@@ -4,6 +4,7 @@ namespace Stillat\Meerkat\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Statamic\Providers\AddonServiceProvider as StatamicAddonServiceProvider;
+use Statamic\Statamic;
 use Stillat\Meerkat\Http\RequestHelpers;
 
 /**
@@ -27,14 +28,13 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
      * @var array Additional providers to boot and register.
      */
     protected $providers = [];
-
+    protected $composers = [];
     /**
      * Indicates if the context state has resolved.
      *
      * @var bool
      */
     private $hasResoledContext = false;
-
     /**
      * Contains the contexts that were resolved for the current request.
      *
@@ -42,45 +42,41 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
      */
     private $requestContexts = [];
 
+    protected $defer = false;
+
     public function __construct()
     {
         parent::__construct(app());
     }
 
     /**
-     * Returns the contexts that the service provider should respond to.
-     *
-     * @return array The contexts.
+     * Boots the current provider and all additional providers, if required.
      */
-    public function getContexts()
+    public function boot()
     {
-        return $this->contexts;
-    }
-
-    /**
-     * Resolves the current request context (web, control panel, CLI, etc.)
-     */
-    private function resolveContext()
-    {
-        if ($this->hasResoledContext == true) {
-            return;
+        if ($this->defer == false) {
+            parent::boot();
+        } else {
+            Statamic::booted(function () {
+                parent::boot();
+            });
         }
 
-        if ($this->app->runningInConsole()) {
-            $this->requestContexts[] = 'cli';
-        } else {
-            $currentRequest = request();
+        foreach ($this->providers as $provider) {
+            $providerInstance = app($provider);
 
-            if ($currentRequest !== null) {
-                if (RequestHelpers::isControlPanelRequest($currentRequest)) {
-                    $this->requestContexts[] = 'cp';
+            if ($providerInstance !== null) {
+                if ($providerInstance instanceof AddonServiceProvider) {
+                    if ($this->isServiceProviderUsable($providerInstance)) {
+                        $providerInstance->boot();
+                    }
                 } else {
-                    $this->requestContexts[] = 'web';
+                   $providerInstance->boot();
                 }
             }
         }
 
-        $this->hasResoledContext = true;
+       $this->bootViewComposers();
     }
 
     /**
@@ -117,23 +113,46 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
     }
 
     /**
-     * Boots the current provider and all additional providers, if required.
+     * Resolves the current request context (web, control panel, CLI, etc.)
      */
-    public function boot()
+    private function resolveContext()
     {
-        parent::boot();
+        if ($this->hasResoledContext == true) {
+            return;
+        }
 
-        foreach ($this->providers as $provider) {
-            $providerInstance = app($provider);
+        if ($this->app->runningInConsole()) {
+            $this->requestContexts[] = 'cli';
+        } else {
+            $currentRequest = request();
 
-            if ($providerInstance !== null) {
-                if ($providerInstance instanceof AddonServiceProvider) {
-                    if ($this->isServiceProviderUsable($providerInstance)) {
-                        $providerInstance->boot();
-                    }
+            if ($currentRequest !== null) {
+                if (RequestHelpers::isControlPanelRequest($currentRequest)) {
+                    $this->requestContexts[] = 'cp';
                 } else {
-                    $providerInstance->boot();
+                    $this->requestContexts[] = 'web';
                 }
+            }
+        }
+
+        $this->hasResoledContext = true;
+    }
+
+    /**
+     * Returns the contexts that the service provider should respond to.
+     *
+     * @return array The contexts.
+     */
+    public function getContexts()
+    {
+        return $this->contexts;
+    }
+
+    private function bootViewComposers()
+    {
+        if (is_array($this->composers) && count($this->composers) > 0) {
+            foreach ($this->composers as $partial => $composer) {
+                view()->composer($partial, $composer);
             }
         }
     }

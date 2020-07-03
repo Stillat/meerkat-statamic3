@@ -13,7 +13,7 @@ class Meerkat
     public const VERSION = '0.0.1';
 
     /**
-     * Returns an instance of Addon for Meerkat.
+     * Returns an instance of Meerkat for Meerkat.
      *
      * @return \Statamic\Extend\Addon
      */
@@ -24,5 +24,6 @@ class Meerkat
 
         return $addonRepository->get(Meerkat::ADDON_ID);
     }
+
 
 }

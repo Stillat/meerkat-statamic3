@@ -37,4 +37,29 @@ class RequestHelpers
 
         return false;
     }
+
+    public static function isControlPanelRequestFromHeaders($request)
+    {
+        $referrer = strtolower($request->headers->get('referer'));
+        $appUrl = strtolower(env('APP_URL'));
+
+        if (mb_strlen($appUrl) > mb_strlen($referrer)) {
+            return false;
+        }
+
+        if (Str::startsWith($referrer, $appUrl)) {
+            $referrer = mb_substr($referrer, mb_strlen($appUrl));
+            $statamicCpRoute = config('statamic.cp.route');
+            $statamicCpRoute = trim($statamicCpRoute, '\//');
+
+
+            if (Str::startsWith($referrer, '/'.$statamicCpRoute.'/')) {
+                return true;
+            }
+        }
+
+
+        return false;
+    }
+
 }

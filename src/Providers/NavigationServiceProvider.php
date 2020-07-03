@@ -14,6 +14,8 @@ use Stillat\Meerkat\PathProvider;
 class NavigationServiceProvider extends AddonServiceProvider
 {
 
+    protected $defer = true;
+
     protected $contexts = ['cp'];
 
     /**
@@ -38,8 +40,10 @@ class NavigationServiceProvider extends AddonServiceProvider
 
     public function boot()
     {
+        parent::boot();
+
         $this->addonIconInstaller->installAddonIcons(Meerkat::CODE_ADDON_NAME, PathProvider::getResourcesDirectory('svg'));
-        $this->navigation->create();
+       // $this->navigation->create();
     }
 
 }

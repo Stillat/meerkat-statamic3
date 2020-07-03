@@ -14,7 +14,7 @@ use Stillat\Meerkat\PathProvider;
 class NavigationServiceProvider extends AddonServiceProvider
 {
 
-    protected $requiresControlPanel = true;
+    protected $contexts = ['cp'];
 
     /**
      * The addon icon installer instance.

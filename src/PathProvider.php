@@ -38,6 +38,11 @@ class PathProvider
         return realpath(__DIR__.'./../');
     }
 
+    public static function getRouteFile($file)
+    {
+        return realpath(PathProvider::getAddonDirectory().'rouetes/'.$file.'.php');
+    }
+
     public static function getResourcesDirectory($path = '')
     {
         return PathProvider::getAddonDirectory().'/resources/'.$path;

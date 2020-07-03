@@ -24,7 +24,4 @@ class Meerkat
         return $addonRepository->get(Meerkat::ADDON_ID);
     }
 
-
-
-
 }

@@ -13,33 +13,20 @@ use Stillat\Meerkat\Http\RequestHelpers;
 class AddonServiceProvider extends StatamicAddonServiceProvider
 {
 
+
+    /**
+     * The request contexts this service provider should respond to.
+     *
+     * @var array The list of contexts.
+     */
+    protected $contexts = [];
+
     /**
      * A collection of additional providers to boot and register for this addon.
      *
      * @var array Additional providers to boot and register.
      */
     protected $providers = [];
-
-    /**
-     * Indicates if the Service Provider requires a Statamic Control Pnael request.
-     *
-     * @var bool
-     */
-    protected $requiresControlPanel = false;
-
-    /**
-     * Indicates if the Service Provider requires a Web request context.
-     *
-     * @var bool
-     */
-    protected $requiresWeb = false;
-
-    /**
-     * Indicates if the Service Provider requires the console context.
-     *
-     * @var bool
-     */
-    protected $requiresCli = false;
 
     /**
      * Indicates if the context state has resolved.
@@ -49,29 +36,25 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
     private $hasResoledContext = false;
 
     /**
-     * Indicates if the current request is running in the Statamic Control Panel.
+     * Contains the contexts that were resolved for the current request.
      *
-     * @var bool
+     * @var array The request contexts.
      */
-    private $isRequestControlPanel = false;
-
-    /**
-     * Indicates if the current request is running a "web" request.
-     *
-     * @var bool
-     */
-    private $isRequestWeb = false;
-
-    /**
-     * Indicates whether the current request is running in the console.
-     *
-     * @var bool
-     */
-    private $isRequestCli = false;
+    private $requestContexts = [];
 
     public function __construct()
     {
         parent::__construct(app());
+    }
+
+    /**
+     * Returns the contexts that the service provider should respond to.
+     *
+     * @return array The contexts.
+     */
+    public function getContexts()
+    {
+        return $this->contexts;
     }
 
     /**
@@ -83,13 +66,19 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
             return;
         }
 
-        $currentRequest = request();
+        if ($this->app->runningInConsole()) {
+            $this->requestContexts[] = 'cli';
+        } else {
+            $currentRequest = request();
 
-        if ($currentRequest !== null) {
-            $this->isRequestControlPanel = RequestHelpers::isControlPanelRequest($currentRequest);
+            if ($currentRequest !== null) {
+                if (RequestHelpers::isControlPanelRequest($currentRequest)) {
+                    $this->requestContexts[] = 'cp';
+                } else {
+                    $this->requestContexts[] = 'web';
+                }
+            }
         }
-
-        $this->isRequestCli = $this->app->runningInConsole();
 
         $this->hasResoledContext = true;
     }
@@ -106,28 +95,22 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
 
         if ($serviceProvider instanceof AddonServiceProvider === false) {
             $this->hasResoledContext = true;
-
             return true;
         }
 
-        if ($this->requiresControlPanel == false &&
-            $this->requiresCli == false &&
-            $this->requiresWeb == false) {
+        $providerContexts = $serviceProvider->getContexts();
+
+        if (is_array($providerContexts) == false || count($providerContexts) == 0) {
             return true;
         }
 
-        $isProviderUsable = true;
+        $isProviderUsable = false;
 
-        if ($this->requiresWeb && $this->isRequestWeb == false) {
-            $isProviderUsable = false;
-        }
-
-        if ($this->requiresControlPanel && $this->isRequestControlPanel == false) {
-            $isProviderUsable = false;
-        }
-
-        if ($this->requiresCli && $this->isRequestCli == false) {
-            $isProviderUsable = false;
+        foreach ($this->requestContexts as $context) {
+            if (in_array($context, $providerContexts)) {
+                $isProviderUsable = true;
+                break;
+            }
         }
 
         return $isProviderUsable;

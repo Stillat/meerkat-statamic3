@@ -1,0 +1,19 @@
+{
+    "name": "stillat/meerkat",
+    "autoload": {
+        "psr-4": {
+            "Stillat\\Meerkat\\": "src"
+        }
+    },
+    "extra": {
+        "statamic": {
+            "name": "Meerkat",
+            "description": "Meerkat addon"
+        },
+        "laravel": {
+            "providers": [
+                "Stillat\\Meerkat\\ServiceProvider"
+            ]
+        }
+    }
+}

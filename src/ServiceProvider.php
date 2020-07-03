@@ -4,6 +4,7 @@ namespace Stillat\Meerkat;
 
 use Stillat\Meerkat\Providers\AddonServiceProvider;
 use Stillat\Meerkat\Providers\NavigationServiceProvider;
+use Stillat\Meerkat\Providers\TagsServiceProvider;
 
 class ServiceProvider extends AddonServiceProvider
 {
@@ -13,13 +14,8 @@ class ServiceProvider extends AddonServiceProvider
     ];
 
     protected $providers = [
+        TagsServiceProvider::class,
         NavigationServiceProvider::class
     ];
-
-    public function boot()
-    {
-        parent::boot();
-    }
-
 
 }

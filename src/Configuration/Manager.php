@@ -9,6 +9,11 @@ use Stillat\Meerkat\PathProvider;
 class Manager
 {
 
+    /**
+     * Gets the addon's configuration items.
+     *
+     * @return array
+     */
     public function getConfigurationMap()
     {
         $configDirectory = PathProvider::getAddonDirectory('config');

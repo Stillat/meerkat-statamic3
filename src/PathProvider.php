@@ -41,7 +41,7 @@ class PathProvider
 
     public static function getRouteFile($file)
     {
-        return realpath(PathProvider::getAddonDirectory().'rouetes/'.$file.'.php');
+        return realpath(PathProvider::getAddonDirectory().'routes/'.$file.'.php');
     }
 
     public static function getResourcesDirectory($path = '')

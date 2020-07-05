@@ -2,7 +2,7 @@
 
 namespace Stillat\Meerkat\Concerns;
 
-use Stillat\Meerkat\Meerkat;
+use Stillat\Meerkat\Addon;
 
 /**
  * Trait UsesConfig
@@ -24,7 +24,7 @@ trait UsesConfig
     protected function getConfig($key, $default = null)
     {
         // Create a namespaced configuration key using "dot" notation.
-        $namespacedKey = Meerkat::CODE_ADDON_NAME.'.'.$key;
+        $namespacedKey = Addon::CODE_ADDON_NAME.'.'.$key;
 
         return config($namespacedKey, $default);
     }

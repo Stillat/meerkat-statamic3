@@ -4,7 +4,7 @@ namespace Stillat\Meerkat\Providers;
 
 use Stillat\Meerkat\Statamic\ControlPanel\AddonNavIcons;
 use Stillat\Meerkat\Statamic\ControlPanel\Navigation;
-use Stillat\Meerkat\Meerkat;
+use Stillat\Meerkat\Addon;
 use Stillat\Meerkat\PathProvider;
 
 /**
@@ -42,7 +42,7 @@ class NavigationServiceProvider extends AddonServiceProvider
     {
         parent::boot();
 
-        $this->addonIconInstaller->installAddonIcons(Meerkat::CODE_ADDON_NAME, PathProvider::getResourcesDirectory('svg'));
+        $this->addonIconInstaller->installAddonIcons(Addon::CODE_ADDON_NAME, PathProvider::getResourcesDirectory('svg'));
         $this->navigation->create();
     }
 

@@ -1,8 +1,8 @@
 <?php
 
-use Stillat\Meerkat\Meerkat;
+use Stillat\Meerkat\Addon;
 use Illuminate\Support\Facades\Route;
 
-Route::group(['prefix' => Meerkat::ROUTE_PREFIX], function () {
+Route::group(['prefix' => Addon::ROUTE_PREFIX], function () {
    Route::get('/', 'DashboardController@index')->name('cp.meerkat.dashboard');
 });

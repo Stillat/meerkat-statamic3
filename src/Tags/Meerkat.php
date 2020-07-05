@@ -3,7 +3,7 @@
 namespace Stillat\Meerkat\Tags;
 
 use Statamic\Tags\Tags;
-use Stillat\Meerkat\Meerkat as MeerkatAddon;
+use Stillat\Meerkat\Addon as MeerkatAddon;
 
 class Meerkat extends Tags
 {

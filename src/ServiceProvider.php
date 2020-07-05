@@ -2,8 +2,6 @@
 
 namespace Stillat\Meerkat;
 
-use Illuminate\Foundation\Application;
-use Stillat\Meerkat\Configuration\Manager;
 use Stillat\Meerkat\Providers\AddonServiceProvider;
 use Stillat\Meerkat\Providers\NavigationServiceProvider;
 use Stillat\Meerkat\Providers\TagsServiceProvider;

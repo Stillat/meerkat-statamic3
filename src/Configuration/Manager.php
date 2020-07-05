@@ -3,8 +3,7 @@
 namespace Stillat\Meerkat\Configuration;
 
 use Illuminate\Support\Str;
-use Illuminate\Foundation\Application;
-use Stillat\Meerkat\Meerkat;
+use Stillat\Meerkat\Addon;
 use Stillat\Meerkat\PathProvider;
 
 class Manager
@@ -29,7 +28,7 @@ class Manager
 
         foreach ($configFiles as $filePath) {
             $configName = basename($filePath);
-            $targetConfigPath = config_path(Meerkat::CODE_ADDON_NAME.'/'.$configName);
+            $targetConfigPath = config_path(Addon::CODE_ADDON_NAME.'/'.$configName);
 
             $configMapping[$filePath] = $targetConfigPath;
         }

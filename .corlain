@@ -1,0 +1,11 @@
+{
+  "name": "stillat/meerkat",
+  "dependencies": [
+    {
+      "name": "stillat/meerkat-ui",
+      "source": "@local:stillat/meerkat-ui",
+      "output": "./resources/test/",
+      "map": []
+    }
+  ]
+}

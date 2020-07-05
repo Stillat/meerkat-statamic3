@@ -2,8 +2,8 @@
 
 namespace Stillat\Meerkat\Providers;
 
-use Stillat\Meerkat\ControlPanel\AddonNavIcons;
-use Stillat\Meerkat\ControlPanel\Navigation;
+use Stillat\Meerkat\Statamic\ControlPanel\AddonNavIcons;
+use Stillat\Meerkat\Statamic\ControlPanel\Navigation;
 use Stillat\Meerkat\Meerkat;
 use Stillat\Meerkat\PathProvider;
 

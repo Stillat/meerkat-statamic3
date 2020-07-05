@@ -40,7 +40,6 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
      */
     private $hasResoledContext = false;
 
-
     /**
      * Contains the contexts that were resolved for the current request.
      *
@@ -48,19 +47,23 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
      */
     private $requestContexts = [];
 
-    protected $defer = false;
+    /**
+     * Indicates whether to defer key actions until Statamic has booted.
+     *
+     * @var bool Whether to wait until Statamic boots.
+     */
+    protected $defer = true;
 
     /**
-     * The configuration manager instance.
+     * A collection of configuration items to publish to the Statamic installation.
      *
-     * @var Manager
+     * @var array The config entries to publish.
      */
-    protected $configurationManager = null;
+    protected $config = [];
 
     public function __construct(Application $app)
     {
         parent::__construct($app);
-
     }
 
     /**
@@ -68,9 +71,20 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
      */
     private function publishAddonConfiguration()
     {
-        $this->configurationManager = app(Manager::class);
+        if (!is_array($this->config) || count($this->config) == 0) {
+            return;
+        }
 
-        $configurationMapping = $this->configurationManager->getConfigurationMap();
+        $configurationMapping = [];
+
+        // Protects against files not existing.
+        foreach ($this->config as $sourceConfig => $targetConfig) {
+            if (!file_exists($sourceConfig) || is_dir($sourceConfig)) {
+                continue;
+            }
+
+            $configurationMapping[$sourceConfig] = $targetConfig;
+        }
 
         foreach ($configurationMapping as $sourceConfig => $targetConfig) {
             if (!file_exists($targetConfig)) {
@@ -86,10 +100,21 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
     }
 
     /**
+     * Provides a place for developers to place anything
+     * that should be done before boot() is executed.
+     */
+    protected function beforeBoot()
+    {
+        // Just an empty method.
+    }
+
+    /**
      * Boots the current provider and all additional providers, if required.
      */
     public function boot()
     {
+        $this->beforeBoot();
+
         if ($this->defer == false) {
             parent::boot();
         } else {
@@ -104,6 +129,7 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
             if ($providerInstance !== null) {
                 if ($providerInstance instanceof AddonServiceProvider) {
                     if ($this->isServiceProviderUsable($providerInstance)) {
+                        $providerInstance->beforeBoot();
                         $providerInstance->boot();
                     }
                 } else {

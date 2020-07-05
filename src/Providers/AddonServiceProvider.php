@@ -2,12 +2,15 @@
 
 namespace Stillat\Meerkat\Providers;
 
+use Illuminate\Support\Str;
+use Stillat\Meerkat\Addon;
 use Stillat\Meerkat\Configuration\Manager;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Statamic\Providers\AddonServiceProvider as StatamicAddonServiceProvider;
 use Statamic\Statamic;
 use Stillat\Meerkat\Http\RequestHelpers;
+use Stillat\Meerkat\PathProvider;
 
 /**
  * Class AddonServiceProvider
@@ -15,6 +18,13 @@ use Stillat\Meerkat\Http\RequestHelpers;
  */
 class AddonServiceProvider extends StatamicAddonServiceProvider
 {
+
+    /**
+     * Indicates whether or not the addon's language files have already been loaded into the application.
+     *
+     * @var bool Whether or not the addon language has already been loaded.
+     */
+    public static $langIncluded = false;
 
     /**
      * The request contexts this service provider should respond to.
@@ -147,6 +157,8 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
         Statamic::booted(function () {
             $this->publishAddonConfiguration();
         });
+
+        $this->includeAddonLanguages();
     }
 
     /**
@@ -228,6 +240,24 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
                 view()->composer($partial, $composer);
             }
         }
+    }
+
+    /**
+     * Loads addon language translations into the application instance.
+     */
+    private function includeAddonLanguages()
+    {
+        if (AddonServiceProvider::$langIncluded || $this->app == null) {
+            return;
+        }
+
+        $langDirectory = PathProvider::getResourcesDirectory('lang');
+
+        if (file_exists($langDirectory) && is_dir($langDirectory)) {
+            $this->loadTranslationsFrom($langDirectory, Addon::CODE_ADDON_NAME);
+        }
+
+        AddonServiceProvider::$langIncluded = true;
     }
 
     /**

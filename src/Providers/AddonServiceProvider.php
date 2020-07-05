@@ -2,6 +2,8 @@
 
 namespace Stillat\Meerkat\Providers;
 
+use Stillat\Meerkat\Configuration\Manager;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Statamic\Providers\AddonServiceProvider as StatamicAddonServiceProvider;
 use Statamic\Statamic;
@@ -13,7 +15,6 @@ use Stillat\Meerkat\Http\RequestHelpers;
  */
 class AddonServiceProvider extends StatamicAddonServiceProvider
 {
-
 
     /**
      * The request contexts this service provider should respond to.
@@ -28,13 +29,18 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
      * @var array Additional providers to boot and register.
      */
     protected $providers = [];
+
+
     protected $composers = [];
+
     /**
      * Indicates if the context state has resolved.
      *
      * @var bool
      */
     private $hasResoledContext = false;
+
+
     /**
      * Contains the contexts that were resolved for the current request.
      *
@@ -44,9 +50,39 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
 
     protected $defer = false;
 
-    public function __construct()
+    /**
+     * The configuration manager instance.
+     *
+     * @var Manager
+     */
+    protected $configurationManager = null;
+
+    public function __construct(Application $app)
     {
-        parent::__construct(app());
+        parent::__construct($app);
+
+    }
+
+    /**
+     * Ensures that the Meerkat configuration is available in the Statamic installation.
+     */
+    private function publishAddonConfiguration()
+    {
+        $this->configurationManager = app(Manager::class);
+
+        $configurationMapping = $this->configurationManager->getConfigurationMap();
+
+        foreach ($configurationMapping as $sourceConfig => $targetConfig) {
+            if (!file_exists($targetConfig)) {
+                $dirName = dirname($targetConfig);
+
+                if (!file_exists($dirName)) {
+                    mkdir($dirName, 644, true);
+                }
+
+                copy($sourceConfig, $targetConfig);
+            }
+        }
     }
 
     /**
@@ -71,12 +107,16 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
                         $providerInstance->boot();
                     }
                 } else {
-                   $providerInstance->boot();
+                    $providerInstance->boot();
                 }
             }
         }
 
-       $this->bootViewComposers();
+        $this->bootViewComposers();
+
+        Statamic::booted(function () {
+            $this->publishAddonConfiguration();
+        });
     }
 
     /**

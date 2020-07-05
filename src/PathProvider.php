@@ -31,11 +31,12 @@ class PathProvider
     /**
      * Gets the absolute path to the Meerkat addon directory.
      *
+     * @param string $path An optional path suffix.
      * @return false|string
      */
-    public static function getAddonDirectory()
+    public static function getAddonDirectory($path = '')
     {
-        return realpath(__DIR__.'./../');
+        return realpath(__DIR__.'./../'.$path);
     }
 
     public static function getRouteFile($file)

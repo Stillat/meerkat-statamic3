@@ -30,7 +30,11 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
      */
     protected $providers = [];
 
-
+    /**
+     * A collection of view composers that should automatically be registered.
+     *
+     * @var array The view composers.
+     */
     protected $composers = [];
 
     /**

@@ -3,7 +3,7 @@
 namespace Stillat\Meerkat;
 
 use Stillat\Meerkat\Providers\AddonServiceProvider;
-use Stillat\Meerkat\Providers\NavigationServiceProvider;
+use Stillat\Meerkat\Providers\ControlPanelServiceProvider;
 use Stillat\Meerkat\Providers\TagsServiceProvider;
 use Stillat\Meerkat\Support\Facades\Configuration;
 
@@ -19,7 +19,7 @@ class ServiceProvider extends AddonServiceProvider
 
     protected $providers = [
         TagsServiceProvider::class,
-        NavigationServiceProvider::class
+        ControlPanelServiceProvider::class
     ];
 
     protected function beforeBoot()

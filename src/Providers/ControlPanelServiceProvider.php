@@ -2,12 +2,10 @@
 
 namespace Stillat\Meerkat\Providers;
 
-use Statamic\Statamic;
-use Stillat\Meerkat\Statamic\ControlPanel\AddonNavIcons;
-use Stillat\Meerkat\Statamic\ControlPanel\Navigation;
 use Stillat\Meerkat\Addon;
 use Stillat\Meerkat\PathProvider;
-use Stillat\Meerkat\Translation\LanguagePatcher;
+use Stillat\Meerkat\Statamic\ControlPanel\AddonNavIcons;
+use Stillat\Meerkat\Statamic\ControlPanel\Navigation;
 
 /**
  * Class NavigationServiceProvider
@@ -41,6 +39,7 @@ class ControlPanelServiceProvider extends AddonServiceProvider
 
     public function __construct(AddonNavIcons $addonIcons, Navigation $navigation)
     {
+        parent::__construct(app());
         $this->addonIconInstaller = $addonIcons;
         $this->navigation = $navigation;
     }
@@ -49,12 +48,10 @@ class ControlPanelServiceProvider extends AddonServiceProvider
     {
         parent::boot();
 
-        /** @var LanguagePatcher languagePatcher */
-        $this->languagePatcher = app(LanguagePatcher::class);
-        $langPatches = $this->languagePatcher->getPatches();
-
         $this->addonIconInstaller->installAddonIcons(Addon::CODE_ADDON_NAME, PathProvider::getResourcesDirectory('svg'));
         $this->navigation->create();
+
+
     }
 
 }

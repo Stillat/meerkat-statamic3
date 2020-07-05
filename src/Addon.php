@@ -25,5 +25,14 @@ class Addon
         return $addonRepository->get(Addon::ADDON_ID);
     }
 
+    /**
+     * Gets the Addon's namespace without waiting for the Statamic manifest.
+     *
+     * @return string
+     */
+    public static function getNamespace()
+    {
+        return __NAMESPACE__;
+    }
 
 }

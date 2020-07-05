@@ -49,4 +49,9 @@ class PathProvider
         return PathProvider::getAddonDirectory().'/resources/'.$path;
     }
 
+    public static function getStub($file)
+    {
+        return PathProvider::getAddonDirectory('src/_stubs/'.$file);
+    }
+
 }

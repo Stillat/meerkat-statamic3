@@ -2,9 +2,8 @@
 
 namespace Stillat\Meerkat\Providers;
 
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Route;
 use Stillat\Meerkat\Addon;
-use Stillat\Meerkat\Configuration\Manager;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Statamic\Providers\AddonServiceProvider as StatamicAddonServiceProvider;

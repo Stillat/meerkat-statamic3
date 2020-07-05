@@ -43,7 +43,7 @@ class NavigationServiceProvider extends AddonServiceProvider
         parent::boot();
 
         $this->addonIconInstaller->installAddonIcons(Meerkat::CODE_ADDON_NAME, PathProvider::getResourcesDirectory('svg'));
-       // $this->navigation->create();
+        $this->navigation->create();
     }
 
 }

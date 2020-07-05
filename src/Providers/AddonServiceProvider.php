@@ -218,6 +218,9 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
         return $this->contexts;
     }
 
+    /**
+     * Registers any defined view composers with the instance.
+     */
     private function bootViewComposers()
     {
         if (is_array($this->composers) && count($this->composers) > 0) {

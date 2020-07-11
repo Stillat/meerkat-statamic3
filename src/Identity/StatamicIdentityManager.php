@@ -3,6 +3,8 @@
 namespace Stillat\Meerkat\Identity;
 
 use Statamic\Auth\UserProvider;
+use Statamic\Contracts\Auth\User;
+use Stillat\Meerkat\Core\Authoring\Author;
 use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorFactoryContract;
@@ -60,7 +62,7 @@ class StatamicIdentityManager implements IdentityManagerContract
             return false;
         }
 
-        if (method_exists($author, 'getId') === false) {
+        if ($author instanceof AuthorContract === false) {
             return false;
         }
 
@@ -117,7 +119,27 @@ class StatamicIdentityManager implements IdentityManagerContract
      */
     public function getIdentityId($author)
     {
-        // TODO: Implement getIdentityId() method.
+        if (is_array($author)) {
+            return $this->getIdentityId($this->authorFactory->makeAuthor($author));
+        }
+
+        if ($author instanceof AuthorContract) {
+            if ($author->getIsTransient()) {
+                return null;
+            }
+
+            return $author->getId();
+        }
+
+        if ($author instanceof User) {
+            $identity = $this->authorFactory->makeAuthor($author);
+
+            if ($identity !== null) {
+                return $identity->getId();
+            }
+        }
+
+        return null;
     }
 
     /**

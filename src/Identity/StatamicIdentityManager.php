@@ -3,7 +3,7 @@
 namespace Stillat\Meerkat\Identity;
 
 use Statamic\Auth\UserProvider;
-use Stillat\Meerkat\Core\Contracts\AuthorContract;
+use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorFactoryContract;
 use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
 

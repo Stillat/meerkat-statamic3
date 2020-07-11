@@ -2,7 +2,7 @@
 
 namespace Stillat\Meerkat\Core\Contracts\Identity;
 
-use Stillat\Meerkat\Core\Contracts\AuthorContract;
+use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 
 /**
  * Defines an authentication and permissions interop standard

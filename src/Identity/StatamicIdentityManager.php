@@ -10,6 +10,14 @@ use Stillat\Meerkat\Core\Contracts\Identity\AuthorFactoryContract;
 use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
 use Statamic\Contracts\Auth\UserRepository;
 
+/**
+ * Class StatamicIdentityManager
+ *
+ * Manages the resolution of identities between Meerkat Core and Statamic.
+ *
+ * @package Stillat\Meerkat\Identity
+ * @since 1.0.0
+ */
 class StatamicIdentityManager implements IdentityManagerContract
 {
 

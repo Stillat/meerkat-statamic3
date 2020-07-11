@@ -4,7 +4,6 @@ namespace Stillat\Meerkat\Identity;
 
 use Statamic\Auth\UserProvider;
 use Statamic\Contracts\Auth\User;
-use Stillat\Meerkat\Core\Authoring\Author;
 use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorFactoryContract;

@@ -4,6 +4,7 @@ namespace Stillat\Meerkat\Identity;
 
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\DataObject;
+use Stillat\Meerkat\Core\Permissions\PermissionsSet;
 
 /**
  * Class StatamicIdentity
@@ -51,6 +52,13 @@ class StatamicIdentity implements AuthorContract
      * @var string
      */
     protected $emailAddress = '';
+
+    /**
+     * The identity's permission set.
+     *
+     * @var PermissionsSet|null
+     */
+    private $permissionSet = null;
 
     /**
      * Returns a value indicating if the identity is transient.
@@ -131,6 +139,28 @@ class StatamicIdentity implements AuthorContract
     public function setEmailAddress($emailAddress)
     {
         $this->emailAddress = $emailAddress;
+    }
+
+
+    /**
+     * Gets the author context's permission set.
+     *
+     * @return PermissionsSet
+     */
+    public function getPermissionSet()
+    {
+        return $this->permissionSet;
+    }
+
+    /**
+     * Sets the author context's permission set.
+     *
+     * @param PermissionsSet $permissionSet
+     * @return mixed
+     */
+    public function setPermissionsSet($permissionSet)
+    {
+        $this->permissionSet = $permissionSet;
     }
 
 }

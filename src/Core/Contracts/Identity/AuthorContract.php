@@ -4,6 +4,7 @@ namespace Stillat\Meerkat\Core\Contracts\Identity;
 
 use Serializable;
 use Stillat\Meerkat\Core\Contracts\DataObjectContract;
+use Stillat\Meerkat\Core\Permissions\PermissionsSet;
 
 /**
  * Provides a standardized structure for defining authors
@@ -102,5 +103,20 @@ interface AuthorContract extends DataObjectContract, Serializable
      * @return mixed
      */
     public function setEmailAddress($emailAddress);
+
+    /**
+     * Gets the author context's permission set.
+     *
+     * @return PermissionsSet
+     */
+    public function getPermissionSet();
+
+    /**
+     * Sets the author context's permission set.
+     *
+     * @param PermissionsSet $permissionSet
+     * @return mixed
+     */
+    public function setPermissionsSet($permissionSet);
 
 }

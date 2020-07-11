@@ -6,6 +6,7 @@ use Statamic\Auth\User;
 use Statamic\Auth\UserProvider;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorFactoryContract;
+use Stillat\Meerkat\Core\Contracts\Permissions\PermissionsManagerContract;
 
 /**
  * Class StatamicAuthorFactory
@@ -25,9 +26,17 @@ class StatamicAuthorFactory implements AuthorFactoryContract
      */
     private $statamicUserProvider = null;
 
-    public function __construct(UserProvider $userProvider)
+    /**
+     * The permissions manager instance.
+     *
+     * @var PermissionsManagerContract
+     */
+    private $permissionsManager = null;
+
+    public function __construct(UserProvider $userProvider, PermissionsManagerContract $permissionsManager)
     {
         $this->statamicUserProvider = $userProvider;
+        $this->permissionsManager = $permissionsManager;
     }
 
     /**
@@ -74,6 +83,8 @@ class StatamicAuthorFactory implements AuthorFactoryContract
                     $identity->setDataAttribute($key, $value);
                 }
 
+                $identity->setPermissionsSet($this->permissionsManager->getPermissions($identity));
+
                 return $identity;
             }
         }
@@ -96,6 +107,8 @@ class StatamicAuthorFactory implements AuthorFactoryContract
             $transientIdentity->setDataAttribute($key, $value);
         }
 
+        $transientIdentity->setPermissionsSet($this->permissionsManager->getPermissions($transientIdentity));
+
         return $transientIdentity;
     }
 
@@ -113,6 +126,7 @@ class StatamicAuthorFactory implements AuthorFactoryContract
         $identity->setIsTransient(false);
         $identity->setDisplayName($protoUser->name());
         $identity->setEmailAddress($protoUser->email());
+        $identity->setPermissionsSet($this->permissionsManager->getPermissions($identity));
 
         return $identity;
     }

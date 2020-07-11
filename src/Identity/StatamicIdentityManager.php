@@ -3,9 +3,11 @@
 namespace Stillat\Meerkat\Identity;
 
 use Statamic\Auth\UserProvider;
+use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorFactoryContract;
 use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
+use Statamic\Contracts\Auth\UserRepository;
 
 class StatamicIdentityManager implements IdentityManagerContract
 {
@@ -13,21 +15,35 @@ class StatamicIdentityManager implements IdentityManagerContract
     /**
      * The Statamic UserProvider instance.
      *
-     * @var UserProvider
+     * @var Statamic\Auth\UserProvider
      */
     private $statamicUserProvider = null;
 
     /**
+     * @var Statamic\Contracts\Auth\UserRepository
+     */
+    private $statamicUserRepository = null;
+
+    /**
      * The AuthorFactory implementation instance.
      *
-     * @var AuthorFactoryContract
+     * @var Stillat\Meerkat\Core\Contracts\Identity\AuthorFactoryContract
      */
     private $authorFactory = null;
 
-    public function __construct(UserProvider $userProvider, AuthorFactoryContract $authorFactory)
+    /**
+     * The Meerkat Core configuration container instance.
+     *
+     * @var Stillat\Meerkat\Core\Configuration
+     */
+    private $config = null;
+
+    public function __construct(UserRepository $userRepository, UserProvider $userProvider, AuthorFactoryContract $authorFactory, Configuration $coreConfig)
     {
+        $this->statamicUserRepository = $userRepository;
         $this->statamicUserProvider = $userProvider;
         $this->authorFactory = $authorFactory;
+        $this->config = $coreConfig;
     }
 
     /**
@@ -69,7 +85,27 @@ class StatamicIdentityManager implements IdentityManagerContract
      */
     public function canAutoPublishComments($author)
     {
-        // TODO: Implement canAutoPublishComments() method.
+        if ($author === null) {
+            return false;
+        }
+
+        if ($author->getIsTransient() && $this->config->autoPublishAnonymousPosts) {
+            return true;
+        }
+
+        if ($author->getIsTransient() === false && $this->config->autoPublishAuthenticatedPosts) {
+            $currentContext = $this->getIdentityContext();
+
+            if ($currentContext === null) {
+                return false;
+            }
+
+            if ($author->getId() === $currentContext->getId()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -91,7 +127,13 @@ class StatamicIdentityManager implements IdentityManagerContract
      */
     public function getIdentityContext()
     {
-        // TODO: Implement getIdentityContext() method.
+        $currentUser = $this->statamicUserRepository->current();
+
+        if ($currentUser === null) {
+            return null;
+        }
+
+        return $this->authorFactory->makeAuthor($currentUser);
     }
 
     /**

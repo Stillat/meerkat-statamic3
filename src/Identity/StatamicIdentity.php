@@ -5,41 +5,104 @@ namespace Stillat\Meerkat\Identity;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\DataObject;
 
+/**
+ * Class StatamicIdentity
+ *
+ * Represents a Statamic User Identity for Meerkat Core.
+ *
+ * @package Stillat\Meerkat\Identity
+ * @since 1.0.0
+ */
 class StatamicIdentity implements AuthorContract
 {
     use DataObject;
 
+    /**
+     * A collection of additional data attributes.
+     *
+     * @var array
+     */
     protected $attributes = [];
 
+    /**
+     * The author's system identifier, if available.
+     *
+     * @var null|string
+     */
+    protected $userId = null;
 
+    /**
+     * Indicates if the identity is transient.
+     *
+     * @var bool
+     */
+    private $isTransient = true;
+
+    /**
+     * The identity's display name, if available.
+     *
+     * @var string
+     */
+    protected $displayName = '';
+
+    /**
+     * Returns a value indicating if the identity is transient.
+     *
+     * @return bool
+     */
     public function getIsTransient()
     {
-        // TODO: Implement getIsTransient() method.
+        return $this->isTransient;
     }
 
+    /**
+     * Sets whether or not the identity is transient.
+     *
+     * @param bool $isTransient
+     */
     public function setIsTransient($isTransient)
     {
-        // TODO: Implement setIsTransient() method.
+        $this->isTransient = $isTransient;
     }
 
+    /**
+     * Gets the user's system string identifier.
+     *
+     * @return string|null
+     */
     public function getId()
     {
-        // TODO: Implement getId() method.
+        return $this->userId;
     }
 
+    /**
+     * Sets the user's system string identifier.
+     *
+     * @param string $userId The user's string identifier.
+     */
     public function setId($userId)
     {
-        // TODO: Implement setId() method.
+        $this->userId = $userId;
     }
 
+    /**
+     * Gets the identity's display name, if available.
+     *
+     * @return string
+     */
     public function getDisplayName()
     {
-        // TODO: Implement getDisplayName() method.
+        return $this->displayName;
     }
 
+    /**
+     * Sets the identity's display name.
+     *
+     * @param string $displayName
+     */
     public function setDisplayName($displayName)
     {
-        // TODO: Implement setDisplayName() method.
+        $this->displayName = $displayName;
     }
 
 }

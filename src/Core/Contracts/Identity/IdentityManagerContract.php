@@ -40,7 +40,7 @@ interface IdentityManagerContract
     public function canAutoPublishComments($author);
 
     /**
-     * Retrieves the identity ID for the provied author information.
+     * Retrieves the identity ID for the provided author information.
      *
      * @param AuthorContract $author
      *

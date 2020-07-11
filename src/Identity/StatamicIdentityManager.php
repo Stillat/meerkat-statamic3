@@ -2,11 +2,34 @@
 
 namespace Stillat\Meerkat\Identity;
 
+use Statamic\Auth\UserProvider;
 use Stillat\Meerkat\Core\Contracts\AuthorContract;
+use Stillat\Meerkat\Core\Contracts\Identity\AuthorFactoryContract;
 use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
 
 class StatamicIdentityManager implements IdentityManagerContract
 {
+
+    /**
+     * The Statamic UserProvider instance.
+     *
+     * @var UserProvider
+     */
+    private $statamicUserProvider = null;
+
+    /**
+     * The AuthorFactory implementation instance.
+     *
+     * @var AuthorFactoryContract
+     */
+    private $authorFactory = null;
+
+    public function __construct(UserProvider $userProvider, AuthorFactoryContract $authorFactory)
+    {
+        $this->statamicUserProvider = $userProvider;
+        $this->authorFactory = $authorFactory;
+    }
+
     /**
      * Returns a value indicating if the provided author
      * contains a user identity within the host system.
@@ -36,7 +59,7 @@ class StatamicIdentityManager implements IdentityManagerContract
     }
 
     /**
-     * Retrieves the identity ID for the provied author information.
+     * Retrieves the identity ID for the provided author information.
      *
      * @param AuthorContract $author
      *
@@ -65,6 +88,17 @@ class StatamicIdentityManager implements IdentityManagerContract
      */
     public function locateIdentity($authorId)
     {
-        // TODO: Implement locateIdentity() method.
+        if ($authorId === null || mb_strlen(trim($authorId)) == 0) {
+            return null;
+        }
+
+        $statamicUser = $this->statamicUserProvider->retrieveById($authorId);
+
+        if ($statamicUser === null) {
+            return null;
+        }
+
+        return $this->authorFactory->makeAuthor($statamicUser);
     }
+
 }

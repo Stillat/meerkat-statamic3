@@ -8,6 +8,7 @@ use Stillat\Meerkat\Core\GuardConfiguration;
 use Stillat\Meerkat\Core\Configuration as GlobalConfiguration;
 use Stillat\Meerkat\Providers\AddonServiceProvider;
 use Stillat\Meerkat\Providers\ControlPanelServiceProvider;
+use Stillat\Meerkat\Providers\IdentityServiceProvider;
 use Stillat\Meerkat\Providers\TagsServiceProvider;
 use Stillat\Meerkat\Support\Facades\Configuration;
 
@@ -23,6 +24,10 @@ class ServiceProvider extends AddonServiceProvider
     ];
 
     protected $providers = [
+        /** Start: Meerkat Core Dependency Providers */
+        IdentityServiceProvider::class,
+        /** End: Meerkat Core Dependency Providers */
+
         TagsServiceProvider::class,
         ControlPanelServiceProvider::class
     ];
@@ -42,7 +47,6 @@ class ServiceProvider extends AddonServiceProvider
         $this->registerMeerkatSpamGuardConfiguration();
         $this->registerMeerkatFormattingConfiguration(); // Global Configuration relies on the formatting config.
         $this->registerMeerkatGlobalConfiguration();
-        $this->registerMeerkatCoreDependencies();
     }
 
     /**
@@ -110,11 +114,6 @@ class ServiceProvider extends AddonServiceProvider
 
             return $globalConfiguration;
         });
-    }
-
-    private function registerMeerkatCoreDependencies()
-    {
-
     }
 
 }

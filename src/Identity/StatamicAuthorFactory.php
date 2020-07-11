@@ -57,7 +57,7 @@ class StatamicAuthorFactory implements AuthorFactoryContract
      */
     private function makeAuthorFromArrayPrototype($protoAuthor)
     {
-        if (is_array($protoAuthor) == false) {
+        if (is_array($protoAuthor) == false || count($protoAuthor) === 0) {
             return null;
         }
 

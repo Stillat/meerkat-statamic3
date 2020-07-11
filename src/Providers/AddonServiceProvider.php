@@ -2,7 +2,6 @@
 
 namespace Stillat\Meerkat\Providers;
 
-use Illuminate\Support\Facades\Route;
 use Stillat\Meerkat\Addon;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;

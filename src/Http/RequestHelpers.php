@@ -19,7 +19,9 @@ class RequestHelpers
      */
     public static function isControlPanelRequest($request)
     {
-        if ($request == null) { return false; }
+        if ($request == null) {
+            return false;
+        }
 
         $statamicCpRoute = config('statamic.cp.route');
 
@@ -53,7 +55,7 @@ class RequestHelpers
             $statamicCpRoute = trim($statamicCpRoute, '\//');
 
 
-            if (Str::startsWith($referrer, '/'.$statamicCpRoute.'/')) {
+            if (Str::startsWith($referrer, '/' . $statamicCpRoute . '/')) {
                 return true;
             }
         }

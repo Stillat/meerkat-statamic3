@@ -50,8 +50,6 @@ class ControlPanelServiceProvider extends AddonServiceProvider
 
         $this->addonIconInstaller->installAddonIcons(Addon::CODE_ADDON_NAME, PathProvider::getResourcesDirectory('svg'));
         $this->navigation->create();
-
-
     }
 
 }

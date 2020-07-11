@@ -40,7 +40,21 @@ class StatamicIdentityManager implements IdentityManagerContract
      */
     public function containsUserIdentity($author)
     {
-        // TODO: Implement containsUserIdentity() method.
+        if ($author === null) {
+            return false;
+        }
+
+        if (method_exists($author, 'getId') === false) {
+            return false;
+        }
+
+        $statamicUser = $this->statamicUserProvider->retrieveById($author->getId());
+
+        if ($statamicUser === null) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

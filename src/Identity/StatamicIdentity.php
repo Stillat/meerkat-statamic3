@@ -46,6 +46,13 @@ class StatamicIdentity implements AuthorContract
     protected $displayName = '';
 
     /**
+     * The identity's email address, if available.
+     *
+     * @var string
+     */
+    protected $emailAddress = '';
+
+    /**
      * Returns a value indicating if the identity is transient.
      *
      * @return bool
@@ -103,6 +110,27 @@ class StatamicIdentity implements AuthorContract
     public function setDisplayName($displayName)
     {
         $this->displayName = $displayName;
+    }
+
+    /**
+     * Gets the identity's email address, if available.
+     *
+     * @return mixed
+     */
+    public function getEmailAddress()
+    {
+        return $this->emailAddress;
+    }
+
+    /**
+     * Sets the identity's email address.
+     *
+     * @param string $emailAddress The identity's email address.
+     * @return mixed
+     */
+    public function setEmailAddress($emailAddress)
+    {
+        $this->emailAddress = $emailAddress;
     }
 
 }

@@ -87,6 +87,10 @@ class StatamicAuthorFactory implements AuthorFactoryContract
             $transientIdentity->setDisplayName($protoAuthor[AuthorContract::KEY_NAME]);
         }
 
+        if (array_key_exists(AuthorContract::KEY_EMAIL_ADDRESS, $protoAuthor)) {
+            $transientIdentity->setEmailAddress($protoAuthor[AuthorContract::KEY_EMAIL_ADDRESS]);
+        }
+
         // Iterate all properties and set them on the identity context.
         foreach ($protoAuthor as $key => $value) {
             $transientIdentity->setDataAttribute($key, $value);
@@ -108,6 +112,7 @@ class StatamicAuthorFactory implements AuthorFactoryContract
         $identity->setId($protoUser->getAuthIdentifier());
         $identity->setIsTransient(false);
         $identity->setDisplayName($protoUser->name());
+        $identity->setEmailAddress($protoUser->email());
 
         return $identity;
     }

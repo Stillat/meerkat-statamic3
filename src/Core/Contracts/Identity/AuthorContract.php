@@ -88,4 +88,19 @@ interface AuthorContract extends DataObjectContract, Serializable
      */
     public function setDisplayName($displayName);
 
+    /**
+     * Gets the identity's email address, if available.
+     *
+     * @return mixed
+     */
+    public function getEmailAddress();
+
+    /**
+     * Sets the identity's email address.
+     *
+     * @param string $emailAddress The identity's email address.
+     * @return mixed
+     */
+    public function setEmailAddress($emailAddress);
+
 }

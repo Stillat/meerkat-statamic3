@@ -2,7 +2,7 @@
   "name": "stillat/meerkat",
   "dependencies": [
     {
-      "name": "stillat/meerkat-ui",
+      "name": "stillat/meerkat-core",
       "source": "@local:stillat/meerkat-core",
       "output": "./src/Core/",
       "map": []

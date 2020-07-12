@@ -16,6 +16,27 @@ class UuidGenerator implements UniqueIdentifierGeneratorContract
 {
 
     /**
+     * A shared instance of UuidGenerator used by internal Meerkat services.
+     *
+     * @var UuidGenerator|null
+     */
+    public static $instance = null;
+
+    /**
+     * Returns access to the shared UuidGenerator instance.
+     *
+     * @return UuidGenerator
+     */
+    public static function getInstance()
+    {
+        if (self::$instance == null) {
+            self::$instance = new UuidGenerator();
+        }
+
+        return self::$instance;
+    }
+
+    /**
      * Requests a new unique identifier.
      *
      * @return string

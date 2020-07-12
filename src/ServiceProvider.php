@@ -4,11 +4,13 @@ namespace Stillat\Meerkat;
 
 use Stillat\Meerkat\Concerns\UsesConfig;
 use Stillat\Meerkat\Console\Commands\ValidateCommand;
+use Stillat\Meerkat\Core\Contracts\Logging\ErrorCodeRepositoryContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\YAMLParserContract;
 use Stillat\Meerkat\Core\FormattingConfiguration;
 use Stillat\Meerkat\Core\GuardConfiguration;
 use Stillat\Meerkat\Core\Configuration as GlobalConfiguration;
+use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
 use Stillat\Meerkat\Parsing\MarkdownParser;
 use Stillat\Meerkat\Parsing\YAMLParser;
 use Stillat\Meerkat\Providers\AddonServiceProvider;
@@ -55,6 +57,8 @@ class ServiceProvider extends AddonServiceProvider
 
     public function register()
     {
+        // Registers the error log repository utilized by many Meerkat services and features.
+        $this->registerMeerkatCoreErrorLogRepository();
         // Register Meerkat Core configuration containers.
         $this->registerMeerkatSpamGuardConfiguration();
         $this->registerMeerkatFormattingConfiguration(); // Global Configuration relies on the formatting config.
@@ -62,6 +66,22 @@ class ServiceProvider extends AddonServiceProvider
         $this->registerCoreDependencies();
 
         parent::register();
+    }
+
+    private function registerMeerkatCoreErrorLogRepository()
+    {
+        $targetPath = storage_path('meerkat/logs');
+
+        if (file_exists($targetPath) == false) {
+            mkdir($targetPath, 644, true);
+        }
+
+        $this->app->singleton(ErrorCodeRepositoryContract::class, function ($app) use ($targetPath) {
+            return new LocalErrorCodeRepository($targetPath);
+        });
+
+        // If we set the shared instance value, Meerkat Core can use it to report issues directly.
+        LocalErrorCodeRepository::$instance = $this->app->make(ErrorCodeRepositoryContract::class);
     }
 
     /**

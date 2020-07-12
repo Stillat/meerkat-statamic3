@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat\Core\Validators;
 
+use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
 use Stillat\Meerkat\Core\ValidationResult;
 
 /**
@@ -67,6 +68,8 @@ class PathPrivilegeValidator
                         'code' => $permissionDeniedErrorCode,
                         'msg' => 'Insufficient privileges for directory: '.$path
                     ];
+
+                    LocalErrorCodeRepository::logCodeMessage($permissionDeniedErrorCode, 'Insufficient privileges for directory: '.$path);
                 }
             } else {
                 $canUseDirectory = true;

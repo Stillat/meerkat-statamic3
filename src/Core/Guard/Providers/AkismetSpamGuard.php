@@ -8,6 +8,9 @@ use Stillat\Meerkat\Core\Contracts\Http\HttpClientContract;
 use Stillat\Meerkat\Core\Contracts\SpamGuardContract;
 use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\GuardConfiguration;
+use Stillat\Meerkat\Core\Logging\ErrorLog;
+use Stillat\Meerkat\Core\Logging\ErrorLogContext;
+use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
 use Stillat\Meerkat\Core\ValidationResult;
 
 /**
@@ -351,14 +354,27 @@ class AkismetSpamGuard implements SpamGuardContract
                 } else {
                     $results->reasons[] = [
                         'msg' => 'Could not read response from Akismet API response.',
-                        'code' => '02-002',
+                        'code' => Errors::GUARD_AKISMET_RESPONSE_FAILURE,
                     ];
+
+                    $logContext = new ErrorLogContext();
+                    $logContext->msg = 'Could not read response from Akismet API response.';
+                    $logContext->details = $response->content;
+                    LocalErrorCodeRepository::log(ErrorLog::make(Errors::GUARD_AKISMET_RESPONSE_FAILURE, $logContext));
+
                 }
             } else {
                 $results->reasons[] = [
                     'msg' => 'Could not read response from Akismet API response.',
                     'code' => Errors::GUARD_AKISMET_RESPONSE_FAILURE,
                 ];
+
+
+                $logContext = new ErrorLogContext();
+                $logContext->msg = 'Could not read response from Akismet API response.';
+                $logContext->details = 'Response content was `null`.';
+
+                LocalErrorCodeRepository::log(ErrorLog::make(Errors::GUARD_AKISMET_RESPONSE_FAILURE, $logContext));
             }
         } catch (Exception $e) {
             $results->reasons[] = [
@@ -366,6 +382,13 @@ class AkismetSpamGuard implements SpamGuardContract
                 'error' => $e,
                 'code' => Errors::GUARD_GENERAL_API_REQUEST_FAILURE,
             ];
+
+
+            $logContext = new ErrorLogContext();
+            $logContext->msg = 'An exception was thrown during the API call.';
+            $logContext->details = $e->getMessage();
+
+            LocalErrorCodeRepository::log(ErrorLog::make(Errors::GUARD_GENERAL_API_REQUEST_FAILURE, $logContext));
 
             return $results;
         }

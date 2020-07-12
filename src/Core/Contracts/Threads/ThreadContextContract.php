@@ -31,4 +31,5 @@ interface ThreadContextContract extends DataObjectContract, Serializable
      * @return string
      */
     public function getName();
+
 }

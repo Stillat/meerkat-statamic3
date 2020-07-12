@@ -83,6 +83,20 @@ trait DataObject
     }
 
     /**
+     * Merges the attributes into the current data object.
+     *
+     * @param array $attributes The attributes to merge.
+     */
+    public function mergeAttributes($attributes)
+    {
+        if ($attributes === null || is_array($attributes) === false || count($attributes) === 0) {
+            return;
+        }
+
+        $this->attributes = array_merge($this->attributes, $attributes);
+    }
+
+    /**
      * Set the data on the object identified by the $key with the given $value.
      *
      * @param string $key   The key of the attribute to set.

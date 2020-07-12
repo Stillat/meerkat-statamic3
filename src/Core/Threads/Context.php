@@ -6,8 +6,11 @@ use Stillat\Meerkat\Core\DataObject;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContextContract;
 
 /**
- * Represents a post/page/etc in the host system
+ * Class Context
  *
+ * Represents a post/page/etc in the host system.
+ *
+ * @package Stillat\Meerkat\Core\Threads
  * @since 2.0.0
  */
 class Context implements ThreadContextContract
@@ -47,4 +50,5 @@ class Context implements ThreadContextContract
     {
         return $this->contextName;
     }
+
 }

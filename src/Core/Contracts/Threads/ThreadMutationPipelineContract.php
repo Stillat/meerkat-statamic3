@@ -11,6 +11,10 @@ use Stillat\Meerkat\Core\Contracts\MutationPipelineContract;
  */
 interface ThreadMutationPipelineContract extends MutationPipelineContract
 {
+
+
+    const MUTATION_RESOLVING = 'thread.resolving';
+
     /**
      * Identifies a request to remove a thread.
      */
@@ -24,5 +28,15 @@ interface ThreadMutationPipelineContract extends MutationPipelineContract
 
     const MUTATION_MOVING = 'thread.moving';
     const MUTATION_MOVED = 'thread.moved';
+
+
+    /**
+     * Broadcasts that a thread's context is resolving.
+     *
+     * @param ThreadContextContract $thread The thread being resolved.
+     * @param callable $callback A callback that will be invoked after each pipeline stop.
+     * @return mixed
+     */
+    public function resolving(ThreadContextContract $thread, $callback);
 
 }

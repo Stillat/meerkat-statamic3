@@ -19,6 +19,10 @@ use Stillat\Meerkat\Core\Contracts\Permissions\PermissionsManagerContract;
 class StatamicAuthorFactory implements AuthorFactoryContract
 {
 
+    const STATAMIC_USER_IS_SUPER = 'statamic_is_super';
+    const STATAMIC_USER_GROUPS = 'statamic_groups';
+    const STATAMIC_USER_ROLES = 'statamic_roles';
+
     /**
      * The Statamic UserProvider instance.
      *
@@ -126,6 +130,10 @@ class StatamicAuthorFactory implements AuthorFactoryContract
         $identity->setIsTransient(false);
         $identity->setDisplayName($protoUser->name());
         $identity->setEmailAddress($protoUser->email());
+        $identity->setDataAttribute(self::STATAMIC_USER_IS_SUPER, $protoUser->isSuper());
+        $identity->setDataAttribute(self::STATAMIC_USER_GROUPS, $protoUser->groups());
+        $identity->setDataAttribute(self::STATAMIC_USER_ROLES, $protoUser->roles());
+
         $identity->setPermissionsSet($this->permissionsManager->getPermissions($identity));
 
         return $identity;

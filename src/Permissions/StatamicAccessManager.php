@@ -5,6 +5,8 @@ namespace Stillat\Meerkat\Permissions;
 use Stillat\Meerkat\Concerns\UsesConfig;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Permissions\AccessManager;
+use Stillat\Meerkat\Core\Permissions\PermissionsSet;
+use Stillat\Meerkat\Identity\StatamicAuthorFactory;
 
 /**
  * Class StatamicAccessManager
@@ -26,10 +28,34 @@ class StatamicAccessManager extends AccessManager
         if ($identity->getIsTransient()) {
             return $this->getRestrictivePermissions();
         }
+
+        $isSuperUser = $identity->getDataAttribute(StatamicAuthorFactory::STATAMIC_USER_IS_SUPER, false);
+
+        if ($isSuperUser) {
+            return $this->getSuperUserPermissions();
+        }
     }
 
-    private function resolveStatamicPermissions()
+    /**
+     * Creates the least-restrictive permissions for a Statamic super user.
+     *
+     * @return PermissionsSet
+     */
+    private function getSuperUserPermissions()
     {
+        $permissionSet = new PermissionsSet();
+
+        $permissionSet->canViewComments = true;
+        $permissionSet->canApproveComments = true;
+        $permissionSet->canUnApproveComments = true;
+        $permissionSet->canReplyToComments = true;
+        $permissionSet->canEditComments = true;
+        $permissionSet->canReportAsHam = true;
+        $permissionSet->canReportAsSpam = true;
+        $permissionSet->canRemoveComments = true;
+
+        return $permissionSet;
     }
+
 
 }

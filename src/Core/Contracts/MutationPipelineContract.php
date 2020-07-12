@@ -21,8 +21,9 @@ interface MutationPipelineContract
      *
      * @param string $request The type of mutation request to propagate.
      * @param mixed $object A reference to the object to mutate.
+     * @param callable $callback A callback to be applied to each pipeline stop.
      * @return mixed
      */
-    public function mutate($request, &$object);
+    public function mutate($request, &$object, $callback);
 
 }

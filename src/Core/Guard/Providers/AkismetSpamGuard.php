@@ -6,6 +6,7 @@ use Exception;
 use Stillat\Meerkat\Core\Contracts\DataObjectContract;
 use Stillat\Meerkat\Core\Contracts\Http\HttpClientContract;
 use Stillat\Meerkat\Core\Contracts\SpamGuardContract;
+use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\GuardConfiguration;
 use Stillat\Meerkat\Core\ValidationResult;
 
@@ -207,14 +208,14 @@ class AkismetSpamGuard implements SpamGuardContract
         if (!$this->config->has(AkismetSpamGuard::AKISMET_API_KEY)) {
             $results->reasons[] = [
                 'msg' => "A required configuration value 'akismet_api_key' is missing for the Akismet spam guard.",
-                'code' => '02-003',
+                'code' => Errors::GUARD_AKISMET_MISSING_API_KEY,
             ];
         }
 
         if (!$this->config->has(AkismetSpamGuard::AKISMET_HOME_URL)) {
             $results->reasons[] = [
                 'msg' => "A required configuration value 'akismet_home_url' is missing for the Akismet spam guard.",
-                'code' => '02-004',
+                'code' => Errors::GUARD_AKISMET_MISSING_HOME_URL,
             ];
         }
 
@@ -297,7 +298,6 @@ class AkismetSpamGuard implements SpamGuardContract
                 return false;
             }
 
-
             $this->configureHttpClient();
             $this->canMakeRequests = true;
             $this->hasBeenValidated = true;
@@ -357,14 +357,14 @@ class AkismetSpamGuard implements SpamGuardContract
             } else {
                 $results->reasons[] = [
                     'msg' => 'Could not read response from Akismet API response.',
-                    'code' => '02-002',
+                    'code' => Errors::GUARD_AKISMET_RESPONSE_FAILURE,
                 ];
             }
         } catch (Exception $e) {
             $results->reasons[] = [
                 'msg' => 'General request failure.',
                 'error' => $e,
-                'code' => '02-007',
+                'code' => Errors::GUARD_GENERAL_API_REQUEST_FAILURE,
             ];
 
             return $results;

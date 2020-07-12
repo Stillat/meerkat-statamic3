@@ -12,6 +12,14 @@ namespace Stillat\Meerkat\Core;
  */
 class ValidationResult
 {
+    use DataObject;
+
+    /**
+     * A collection of additional validation attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [];
 
     /**
      * Indicates if validation was a success.
@@ -28,6 +36,20 @@ class ValidationResult
     public $reasons = [];
 
     /**
+     * Adds a new failure reason to the validation result.
+     *
+     * @param string $errorCode The error code for the result.
+     * @param string $msg A human-readable version of the message.
+     */
+    public function add($errorCode, $msg)
+    {
+        $this->reasons[] = [
+            'code' => $errorCode,
+            'msg' => $msg
+        ];
+    }
+
+    /**
      * Updates the `$isValid` member based on the number of reasons provided.
      *
      * @return void
@@ -40,7 +62,7 @@ class ValidationResult
     /**
      * Merges the reasons with the current results and updates the validity.
      *
-     * @param  string[] $reasons The validation results to merge.
+     * @param string[] $reasons The validation results to merge.
      *
      * @return void
      */
@@ -49,4 +71,34 @@ class ValidationResult
         $this->reasons = array_merge($this->reasons, $reasons);
         $this->updateValidity();
     }
+
+    /**
+     * Indicates if the current results contains the provided error code.
+     *
+     * @param string $errorCode The error code to test.
+     * @return bool
+     */
+    public function containsError($errorCode)
+    {
+        if ($this->reasons == null || is_array($this->reasons) == false || count($this->reasons) == 0) {
+            return false;
+        }
+
+        foreach ($this->reasons as $reason) {
+            if ($reason == null || is_array($reason) == false || count($reason) == 0) {
+                return false;
+            }
+
+            if (array_key_exists('code', $reason) == false) {
+                return false;
+            }
+
+            if ($reason['code'] == $errorCode) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 }

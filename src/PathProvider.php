@@ -14,13 +14,13 @@ class PathProvider
      */
     public static function contentPath()
     {
-        $configuredPath = config(Addon::CODE_ADDON_NAME.'.storage.path', null);
+        $configuredPath = config(Addon::CODE_ADDON_NAME . '.storage.path', null);
 
         if ($configuredPath !== null) {
             return $configuredPath;
         }
 
-        return base_path(PathProvider::MEERKAT_COMMENTS_DIRECTORY);
+        return PathProvider::normalize(base_path(PathProvider::MEERKAT_COMMENTS_DIRECTORY));
     }
 
     /**
@@ -43,22 +43,32 @@ class PathProvider
      */
     public static function getAddonDirectory($path = '')
     {
-        return realpath(__DIR__.'./../'.$path);
+        return PathProvider::normalize(realpath(__DIR__ . './../' . $path));
     }
 
     public static function getRouteFile($file)
     {
-        return realpath(PathProvider::getAddonDirectory().'routes/'.$file.'.php');
+        return PathProvider::normalize(realpath(PathProvider::getAddonDirectory() . 'routes/' . $file . '.php'));
     }
 
     public static function getResourcesDirectory($path = '')
     {
-        return PathProvider::getAddonDirectory().'/resources/'.$path;
+        return PathProvider::normalize(PathProvider::getAddonDirectory() . '/resources/' . $path);
     }
 
     public static function getStub($file)
     {
-        return PathProvider::getAddonDirectory('src/_stubs/'.$file);
+        return PathProvider::normalize(PathProvider::getAddonDirectory('src/_stubs/' . $file));
+    }
+
+    public static function normalize($path)
+    {
+        return str_replace('\\', '/', $path);
+    }
+
+    public static function winPath($path)
+    {
+        return str_replace('/', '\\', PathProvider::normalize($path));
     }
 
 }

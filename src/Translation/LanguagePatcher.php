@@ -1,8 +1,8 @@
 <?php
 
 namespace Stillat\Meerkat\Translation;
-
 use Illuminate\Translation\Translator;
+
 use Stillat\Meerkat\Addon;
 use Stillat\Meerkat\PathProvider;
 use Statamic\Facades\Folder;

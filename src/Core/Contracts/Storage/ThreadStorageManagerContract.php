@@ -4,9 +4,18 @@ namespace Stillat\Meerkat\Core\Contracts\Storage;
 
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContract;
+use Stillat\Meerkat\Core\ValidationResult;
 
 interface ThreadStorageManagerContract
 {
+
+
+    /**
+     * Validates the storage driver configuration.
+     *
+     * @return ValidationResult
+     */
+    public function validate();
 
     /**
      * @param false $withTrashed

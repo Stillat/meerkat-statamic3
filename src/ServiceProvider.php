@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat;
 
 use Stillat\Meerkat\Concerns\UsesConfig;
+use Stillat\Meerkat\Console\Commands\ValidateCommand;
 use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\YAMLParserContract;
 use Stillat\Meerkat\Core\FormattingConfiguration;
@@ -26,6 +27,10 @@ class ServiceProvider extends AddonServiceProvider
     protected $routes = [
         'cp' => __DIR__.'/../routes/cp.php',
         'web' => __DIR__.'/../routes/web.php',
+    ];
+
+    protected $commands = [
+        ValidateCommand::class,
     ];
 
     protected $providers = [

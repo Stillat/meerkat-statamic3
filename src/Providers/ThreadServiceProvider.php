@@ -40,7 +40,6 @@ class ThreadServiceProvider extends AddonServiceProvider
     {
         $driverConfiguration = $this->getConfig('storage.drivers', null);
 
-        // Guard against unexpected values.
         if ($driverConfiguration === null || is_array($driverConfiguration) === false) {
             $driverConfiguration = [];
         }
@@ -60,7 +59,7 @@ class ThreadServiceProvider extends AddonServiceProvider
         }
 
         if (!class_exists($driverConfiguration[self::CONFIG_THREAD_DRIVER])) {
-            $driverConfiguration[self::CONFIG_THREAD_DRIVER] - LocalThreadStorageManager::class;
+            $driverConfiguration[self::CONFIG_THREAD_DRIVER] = LocalThreadStorageManager::class;
         }
 
         $this->app->singleton(ThreadMutationPipelineContract::class, function ($app) {

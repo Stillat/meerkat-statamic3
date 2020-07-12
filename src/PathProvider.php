@@ -2,9 +2,6 @@
 
 namespace Stillat\Meerkat;
 
-
-use Stillat\Meerkat\Support\Facades\Configuration;
-
 class PathProvider
 {
 

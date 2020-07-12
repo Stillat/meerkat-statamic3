@@ -19,9 +19,26 @@ use Stillat\Meerkat\Core\Contracts\Permissions\PermissionsManagerContract;
 class StatamicAuthorFactory implements AuthorFactoryContract
 {
 
+    /**
+     * Data attribute key representing Statamic "Super User" status.
+     */
     const STATAMIC_USER_IS_SUPER = 'statamic_is_super';
+
+    /**
+     * Data attribute key representing Statamic user groups.
+     */
     const STATAMIC_USER_GROUPS = 'statamic_groups';
+
+    /**
+     * Data attribute key representing Statamic user roles.
+     */
     const STATAMIC_USER_ROLES = 'statamic_roles';
+
+    /**
+     * A cache of previously resolved user identities.
+     * @var array
+     */
+    public static $identityCache = [];
 
     /**
      * The Statamic UserProvider instance.
@@ -124,9 +141,17 @@ class StatamicAuthorFactory implements AuthorFactoryContract
      */
     private function makeAuthorFromStatamicUser(User $protoUser)
     {
+        $protoUserIdentifier = $protoUser->getAuthIdentifier();
+
+        if (self::$identityCache !== null && is_array(self::$identityCache)) {
+            if (array_key_exists($protoUserIdentifier, self::$identityCache)) {
+                return self::$identityCache[$protoUserIdentifier];
+            }
+        }
+
         $identity = new StatamicIdentity();
 
-        $identity->setId($protoUser->getAuthIdentifier());
+        $identity->setId($protoUserIdentifier);
         $identity->setIsTransient(false);
         $identity->setDisplayName($protoUser->name());
         $identity->setEmailAddress($protoUser->email());
@@ -135,6 +160,8 @@ class StatamicAuthorFactory implements AuthorFactoryContract
         $identity->setDataAttribute(self::STATAMIC_USER_ROLES, $protoUser->roles());
 
         $identity->setPermissionsSet($this->permissionsManager->getPermissions($identity));
+
+        self::$identityCache[$protoUserIdentifier] = $identity;
 
         return $identity;
     }

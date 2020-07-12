@@ -2,8 +2,12 @@
 
 namespace Stillat\Meerkat;
 
+
+use Stillat\Meerkat\Support\Facades\Configuration;
+
 class PathProvider
 {
+
     const MEERKAT_COMMENTS_DIRECTORY = '/content/comments/';
 
     /**
@@ -13,6 +17,12 @@ class PathProvider
      */
     public static function contentPath()
     {
+        $configuredPath = config(Addon::CODE_ADDON_NAME.'.storage.path', null);
+
+        if ($configuredPath !== null) {
+            return $configuredPath;
+        }
+
         return base_path(PathProvider::MEERKAT_COMMENTS_DIRECTORY);
     }
 

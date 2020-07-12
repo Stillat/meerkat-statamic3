@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat;
 
 use Stillat\Meerkat\Concerns\UsesConfig;
+use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\FormattingConfiguration;
 use Stillat\Meerkat\Core\GuardConfiguration;
 use Stillat\Meerkat\Core\Configuration as GlobalConfiguration;
@@ -10,6 +11,7 @@ use Stillat\Meerkat\Providers\AddonServiceProvider;
 use Stillat\Meerkat\Providers\ControlPanelServiceProvider;
 use Stillat\Meerkat\Providers\IdentityServiceProvider;
 use Stillat\Meerkat\Providers\TagsServiceProvider;
+use Stillat\Meerkat\Providers\ThreadServiceProvider;
 use Stillat\Meerkat\Support\Facades\Configuration;
 
 class ServiceProvider extends AddonServiceProvider
@@ -26,10 +28,14 @@ class ServiceProvider extends AddonServiceProvider
     protected $providers = [
         /** Start: Meerkat Core Dependency Providers */
         IdentityServiceProvider::class,
+        ThreadServiceProvider::class,
         /** End: Meerkat Core Dependency Providers */
 
         TagsServiceProvider::class,
         ControlPanelServiceProvider::class
+    ];
+
+    protected $policies = [
     ];
 
     protected function beforeBoot()
@@ -41,12 +47,12 @@ class ServiceProvider extends AddonServiceProvider
 
     public function register()
     {
-        parent::register();
-
         // Register Meerkat Core configuration containers.
         $this->registerMeerkatSpamGuardConfiguration();
         $this->registerMeerkatFormattingConfiguration(); // Global Configuration relies on the formatting config.
         $this->registerMeerkatGlobalConfiguration();
+
+        parent::register();
     }
 
     /**

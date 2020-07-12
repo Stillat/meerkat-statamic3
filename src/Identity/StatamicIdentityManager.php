@@ -9,6 +9,8 @@ use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorFactoryContract;
 use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
 use Statamic\Contracts\Auth\UserRepository;
+use Stillat\Meerkat\Core\Contracts\Permissions\PermissionsManagerContract;
+use Stillat\Meerkat\Core\Permissions\PermissionsSet;
 
 /**
  * Class StatamicIdentityManager
@@ -18,7 +20,7 @@ use Statamic\Contracts\Auth\UserRepository;
  * @package Stillat\Meerkat\Identity
  * @since 1.0.0
  */
-class StatamicIdentityManager implements IdentityManagerContract
+class StatamicIdentityManager implements IdentityManagerContract, PermissionsManagerContract
 {
 
     /**
@@ -186,4 +188,22 @@ class StatamicIdentityManager implements IdentityManagerContract
         return $this->authorFactory->makeAuthor($statamicUser);
     }
 
+    /**
+     * Resolves the permissions set for the provided identity.
+     *
+     * @param AuthorContract $identity
+     * @return PermissionsSet
+     */
+    public function getPermissions(AuthorContract $identity)
+    {
+        if ($identity === null || $identity->getId() === null) {
+            $permissionsSet = new PermissionsSet();
+
+            $permissionsSet->revokeAll();
+
+            return $permissionsSet;
+        }
+
+        return $this->locateIdentity($identity->getId())->getPermissionSet();
+    }
 }

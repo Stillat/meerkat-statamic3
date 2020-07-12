@@ -70,6 +70,38 @@ class PermissionsSet
     public $canRemoveComments = true;
 
     /**
+     * Grants all permissions to the current set.
+     */
+    public function grantAll()
+    {
+        $this->canViewComments = true;
+        $this->canApproveComments = true;
+        $this->canUnApproveComments = true;
+        $this->canReplyToComments = true;
+        $this->canReplyToComments = true;
+        $this->canEditComments = true;
+        $this->canReportAsHam = true;
+        $this->canReportAsSpam = true;
+        $this->canRemoveComments = true;
+    }
+
+    /**
+     * Removes all permissions from the current set.
+     */
+    public function revokeAll()
+    {
+        $this->canViewComments = false;
+        $this->canApproveComments = false;
+        $this->canUnApproveComments = false;
+        $this->canReplyToComments = false;
+        $this->canReplyToComments = false;
+        $this->canEditComments = false;
+        $this->canReportAsHam = false;
+        $this->canReportAsSpam = false;
+        $this->canRemoveComments = false;
+    }
+
+    /**
      * Converts the permission set to a list an array of permission attributes.
      *
      * @return array

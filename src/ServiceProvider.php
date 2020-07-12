@@ -3,10 +3,13 @@
 namespace Stillat\Meerkat;
 
 use Stillat\Meerkat\Concerns\UsesConfig;
-use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
+use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
+use Stillat\Meerkat\Core\Contracts\Parsing\YAMLParserContract;
 use Stillat\Meerkat\Core\FormattingConfiguration;
 use Stillat\Meerkat\Core\GuardConfiguration;
 use Stillat\Meerkat\Core\Configuration as GlobalConfiguration;
+use Stillat\Meerkat\Parsing\MarkdownParser;
+use Stillat\Meerkat\Parsing\YAMLParser;
 use Stillat\Meerkat\Providers\AddonServiceProvider;
 use Stillat\Meerkat\Providers\ControlPanelServiceProvider;
 use Stillat\Meerkat\Providers\IdentityServiceProvider;
@@ -51,6 +54,7 @@ class ServiceProvider extends AddonServiceProvider
         $this->registerMeerkatSpamGuardConfiguration();
         $this->registerMeerkatFormattingConfiguration(); // Global Configuration relies on the formatting config.
         $this->registerMeerkatGlobalConfiguration();
+        $this->registerCoreDependencies();
 
         parent::register();
     }
@@ -122,4 +126,18 @@ class ServiceProvider extends AddonServiceProvider
         });
     }
 
+
+    /**
+     * Registers the basic Meerkat Core dependencies.
+     */
+    private function registerCoreDependencies()
+    {
+        $this->app->singleton(YAMLParserContract::class, function ($app) {
+            return $app->make(YAMLParser::class);
+        });
+
+        $this->app->singleton(MarkdownParserContract::class, function ($app) {
+            return $app->make(MarkdownParser::class);
+        });
+    }
 }

@@ -96,14 +96,9 @@ class ThreadManager implements ThreadManagerContract
     protected function isValidThreadId($threadPath, $includeTrashed)
     {
         // Length 36 is a normal GUID.
-        // Length 37 is a normal GUID with soft-delete prefix '_'.
         $threadIdLength = mb_strlen($threadPath);
 
         if ($threadIdLength == 36) {
-            return true;
-        }
-
-        if ($includeTrashed && $threadIdLength == 37) {
             return true;
         }
 

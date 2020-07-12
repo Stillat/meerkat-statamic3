@@ -41,6 +41,13 @@ class StatamicAccessManager extends AccessManager
     private $identity = null;
 
     /**
+     * The mutation pipeline implementation.
+     *
+     * @var \Stillat\Meerkat\Core\Contracts\Permissions\PermissionsMutationPipelineContract
+     */
+    private $mutationPipeline = null;
+
+    /**
      * Resets the permission state in-between resolutions.
      */
     private function reset()
@@ -251,9 +258,13 @@ class StatamicAccessManager extends AccessManager
 
     private function resolveFromEvents()
     {
+        if ($this->mutationPipeline === null) {
+            $this->mutationPipeline = new PermissionMutationPipeline();
+        }
+
         $permissionSet = $this->toPermissionSet();
 
-        foreach ($this->emitEvent(PermissionsMutationPipelineContract::MUTATION_RESOLVING, [$this->identity, $permissionSet]) as $resolved) {
+        $this->mutationPipeline->resolving($this->identity, $permissionSet, function ($resolved) {
             if ($resolved !== null && $resolved instanceof PermissionsSet) {
                 $this->canViewComments = $resolved->canViewComments;
                 $this->canApproveComments = $resolved->canApproveComments;
@@ -264,7 +275,7 @@ class StatamicAccessManager extends AccessManager
                 $this->canReportAsHam = $resolved->canReportAsHam;
                 $this->canRemoveComments = $resolved->canRemoveComments;
             }
-        }
+        });
     }
 
     /**

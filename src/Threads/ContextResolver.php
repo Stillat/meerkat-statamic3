@@ -20,6 +20,13 @@ class ContextResolver implements ContextResolverContract
 {
 
     /**
+     * A global context cache.
+     *
+     * @var array
+     */
+    public static $resolverCache = [];
+
+    /**
      * The Statamic Entry repository instance.
      *
      * @var EntryRepository
@@ -48,6 +55,12 @@ class ContextResolver implements ContextResolverContract
      */
     public function findById($contextId)
     {
+        if (self::$resolverCache !== null && is_array(self::$resolverCache)) {
+            if (array_key_exists($contextId, self::$resolverCache)) {
+                return self::$resolverCache[$contextId];
+            }
+        }
+
         /** @var Entry $statamicContext */
         $statamicContext = $this->entryRepository->find($contextId);
 
@@ -91,6 +104,9 @@ class ContextResolver implements ContextResolverContract
                 $threadContext->contextName = $resolved->contextName;
             }
         });
+
+        // Add the context to the resolver cache.
+        self::$resolverCache[$contextId] = $threadContext;
 
         return $threadContext;
     }

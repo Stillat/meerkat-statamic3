@@ -4,6 +4,8 @@ namespace Stillat\Meerkat\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Concerns\InteractsWithInput;
+use Statamic\Statamic;
+use Stillat\Meerkat\Addon;
 use Stillat\Meerkat\Core\Contracts\Logging\ErrorCodeRepositoryContract;
 use Stillat\Meerkat\Feedback\SolutionProvider;
 
@@ -43,7 +45,9 @@ class ErrorLogsController extends Controller
 
     public function index()
     {
-        return 'asdf';
+        Statamic::script('meerkat', 'meerkat-core');
+
+        return view('meerkat::errors');
     }
 
     /**

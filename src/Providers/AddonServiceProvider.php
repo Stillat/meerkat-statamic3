@@ -2,11 +2,11 @@
 
 namespace Stillat\Meerkat\Providers;
 
-use Stillat\Meerkat\Addon;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Statamic\Providers\AddonServiceProvider as StatamicAddonServiceProvider;
 use Statamic\Statamic;
+use Stillat\Meerkat\Addon;
 use Stillat\Meerkat\Http\RequestHelpers;
 use Stillat\Meerkat\PathProvider;
 
@@ -44,14 +44,24 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
      * @var array The view composers.
      */
     protected $composers = [];
-
+    /**
+     * Indicates whether to defer key actions until Statamic has booted.
+     *
+     * @var bool Whether to wait until Statamic boots.
+     */
+    protected $defer = true;
+    /**
+     * A collection of configuration items to publish to the Statamic installation.
+     *
+     * @var array The config entries to publish.
+     */
+    protected $config = [];
     /**
      * Indicates if the context state has resolved.
      *
      * @var bool
      */
     private $hasResoledContext = false;
-
     /**
      * Contains the contexts that were resolved for the current request.
      *
@@ -59,65 +69,9 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
      */
     private $requestContexts = [];
 
-    /**
-     * Indicates whether to defer key actions until Statamic has booted.
-     *
-     * @var bool Whether to wait until Statamic boots.
-     */
-    protected $defer = true;
-
-    /**
-     * A collection of configuration items to publish to the Statamic installation.
-     *
-     * @var array The config entries to publish.
-     */
-    protected $config = [];
-
     public function __construct(Application $app)
     {
         parent::__construct($app);
-    }
-
-    /**
-     * Ensures that the Meerkat configuration is available in the Statamic installation.
-     */
-    private function publishAddonConfiguration()
-    {
-        if (!is_array($this->config) || count($this->config) == 0) {
-            return;
-        }
-
-        $configurationMapping = [];
-
-        // Protects against files not existing.
-        foreach ($this->config as $sourceConfig => $targetConfig) {
-            if (!file_exists($sourceConfig) || is_dir($sourceConfig)) {
-                continue;
-            }
-
-            $configurationMapping[$sourceConfig] = $targetConfig;
-        }
-
-        foreach ($configurationMapping as $sourceConfig => $targetConfig) {
-            if (!file_exists($targetConfig)) {
-                $dirName = dirname($targetConfig);
-
-                if (!file_exists($dirName)) {
-                    mkdir($dirName, 644, true);
-                }
-
-                copy($sourceConfig, $targetConfig);
-            }
-        }
-    }
-
-    /**
-     * Provides a place for developers to place anything
-     * that should be done before boot() is executed.
-     */
-    protected function beforeBoot()
-    {
-        // Just an empty method.
     }
 
     /**
@@ -154,9 +108,19 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
 
         Statamic::booted(function () {
             $this->publishAddonConfiguration();
+            $this->publishAddonControlPanelAssets();
         });
 
         $this->includeAddonLanguages();
+    }
+
+    /**
+     * Provides a place for developers to place anything
+     * that should be done before boot() is executed.
+     */
+    protected function beforeBoot()
+    {
+        // Just an empty method.
     }
 
     /**
@@ -241,6 +205,67 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
     }
 
     /**
+     * Ensures that the Meerkat configuration is available in the Statamic installation.
+     */
+    private function publishAddonConfiguration()
+    {
+        if (!is_array($this->config) || count($this->config) == 0) {
+            return;
+        }
+
+        $configurationMapping = [];
+
+        // Protects against files not existing.
+        foreach ($this->config as $sourceConfig => $targetConfig) {
+            if (!file_exists($sourceConfig) || is_dir($sourceConfig)) {
+                continue;
+            }
+
+            $configurationMapping[$sourceConfig] = $targetConfig;
+        }
+
+        foreach ($configurationMapping as $sourceConfig => $targetConfig) {
+            if (!file_exists($targetConfig)) {
+                $dirName = dirname($targetConfig);
+
+                if (!file_exists($dirName)) {
+                    mkdir($dirName, 644, true);
+                }
+
+                copy($sourceConfig, $targetConfig);
+            }
+        }
+    }
+
+    private function publishAddonControlPanelAssets()
+    {
+        $resources = PathProvider::getResourcesDirectory('/dist/js');
+        $publicPath = public_path('/vendor/meerkat/js');
+
+        if (file_exists($publicPath) == false) {
+            mkdir($publicPath, 644, true);
+        }
+
+        $this->recurse_copy($resources, $publicPath);
+    }
+
+    private function recurse_copy($src, $dst)
+    {
+        $dir = opendir($src);
+        @mkdir($dst);
+        while (false !== ($file = readdir($dir))) {
+            if (($file != '.') && ($file != '..')) {
+                if (is_dir($src . '/' . $file)) {
+                    recurse_copy($src . '/' . $file, $dst . '/' . $file);
+                } else {
+                    copy($src . '/' . $file, $dst . '/' . $file);
+                }
+            }
+        }
+        closedir($dir);
+    }
+
+    /**
      * Loads addon language translations into the application instance.
      */
     private function includeAddonLanguages()
@@ -257,6 +282,8 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
 
         AddonServiceProvider::$langIncluded = true;
     }
+
+    // TODO: REFACTOR OUT
 
     /**
      * Registers the current provider and all additional providers, if required.

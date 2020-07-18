@@ -165,4 +165,5 @@ class ServiceProvider extends AddonServiceProvider
             return $app->make(MarkdownParser::class);
         });
     }
+
 }

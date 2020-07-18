@@ -15,5 +15,8 @@
                 "Stillat\\Meerkat\\ServiceProvider"
             ]
         }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.2"
     }
 }

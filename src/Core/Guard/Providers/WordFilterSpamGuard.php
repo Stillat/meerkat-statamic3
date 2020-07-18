@@ -2,7 +2,7 @@
 
 namespace Stillat\Meerkat\Core\Guard\Providers;
 
-use Stillat\Meerkat\Core\Helpers\Str;
+use Stillat\Meerkat\Core\Support\Str;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\GuardConfiguration;
 use Stillat\Meerkat\Core\Contracts\DataObjectContract;
@@ -23,7 +23,7 @@ class WordFilterSpamGuard implements SpamGuardContract
     /**
      * The Meerkat Guard configuration instance.
      *
-     * @var \Stillat\Meerkat\Core\GuardConfiguration
+     * @var GuardConfiguration
      */
     private $guardConfig = null;
 

@@ -6,16 +6,20 @@ use Serializable;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\StorableContract;
 use Stillat\Meerkat\Core\Contracts\DataObjectContract;
-use Stillat\Meerkat\Core\Contracts\Threads\ThreadContextContract;
+use Stillat\Meerkat\Core\Threads\ThreadMetaData;
 
 /**
+ * Interface ThreadContract
+ *
  * Defines a standardized comment thread structure
  *
+ * @package Stillat\Meerkat\Core\Contracts\Threads
  * @since 2.0.0
  */
 interface ThreadContract extends DataObjectContract, StorableContract, Serializable
 {
 
+    const LEGACY_SOFT_DELETE_PREFIX = '_';
     const KEY_ID = 'id';
     const KEY_CONTEXT_ID = 'context_id';
     const KEY_PATH = 'path';
@@ -61,6 +65,10 @@ interface ThreadContract extends DataObjectContract, StorableContract, Serializa
      * @return string
      */
     public function getContextId();
+
+    public function setIsUsable($isUsable);
+
+    public function getIsUsable();
 
     /**
      * Sets the context identifier for the thread.
@@ -130,5 +138,20 @@ interface ThreadContract extends DataObjectContract, StorableContract, Serializa
      * @return void
      */
     public function setIsTrashed($isTrashed);
+
+    /**
+     * Sets the thread's meta data.
+     *
+     * @param ThreadMetaData $metaData The meta data.
+     * @return void
+     */
+    public function setMetaData(ThreadMetaData $metaData);
+
+    /**
+     * Gets the thread's meta data, if available.
+     *
+     * @return ThreadMetaData|null
+     */
+    public function getMetaData();
 
 }

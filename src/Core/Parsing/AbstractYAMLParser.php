@@ -6,11 +6,14 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\YAMLParserContract;
 
 /**
+ * Class AbstractYAMLParser
+ *
  * Provides a base abstract implementation of YAMLParserContract
  *
  * This abstract implementation handles the parseAndMerge responsibility
  * of the YAMLParserContract. Use this to kick-start custom parsers.
- * 
+ *
+ * @package Stillat\Meerkat\Core\Parsing
  * @since 2.0.0
  */
 abstract class AbstractYAMLParser implements YAMLParserContract

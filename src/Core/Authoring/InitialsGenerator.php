@@ -3,8 +3,11 @@
 namespace Stillat\Meerkat\Core\Authoring;
 
 /**
- * Contains utilities for parsing strings into initialisms
+ * Class InitialsGenerator
  *
+ * Contains utilities for parsing strings into an initialism.
+ *
+ * @package Stillat\Meerkat\Core\Authoring
  * @since 2.0.0
  */
 class InitialsGenerator

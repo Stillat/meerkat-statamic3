@@ -5,14 +5,17 @@ namespace Stillat\Meerkat\Core\Storage\Data;
 use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Storage\ThreadStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ContextResolverContract;
-use Stillat\Meerkat\Core\Threads\Thread;
+use Stillat\Meerkat\Core\Contracts\Threads\ThreadContract;
 
 /**
+ * Class ThreadRetriever
+ *
  * A wrapper utility to retrieve all threads
  *
  * To have greater control over locating specific threads, you
  * should use the ThreadManagerContract.php implementation.
- * 
+ *
+ * @package Stillat\Meerkat\Core\Storage\Data
  * @since 2.0.0
  */
 class ThreadRetriever
@@ -21,7 +24,7 @@ class ThreadRetriever
     /**
      * The Configuration instance to provide access to the shared file share.
      *
-     * @var Stillat\Meerkat\Core\Configuration
+     * @var Configuration
      */
     private $config = null;
 
@@ -35,7 +38,7 @@ class ThreadRetriever
     /**
      * The comment record retriever instance.
      *
-     * @var \Stillat\Meerkat\Core\Storage\Data\ThreadCommentRetriever
+     * @var ThreadCommentRetriever
      */
     private $threadCommentRetriever = null;
 
@@ -46,13 +49,11 @@ class ThreadRetriever
      */
     private $streamStorageManager = null;
 
-    /**
-     * Creates a new instance of ThreadRetriever.
-     *
-     * @param Configuration $config
-     * @param ContextResolverContract $contextResolver
-     */
-    public function __construct(Configuration $config, ContextResolverContract $contextResolver, ThreadCommentRetriever $threadRetriever, ThreadStorageManagerContract $streamStorage)
+    public function __construct(
+        Configuration $config,
+        ContextResolverContract $contextResolver,
+        ThreadCommentRetriever $threadRetriever,
+        ThreadStorageManagerContract $streamStorage)
     {
         $this->config = $config;
         $this->contextResolver = $contextResolver;
@@ -65,11 +66,11 @@ class ThreadRetriever
      *
      * @param  boolean $withTrashed Indicates whether or not soft-deleted threads should be included in the result set.
      * @param  boolean $includeComments Indicates whether or not comments should be included in the result set.
-     * @return Thread[]
+     * @return ThreadContract[]
      */
     public function getThreads($withTrashed, $includeComments)
     {
-        $threads = $this->streamStorageManager->getAllThreads($withTrashed, $includeComments);
+        $threads = $this->streamStorageManager->getAllThreads($withTrashed);
 
         foreach ($threads as $thread) {
             if ($includeComments) {
@@ -86,4 +87,5 @@ class ThreadRetriever
 
         return $threads;
     }
+
 }

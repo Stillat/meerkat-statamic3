@@ -76,6 +76,7 @@ class ValidationResult
      * Indicates if the current results contains the provided error code.
      *
      * @param string $errorCode The error code to test.
+     *
      * @return bool
      */
     public function containsError($errorCode)

@@ -6,8 +6,11 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
 use Stillat\Meerkat\Core\Search\Engine;
+use Stillat\Meerkat\Core\Support\TypeConversions;
 
 /**
+ * Class CommentLocator
+ *
  * Provides utilities and mechanisms for locating Meerkat comments easily.
  *
  * @package Stillat\Meerkat\Core\Comments
@@ -76,7 +79,6 @@ class CommentLocator
             $searchTerms = $this->searchOptions->searchTerms;
         }
 
-        $threadsToSearch = [];
         $allComments = [];
         $threadsToMaterialize = [];
         $materializedThreads = [];
@@ -125,11 +127,16 @@ class CommentLocator
                     }
                 }
 
+                $children = TypeConversions::getArray(
+                    $comment->getDataAttribute(CommentContract::KEY_CHILDREN, [])
+                );
+
                 if ($this->searchOptions->returnOnlyCommentsWithReplies === true && $this->searchOptions->returnOnlyParentComments === true) {
                     // Only return comment if it:
                     //    1. Has the `is_parent` attribute set to `true` AND
                     //    2. Has the `children` attribute set and at least one value.
-                    if (count($comment->getDataAttribute(CommentContract::KEY_CHILDREN, [])) > 0 &&
+
+                    if (count($children) > 0 &&
                         $comment->getDataAttribute(CommentContract::KEY_IS_PARENT, false) === true) {
                         $allComments[] = $comment;
                         $commentsMergedWithReturnValues += 1;
@@ -144,7 +151,7 @@ class CommentLocator
                 } else if ($this->searchOptions->returnOnlyCommentsWithReplies === true) {
                     // Only return comment if it:
                     //    1. Has the `children` attribute set and at least one value.
-                    if (count($comment->getDataAttribute(CommentContract::KEY_CHILDREN, [])) > 0) {
+                    if (count($children) > 0) {
                         $allComments[] = $comment;
                         $commentsMergedWithReturnValues += 1;
                     }

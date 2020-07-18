@@ -2,20 +2,21 @@
 
 namespace Stillat\Meerkat\Core\Storage\Data;
 
-use Stillat\Meerkat\Core\Contracts\Storage\ThreadStorageManagerContract;
-use Stillat\Meerkat\Core\Helpers\Str;
-use Stillat\Meerkat\Core\Storage\Paths;
 use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentFactoryContract;
-use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\YAMLParserContract;
+use Stillat\Meerkat\Core\Contracts\Storage\ThreadStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContract;
+use Stillat\Meerkat\Core\Support\Str;
 
 /**
- * Provides utilities and mechanisms for finding thread data
+ * Class ThreadCommentRetriever
  *
+ * Provides utilities and mechanisms for finding thread data.
+ *
+ * @package Stillat\Meerkat\Core\Storage\Data
  * @since 2.0.0
  */
 class ThreadCommentRetriever
@@ -24,7 +25,7 @@ class ThreadCommentRetriever
     /**
      * The Configuration instance to provide access to the shared file share.
      *
-     * @var Stillat\Meerkat\Core\Configuration
+     * @var Configuration
      */
     private $config = null;
 
@@ -38,35 +39,35 @@ class ThreadCommentRetriever
     /**
      * The current root-level comment thread being worked in.
      *
-     * @var Stillat\Meerkat\Core\Contracts\Threads\ThreadContract
+     * @var ThreadContract
      */
     private $thread = null;
 
     /**
      * The YAML document parser implementation.
      *
-     * @var Stillat\Meerkat\Core\Contracts\Parsing\YAMLParserContract
+     * @var YAMLParserContract
      */
     private $yamlParser = null;
 
     /**
      * The Markdown parser implementation.
      *
-     * @var Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract
+     * @var MarkdownParserContract
      */
     private $markdownParser = null;
 
     /**
      * The comment factory implementation instance.
      *
-     * @var Stillat\Meerkat\Core\Contracts\Comments\CommentFactoryContract
+     * @var CommentFactoryContract
      */
     private $commentFactory = null;
 
     /**
      * The author retriever implementation instance.
      *
-     * @var \Stillat\Meerkat\Core\Storage\Data\CommentAuthorRetriever
+     * @var CommentAuthorRetriever
      */
     private $authorRetriever = null;
 
@@ -115,7 +116,8 @@ class ThreadCommentRetriever
         CommentFactoryContract $factory,
         CommentAuthorRetriever $authorRetriever,
         ThreadStorageManagerContract $streamStorageManager
-    ) {
+    )
+    {
         $this->config = $config;
         $this->yamlParser = $yamlParser;
         $this->markdownParser = $markdownParser;
@@ -161,7 +163,7 @@ class ThreadCommentRetriever
      * Sets whether or not the hierarchy methods should remove
      * non -roots from the first level of the resulting array.
      *
-     * @param  boolean $shouldReturnFlatList
+     * @param boolean $shouldReturnFlatList
      * @return void
      */
     public function setReturnFlatList($shouldReturnFlatList)
@@ -190,21 +192,9 @@ class ThreadCommentRetriever
     }
 
     /**
-     * Returns all the comments located in the physical storage path for the context's thread.
-     *
-     * @return CommentContract[]
-     */
-    public function getComments()
-    {
-        $this->comments = $this->streamStorageManager->getAllComments($this->thread);
-
-        return $this->comments;
-    }
-
-    /**
      * Returns all comments with child content nested under their parent.
      *
-     * @return void
+     * @return CommentContract[]
      */
     public function buildHierarchy()
     {
@@ -279,6 +269,18 @@ class ThreadCommentRetriever
         if (!$this->returnFlatList) {
             $this->comments = $topLevelComments;
         }
+
+        return $this->comments;
+    }
+
+    /**
+     * Returns all the comments located in the physical storage path for the context's thread.
+     *
+     * @return CommentContract[]
+     */
+    public function getComments()
+    {
+        $this->comments = $this->streamStorageManager->getAllComments($this->thread);
 
         return $this->comments;
     }

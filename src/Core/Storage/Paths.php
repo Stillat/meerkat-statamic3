@@ -2,21 +2,33 @@
 
 namespace Stillat\Meerkat\Core\Storage;
 
-use Stillat\Meerkat\Core\Assertions\TypeAssertions;
+use Stillat\Meerkat\Core\Configuration;
 
 /**
+ * Class Paths
+ *
  * Provides cross-platform path-related utility methods
- * 
+ *
+ * @package Stillat\Meerkat\Core\Storage
  * @since 2.0.0
  */
 class Paths
 {
+
+    /**
+     * The default directory permissions to use.
+     */
+    const DIRECTORY_PERMISSIONS = 644;
+
+    /**
+     * The directory separator that is used internally.
+     */
     const SYM_FORWARD_SEPARATOR = '/';
 
     /**
      * The Meerkat configuration instance.
      *
-     * @var \Stillat\Meerkat\Core\Configuration
+     * @var Configuration
      */
     private $config = null;
 
@@ -27,15 +39,8 @@ class Paths
      */
     private $cleanedStorageRoot = '';
 
-    /**
-     * Constructs a new instance of Paths.
-     *
-     * @param \Stillat\Meerkat\Core\Configuration $config
-     */
     public function __construct($config)
     {
-        TypeAssertions::assertIsMeerkatConfiguration($config, '$config');
-
         $this->config = $config;
 
         // Create the cleaned storage root path.
@@ -60,18 +65,12 @@ class Paths
     /**
      * Combines the provided path segments and returns the created path.
      *
-     * @param  string[] $segments The path segments to combine.
+     * @param string[] $segments The path segments to combine.
      *
      * @return string
      */
-    public function combine()
+    public function combine(array $segments)
     {
-        if (func_num_args() == 0) {
-            return null;
-        }
-
-        $segments = func_get_args();
-
         array_walk($segments, [$this, 'cleanSegment']);
 
         return $this->cleanSegment(join($this->config->directorySeparator, $segments));
@@ -84,14 +83,8 @@ class Paths
      *
      * @return string
      */
-    public function combineWithStorage()
+    public function combineWithStorage(array $segments)
     {
-        if (func_num_args() == 0) {
-            return null;
-        }
-
-        $segments = func_get_args();
-
         array_walk($segments, [$this, 'cleanSegment']);
 
         // We've already cleaned the root storage directory; just put it at the beginning.
@@ -108,7 +101,7 @@ class Paths
      */
     public function makeRelative($path)
     {
-        $rootPath = $this->combineWithStorage('');
+        $rootPath = $this->combineWithStorage([]);
 
         if (mb_strlen($rootPath) > mb_strlen($path)) {
             return $this->cleanSegment($path);

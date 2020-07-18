@@ -27,4 +27,19 @@ class GuardResult
      */
     public $success = false;
 
+    /**
+     * Creates and returns a GuardResult in a failed state.
+     *
+     * @return GuardResult
+     */
+    public static function failure()
+    {
+        $result = new GuardResult();
+
+        $result->success = false;
+        $result->errors = [];
+
+        return $result;
+    }
+
 }

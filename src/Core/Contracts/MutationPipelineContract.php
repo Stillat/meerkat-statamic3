@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat\Core\Contracts;
 
 /**
+ * Interface MutationPipelineContract
  *
  * Defines a consistent API for performing mutations
  *
@@ -11,6 +12,7 @@ namespace Stillat\Meerkat\Core\Contracts;
  * cycle. All mutators should always return an object
  * of the same form that was supplied to mutators.
  *
+ * @package Stillat\Meerkat\Core\Contracts
  * @since 2.0.0
  */
 interface MutationPipelineContract

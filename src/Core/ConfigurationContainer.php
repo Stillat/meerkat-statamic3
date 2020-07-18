@@ -26,7 +26,8 @@ class ConfigurationContainer
     /**
      * Returns a value indicating if the provided configuration key exists.
      *
-     * @param  stirng  $key The configuration key to lookup.
+     * @param  string  $key The configuration key to lookup.
+     *
      * @return boolean
      */
     public function has($key)

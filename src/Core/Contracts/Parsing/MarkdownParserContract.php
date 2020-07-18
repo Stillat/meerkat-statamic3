@@ -3,6 +3,11 @@
 namespace Stillat\Meerkat\Core\Contracts\Parsing;
 
 /**
+ * Interface MarkdownParserContract
+ *
+ * Provides a consistent API for managing Markdown-formatted documents.
+ *
+ * @package Stillat\Meerkat\Core\Contracts\Parsing
  * @since 2.0.0
  */
 interface MarkdownParserContract
@@ -13,7 +18,7 @@ interface MarkdownParserContract
    *
    * @param  string $content
    *
-   * @return array
+   * @return string
    */
   public function parseDocument($content);
 

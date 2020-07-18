@@ -3,15 +3,19 @@
 namespace Stillat\Meerkat\Core\Contracts\Threads;
 
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
-use Stillat\Meerkat\Core\Contracts\Threads\ThreadContract;
 
 /**
- * Provides a consistent API for managing Meerkat threads
+ * Interface ThreadManagerContract
  *
+ * Provides a consistent API for managing Meerkat threads.
+ *
+ * @package Stillat\Meerkat\Core\Contracts\Threads
  * @since 2.0.0
  */
 interface ThreadManagerContract
 {
+
+    public function getAllThreads($includeTrashed = false);
 
     /**
      * Returns a collection of all thread IDs.

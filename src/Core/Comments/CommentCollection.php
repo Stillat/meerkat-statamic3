@@ -3,6 +3,8 @@
 namespace Stillat\Meerkat\Core\Comments;
 
 /**
+ * Class CommentCollection
+ *
  * Provides a consistent search result container.
  *
  * @package Stillat\Meerkat\Core\Comments

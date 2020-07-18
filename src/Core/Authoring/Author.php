@@ -6,6 +6,8 @@ use Stillat\Meerkat\Core\DataObject;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 
 /**
+ * Class Author
+ *
  * Author represents some user-identity context around comments
  *
  * Authors may be anonymous, or have a "real" mapping
@@ -13,9 +15,10 @@ use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
  * also be present on a thread or comment as a
  * named collection of thread "Participants".
  *
+ * @package Stillat\Meerkat\Core\Authoring
  * @since 2.0.0
  */
-class Author implements AuthorContract
+abstract class Author implements AuthorContract
 {
     use DataObject;
 

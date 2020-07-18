@@ -5,8 +5,11 @@ namespace Stillat\Meerkat\Core\Contracts\Comments;
 use Stillat\Meerkat\Core\Contracts\MutationPipelineContract;
 
 /**
+ * Interface CommentMutationPipelineContract
+ *
  * Responsible for responding to comment data mutation requests
  *
+ * @package Stillat\Meerkat\Core\Contracts\Comments
  * @since 2.0.0
  */
 interface CommentMutationPipelineContract extends MutationPipelineContract

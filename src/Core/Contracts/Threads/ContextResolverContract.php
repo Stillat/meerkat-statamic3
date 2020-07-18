@@ -2,8 +2,6 @@
 
 namespace Stillat\Meerkat\Core\Contracts\Threads;
 
-use Stillat\Meerkat\Core\Contracts\Threads\ThreadContextContract;
-
 /**
  * Interface ContextResolverContract
  *
@@ -23,10 +21,18 @@ interface ContextResolverContract
     /**
      * Attempts to locate a thread context by it's string identifier.
      *
-     * @param  string $contextId
+     * @param  string $contextId The context's unique identifier.
      *
      * @return ThreadContextContract
      */
     public function findById($contextId);
+
+    /**
+     * Returns a value indicating if a context exists for the given identifier.
+     *
+     * @param string $contextId The context's unique identifier.
+     * @return bool
+     */
+    public function contextExistsById($contextId);
 
 }

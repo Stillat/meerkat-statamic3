@@ -6,8 +6,11 @@ use Stillat\Meerkat\Core\Contracts\DataObjectContract;
 use Stillat\Meerkat\Core\DataObject;
 
 /**
+ * Class ThreadRemovalEventArgs
+ *
  * Represents a Thread during a thread mutation request
  *
+ * @package Stillat\Meerkat\Core\Threads
  * @since 2.0.0
  */
 class ThreadRemovalEventArgs implements DataObjectContract

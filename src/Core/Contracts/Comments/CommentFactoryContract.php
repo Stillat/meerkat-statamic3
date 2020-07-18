@@ -3,6 +3,8 @@
 namespace Stillat\Meerkat\Core\Contracts\Comments;
 
 /**
+ * Interface CommentFactoryContract
+ *
  * Converts a comment prototype into a CommentContract instance
  *
  * The comment factory is responsible for constructing a valid instance
@@ -10,6 +12,7 @@ namespace Stillat\Meerkat\Core\Contracts\Comments;
  * to the implementer of Meerkat Core to supply a factory; this allows
  * different implementations to use their own base classes or objects.
  *
+ * @package Stillat\Meerkat\Core\Contracts\Comments
  * @since 2.0.0
  */
 interface CommentFactoryContract

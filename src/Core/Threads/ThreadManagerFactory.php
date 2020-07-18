@@ -5,8 +5,11 @@ namespace Stillat\Meerkat\Core\Threads;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
 
 /**
+ * Class ThreadManagerFactory
+ *
  * Allows Meerkat Core internals to reference a global implementation
  *
+ * @package Stillat\Meerkat\Core\Threads
  * @since 2.0.0
  */
 class ThreadManagerFactory
@@ -15,7 +18,7 @@ class ThreadManagerFactory
     /**
      * A reference to the ThreadManager instance.
      *
-     * @var \Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract
+     * @var ThreadManagerContract
      */
     public static $instance = null;
 

@@ -2,14 +2,14 @@
 
 namespace Stillat\Meerkat\Core\Guard\Providers;
 
-use Stillat\Meerkat\Core\Helpers\Str;
+use Stillat\Meerkat\Core\Support\Str;
 use Stillat\Meerkat\Core\Contracts\DataObjectContract;
 use Stillat\Meerkat\Core\Contracts\SpamGuardContract;
 
 /**
  * Class GTUBESpamGuard
  *
- * Generic Test for Unscolicted Bulk Email
+ * Generic Test for unsolicited Bulk Email
  *
  * This spam guard implements the GTUBE test, which is a simple way
  * to verify that a spam filter setup is functioning properly.

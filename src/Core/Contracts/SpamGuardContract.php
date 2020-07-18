@@ -2,11 +2,12 @@
 
 namespace Stillat\Meerkat\Core\Contracts;
 
-use Stillat\Meerkat\Core\Contracts\DataObjectContract;
-
 /**
+ * Interface SpamGuardContract
+ *
  * Defines a consistent API for spam-guard implementations
- * 
+ *
+ * @package Stillat\Meerkat\Core\Contracts
  * @since 2.0.0
  */
 interface SpamGuardContract

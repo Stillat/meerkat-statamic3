@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat\Core\Logging;
 
+use Exception;
 use Stillat\Meerkat\Core\Contracts\Logging\ErrorCodeRepositoryContract;
 
 /**
@@ -168,7 +169,7 @@ class LocalErrorCodeRepository implements ErrorCodeRepositoryContract
                     $restoredLog = unserialize($fileContent);
 
                     $logsToReturn[] = $restoredLog;
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     // Skip.
                 }
             }

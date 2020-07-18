@@ -2,6 +2,8 @@
 
 namespace Stillat\Meerkat\Core;
 
+use Stillat\Meerkat\Core\Contracts\UniqueIdentifierGeneratorContract;
+
 /**
  * Trait DataObject
  *
@@ -32,23 +34,29 @@ trait DataObject
     /**
      * Returns access to the unique identifier generator.
      *
-     * @return \Stillat\Meerkat\Core\Contracts\UniqueIdentifierGeneratorContract
+     * @return UniqueIdentifierGeneratorContract
+     *
+     * @throws InconsistentCompositionException
      */
     protected function getIdGenerator()
     {
-        return $this->uidGenerator;
+        if (property_exists($this, 'uidGenerator')) {
+            return $this->uidGenerator;
+        }
+
+        throw InconsistentCompositionException::make('uidGenerator', __CLASS__);
     }
 
     /**
      * Generates and returns a UUIDv4 string identifier.
      *
      * @return string
+     *
+     * @throws InconsistentCompositionException
      */
     protected function getNewId()
     {
-        $identifier = $this->getIdGenerator()->newId();
-
-        return $identifier->toString();
+        return $this->getIdGenerator()->newId();
     }
 
     /**
@@ -65,6 +73,7 @@ trait DataObject
      * Returns a value indicating if the provided attribute exists.
      *
      * @param  string  $key The key to check for existence.
+     *
      * @return boolean
      */
     public function hasDataAttribute($key)
@@ -140,11 +149,11 @@ trait DataObject
     /**
      * Returns a run-time instance of an object from serialized form.
      *
-     * @param  string $serialized
-     * @return static
+     * @param  string $serialized The serialized contents.
      */
     public function unserialize($serialized)
     {
         $this->setDataAttributes(json_decode($serialized));
     }
+
 }

@@ -4,6 +4,14 @@ namespace Stillat\Meerkat\Core\Contracts\Http;
 
 use Stillat\Meerkat\Core\Http\HttpResponse;
 
+/**
+ * Interface HttpClientContract
+ *
+ * Defines the HTTP Client API for Meerkat Core.
+ *
+ * @package Stillat\Meerkat\Core\Contracts\Http
+ * @since 2.0.0
+ */
 interface HttpClientContract
 {
 

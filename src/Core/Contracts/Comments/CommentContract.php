@@ -3,12 +3,15 @@
 namespace Stillat\Meerkat\Core\Contracts\Comments;
 
 use Serializable;
-use Stillat\Meerkat\Core\Contracts\AuthorContract;
+use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\DataObjectContract;
 
 /**
+ * Interface CommentContract
+ *
  * Defines a standard structure for Meerkat comments
- * 
+ *
+ * @package Stillat\Meerkat\Core\Contracts\Comments
  * @since 2.0.0
  */
 interface CommentContract extends DataObjectContract, Serializable

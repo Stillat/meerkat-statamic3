@@ -3,12 +3,15 @@
 namespace Stillat\Meerkat\Core\Authoring;
 
 /**
+ * Class Gravatar
+ *
  * Provides utilities for generating Gravatar URLs
  *
  * Gravatars is an image service that allows users
  * to utilize the same image across many different
  * sites: https://en.gravatar.com/site/implement/
  *
+ * @package Stillat\Meerkat\Core\Authoring
  * @since 2.0.0
  */
 class Gravatar

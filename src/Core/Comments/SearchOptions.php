@@ -3,6 +3,8 @@
 namespace Stillat\Meerkat\Core\Comments;
 
 /**
+ * Class SearchOptions
+ *
  * Defines the various search options available when locating Meerkat comments.
  *
  * @package Stillat\Meerkat\Core\Comments

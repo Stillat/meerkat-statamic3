@@ -28,6 +28,7 @@ interface PermissionsMutationPipelineContract extends MutationPipelineContract
      * @param AuthorContract $identity The author identity being resolved.
      * @param PermissionsSet $permissionsSet The Meerkat-resolved permissions.
      * @param callable $callback A callback that will be invoked with the result of each pipeline stop.
+     *
      * @return mixed
      */
     public function resolving(AuthorContract $identity, PermissionsSet $permissionsSet, $callback);

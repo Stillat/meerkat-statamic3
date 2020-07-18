@@ -2,7 +2,9 @@
 
 namespace Stillat\Meerkat\Core\Validators;
 
+use Exception;
 use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
+use Stillat\Meerkat\Core\Storage\Paths;
 use Stillat\Meerkat\Core\ValidationResult;
 
 /**
@@ -15,11 +17,6 @@ use Stillat\Meerkat\Core\ValidationResult;
  */
 class PathPrivilegeValidator
 {
-
-    /**
-     * The default directory permissions to use.
-     */
-    const DEFAULT_DIR_PERMISSIONS = 644;
 
     /**
      * The key used to identify if a path can be used.
@@ -44,7 +41,7 @@ class PathPrivilegeValidator
         $validationResults = new ValidationResult();
 
         if (file_exists($path) == false || is_dir($path) == false) {
-            $wasSuccess = mkdir($path, self::DEFAULT_DIR_PERMISSIONS, true);
+            $wasSuccess = mkdir($path, Paths::DIRECTORY_PERMISSIONS, true);
 
             if ($wasSuccess) {
                 $canUseDirectory = true;
@@ -56,20 +53,23 @@ class PathPrivilegeValidator
             if ($canWrite == false) {
                 // Attempt to adjust Meerkat's permissions over this directory.
                 try {
-                    $couldAdjust = chmod($path, self::DEFAULT_DIR_PERMISSIONS);
+                    $couldAdjust = chmod($path, Paths::DIRECTORY_PERMISSIONS);
 
                     if ($couldAdjust && is_writeable($path)) {
                         $canUseDirectory = true;
                     }
-                } catch (\ErrorException $e) {
+                } catch (Exception $e) {
                     // Permission denied.
                     $canUseDirectory = false;
                     $validationResults->reasons[] = [
                         'code' => $permissionDeniedErrorCode,
-                        'msg' => 'Insufficient privileges for directory: '.$path
+                        'msg' => 'Insufficient privileges for directory: ' . $path
                     ];
 
-                    LocalErrorCodeRepository::logCodeMessage($permissionDeniedErrorCode, 'Insufficient privileges for directory: '.$path);
+                    LocalErrorCodeRepository::logCodeMessage(
+                        $permissionDeniedErrorCode,
+                        'Insufficient privileges for directory: ' . $path
+                    );
                 }
             } else {
                 $canUseDirectory = true;
@@ -79,8 +79,8 @@ class PathPrivilegeValidator
         $validationResults->updateValidity();
 
         return [
-          self::RESULT_CAN_USE_DIRECTORY => $canUseDirectory,
-          self::RESULT_VALIDATION_RESULTS => $validationResults
+            self::RESULT_CAN_USE_DIRECTORY => $canUseDirectory,
+            self::RESULT_VALIDATION_RESULTS => $validationResults
         ];
     }
 

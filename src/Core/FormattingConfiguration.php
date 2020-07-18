@@ -24,13 +24,13 @@ class FormattingConfiguration extends ConfigurationContainer
     public $commentDateFormat = 'Y-m-d h:m:s A';
 
     /**
-     * A list of HTML tags to remove from parsed Markdown documents
+     * A list of HTML tags to keep from parsed Markdown documents
      *
      * Used by:
      *    - Stillat\Meerkat\Core\Parsing\AbstractMarkdownParser::cleanDocument($content)
      *
      * @var string
      */
-    public $htmlTagsToClean = '<a><p><ul><li><ol><code><pre>';
+    public $tagsToKeep = ['strong','em'];
 
 }

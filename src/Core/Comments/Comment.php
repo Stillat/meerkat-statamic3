@@ -2,20 +2,24 @@
 
 namespace Stillat\Meerkat\Core\Comments;
 
-use Stillat\Meerkat\Core\Parsing\UsesMarkdownParser;
-use Stillat\Meerkat\Core\Contracts\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
+use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\DataObject;
-use Stillat\Meerkat\Core\Helpers\TypeConversions;
+use Stillat\Meerkat\Core\InconsistentCompositionException;
+use Stillat\Meerkat\Core\Parsing\UsesMarkdownParser;
+use Stillat\Meerkat\Core\Support\TypeConversions;
 
 /**
+ * Trait Comment
+ *
  * Provides a consistent base implementation for comments.
  *
  * This trait is not required to be used in host-implementations
  * but may be used to quickly implement the CommentContract
  * interface. Custom comment implementations must also
  * implement `../Contracts/DataObjectContract.php`.
- * 
+ *
+ * @package Stillat\Meerkat\Core\Comments
  * @since 2.0.0
  */
 trait Comment
@@ -58,16 +62,6 @@ trait Comment
     protected $commentReplies = [];
 
     /**
-     * Returns the identifier for the comment.
-     *
-     * @return string
-     */
-    public function getId()
-    {
-        return $this->getDataAttribute(CommentContract::KEY_ID);
-    }
-
-    /**
      * Returns the comment's content.
      *
      * @return string
@@ -80,12 +74,18 @@ trait Comment
     /**
      * Sets the comment's content.
      *
-     * @param  string $string
+     * @param string $string
      * @return void
+     *
+     * @throws InconsistentCompositionException
      */
     public function setContent($string)
     {
-        $this->getMarkdownParser()->parseStringAndMerge($string, $this->attributes);
+        if (property_exists($this, 'attributes')) {
+            $this->getMarkdownParser()->parseStringAndMerge($string, $this->attributes);
+        }
+
+        throw InconsistentCompositionException::make('attributes', __CLASS__);
     }
 
     /**
@@ -99,7 +99,7 @@ trait Comment
             return true;
         }
 
-        $children = $this->getDataAttribute(CommentContract::KEY_CHILDREN, []);
+        $children = TypeConversions::getArray($this->getDataAttribute(CommentContract::KEY_CHILDREN, []));
 
         return count($children) > 0;
     }
@@ -145,9 +145,9 @@ trait Comment
      */
     public function published()
     {
-        return TypeConversions::getBooleanValue($this->getDataAttribute(
-            CommentContract::KEY_PUBLISHED
-        ), false);
+        return TypeConversions::getBooleanValue(
+            $this->getDataAttribute(CommentContract::KEY_PUBLISHED, false)
+        );
     }
 
     /**
@@ -167,9 +167,9 @@ trait Comment
      */
     public function isReply()
     {
-        return TypeConversions::getBooleanValue($this->getDataAttribute(
-            CommentContract::KEY_IS_REPLY
-        ), false);
+        return TypeConversions::getBooleanValue(
+            $this->getDataAttribute(CommentContract::KEY_IS_REPLY, false)
+        );
     }
 
     /**
@@ -185,7 +185,7 @@ trait Comment
     /**
      * Sets the comment's replies.
      *
-     * @param  CommentContract[] $replies The replies to the comment.
+     * @param CommentContract[] $replies The replies to the comment.
      * @return void
      */
     public function setReplies($replies)
@@ -206,7 +206,7 @@ trait Comment
     /**
      * Sets the parent comment for this comment instance.
      *
-     * @param  CommentContract $comment The parent comment.
+     * @param CommentContract $comment The parent comment.
      * @return void
      */
     public function setParentComment($comment)
@@ -224,7 +224,6 @@ trait Comment
         return $this->getDataAttribute(CommentContract::KEY_PARENT, null);
     }
 
-
     /**
      * Returns a value indicating if the comment was marked as spam.
      *
@@ -232,9 +231,7 @@ trait Comment
      */
     public function isSpam()
     {
-        return TypeConversions::getBooleanValue($this->getDataAttribute(
-            CommentContract::KEY_SPAM
-        ), false);
+        return TypeConversions::getBooleanValue($this->getDataAttribute(CommentContract::KEY_SPAM, false));
     }
 
     /**
@@ -246,6 +243,16 @@ trait Comment
     {
         // The date/time the comment was created is coded as the ID.
         return $this->getId();
+    }
+
+    /**
+     * Returns the identifier for the comment.
+     *
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->getDataAttribute(CommentContract::KEY_ID);
     }
 
     /**
@@ -271,7 +278,7 @@ trait Comment
     /**
      * Sets the comment's participants.
      *
-     * @param  AuthorContract[] $participants The comment's participants.
+     * @param AuthorContract[] $participants The comment's participants.
      * @return void
      */
     public function setParticipants($participants)
@@ -282,7 +289,7 @@ trait Comment
     /**
      * Sets the comment's author context.
      *
-     * @param  AuthorContract $author The author of the comment.
+     * @param AuthorContract $author The author of the comment.
      * @return void
      */
     public function setAuthor($author)
@@ -304,4 +311,5 @@ trait Comment
     {
         return $this->getId();
     }
+
 }

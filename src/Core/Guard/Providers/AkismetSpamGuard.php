@@ -45,7 +45,7 @@ class AkismetSpamGuard implements SpamGuardContract
     const AKISMET_FIELD_MAPPINGS = 'akismet_fields';
 
     /**
-     * The configuration entry key that determines the default "spaminess" value on API request failures.
+     * The configuration entry key that determines the default status value on API request failures.
      */
     const AKISMET_DEFAULT_SPAM_VALUE_ON_FAILURE = 'akismet_default_value_on_api_failure';
 
@@ -84,14 +84,14 @@ class AkismetSpamGuard implements SpamGuardContract
     /**
      * The Meerkat configuration instance.
      *
-     * @var \Stillat\Meerkat\Core\GuardConfiguration
+     * @var GuardConfiguration
      */
     private $config = null;
 
     /**
      * The HTTP Client used to make external web requests.
      *
-     * @var \Stillat\Meerkat\Core\Contracts\Http\HttpClientContract
+     * @var HttpClientContract
      */
     private $httpClient = null;
 
@@ -103,13 +103,6 @@ class AkismetSpamGuard implements SpamGuardContract
      * @var boolean
      */
     private $canMakeRequests = false;
-
-    /**
-     * The Akismet sub-domain to use when issuing API requests.
-     *
-     * @var string
-     */
-    private $akismetBaseUrl = '';
 
     /**
      * Indicates if the API keys have been validated and connections configured.
@@ -180,11 +173,6 @@ class AkismetSpamGuard implements SpamGuardContract
         return $this->success;
     }
 
-    /**
-     * Creates an instance of AkismetSpamGuard
-     *
-     * @param \Stillat\Meerkat\Core\GuardConfiguration $config
-     */
     public function __construct(GuardConfiguration $config, HttpClientContract $httpClient)
     {
         $this->config = $config;
@@ -195,14 +183,14 @@ class AkismetSpamGuard implements SpamGuardContract
         $this->defaultValueOnApiFailure = $this->config->get(AkismetSpamGuard::AKISMET_DEFAULT_SPAM_VALUE_ON_FAILURE);
         $this->isApiTestMode = $this->config->get(AkismetSpamGuard::AKISMET_CONFIG_ENABLE_TEST_MODE, false);
 
-        // Pre-emptively run validation on configuration values.
+        // Run validation on configuration values before continuing.
         $this->validateAkismetSettings();
     }
 
     /**
      * Validates the configuration has been configured for the Akismet spam guard.
      *
-     * @return \Stillat\Meerkat\Core\ValidationResult
+     * @return ValidationResult
      */
     public function validateAkismetSettings()
     {
@@ -248,7 +236,7 @@ class AkismetSpamGuard implements SpamGuardContract
 
         // Check here to prevent calling the API in the constructor.
         if (!$this->checkApiKey()) {
-            return;
+            return false;
         }
 
         if ($this->canMakeRequests) {
@@ -301,7 +289,6 @@ class AkismetSpamGuard implements SpamGuardContract
                 return false;
             }
 
-            $this->configureHttpClient();
             $this->canMakeRequests = true;
             $this->hasBeenValidated = true;
         }
@@ -315,8 +302,9 @@ class AkismetSpamGuard implements SpamGuardContract
      * Attempts to validate the Akismet API key with the Akismet service.
      *
      * @param string $apiKey The Akismet API key to check.
+     * @param string $homePage The Akismet Home Page.
      *
-     * @return \Stillat\Meerkat\Core\ValidationResult
+     * @return ValidationResult
      */
     private function validateAkismetAPIKey($apiKey, $homePage)
     {
@@ -360,7 +348,10 @@ class AkismetSpamGuard implements SpamGuardContract
                     $logContext = new ErrorLogContext();
                     $logContext->msg = 'Could not read response from Akismet API response.';
                     $logContext->details = $response->content;
-                    LocalErrorCodeRepository::log(ErrorLog::make(Errors::GUARD_AKISMET_RESPONSE_FAILURE, $logContext));
+                    LocalErrorCodeRepository::log(ErrorLog::make(
+                        Errors::GUARD_AKISMET_RESPONSE_FAILURE,
+                        $logContext
+                    ));
 
                 }
             } else {
@@ -374,7 +365,10 @@ class AkismetSpamGuard implements SpamGuardContract
                 $logContext->msg = 'Could not read response from Akismet API response.';
                 $logContext->details = 'Response content was `null`.';
 
-                LocalErrorCodeRepository::log(ErrorLog::make(Errors::GUARD_AKISMET_RESPONSE_FAILURE, $logContext));
+                LocalErrorCodeRepository::log(ErrorLog::make(
+                    Errors::GUARD_AKISMET_RESPONSE_FAILURE,
+                    $logContext
+                ));
             }
         } catch (Exception $e) {
             $results->reasons[] = [
@@ -388,28 +382,15 @@ class AkismetSpamGuard implements SpamGuardContract
             $logContext->msg = 'An exception was thrown during the API call.';
             $logContext->details = $e->getMessage();
 
-            LocalErrorCodeRepository::log(ErrorLog::make(Errors::GUARD_GENERAL_API_REQUEST_FAILURE, $logContext));
+            LocalErrorCodeRepository::log(ErrorLog::make(
+                Errors::GUARD_GENERAL_API_REQUEST_FAILURE,
+                $logContext
+            ));
 
             return $results;
         }
 
         return $results;
-    }
-
-    /**
-     * Configures the HTTP client with the Akismet base URLs.
-     *
-     * @return void
-     */
-    private function configureHttpClient()
-    {
-        $apiKey = $this->config->get(AkismetSpamGuard::AKISMET_API_KEY);
-
-        if ($this->useSsl) {
-            $this->akismetBaseUrl = "https://{$apiKey}.rest.akismet.com/1.1/";
-        } else {
-            $this->akismetBaseUrl = "http://{$apiKey}.rest.akismet.com/1.1/";
-        }
     }
 
     /**

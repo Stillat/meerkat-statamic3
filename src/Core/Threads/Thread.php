@@ -2,20 +2,25 @@
 
 namespace Stillat\Meerkat\Core\Threads;
 
+use JsonSerializable;
+use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContextContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContract;
 use Stillat\Meerkat\Core\DataObject;
 
 /**
+ * Class Thread
+ *
  * The base Meerkat Thread implementation
  *
  * A Thread represents a collection of comments related
  * to a single context. A context is any data object;
  * common examples include blog posts and photos.
  *
+ * @package Stillat\Meerkat\Core\Threads
  * @since 2.0.0
  */
-class Thread implements ThreadContract, \JsonSerializable
+class Thread implements ThreadContract, JsonSerializable
 {
     use DataObject;
 
@@ -73,6 +78,46 @@ class Thread implements ThreadContract, \JsonSerializable
     private $isTrashed = false;
 
     /**
+     * The thread's meta data, if any.
+     *
+     * @var ThreadMetaData|null
+     */
+    private $metaData = null;
+
+    /**
+     * Indicates if this thread is considered "usable".
+     *
+     * A run-time thread that becomes "un-usable" generally
+     * occurs when a thread has been deleted and the
+     * run-time collection has not updated yet.
+     *
+     * @var bool
+     */
+    private $isUsable = false;
+
+    /**
+     * Sets if the thread is usable.
+     *
+     * @param bool $isUsable The threads usability status.
+     */
+    public function setIsUsable($isUsable)
+    {
+        $this->isUsable = $isUsable;
+    }
+
+    /**
+     * Gets a value indicating if the thread is currently usable.
+     *
+     * Unusable threads should be rejected for most operations.
+     *
+     * @return bool
+     */
+    public function getIsUsable()
+    {
+        return $this->isUsable;
+    }
+
+    /**
      * Sets the storage path.
      *
      * @param  string $path
@@ -115,6 +160,26 @@ class Thread implements ThreadContract, \JsonSerializable
     {
         $this->threadId = $id;
         $this->setDataAttribute(ThreadContract::KEY_ID, $id);
+    }
+
+    /**
+     * Sets the thread's meta data.
+     *
+     * @param ThreadMetaData $metaData The meta data.
+     */
+    public function setMetaData(ThreadMetaData $metaData)
+    {
+        $this->metaData = $metaData;
+    }
+
+    /**
+     * Gets the thread's meta data, if available.
+     *
+     * @return ThreadMetaData|null
+     */
+    public function getMetaData()
+    {
+        return $this->metaData;
     }
 
     /**

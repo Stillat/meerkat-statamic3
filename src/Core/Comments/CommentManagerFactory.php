@@ -5,8 +5,11 @@ namespace Stillat\Meerkat\Core\Comments;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentManagerContract;
 
 /**
+ * Class CommentManagerFactory
+ *
  * Allows Meerkat Core internals to reference a global implementation
  *
+ * @package Stillat\Meerkat\Core\Comments
  * @since 2.0.0
  */
 class CommentManagerFactory
@@ -14,7 +17,7 @@ class CommentManagerFactory
     /**
      * A reference to the CommentManager instance.
      *
-     * @var \Stillat\Meerkat\Core\Contracts\Comments\CommentManagerContract
+     * @var CommentManagerContract
      */
     public static $instance = null;
 

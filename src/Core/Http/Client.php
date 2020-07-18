@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat\Core\Http;
 
+use Exception;
 use Stillat\Meerkat\Core\Contracts\Http\HttpClientContract;
 use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Logging\ErrorLog;
@@ -115,14 +116,14 @@ class Client implements HttpClientContract
             }
 
             fclose($fp);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $httpResponse->wasSuccess = false;
             $httpResponse->wasClientFailure = true;
             $httpResponse->error = $e->getMessage();
 
 
             $logContext = new ErrorLogContext();
-            $logContext->msg = 'An exception was thrown during the execution of an HTTP Request ('.$httpVerb.'): '.$url;
+            $logContext->msg = 'An exception was thrown during the execution of an HTTP Request (' . $httpVerb . '): ' . $url;
             $logContext->details = $e->getMessage();
 
             LocalErrorCodeRepository::log(ErrorLog::make(Errors::HTTP_CLIENT_REQUEST_FAILED, $logContext));
@@ -161,11 +162,17 @@ class Client implements HttpClientContract
         return http_build_query($data);
     }
 
+    /**
+     * Decodes the provided chunk.
+     *
+     * @param string $chunk The encoded chunk.
+     * @return string|null
+     */
     private function decode($chunk)
     {
         $pos = 0;
         $len = strlen($chunk);
-        $dechunk = null;
+        $deCoded = null;
 
         while (($pos < $len)
             && ($chunkLenHex = substr($chunk, $pos, ($newlineAt = strpos($chunk, "\n", $pos + 1)) - $pos))) {
@@ -176,23 +183,40 @@ class Client implements HttpClientContract
 
             $pos = $newlineAt + 1;
             $chunkLen = hexdec(rtrim($chunkLenHex, "\r\n"));
-            $dechunk .= substr($chunk, $pos, $chunkLen);
+            $deCoded .= substr($chunk, $pos, $chunkLen);
             $pos = strpos($chunk, "\n", $pos + $chunkLen) + 1;
         }
-        return $dechunk;
+        return $deCoded;
     }
 
+    /**
+     * Tests if the provided value is hex.
+     *
+     * @param string $hex Value to test.
+     * @return bool
+     */
     private function isHex($hex)
     {
-        // regex is for weenies
-        $hex = strtolower(trim(ltrim($hex, "0")));
+        $hex = strtolower(trim(ltrim($hex, '0')));
+
         if (empty($hex)) {
             $hex = 0;
-        };
+        }
+
         $dec = hexdec($hex);
+
         return ($hex == dechex($dec));
     }
 
+    /**
+     * Issues a HTTP GET request with the provided data.
+     *
+     * @param string $url The endpoint to request.
+     * @param array $data Optional query data to send.
+     * @param string $referer Optional HTTP referer to set.
+     *
+     * @return mixed|HttpResponse
+     */
     public function get($url, $data = [], $referer = '')
     {
         return $this->makeRequest(Client::HTTP_GET, $url, $data, $referer);

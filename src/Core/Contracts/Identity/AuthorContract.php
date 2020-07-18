@@ -7,6 +7,8 @@ use Stillat\Meerkat\Core\Contracts\DataObjectContract;
 use Stillat\Meerkat\Core\Permissions\PermissionsSet;
 
 /**
+ * Interface AuthorContract
+ *
  * Provides a standardized structure for defining authors
  *
  * Author Transience
@@ -29,7 +31,8 @@ use Stillat\Meerkat\Core\Permissions\PermissionsSet;
  * a site administrator replying to a visitor comment.
  * The administrator's identity would be associated
  * with the postings stored author information.
- * 
+ *
+ * @package Stillat\Meerkat\Core\Contracts\Identity
  * @since 2.0.0
  */
 interface AuthorContract extends DataObjectContract, Serializable

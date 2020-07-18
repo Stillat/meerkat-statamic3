@@ -3,7 +3,6 @@
 namespace Stillat\Meerkat\Core\Guard;
 
 use Exception;
-use Stillat\Meerkat\Core\Assertions\TypeAssertions;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\DataObjectContract;
 use Stillat\Meerkat\Core\Contracts\SpamGuardContract;
@@ -23,7 +22,7 @@ class SpamService
     /**
      * The settings to control Guard behavior.
      *
-     * @var Stillat\Meerkat\Core\GuardConfiguration
+     * @var GuardConfiguration
      */
     protected $config = null;
 
@@ -44,15 +43,8 @@ class SpamService
      */
     protected $errors = [];
 
-    /**
-     * Creates a new instance of SpamService.
-     *
-     * @param Stillat\Meerkat\Core\GuardConfiguration $config
-     */
     public function __construct(GuardConfiguration $config)
     {
-        TypeAssertions::assertIsGuardConfiguration($config, '$config');
-
         $this->config = $config;
     }
 
@@ -72,7 +64,7 @@ class SpamService
      * Returns a collection of Exceptions thrown during
      * communication with third-party spam providers.
      *
-     * @return \Exception[]
+     * @return Exception[]
      */
     public function getErrors()
     {
@@ -105,16 +97,16 @@ class SpamService
      *
      * @param  DataObjectContract $data
      *
-     * @return boolean
+     * @return GuardResult
      */
     public function submitAsSpam(DataObjectContract $data)
     {
         if ($data == null) {
-            return false;
+            return GuardResult::failure();
         }
 
         if (!$this->hasGuards()) {
-            return false;
+            return GuardResult::failure();
         }
 
         return $this->markAsSpam($data);
@@ -174,7 +166,7 @@ class SpamService
     }
 
     /**
-     * Uses each registerd spam guard to submit the comment as spam.
+     * Uses each registered spam guard to submit the comment as spam.
      *
      * @param  DataObjectContract $data
      *
@@ -230,8 +222,6 @@ class SpamService
         $spamCount = 0;
 
         foreach ($this->spamGuards as $guard) {
-            $alreadyMarkedForUnpublish = false;
-
             try {
                 if ($guard->getIsSpam($comment)) {
                     $spamCount += 1;
@@ -244,7 +234,6 @@ class SpamService
 
                             if ($this->config->unpublishOnGuardFailures) {
                                 $comment->unpublish();
-                                $alreadyMarkedForUnpublish = true;
                             }
                         }
                     }
@@ -262,7 +251,7 @@ class SpamService
                 // If we could not connect to the remote service, check if we
                 // should unpublish any comments automatically that we could
                 // not check reliably with the third-party spam service.
-                if ($this->config->unpublishOnGuardFailures && $alreadyMarkedForUnpublish == false) {
+                if ($this->config->unpublishOnGuardFailures) {
                     $comment->unpublish();
                 }
             }

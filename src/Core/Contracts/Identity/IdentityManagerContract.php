@@ -2,16 +2,17 @@
 
 namespace Stillat\Meerkat\Core\Contracts\Identity;
 
-use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
-
 /**
+ * Interface IdentityManagerContract
+ *
  * Defines an authentication and permissions interop standard
- * 
+ *
  * The Identity Manager provides a method for Meerkat Core
  * to communicate to the host system about user identities
  * and system privileges. Meerkat Core will only use the
  * methods contained within this interface when determining access rights.
  *
+ * @package Stillat\Meerkat\Core\Contracts\Identity
  * @since 2.0.0
  */
 interface IdentityManagerContract

@@ -5,14 +5,18 @@ namespace Stillat\Meerkat\Core\Parsing;
 use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
+use Stillat\Meerkat\Core\Support\TypeConversions;
 
 /**
+ * Class AbstractMarkdownParser
+ *
  * Provides a base abstract implementation of MarkdownParserContract
  *
  * This abstract implementation handles all but the parseDocument
  * responsibility of the MarkdownParserContract. Implementations
  * should only have to provide an actual Markdown parser.
- * 
+ *
+ * @package Stillat\Meerkat\Core\Parsing
  * @since 2.0.0
  */
 abstract class AbstractMarkdownParser implements MarkdownParserContract
@@ -21,7 +25,7 @@ abstract class AbstractMarkdownParser implements MarkdownParserContract
     /**
      * An instance of the shared Meerkat Configuration context.
      *
-     * @var \Stillat\Meerkat\Core\Configuration
+     * @var Configuration
      */
     private $configuration = null;
 
@@ -44,7 +48,11 @@ abstract class AbstractMarkdownParser implements MarkdownParserContract
      */
     public function cleanDocument($content)
     {
-        return strip_tags($content, $this->configuration->getFormattingConfiguration()->htmlTagsToClean);
+        $tagsToKeep = implode('', TypeConversions::getArray(
+            $this->configuration->getFormattingConfiguration()->tagsToKeep
+        ));
+
+        return strip_tags($content, $tagsToKeep);
     }
 
     /**

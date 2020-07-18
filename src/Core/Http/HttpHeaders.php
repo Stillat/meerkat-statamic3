@@ -2,6 +2,14 @@
 
 namespace Stillat\Meerkat\Core\Http;
 
+/**
+ * Class HttpHeaders
+ *
+ * Represents a collection of request HTTP headers.
+ *
+ * @package Stillat\Meerkat\Core\Http
+ * @since 2.0.0
+ */
 class HttpHeaders
 {
 

@@ -2,11 +2,10 @@
 
 namespace Stillat\Meerkat\Core\Threads;
 
-use Exception;
 use Stillat\Meerkat\Core\Contracts\Storage\ThreadStorageManagerContract;
-use Stillat\Meerkat\Core\Threads\Thread;
 use Stillat\Meerkat\Core\Storage\Paths;
 use Stillat\Meerkat\Core\Configuration;
+use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ContextResolverContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
@@ -14,29 +13,27 @@ use Stillat\Meerkat\Core\Contracts\Threads\ThreadMutationPipelineContract;
 use Stillat\Meerkat\Core\Storage\Data\ThreadCommentRetriever;
 
 /**
- * Provides utilities/tools for managing Meerkat Comment threads
+ * Class ThreadManager
  *
+ * Provides utilities/tools for managing Meerkat Comment threads.
+ *
+ * @package Stillat\Meerkat\Core\Threads
  * @since 2.0.0
  */
 class ThreadManager implements ThreadManagerContract
 {
 
     /**
-     * The file-name prefix to use when soft-deleting a thread.
-     */
-    const THREAD_SOFTDELETED_PREFIX = '_';
-
-    /**
      * The Configuration instance to provide access to the shared file share.
      *
-     * @var \Stillat\Meerkat\Core\Configuration
+     * @var Configuration
      */
     private $config = null;
 
     /**
      * The Paths utility instance.
      *
-     * @var \Stillat\Meerkat\Core\Storage\Paths
+     * @var Paths
      */
     private $pathManager = null;
 
@@ -48,7 +45,7 @@ class ThreadManager implements ThreadManagerContract
     private $contextResolver = null;
 
     /**
-     * The ThreadCommentRetriever isntance.
+     * The ThreadCommentRetriever instance.
      *
      * @var ThreadCommentRetriever
      */
@@ -85,24 +82,9 @@ class ThreadManager implements ThreadManagerContract
         $this->pathManager = new Paths($this->config);
     }
 
-    /**
-     * Performs a simple check to determine if the root thread path is a valid ID.
-     *
-     * @param string $threadPath The basic path to check.
-     * @param boolean $includeTrashed Indicates if Meerkat should locate trashed thread.
-     *
-     * @return bool
-     */
-    protected function isValidThreadId($threadPath, $includeTrashed)
+    public function getAllThreads($includeTrashed = false)
     {
-        // Length 36 is a normal GUID.
-        $threadIdLength = mb_strlen($threadPath);
-
-        if ($threadIdLength == 36) {
-            return true;
-        }
-
-        return false;
+        return $this->threadStorageManager->getAllThreads($includeTrashed);
     }
 
     /**
@@ -188,7 +170,9 @@ class ThreadManager implements ThreadManagerContract
      */
     public function create(ThreadContract $thread)
     {
-        return $this->threadStorageManager->save($thread);
+        $this->threadStorageManager->createForContext($thread->getContext());
+
+        return $thread;
     }
 
     /**

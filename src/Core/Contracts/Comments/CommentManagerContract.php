@@ -2,11 +2,12 @@
 
 namespace Stillat\Meerkat\Core\Contracts\Comments;
 
-use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
-
 /**
+ * Interface CommentManagerContract
+ *
  * Defines a consistent API for managing Meerkat comments
  *
+ * @package Stillat\Meerkat\Core\Contracts\Commentsg
  * @since 2.0.0
  */
 interface CommentManagerContract

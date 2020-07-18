@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat\Core\Logging;
 
+use Serializable;
 use Stillat\Meerkat\Core\UuidGenerator;
 
 /**
@@ -12,13 +13,18 @@ use Stillat\Meerkat\Core\UuidGenerator;
  * @package Stillat\Meerkat\Core\Logging
  * @since 2.0.0
  */
-class ErrorLog implements \Serializable
+class ErrorLog implements Serializable
 {
 
     const KEY_ID = 'id';
     const KEY_ERROR_CODE = 'ec';
     const KEY_CONTEXT = 'ctx';
     const KEY_DATE = 'date';
+    const KEY_TYPE = 'type';
+
+    const TYPE_ERROR = 0;
+    const TYPE_WARNING = 1;
+    const TYPE_MESSAGE = 3;
 
     /**
      * The log's instance identifier.
@@ -48,6 +54,13 @@ class ErrorLog implements \Serializable
      */
     public $dateTimeUtc = '';
 
+    /**
+     * The error log type (warning, error, or message).
+     *
+     * @var int
+     */
+    public $type = self::TYPE_ERROR;
+
 
     /**
      * Creates a new instance of ErrorLog.
@@ -60,6 +73,7 @@ class ErrorLog implements \Serializable
     {
         $errorLog = new ErrorLog();
 
+        $errorLog->type = self::TYPE_ERROR;
         $errorLog->instanceId = UuidGenerator::getInstance()->newId();
 
         if (is_string($context)) {
@@ -81,6 +95,38 @@ class ErrorLog implements \Serializable
     }
 
     /**
+     * Creates a new warning instance of ErrorLog.
+     *
+     * @param string $errorCode The error code.
+     * @param string $context The error's surrounding context.
+     * @return ErrorLog
+     */
+    public static function warning($errorCode, $context)
+    {
+        $errorLog = ErrorLog::make($errorCode, $context);
+
+        $errorLog->type = self::TYPE_WARNING;
+
+        return $errorLog;
+    }
+
+    /**
+     * Creates a new message instance of ErrorLog.
+     *
+     * @param string $errorCode The error code.
+     * @param string $context The error's surrounding context.
+     * @return ErrorLog
+     */
+    public static function message($errorCode, $context)
+    {
+        $errorLog = ErrorLog::make($errorCode, $context);
+
+        $errorLog->type = self::TYPE_MESSAGE;
+
+        return $errorLog;
+    }
+
+    /**
      * Converts the error log to an array.
      *
      * @return array
@@ -91,7 +137,8 @@ class ErrorLog implements \Serializable
             self::KEY_ID => $this->instanceId,
             self::KEY_ERROR_CODE => $this->errorCode,
             self::KEY_CONTEXT => $this->context,
-            self::KEY_DATE => $this->dateTimeUtc
+            self::KEY_DATE => $this->dateTimeUtc,
+            self::KEY_TYPE => $this->type
         ];
     }
 
@@ -108,8 +155,7 @@ class ErrorLog implements \Serializable
     /**
      * Returns a run-time instance of an object from serialized form.
      *
-     * @param string $serialized
-     * @return static
+     * @param string $serialized The serialized contents.
      */
     public function unserialize($serialized)
     {
@@ -119,6 +165,7 @@ class ErrorLog implements \Serializable
         $this->errorCode = $arrayFormat[self::KEY_ERROR_CODE];
         $this->context = $arrayFormat[self::KEY_CONTEXT];
         $this->dateTimeUtc = $arrayFormat[self::KEY_DATE];
+        $this->type = $arrayFormat[self::KEY_TYPE];
     }
 
 }

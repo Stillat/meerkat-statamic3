@@ -3,6 +3,8 @@
 namespace Stillat\Meerkat\Core\Search;
 
 /**
+ * Class Engine
+ *
  * Provides search mechanisms for filtering Meerkat datasets.
  *
  * @package Stillat\Meerkat\Core\Search

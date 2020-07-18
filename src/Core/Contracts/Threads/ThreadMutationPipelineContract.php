@@ -5,30 +5,24 @@ namespace Stillat\Meerkat\Core\Contracts\Threads;
 use Stillat\Meerkat\Core\Contracts\MutationPipelineContract;
 
 /**
+ * Interface ThreadMutationPipelineContract
+ *
  * Responsible for responding to thread mutation requests
  *
+ * @package Stillat\Meerkat\Core\Contracts\Threads
  * @since 2.0.0
  */
 interface ThreadMutationPipelineContract extends MutationPipelineContract
 {
 
-
     const MUTATION_RESOLVING = 'thread.resolving';
-
-    /**
-     * Identifies a request to remove a thread.
-     */
     const MUTATION_REMOVING = 'thread.beforeRemove';
     const MUTATION_REMOVED = 'thread.removed';
-
     const MUTATION_SOFT_DELETED = 'thread.softDeleted';
-
     const MUTATION_CREATING = 'thread.beforeCreate';
     const MUTATION_CREATED = 'thread.created';
-
     const MUTATION_MOVING = 'thread.moving';
     const MUTATION_MOVED = 'thread.moved';
-
 
     /**
      * Broadcasts that a thread's context is resolving.

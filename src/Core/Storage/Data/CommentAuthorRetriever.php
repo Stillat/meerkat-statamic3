@@ -7,11 +7,14 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorFactoryContract;
 
 /**
+ * Class CommentAuthorRetriever
+ *
  * Gathers author data from a collection of comments
- * 
+ *
  * The author retriever is responsible for analyzing a
  * collection of comments to find author information.
- * 
+ *
+ * @package Stillat\Meerkat\Core\Storage\Data
  * @since 2.0.0
  */
 class CommentAuthorRetriever
@@ -20,7 +23,7 @@ class CommentAuthorRetriever
     /**
      * An author factory implementation instance.
      * 
-     * @var \Stillat\Meerkat\Core\Contracts\Identity\AuthorFactoryContract
+     * @var AuthorFactoryContract
      */
     protected $authorFactory = null;
 
@@ -41,12 +44,12 @@ class CommentAuthorRetriever
      *
      *
      * @param  CommentContract[] $comments
-     * @return void
+     * @return AuthorContract[]
      */
     public function getAuthorDetails($comments)
     {
         if (count($comments) === 0) {
-            return;
+            return [];
         }
 
         foreach ($comments as $comment) {
@@ -59,11 +62,9 @@ class CommentAuthorRetriever
             }
         }
 
-        $identities = array_map(function ($proto) {
+        return array_map(function ($proto) {
             return $this->authorFactory->makeAuthor($proto);
         }, $this->authEmailMappings);
-
-        return $identities;
     }
 
     /**

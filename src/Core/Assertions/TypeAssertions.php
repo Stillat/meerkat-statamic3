@@ -16,7 +16,7 @@ class TypeAssertions
 
     private static function makeTypeAssertionMessage($value, $parameterName, $qualifiedClassName)
     {
-        $providedClassName = \get_class($value);
+        $providedClassName = get_class($value);
 
         return "Argument passed to parameter {$parameterName} must be an instance of {$qualifiedClassName}. {$providedClassName} provided.";
     }

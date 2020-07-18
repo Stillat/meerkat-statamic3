@@ -20,7 +20,7 @@ class Configuration extends ConfigurationContainer
     /**
      * The FormattingConfiguration instance.
      *
-     * @var \Stillat\Meerkat\Core\FormattingConfiguration
+     * @var FormattingConfiguration
      */
     private $formatConfiguration = null;
 
@@ -42,7 +42,7 @@ class Configuration extends ConfigurationContainer
     /**
      * Returns access to the formatting configuration instance.
      *
-     * @return Stillat\Meerkat\Core\FormattingConfiguration
+     * @return FormattingConfiguration
      */
     public function getFormattingConfiguration()
     {
@@ -77,6 +77,6 @@ class Configuration extends ConfigurationContainer
      *
      * @var string
      */
-    public $directorySeparator = \DIRECTORY_SEPARATOR;
+    public $directorySeparator = DIRECTORY_SEPARATOR;
 
 }

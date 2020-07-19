@@ -79,4 +79,12 @@ class Configuration extends ConfigurationContainer
      */
     public $directorySeparator = DIRECTORY_SEPARATOR;
 
+    /**
+     * The comment length limit. If this limit is reached when
+     * reading the comment's content data will be truncated.
+     *
+     * @var int
+     */
+    public $hardCommentLengthCap = 5000;
+
 }

@@ -21,9 +21,7 @@ interface CommentContract extends DataObjectContract, Serializable
     const KEY_REPLIES = 'replies';
     const KEY_COMMENT_DATE_FORMATTED = 'comment_date_formatted';
     const KEY_CONTENT = 'content';
-    const KEY_COMMENT = 'comment';
     const KEY_COMMENT_MARKDOWN = 'comment_markdown';
-    const KEY_RAW_CONTENT = 'raw_content';
     const KEY_ID = 'id';
     const KEY_COMMENT_DATE = 'comment_date';
     const KEY_IS_REPLY = 'isReply';
@@ -36,7 +34,9 @@ interface CommentContract extends DataObjectContract, Serializable
     const KEY_PUBLISHED = 'published';
     const KEY_SPAM = 'spam';
 
+    const INTERNAL_CONTENT_TRUNCATED = 'internal_content_truncated';
     const INTERNAL_CONTEXT = 'context';
+    const INTERNAL_CONTENT_RAW = 'content_raw';
     const INTERNAL_PATH = 'internal_path';
     const INTERNAL_RESPONSE = 'internal_response';
     const INTERNAL_RESPONSE_PATH = 'internal_response_path';
@@ -61,10 +61,33 @@ interface CommentContract extends DataObjectContract, Serializable
     /**
      * Sets the comment's content.
      *
-     * @param  string $string
+     * @param  string $content The content.
      * @return void
      */
-    public function setContent($string);
+    public function setContent($content);
+
+    /**
+     * Gets the comment's raw content.
+     *
+     * @return string
+     */
+    public function getRawContent();
+
+    /**
+     * Sets the comment's raw content value.
+     *
+     * @param string $content The content.
+     * @return void
+     */
+    public function setRawContent($content);
+
+    /**
+     * Sets the comments raw attribute values.
+     *
+     * @param array $attributes The attributes.
+     * @return mixed
+     */
+    public function setRawAttributes($attributes);
 
     /**
      * Returns a value indicating if the comment has replies.

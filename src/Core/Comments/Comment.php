@@ -10,19 +10,14 @@ use Stillat\Meerkat\Core\Parsing\UsesMarkdownParser;
 use Stillat\Meerkat\Core\Support\TypeConversions;
 
 /**
- * Trait Comment
+ * Class Comment
  *
  * Provides a consistent base implementation for comments.
- *
- * This trait is not required to be used in host-implementations
- * but may be used to quickly implement the CommentContract
- * interface. Custom comment implementations must also
- * implement `../Contracts/DataObjectContract.php`.
  *
  * @package Stillat\Meerkat\Core\Comments
  * @since 2.0.0
  */
-trait Comment
+class Comment implements CommentContract
 {
     use DataObject, UsesMarkdownParser;
 
@@ -62,30 +57,86 @@ trait Comment
     protected $commentReplies = [];
 
     /**
+     * A collection of data attributes for this comment.
+     *
+     * @var array The data attributes.
+     */
+    protected $attributes = [];
+
+    /**
+     * A collection of raw, unparsed data attributes.
+     *
+     * @var array
+     */
+    protected $rawAttributes = [];
+
+    /**
+     * The original raw content.
+     *
+     * @var string
+     */
+    protected $rawContent = '';
+
+    /**
      * Returns the comment's content.
      *
      * @return string
      */
     public function getContent()
     {
-        return $this->getDataAttribute(CommentContract::KEY_CONTENT);
+        if ($this->hasDataAttribute(CommentContract::KEY_CONTENT)) {
+            return $this->getDataAttribute(CommentContract::KEY_CONTENT, '');
+        }
+
+        return $this->rawContent;
     }
 
     /**
      * Sets the comment's content.
      *
-     * @param string $string
+     * @param string $content
      * @return void
      *
      * @throws InconsistentCompositionException
      */
-    public function setContent($string)
+    public function setContent($content)
     {
-        if (property_exists($this, 'attributes')) {
-            $this->getMarkdownParser()->parseStringAndMerge($string, $this->attributes);
-        }
+        $this->getMarkdownParser()->parseStringAndMerge($content, $this->attributes);
 
         throw InconsistentCompositionException::make('attributes', __CLASS__);
+    }
+
+    /**
+     * Gets the comment's raw content.
+     *
+     * @return string
+     */
+    public function getRawContent()
+    {
+        return $this->rawContent;
+    }
+
+    /**
+     * Sets the comment's raw content value.
+     *
+     * @param string $content The content.
+     * @return void
+     */
+    public function setRawContent($content)
+    {
+        $this->rawContent = $content;
+        $this->setDataAttribute(CommentContract::INTERNAL_CONTENT_RAW, $content);
+    }
+
+    /**
+     * Sets the comments raw attribute values.
+     *
+     * @param array $attributes The attributes.
+     * @return mixed
+     */
+    public function setRawAttributes($attributes)
+    {
+        $this->rawAttributes = $attributes;
     }
 
     /**

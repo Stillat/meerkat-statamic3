@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat\Http\Controllers;
 
 use Stillat\Meerkat\Core\Contracts\Logging\ErrorCodeRepositoryContract;
+use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Logging\ErrorLog;
 use Stillat\Meerkat\Feedback\SolutionProvider;
@@ -21,17 +22,9 @@ class DashboardController extends Controller
 {
     use UsesTranslations;
 
-    public function index(ThreadManager $manager, SolutionProvider $solutionProvider, ErrorCodeRepositoryContract $repo)
+    public function index(CommentStorageManagerContract $comments)
     {
-        $thread1 = $manager->findById('af43e0fb-a338-4433-b60a-3bed773be341', false);
-
-        $manager->restoreThread('af43e0fb-a338-4433-b60a-3bed773be341');
-        $thread2 = $manager->findById('af43e0fb-a338-4433-b60a-3bed773be341', false);
-
-
-
-        dd($thread1, $thread2);
-
+        dd(count($comments->getCommentsForThreadId('af43e0fb-a338-4433-b60a-3bed773be344')));
         return view('meerkat::dashboard');
     }
 

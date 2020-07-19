@@ -79,7 +79,5 @@ abstract class AbstractMarkdownParser implements MarkdownParserContract
         $parsedContent = $this->parse($stringContent);
 
         $dataContainer[CommentContract::KEY_CONTENT] = $parsedContent;
-        $dataContainer[CommentContract::KEY_COMMENT] = $parsedContent;
-        $dataContainer[CommentContract::KEY_RAW_CONTENT] = $stringContent;
     }
 }

@@ -50,7 +50,7 @@ class Paths
     /**
      * Removes all leading/trailing back and forward slashes.
      *
-     * @param  string $segment
+     * @param string $segment
      *
      * @return string
      */
@@ -60,6 +60,17 @@ class Paths
         $segment = trim($segment, '\\');
 
         return $segment;
+    }
+
+    /**
+     * Normalizes the directory separators in the provided path.
+     *
+     * @param string $path The path to normalize.
+     * @return string|string[]
+     */
+    public function normalize($path)
+    {
+        return str_replace('\\', self::SYM_FORWARD_SEPARATOR, $path);
     }
 
     /**
@@ -73,7 +84,24 @@ class Paths
     {
         array_walk($segments, [$this, 'cleanSegment']);
 
-        return $this->cleanSegment(join($this->config->directorySeparator, $segments));
+        return $this->normalize($this->cleanSegment(join($this->config->directorySeparator, $segments)));
+    }
+
+    /**
+     * Converts the path to a path relative to the storage root.
+     *
+     * @param string $path The path to convert.
+     * @return string|boolean
+     */
+    public function makeRelative($path)
+    {
+        $rootPath = $this->combineWithStorage([]);
+
+        if (mb_strlen($rootPath) > mb_strlen($path)) {
+            return $this->cleanSegment($path);
+        }
+
+        return $this->cleanSegment(mb_substr($path, mb_strlen(($rootPath))));
     }
 
     /**
@@ -93,20 +121,12 @@ class Paths
         return $this->cleanSegment(join($this->config->directorySeparator, $segments));
     }
 
-    /**
-     * Converts the path to a path relative to the storage root.
-     *
-     * @param  string $path The path to convert.
-     * @return string|boolean
-     */
-    public function makeRelative($path)
+    public function getFilesRecursively($pattern, $flags = 0)
     {
-        $rootPath = $this->combineWithStorage([]);
-
-        if (mb_strlen($rootPath) > mb_strlen($path)) {
-            return $this->cleanSegment($path);
+        $files = glob($pattern, $flags);
+        foreach (glob(dirname($pattern) . '/*', GLOB_ONLYDIR | GLOB_NOSORT) as $dir) {
+            $files = array_merge($files, $this->getFilesRecursively($dir . '/' . basename($pattern), $flags));
         }
-
-        return $this->cleanSegment(mb_substr($path, mb_strlen(($rootPath))));
+        return $files;
     }
 }

@@ -6,6 +6,7 @@ use DirectoryIterator;
 use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\YAMLParserContract;
+use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\ThreadStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ContextResolverContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContextContract;
@@ -92,17 +93,29 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
     private $contextResolver;
 
     /**
+     * The comment storage manager implementation instance.
+     *
+     * @var CommentStorageManagerContract|null
+     */
+    private $commentStorageManager = null;
+
+    /**
      * A collection of storage directory validation results.
      *
      * @var ValidationResult
      */
     private $validationResults;
 
-    public function __construct(Configuration $config, YAMLParserContract $yamlParser, ContextResolverContract $contextResolver)
+    public function __construct(
+        Configuration $config,
+        YAMLParserContract $yamlParser,
+        ContextResolverContract $contextResolver,
+        CommentStorageManagerContract $commentStorageManager)
     {
         $this->meerkatConfiguration = $config;
         $this->yamlParser = $yamlParser;
         $this->contextResolver = $contextResolver;
+        $this->commentStorageManager = $commentStorageManager;
 
         // Quick alias for less typing.
         $this->storagePath = PathUtilities::normalize($this->meerkatConfiguration->storageDirectory);
@@ -435,7 +448,7 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
             return [];
         }
 
-        return [];
+        return $this->commentStorageManager->getCommentsForThreadId($threadId);
     }
 
     /**

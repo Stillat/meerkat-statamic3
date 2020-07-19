@@ -5,6 +5,8 @@ namespace Stillat\Meerkat\Core\Contracts\Comments;
 use Serializable;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\DataObjectContract;
+use Stillat\Meerkat\Core\Contracts\Parsing\ParsesMarkdownContract;
+use Stillat\Meerkat\Core\Contracts\Parsing\ParsesYamlContract;
 
 /**
  * Interface CommentContract
@@ -14,13 +16,14 @@ use Stillat\Meerkat\Core\Contracts\DataObjectContract;
  * @package Stillat\Meerkat\Core\Contracts\Comments
  * @since 2.0.0
  */
-interface CommentContract extends DataObjectContract, Serializable
+interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdownContract, ParsesYamlContract
 {
     const COMMENT_FILENAME = 'comment.md';
     
     const KEY_REPLIES = 'replies';
     const KEY_COMMENT_DATE_FORMATTED = 'comment_date_formatted';
     const KEY_CONTENT = 'content';
+    const KEY_LEGACY_COMMENT = 'comment';
     const KEY_COMMENT_MARKDOWN = 'comment_markdown';
     const KEY_ID = 'id';
     const KEY_COMMENT_DATE = 'comment_date';
@@ -34,6 +37,13 @@ interface CommentContract extends DataObjectContract, Serializable
     const KEY_PUBLISHED = 'published';
     const KEY_SPAM = 'spam';
 
+    const KEY_NAME = 'name';
+    const KEY_EMAIL = 'email';
+    const KEY_USER_IP = 'user_ip';
+    const KEY_USER_AGENT = 'user_agent';
+    const KEY_REFERRER = 'referrer';
+    const KEY_PAGE_URL = 'page_url';
+
     const INTERNAL_CONTENT_TRUNCATED = 'internal_content_truncated';
     const INTERNAL_CONTEXT = 'context';
     const INTERNAL_CONTENT_RAW = 'content_raw';
@@ -43,6 +53,7 @@ interface CommentContract extends DataObjectContract, Serializable
     const INTERNAL_RESPONSE_ID = 'internal_response_id';
     const INTERNAL_RESPONSE_CONTEXT = 'internal_response_context';
     const INTERNAL_RESPONSE_HAS_REPLIES = 'internal_response_has_replies';
+    const INTERNAL_STRUCTURE_NEEDS_MIGRATION = 'internal_needs_structure_migration';
 
     /**
      * Returns the identifier for the comment.
@@ -225,5 +236,19 @@ interface CommentContract extends DataObjectContract, Serializable
      * @return void
      */
     public function setParticipants($participants);
+
+    /**
+     * Saves the comment's data.
+     *
+     * @return bool
+     */
+    public function save();
+
+    /**
+     * Updates the comment's data structure and saves the comment.
+     *
+     * @return bool
+     */
+    public function updateStructure();
 
 }

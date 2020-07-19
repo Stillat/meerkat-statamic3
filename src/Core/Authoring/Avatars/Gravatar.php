@@ -1,6 +1,6 @@
 <?php
 
-namespace Stillat\Meerkat\Core\Authoring;
+namespace Stillat\Meerkat\Core\Authoring\Avatars;
 
 /**
  * Class Gravatar
@@ -11,7 +11,7 @@ namespace Stillat\Meerkat\Core\Authoring;
  * to utilize the same image across many different
  * sites: https://en.gravatar.com/site/implement/
  *
- * @package Stillat\Meerkat\Core\Authoring
+ * @package Stillat\Meerkat\Core\Authoring\Avatars
  * @since 2.0.0
  */
 class Gravatar

@@ -46,6 +46,22 @@ interface DataObjectContract
     public function setDataAttribute($key, $value);
 
     /**
+     * Removes a data attribute with the given name.
+     *
+     * @param string $attributeName The name of the attribute to remove.
+     */
+    public function removeDataAttribute($attributeName);
+
+    /**
+     * Reassigns the provided attribute names and removes the source.
+     *
+     * @param string $sourceAttribute The source attribute.
+     * @param string $targetAttribute The target attribute.
+     * @return mixed
+     */
+    public function reassignDataProperty($sourceAttribute, $targetAttribute);
+
+    /**
      * Get the value for the provided $key, if one exists.
      *
      * @param string      $key     The key of the attribute to get.

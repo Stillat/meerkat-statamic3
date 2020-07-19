@@ -21,9 +21,9 @@ class YAMLParser extends AbstractYAMLParser implements YAMLParserContract
         $this->statamicParser = $yaml;
     }
 
-    public function toYaml($content)
+    public function toYaml($data, $content)
     {
-        return $this->statamicParser->dump($content);
+        return $this->statamicParser->dump($data, $content);
     }
 
     /**

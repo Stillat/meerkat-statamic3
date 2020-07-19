@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat\Core\Parsing;
 
+use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
 use Stillat\Meerkat\Core\InconsistentCompositionException;
 
 /**
@@ -19,19 +20,36 @@ trait UsesMarkdownParser
 {
 
     /**
-     * Returns access to an AbstractMarkdownParser instance.
+     * The Markdown parser implementation instance.
      *
-     * @return AbstractMarkdownParser
+     * @var MarkdownParserContract|null
+     */
+    protected $markdownParser = null;
+
+    /**
+     * Returns access to an MarkdownParserContract instance.
+     *
+     * @return MarkdownParserContract
      *
      * @throws InconsistentCompositionException
      */
     protected function getMarkdownParser()
     {
-        if (property_exists($this, 'markdownParser')) {
+        if ($this->markdownParser !== null) {
             return $this->markdownParser;
         }
 
         throw InconsistentCompositionException::make('markdownParser', __CLASS__);
+    }
+
+    /**
+     * Sets the Markdown parser implementation instance.
+     *
+     * @param MarkdownParserContract $markdownParser The parser instance.
+     */
+    public function setMarkdownParser($markdownParser)
+    {
+        $this->markdownParser = $markdownParser;
     }
 
 }

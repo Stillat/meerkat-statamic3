@@ -119,6 +119,33 @@ trait DataObject
     }
 
     /**
+     * Removes a data attribute with the given name.
+     *
+     * @param string $attributeName The name of the attribute to remove.
+     */
+    public function removeDataAttribute($attributeName)
+    {
+        if ($this->hasDataAttribute($attributeName)) {
+            unset($this->attributes[$attributeName]);
+        }
+    }
+
+    /**
+     * Reassigns the provided attribute names and removes the source.
+     *
+     * @param string $sourceAttribute The source attribute.
+     * @param string $targetAttribute The target attribute.
+     * @return mixed
+     */
+    public function reassignDataProperty($sourceAttribute, $targetAttribute)
+    {
+        $temp = $this->getDataAttribute($sourceAttribute, null);
+        $this->setDataAttribute($targetAttribute, $temp);
+
+        $this->removeDataAttribute($sourceAttribute);
+    }
+
+    /**
      * Get the value for the provided $key, if one exists.
      *
      *

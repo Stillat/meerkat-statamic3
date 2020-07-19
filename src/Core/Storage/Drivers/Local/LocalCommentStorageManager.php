@@ -3,8 +3,11 @@
 namespace Stillat\Meerkat\Core\Storage\Drivers\Local;
 
 use Stillat\Meerkat\Core\Comments\Comment;
+use Stillat\Meerkat\Core\Comments\TransientCommentAttributes;
 use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
+use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
+use Stillat\Meerkat\Core\Contracts\Parsing\YAMLParserContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Paths\PathUtilities;
@@ -36,6 +39,8 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      */
     private $canUseDirectory = false;
 
+    private $threadStructureCache = [];
+
     /**
      * A collection of storage directory validation results.
      *
@@ -65,13 +70,33 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      */
     private $commentStructureResolver = null;
 
-    public function __construct(Configuration $config)
+    /**
+     * The YAML parser implementation instance.
+     *
+     * @var YAMLParserContract
+     */
+    private $yamlParser = null;
+
+    /**
+     * The Markdown parser implementation instance.
+     *
+     * @var MarkdownParserContract
+     */
+    private $markdownParser = null;
+
+    public function __construct(
+        Configuration $config,
+        YAMLParserContract $yamlParser,
+        MarkdownParserContract $markdownParser)
     {
         $this->commentStructureResolver = new LocalCommentStructureResolver();
         $this->config = $config;
         $this->paths = new Paths($this->config);
         // Quick alias for less typing.
         $this->storagePath = PathUtilities::normalize($this->config->storageDirectory);
+
+        $this->yamlParser = $yamlParser;
+        $this->markdownParser = $markdownParser;
 
         $this->validationResults = new ValidationResult();
         $this->validate();
@@ -113,7 +138,6 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             $commentPrototype = $this->getCommentPrototype($commentInternalPath);
 
             if (count($commentPrototype['headers']) == 0) {
-                // TODO: Orphaned tree detection and abandon.
                 continue;
             }
 
@@ -123,6 +147,12 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             $comment->setDataAttributes($commentPrototype['headers']);
             $comment->setRawAttributes($commentPrototype['raw_headers']);
             $comment->setRawContent($commentPrototype['content']);
+            $comment->setYamlParser($this->yamlParser);
+            $comment->setMarkdownParser($this->markdownParser);
+
+            if ($commentPrototype['needs_content_migration']) {
+                $comment->setDataAttribute(CommentContract::INTERNAL_STRUCTURE_NEEDS_MIGRATION, true);
+            }
 
             $commentPrototypes[] = $comment;
         }

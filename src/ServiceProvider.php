@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat;
 
 use Stillat\Meerkat\Concerns\UsesConfig;
+use Stillat\Meerkat\Console\Commands\MigrateCommentsCommand;
 use Stillat\Meerkat\Console\Commands\ValidateCommand;
 use Stillat\Meerkat\Core\Contracts\Logging\ErrorCodeRepositoryContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
@@ -33,6 +34,7 @@ class ServiceProvider extends AddonServiceProvider
 
     protected $commands = [
         ValidateCommand::class,
+        MigrateCommentsCommand::class,
     ];
 
     protected $providers = [

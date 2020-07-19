@@ -25,11 +25,12 @@ interface YAMLParserContract
     /**
      * Converts the provided data into its YAML representation.
      *
-     * @param mixed $content The data to convert.
+     * @param mixed $attributes The data to convert.
+     * @param string $content The content to convert.
      *
      * @return string
      */
-  public function toYaml($content);
+  public function toYaml($attributes, $content);
 
   /**
    * Parses the provided string document and merges the results into the provided data container array.

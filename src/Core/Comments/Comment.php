@@ -7,6 +7,7 @@ use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\DataObject;
 use Stillat\Meerkat\Core\InconsistentCompositionException;
 use Stillat\Meerkat\Core\Parsing\UsesMarkdownParser;
+use Stillat\Meerkat\Core\Parsing\UsesYAMLParser;
 use Stillat\Meerkat\Core\Support\TypeConversions;
 
 /**
@@ -19,7 +20,7 @@ use Stillat\Meerkat\Core\Support\TypeConversions;
  */
 class Comment implements CommentContract
 {
-    use DataObject, UsesMarkdownParser;
+    use DataObject, UsesMarkdownParser, UsesYAMLParser;
 
     /**
      * The comment's parent instance, if available.
@@ -76,6 +77,13 @@ class Comment implements CommentContract
      * @var string
      */
     protected $rawContent = '';
+
+    /**
+     * Indicates if the full set of run-time attributes has been resolved.
+     *
+     * @var bool
+     */
+    protected $runTimeAttributesResolved = false;
 
     /**
      * Returns the comment's content.
@@ -356,6 +364,118 @@ class Comment implements CommentContract
     public function getAuthor()
     {
         return $this->commentAuthor;
+    }
+
+    /**
+     * Parses the raw attributes and reloads the current attributes.
+     *
+     * Note: This method incurs a performance penalty, and should only be used when necessary!
+     *
+     * @return void
+     */
+    protected function resolveRunTimeAttributes()
+    {
+        if (count($this->rawAttributes) == 0) {
+            return;
+        }
+
+        if ($this->runTimeAttributesResolved) {
+            return;
+        }
+
+        $this->yamlParser->parseAndMerge(join('', $this->rawAttributes), $this->attributes);
+
+        $this->runTimeAttributesResolved = true;
+    }
+
+    /**
+     * Gets the internal storage path for this comment.
+     *
+     * @return string
+     */
+    private function getStoragePath()
+    {
+        return $this->getDataAttribute(CommentContract::INTERNAL_PATH, null);
+    }
+
+    /**
+     * Filters the run-time data attributes and returns only those that should be saved.
+     *
+     * @return array
+     */
+    private function getAttributesToSave()
+    {
+        $cleanableProperties = CleanableCommentAttributes::getCleanableAttributes();
+        $transientProperties = TransientCommentAttributes::getTransientProperties();
+        $attributes = $this->attributes;
+
+        foreach ($transientProperties as $property) {
+            if (array_key_exists($property, $attributes)) {
+                unset($attributes[$property]);
+            }
+        }
+
+        foreach ($attributes as $attributeName => $value) {
+            if (in_array($attributeName, $cleanableProperties)) {
+                $value = ltrim($value, '"\' ');
+                $value = rtrim($value, '"\' ');
+
+                $attributes[$attributeName] = $value;
+            }
+        }
+
+        return $attributes;
+    }
+
+
+    /**
+     * Saves the comment's data.
+     *
+     * @return bool
+     */
+    public function save()
+    {
+        $attributes = $this->getAttributesToSave();
+        $content = '';
+
+        if (array_key_exists(CommentContract::KEY_CONTENT, $attributes)) {
+            $content = $attributes[CommentContract::KEY_CONTENT];
+            unset($attributes[CommentContract::KEY_CONTENT]);
+        }
+
+        $contentToSave = $this->yamlParser->toYaml($attributes, $content);
+        $storagePath = $this->getStoragePath();
+
+        if ($storagePath === null) {
+            return false;
+        }
+
+        $saveResult = file_put_contents($storagePath, $contentToSave);
+
+        if ($saveResult === false) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Updates the comment's data structure and saves the comment.
+     *
+     * @return bool
+     */
+    public function updateStructure()
+    {
+        $this->resolveRunTimeAttributes();
+
+        if ($this->hasDataAttribute(CommentContract::KEY_LEGACY_COMMENT)) {
+            $this->reassignDataProperty(
+                CommentContract::KEY_LEGACY_COMMENT,
+                CommentContract::KEY_CONTENT
+            );
+        }
+
+        return $this->save();
     }
 
     public function __toString()

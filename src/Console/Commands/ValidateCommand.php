@@ -26,6 +26,7 @@ class ValidateCommand extends Command
      * @var string
      */
     protected $description = 'Validates the current Meerkat installation and configuration.';
+
     /**
      * The storage driver validator instance.
      *

@@ -31,13 +31,14 @@ abstract class AbstractYAMLParser implements YAMLParserContract
         $parsedDocument = $this->parseDocument($content);
         $dataContainer = array_merge($parsedDocument, $dataContainer);
 
-        if (array_key_exists(CommentContract::KEY_COMMENT, $dataContainer) && !array_key_exists(CommentContract::KEY_CONTENT, $dataContainer)) {
-            $dataContainer[CommentContract::KEY_CONTENT] = $dataContainer[CommentContract::KEY_COMMENT];
-            $dataContainer[CommentContract::KEY_RAW_CONTENT] = $dataContainer[CommentContract::KEY_CONTENT];
+        if (array_key_exists(CommentContract::KEY_LEGACY_COMMENT, $dataContainer) &&
+            !array_key_exists(CommentContract::KEY_CONTENT, $dataContainer)) {
+            $dataContainer[CommentContract::KEY_CONTENT] = $dataContainer[CommentContract::KEY_LEGACY_COMMENT];
+            $dataContainer[CommentContract::KEY_LEGACY_COMMENT] = $dataContainer[CommentContract::KEY_CONTENT];
         }
 
-        if (array_key_exists(CommentContract::KEY_COMMENT, $parsedDocument)) {
-            $dataContainer[CommentContract::KEY_COMMENT_MARKDOWN] = $parsedDocument[CommentContract::KEY_COMMENT];
+        if (array_key_exists(CommentContract::KEY_LEGACY_COMMENT, $parsedDocument)) {
+            $dataContainer[CommentContract::KEY_COMMENT_MARKDOWN] = $parsedDocument[CommentContract::KEY_LEGACY_COMMENT];
         }
 
         if (array_key_exists(CommentContract::KEY_CONTENT, $parsedDocument)) {

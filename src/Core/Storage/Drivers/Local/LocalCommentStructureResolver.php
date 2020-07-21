@@ -5,31 +5,115 @@ namespace Stillat\Meerkat\Core\Storage\Drivers\Local;
 use Stillat\Meerkat\Core\Contracts\Storage\StructureResolverInterface;
 use Stillat\Meerkat\Core\Storage\Paths;
 
+/**
+ * Class LocalCommentStructureResolver
+ *
+ * Resolves the hierarchy structure of a comment thread from a filesystem.
+ *
+ * @package Stillat\Meerkat\Core\Storage\Drivers\Local
+ * @since 2.0.0
+ */
 class LocalCommentStructureResolver implements StructureResolverInterface
 {
 
+    /**
+     * A list of all the paths processed by the resolver.
+     *
+     * @var array
+     */
     protected $paths = [];
 
+    /**
+     * The absolute path to the thread's storage.
+     *
+     * @var string
+     */
     protected $threadPath = '';
 
+    /**
+     * The total length of the thread's storage path.
+     *
+     * @var int
+     */
     protected $threadPathLength = 0;
 
+    /**
+     * The path reply value that will be replaced.
+     *
+     * Typically /replies
+     *
+     * @var string
+     */
     protected $replyReplacement = '';
 
+    /**
+     * A mapping between comment identifiers and their storage paths.
+     *
+     * @var array
+     */
     protected $commentIdPathMapping = [];
 
+    /**
+     * A mapping between depths and comment identifiers.
+     *
+     *    [depth][] = 'identifier'
+     *
+     * @var array
+     */
     protected $depthMapping = [];
 
+    /**
+     * A mapping between identifiers and depths.
+     *
+     *     [identifier] = depth
+     *
+     * @var array
+     */
     protected $commentDepthMapping = [];
 
+    /**
+     * A mapping between identifiers and direct ancestors.
+     *
+     *     [identifier][] = 'ancestor-identifier'
+     *
+     * @var array
+     */
     protected $directAncestorMapping = [];
 
+    /**
+     * A mapping between identifiers and direct descendents.
+     *
+     *     [identifier][] = 'descendent-identifier'
+     *
+     * @var array
+     */
     protected $directDescendentMapping = [];
 
+    /**
+     * A mapping between identifiers and all ancestors.
+     *
+     *     [identifier][] = 'any-ancestor-identifier'
+     *
+     * @var array
+     */
     protected $ancestorMapping = [];
 
+    /**
+     * A mapping between identifiers and all descendents.
+     *
+     *     [identifier][] = 'any-descendent-identifier'
+     *
+     * @var array
+     */
     protected $descendentMapping = [];
 
+    /**
+     * A mapping between identifiers and their potential replies path.
+     *
+     *     [identifier] = 'reply-path'
+     *
+     * @var array
+     */
     protected $internalRepliesPathMapping = [];
 
     public function __construct()
@@ -37,12 +121,24 @@ class LocalCommentStructureResolver implements StructureResolverInterface
         $this->replyReplacement = Paths::SYM_FORWARD_SEPARATOR . LocalCommentStorageManager::PATH_REPLIES_DIRECTORY;
     }
 
+    /**
+     * Resets the internal state of the resolver.
+     *
+     * @return void
+     */
     public function reset()
     {
         $this->paths = [];
         $this->threadPath = '';
     }
 
+    /**
+     * Compares the lengths of the provided values.
+     *
+     * @param string $a First test value.
+     * @param string $b Second test value.
+     * @return int
+     */
     private function compareLength($a, $b)
     {
         return mb_strlen($b) - mb_strlen($a);
@@ -106,7 +202,6 @@ class LocalCommentStructureResolver implements StructureResolverInterface
                     $this->directDescendentMapping[$parentCommentId] = [];
                 }
 
-
                 $this->directDescendentMapping[$parentCommentId][] = $structureId;
 
                 for ($i = 0; $i < count($ancestorGraph); $i += 1) {
@@ -150,9 +245,14 @@ class LocalCommentStructureResolver implements StructureResolverInterface
 
             $this->paths[] = $path;
         }
-
     }
 
+    /**
+     * Gets the depth of the provided comment identifier.
+     *
+     * @param string $commentId The comment's identifier.
+     * @return integer
+     */
     public function getDepth($commentId)
     {
         if (array_key_exists($commentId, $this->commentDepthMapping)) {
@@ -173,6 +273,12 @@ class LocalCommentStructureResolver implements StructureResolverInterface
         return array_key_exists($commentId, $this->directAncestorMapping);
     }
 
+    /**
+     * Gets the comment's ancestor identifiers.
+     *
+     * @param string $commentId The comment's identifier.
+     * @return string[]
+     */
     public function getAllAncestors($commentId)
     {
         if (array_key_exists($commentId, $this->ancestorMapping)) {
@@ -182,11 +288,30 @@ class LocalCommentStructureResolver implements StructureResolverInterface
         return [];
     }
 
+    /**
+     * Gets the comment's parent identifier, if any.
+     *
+     * @param string $commentId The comment's identifier.
+     * @return string|null
+     */
     public function getParent($commentId)
     {
-        return $this->directAncestorMapping[$commentId];
+        if (array_key_exists($commentId, $this->directAncestorMapping)) {
+            return $this->directAncestorMapping[$commentId];
+        }
+
+        return null;
     }
 
+    /**
+     * Gets the comment's descendent identifiers, if any.
+     *
+     * This method will all comment identifiers from:
+     *    Comment Depth + 1 to MaxSubThreadDepth
+     *
+     * @param string $commentId The comment's identifier.
+     * @return string[]
+     */
     public function getAllDescendents($commentId)
     {
         if (array_key_exists($commentId, $this->descendentMapping)) {
@@ -196,6 +321,15 @@ class LocalCommentStructureResolver implements StructureResolverInterface
         return [];
     }
 
+    /**
+     * Gets the comment's direct descendent identifiers, if any.
+     *
+     * This method will return all comment identifiers from:
+     *    Comment Depth + 1
+     *
+     * @param string $commentId The comment's identifier.
+     * @return string[]
+     */
     public function getDirectDescendents($commentId)
     {
         if (array_key_exists($commentId, $this->directDescendentMapping)) {

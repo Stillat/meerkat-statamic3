@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat\Core\Contracts\Comments;
 
+use DateTime;
 use Serializable;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\DataObjectContract;
@@ -30,9 +31,11 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     const KEY_IS_REPLY = 'isReply';
     const KEY_DEPTH = 'depth';
     const KEY_ANCESTORS = 'ancestors';
+    const KEY_DESCENDENTS = 'descendents';
     const KEY_CHILDREN = 'children';
     const KEY_PARENT = 'parent';
     const KEY_IS_PARENT = 'is_parent';
+    const KEY_IS_ROOT = 'is_root';
     const KEY_IS_DELETED = 'is_deleted';
     const KEY_PUBLISHED = 'published';
     const KEY_SPAM = 'spam';
@@ -44,6 +47,7 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     const KEY_REFERRER = 'referrer';
     const KEY_PAGE_URL = 'page_url';
 
+    const INTERNAL_ABSOLUTE_ROOT = 'internal_root';
     const INTERNAL_CONTENT_TRUNCATED = 'internal_content_truncated';
     const INTERNAL_CONTEXT = 'context';
     const INTERNAL_CONTENT_RAW = 'content_raw';
@@ -73,7 +77,7 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
      * Sets the comment's content.
      *
      * @param  string $content The content.
-     * @return void
+     * @return CommentContract
      */
     public function setContent($content);
 
@@ -88,15 +92,22 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
      * Sets the comment's raw content value.
      *
      * @param string $content The content.
-     * @return void
+     * @return CommentContract
      */
     public function setRawContent($content);
+
+    /**
+     * Gets the comments virtual storage path.
+     *
+     * @return string
+     */
+    public function getVirtualPath();
 
     /**
      * Sets the comments raw attribute values.
      *
      * @param array $attributes The attributes.
-     * @return mixed
+     * @return CommentContract
      */
     public function setRawAttributes($attributes);
 
@@ -108,9 +119,23 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     public function getHasReplies();
 
     /**
+     * Gets the date/time the comment was submitted.
+     *
+     * @return DateTime
+     */
+    public function getCommentDate();
+
+    /**
+     * Gets the formatted date/time the comment was submitted.
+     *
+     * @return string
+     */
+    public function getFormattedCommentDate();
+
+    /**
      * Sets a value indicating that the comment should always report it has replies.
      *
-     * @return void
+     * @return CommentContract
      */
     public function alwaysReportCommentHasReplies();
 
@@ -125,7 +150,7 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
      * Sets the comment's replies.
      *
      * @param  CommentContract[] $replies The replies to the comment.
-     * @return void
+     * @return CommentContract
      */
     public function setReplies($replies);
 
@@ -158,6 +183,20 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     public function isRoot();
 
     /**
+     * Returns the ID of the comment's absolute root.
+     *
+     * @return string
+     */
+    public function getRoot();
+
+    /**
+     * Gets the comments depth in the reply hierarchy.
+     *
+     * @return int
+     */
+    public function getDepth();
+
+    /**
      * Returns a value indicating if the comment was marked as spam.
      *
      * @return boolean
@@ -182,7 +221,7 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
      * Sets the parent comment for this comment instance.
      *
      * @param  CommentContract $comment The parent comment.
-     * @return void
+     * @return CommentContract
      */
     public function setParentComment($comment);
 
@@ -211,7 +250,7 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
      * Sets the comment's author context.
      *
      * @param  AuthorContract $author The author of the comment.
-     * @return void
+     * @return CommentContract
      */
     public function setAuthor($author);
 
@@ -233,9 +272,16 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
      * Sets the comment's participants.
      *
      * @param  AuthorContract[] $participants The comment's participants.
-     * @return void
+     * @return CommentContract
      */
     public function setParticipants($participants);
+
+    /**
+     * Gets the comment's storable data.
+     *
+     * @return array
+     */
+    public function getStorableAttributes();
 
     /**
      * Saves the comment's data.
@@ -245,10 +291,25 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     public function save();
 
     /**
+     * Indicates if the comment is a new instance, or one loaded from storage.
+     *
+     * @return bool
+     */
+    public function getIsNew();
+
+    /**
      * Updates the comment's data structure and saves the comment.
      *
      * @return bool
      */
     public function updateStructure();
+
+    /**
+     * Updates the comment's content and saves the comment.
+     *
+     * @param string $content The new content.
+     * @return bool
+     */
+    public function updateCommentContent($content);
 
 }

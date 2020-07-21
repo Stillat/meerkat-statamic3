@@ -2,9 +2,10 @@
 
 namespace Stillat\Meerkat\Core\Storage\Drivers\Local;
 
+use Stillat\Meerkat\Core\Contracts\Storage\StructureResolverInterface;
 use Stillat\Meerkat\Core\Storage\Paths;
 
-class LocalCommentStructureResolver
+class LocalCommentStructureResolver implements StructureResolverInterface
 {
 
     protected $paths = [];
@@ -19,6 +20,8 @@ class LocalCommentStructureResolver
 
     protected $depthMapping = [];
 
+    protected $commentDepthMapping = [];
+
     protected $directAncestorMapping = [];
 
     protected $directDescendentMapping = [];
@@ -31,7 +34,7 @@ class LocalCommentStructureResolver
 
     public function __construct()
     {
-        $this->replyReplacement = Paths::SYM_FORWARD_SEPARATOR.LocalCommentStorageManager::PATH_REPLIES_DIRECTORY;
+        $this->replyReplacement = Paths::SYM_FORWARD_SEPARATOR . LocalCommentStorageManager::PATH_REPLIES_DIRECTORY;
     }
 
     public function reset()
@@ -40,7 +43,8 @@ class LocalCommentStructureResolver
         $this->threadPath = '';
     }
 
-    private function compareLength($a, $b) {
+    private function compareLength($a, $b)
+    {
         return mb_strlen($b) - mb_strlen($a);
     }
 
@@ -66,7 +70,7 @@ class LocalCommentStructureResolver
             $structurePath = str_replace($this->replyReplacement, '', $structurePath);
             $structureId = mb_substr($structurePath, -10);
             $structureDepth = substr_count($structurePath, Paths::SYM_FORWARD_SEPARATOR);
-            $internalReplyPath = mb_substr($path, 0, -10).LocalCommentStorageManager::PATH_REPLIES_DIRECTORY;
+            $internalReplyPath = mb_substr($path, 0, -10) . LocalCommentStorageManager::PATH_REPLIES_DIRECTORY;
 
             if (array_key_exists($structureDepth, $this->depthMapping) == false) {
                 $this->depthMapping[$structureDepth] = [];
@@ -79,16 +83,16 @@ class LocalCommentStructureResolver
             $internalReplyPath = null;
 
             $this->depthMapping[$structureDepth][] = $structureId;
+            $this->commentDepthMapping[$structureId] = $structureDepth;
 
             $this->commentIdPathMapping[$structureId] = $path;
 
             if ($structureId != $structurePath) {
                 $ancestorGraph = explode(Paths::SYM_FORWARD_SEPARATOR, $structurePath);
-                $parentCommentId = $ancestorGraph[count($ancestorGraph) - 1];
-
                 $descendentGraph = $ancestorGraph;
-
                 array_pop($ancestorGraph);
+
+                $parentCommentId = $ancestorGraph[count($ancestorGraph) - 1];
 
                 if (array_key_exists($structureId, $this->ancestorMapping) == false) {
                     $this->ancestorMapping[$structureId] = [];
@@ -102,7 +106,8 @@ class LocalCommentStructureResolver
                     $this->directDescendentMapping[$parentCommentId] = [];
                 }
 
-                $this->directDescendentMapping[$parentCommentId] = $structureId;
+
+                $this->directDescendentMapping[$parentCommentId][] = $structureId;
 
                 for ($i = 0; $i < count($ancestorGraph); $i += 1) {
                     $this->ancestorMapping[$structureId][] = $ancestorGraph[$i];
@@ -113,6 +118,7 @@ class LocalCommentStructureResolver
 
                 for ($i = 0; $i < $descendentGraphLength; $i += 1) {
                     if ($i === $descendentGraphLengthComparison) {
+
                         break;
                     }
 
@@ -120,7 +126,7 @@ class LocalCommentStructureResolver
                         $subDescendentGraph = $descendentGraph;
                         $graphRoot = array_shift($subDescendentGraph);
 
-                        if (array_key_exists($graphRoot, $this->descendentMapping)) {
+                        if (array_key_exists($graphRoot, $this->descendentMapping) == false) {
                             $this->descendentMapping[$graphRoot] = [];
                         }
 
@@ -131,7 +137,7 @@ class LocalCommentStructureResolver
                         $subDescendentGraph = array_slice($descendentGraph, $i);
                         $graphRoot = array_shift($subDescendentGraph);
 
-                        if (array_key_exists($graphRoot, $this->descendentMapping)) {
+                        if (array_key_exists($graphRoot, $this->descendentMapping) == false) {
                             $this->descendentMapping[$graphRoot] = [];
                         }
 
@@ -144,7 +150,59 @@ class LocalCommentStructureResolver
 
             $this->paths[] = $path;
         }
+
     }
 
+    public function getDepth($commentId)
+    {
+        if (array_key_exists($commentId, $this->commentDepthMapping)) {
+            return $this->commentDepthMapping[$commentId];
+        }
+
+        return 0;
+    }
+
+    /**
+     * Indicates if the comment has a direct ancestor.
+     *
+     * @param string $commentId The comment ID.
+     * @return bool
+     */
+    public function hasAncestor($commentId)
+    {
+        return array_key_exists($commentId, $this->directAncestorMapping);
+    }
+
+    public function getAllAncestors($commentId)
+    {
+        if (array_key_exists($commentId, $this->ancestorMapping)) {
+            return $this->ancestorMapping[$commentId];
+        }
+
+        return [];
+    }
+
+    public function getParent($commentId)
+    {
+        return $this->directAncestorMapping[$commentId];
+    }
+
+    public function getAllDescendents($commentId)
+    {
+        if (array_key_exists($commentId, $this->descendentMapping)) {
+            return $this->descendentMapping[$commentId];
+        }
+
+        return [];
+    }
+
+    public function getDirectDescendents($commentId)
+    {
+        if (array_key_exists($commentId, $this->directDescendentMapping)) {
+            return $this->directDescendentMapping[$commentId];
+        }
+
+        return [];
+    }
 
 }

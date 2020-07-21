@@ -67,6 +67,31 @@ class CommentAuthorRetriever
         }, $this->authEmailMappings);
     }
 
+    /***
+     * Locates the author details for the provided comment.
+     *
+     * @param CommentContract $comment The comment to locate the author of.
+     * @return AuthorContract|null
+     */
+    public function getCommentAuthor(CommentContract $comment)
+    {
+        $emailAddress = $comment->getDataAttribute(AuthorContract::KEY_EMAIL_ADDRESS, null);
+
+        if ($emailAddress !== null && mb_strlen(trim($emailAddress)) > 0) {
+            $authorKey = trim($emailAddress);
+
+            if (!array_key_exists($authorKey, $this->authEmailMappings)) {
+                $authorPrototype = $this->getAuthorDataPrototype($comment);
+
+                $this->authEmailMappings[$authorKey] = $this->authorFactory->makeAuthor($authorPrototype);
+            }
+
+            return $this->authEmailMappings[$authorKey];
+        }
+
+        return null;
+    }
+
     /**
      * Finds author data prototype data.
      *
@@ -94,4 +119,5 @@ class CommentAuthorRetriever
             AuthorContract::KEY_NAME => $name
         ];
     }
+
 }

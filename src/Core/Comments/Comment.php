@@ -2,12 +2,15 @@
 
 namespace Stillat\Meerkat\Core\Comments;
 
+use DateTime;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
+use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\DataObject;
 use Stillat\Meerkat\Core\InconsistentCompositionException;
 use Stillat\Meerkat\Core\Parsing\UsesMarkdownParser;
 use Stillat\Meerkat\Core\Parsing\UsesYAMLParser;
+use Stillat\Meerkat\Core\Storage\Data\CommentAuthorRetriever;
 use Stillat\Meerkat\Core\Support\TypeConversions;
 
 /**
@@ -86,6 +89,28 @@ class Comment implements CommentContract
     protected $runTimeAttributesResolved = false;
 
     /**
+     * The storage manager instance.
+     *
+     * @var CommentStorageManagerContract|null
+     */
+    private $storageManager = null;
+
+    /**
+     * @var CommentAuthorRetriever|null
+     */
+    private $authorManager = null;
+
+    public function setStorageManager(&$manager)
+    {
+        $this->storageManager = $manager;
+    }
+
+    public function setAuthorRetriever(&$retriever)
+    {
+        $this->authorManager = $retriever;
+    }
+
+    /**
      * Returns the comment's content.
      *
      * @return string
@@ -103,7 +128,7 @@ class Comment implements CommentContract
      * Sets the comment's content.
      *
      * @param string $content
-     * @return void
+     * @return CommentContract
      *
      * @throws InconsistentCompositionException
      */
@@ -111,7 +136,7 @@ class Comment implements CommentContract
     {
         $this->getMarkdownParser()->parseStringAndMerge($content, $this->attributes);
 
-        throw InconsistentCompositionException::make('attributes', __CLASS__);
+        return $this;
     }
 
     /**
@@ -128,23 +153,27 @@ class Comment implements CommentContract
      * Sets the comment's raw content value.
      *
      * @param string $content The content.
-     * @return void
+     * @return CommentContract
      */
     public function setRawContent($content)
     {
         $this->rawContent = $content;
         $this->setDataAttribute(CommentContract::INTERNAL_CONTENT_RAW, $content);
+
+        return $this;
     }
 
     /**
      * Sets the comments raw attribute values.
      *
      * @param array $attributes The attributes.
-     * @return mixed
+     * @return CommentContract
      */
     public function setRawAttributes($attributes)
     {
         $this->rawAttributes = $attributes;
+
+        return $this;
     }
 
     /**
@@ -166,11 +195,13 @@ class Comment implements CommentContract
     /**
      * Sets a value indicating that the comment should always report it has replies.
      *
-     * @return void
+     * @return CommentContract
      */
     public function alwaysReportCommentHasReplies()
     {
         $this->commentOverrideAlwaysHasReplies = true;
+
+        return $this;
     }
 
     /**
@@ -182,7 +213,81 @@ class Comment implements CommentContract
     {
         $this->setDataAttribute(CommentContract::KEY_PUBLISHED, false);
 
+        return $this->save();
+    }
+
+    /**
+     * Saves the comment's data.
+     *
+     * @return bool
+     */
+    public function save()
+    {
+        if ($this->storageManager === null) {
+            return false;
+        }
+
+        $attributes = $this->getAttributesToSave();
+        $content = '';
+
+        if (array_key_exists(CommentContract::KEY_CONTENT, $attributes)) {
+            $content = $attributes[CommentContract::KEY_CONTENT];
+            unset($attributes[CommentContract::KEY_CONTENT]);
+        }
+
+        $contentToSave = $this->yamlParser->toYaml($attributes, $content);
+        $storagePath = $this->getStoragePath();
+
+        if ($storagePath === null) {
+            return false;
+        }
+
+        $saveResult = file_put_contents($storagePath, $contentToSave);
+
+        if ($saveResult === false) {
+            return false;
+        }
+
         return true;
+    }
+
+    /**
+     * Filters the run-time data attributes and returns only those that should be saved.
+     *
+     * @return array
+     */
+    private function getAttributesToSave()
+    {
+        $cleanableProperties = CleanableCommentAttributes::getCleanableAttributes();
+        $transientProperties = TransientCommentAttributes::getTransientProperties();
+        $attributes = $this->attributes;
+
+        foreach ($transientProperties as $property) {
+            if (array_key_exists($property, $attributes)) {
+                unset($attributes[$property]);
+            }
+        }
+
+        foreach ($attributes as $attributeName => $value) {
+            if (in_array($attributeName, $cleanableProperties)) {
+                $value = ltrim($value, '"\' ');
+                $value = rtrim($value, '"\' ');
+
+                $attributes[$attributeName] = $value;
+            }
+        }
+
+        return $attributes;
+    }
+
+    /**
+     * Gets the internal storage path for this comment.
+     *
+     * @return string
+     */
+    private function getStoragePath()
+    {
+        return $this->getDataAttribute(CommentContract::INTERNAL_PATH, null);
     }
 
     /**
@@ -194,7 +299,7 @@ class Comment implements CommentContract
     {
         $this->setDataAttribute(CommentContract::KEY_PUBLISHED, true);
 
-        return true;
+        return $this->save();
     }
 
     /**
@@ -216,7 +321,27 @@ class Comment implements CommentContract
      */
     public function isRoot()
     {
-        return !$this->isReply();
+        return $this->getDataAttribute(CommentContract::KEY_IS_ROOT, true);
+    }
+
+    /**
+     * Returns the ID of the comment's absolute root.
+     *
+     * @return string
+     */
+    public function getRoot()
+    {
+        return $this->getDataAttribute(CommentContract::INTERNAL_ABSOLUTE_ROOT, null);
+    }
+
+    /**
+     * Gets the comments depth in the reply hierarchy.
+     *
+     * @return int
+     */
+    public function getDepth()
+    {
+        return $this->getDataAttribute(CommentContract::KEY_DEPTH, 0);
     }
 
     /**
@@ -245,11 +370,13 @@ class Comment implements CommentContract
      * Sets the comment's replies.
      *
      * @param CommentContract[] $replies The replies to the comment.
-     * @return void
+     * @return CommentContract
      */
     public function setReplies($replies)
     {
         $this->commentReplies = $replies;
+
+        return $this;
     }
 
     /**
@@ -266,11 +393,13 @@ class Comment implements CommentContract
      * Sets the parent comment for this comment instance.
      *
      * @param CommentContract $comment The parent comment.
-     * @return void
+     * @return CommentContract
      */
     public function setParentComment($comment)
     {
         $this->commentParent = $comment;
+
+        return $this;
     }
 
     /**
@@ -338,22 +467,26 @@ class Comment implements CommentContract
      * Sets the comment's participants.
      *
      * @param AuthorContract[] $participants The comment's participants.
-     * @return void
+     * @return CommentContract
      */
     public function setParticipants($participants)
     {
         $this->commentParticipants = $participants;
+
+        return $this;
     }
 
     /**
      * Sets the comment's author context.
      *
      * @param AuthorContract $author The author of the comment.
-     * @return void
+     * @return CommentContract
      */
     public function setAuthor($author)
     {
         $this->commentAuthor = $author;
+
+        return $this;
     }
 
     /**
@@ -363,7 +496,23 @@ class Comment implements CommentContract
      */
     public function getAuthor()
     {
+        if ($this->commentAuthor === null && $this->authorManager !== null) {
+            $this->commentAuthor = $this->authorManager->getCommentAuthor($this);
+        }
+
         return $this->commentAuthor;
+    }
+
+    /**
+     * Gets the comment's storable data.
+     *
+     * @return array
+     */
+    public function getStorableAttributes()
+    {
+        $this->resolveRunTimeAttributes();
+
+        return $this->getAttributesToSave();
     }
 
     /**
@@ -389,74 +538,25 @@ class Comment implements CommentContract
     }
 
     /**
-     * Gets the internal storage path for this comment.
-     *
-     * @return string
-     */
-    private function getStoragePath()
-    {
-        return $this->getDataAttribute(CommentContract::INTERNAL_PATH, null);
-    }
-
-    /**
-     * Filters the run-time data attributes and returns only those that should be saved.
-     *
-     * @return array
-     */
-    private function getAttributesToSave()
-    {
-        $cleanableProperties = CleanableCommentAttributes::getCleanableAttributes();
-        $transientProperties = TransientCommentAttributes::getTransientProperties();
-        $attributes = $this->attributes;
-
-        foreach ($transientProperties as $property) {
-            if (array_key_exists($property, $attributes)) {
-                unset($attributes[$property]);
-            }
-        }
-
-        foreach ($attributes as $attributeName => $value) {
-            if (in_array($attributeName, $cleanableProperties)) {
-                $value = ltrim($value, '"\' ');
-                $value = rtrim($value, '"\' ');
-
-                $attributes[$attributeName] = $value;
-            }
-        }
-
-        return $attributes;
-    }
-
-
-    /**
-     * Saves the comment's data.
+     * Indicates if the comment is a new instance, or one loaded from storage.
      *
      * @return bool
      */
-    public function save()
+    public function getIsNew()
     {
-        $attributes = $this->getAttributesToSave();
-        $content = '';
+        $virtualPath = $this->getVirtualPath();
 
-        if (array_key_exists(CommentContract::KEY_CONTENT, $attributes)) {
-            $content = $attributes[CommentContract::KEY_CONTENT];
-            unset($attributes[CommentContract::KEY_CONTENT]);
-        }
+        return !file_exists($virtualPath);
+    }
 
-        $contentToSave = $this->yamlParser->toYaml($attributes, $content);
-        $storagePath = $this->getStoragePath();
-
-        if ($storagePath === null) {
-            return false;
-        }
-
-        $saveResult = file_put_contents($storagePath, $contentToSave);
-
-        if ($saveResult === false) {
-            return false;
-        }
-
-        return true;
+    /**
+     * Gets the comments virtual storage path.
+     *
+     * @return string
+     */
+    public function getVirtualPath()
+    {
+        return $this->getDataAttribute(CommentContract::INTERNAL_PATH);
     }
 
     /**
@@ -466,6 +566,10 @@ class Comment implements CommentContract
      */
     public function updateStructure()
     {
+        if ($this->storageManager === null) {
+            return false;
+        }
+
         $this->resolveRunTimeAttributes();
 
         if ($this->hasDataAttribute(CommentContract::KEY_LEGACY_COMMENT)) {
@@ -473,7 +577,45 @@ class Comment implements CommentContract
                 CommentContract::KEY_LEGACY_COMMENT,
                 CommentContract::KEY_CONTENT
             );
+            $this->setRawContent($this->getDataAttribute(CommentContract::KEY_CONTENT));
         }
+
+        return $this->save();
+    }
+
+    /**
+     * Gets the date/time the comment was submitted.
+     *
+     * @return DateTime
+     */
+    public function getCommentDate()
+    {
+        return $this->getDataAttribute(CommentContract::KEY_COMMENT_DATE);
+    }
+
+    /**
+     * Gets the formatted date/time the comment was submitted.
+     *
+     * @return string
+     */
+    public function getFormattedCommentDate()
+    {
+        return $this->getDataAttribute(CommentContract::KEY_COMMENT_DATE_FORMATTED);
+    }
+
+    /**
+     * Updates the comment's content and saves the comment.
+     *
+     * @param string $content The new content.
+     * @return bool
+     */
+    public function updateCommentContent($content)
+    {
+        if ($this->storageManager === null) {
+            return false;
+        }
+
+        $this->setRawContent($content);
 
         return $this->save();
     }

@@ -51,9 +51,17 @@ class MigrateCommentsCommand extends Command
         $this->line('Total: ' . $commentCount . ' comments(s) across all threads analyzed.');
         $this->line(count($comments).' comment(s) need a data structure update.');
 
+        $commentsUpdated = 0;
+
         foreach ($comments as $comment) {
-            $comment->updateStructure();
+            $updateResult = $comment->updateStructure();
+
+            if ($updateResult === true) {
+                $commentsUpdated += 1;
+            }
         }
+
+        $this->line($commentsUpdated.' comment(s) updated!');
 
     }
 

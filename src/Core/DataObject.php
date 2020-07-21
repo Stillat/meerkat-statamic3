@@ -152,7 +152,7 @@ trait DataObject
      * @param string      $key     The key of the attribute to get.
      * @param string|null $default The default value to return if the attribute does not exist.
      *
-     * @return string|null
+     * @return string|mixed|null
      */
     public function getDataAttribute($key, $default = null)
     {
@@ -180,7 +180,7 @@ trait DataObject
      */
     public function unserialize($serialized)
     {
-        $this->setDataAttributes(json_decode($serialized));
+        $this->setDataAttributes((array)json_decode($serialized));
     }
 
 }

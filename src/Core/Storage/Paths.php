@@ -2,6 +2,8 @@
 
 namespace Stillat\Meerkat\Core\Storage;
 
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use Stillat\Meerkat\Core\Configuration;
 
 /**
@@ -63,17 +65,6 @@ class Paths
     }
 
     /**
-     * Normalizes the directory separators in the provided path.
-     *
-     * @param string $path The path to normalize.
-     * @return string|string[]
-     */
-    public function normalize($path)
-    {
-        return str_replace('\\', self::SYM_FORWARD_SEPARATOR, $path);
-    }
-
-    /**
      * Combines the provided path segments and returns the created path.
      *
      * @param string[] $segments The path segments to combine.
@@ -85,6 +76,17 @@ class Paths
         array_walk($segments, [$this, 'cleanSegment']);
 
         return $this->normalize($this->cleanSegment(join($this->config->directorySeparator, $segments)));
+    }
+
+    /**
+     * Normalizes the directory separators in the provided path.
+     *
+     * @param string $path The path to normalize.
+     * @return string|string[]
+     */
+    public function normalize($path)
+    {
+        return str_replace('\\', self::SYM_FORWARD_SEPARATOR, $path);
     }
 
     /**
@@ -121,10 +123,24 @@ class Paths
         return $this->cleanSegment(join($this->config->directorySeparator, $segments));
     }
 
+    public function seekFiles($directory, $targetFile)
+    {
+        $result = [];
+        $dir = new RecursiveDirectoryIterator($directory);
+        $iterator = new RecursiveIteratorIterator($dir);
+
+        foreach ($dir as $info) {
+            $result[] = $info->getPathname();
+        }
+
+
+        return $result;
+    }
+
     public function getFilesRecursively($pattern, $flags = 0)
     {
         $files = glob($pattern, $flags);
-        foreach (glob(dirname($pattern) . '/*', GLOB_ONLYDIR | GLOB_NOSORT) as $dir) {
+        foreach (glob(dirname($pattern) . '/*', GLOB_NOSORT) as $dir) {
             $files = array_merge($files, $this->getFilesRecursively($dir . '/' . basename($pattern), $flags));
         }
         return $files;

@@ -72,6 +72,8 @@ class Configuration extends ConfigurationContainer
      */
     public $storageDirectory = '';
 
+    public $indexDirectory = '';
+
     /**
      * The directory separator character to use when constructing storage paths.
      *

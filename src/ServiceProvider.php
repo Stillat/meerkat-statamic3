@@ -4,6 +4,7 @@ namespace Stillat\Meerkat;
 
 use Stillat\Meerkat\Concerns\UsesConfig;
 use Stillat\Meerkat\Console\Commands\MigrateCommentsCommand;
+use Stillat\Meerkat\Console\Commands\StatisticsCommand;
 use Stillat\Meerkat\Console\Commands\ValidateCommand;
 use Stillat\Meerkat\Core\Contracts\Logging\ErrorCodeRepositoryContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
@@ -35,6 +36,7 @@ class ServiceProvider extends AddonServiceProvider
     protected $commands = [
         ValidateCommand::class,
         MigrateCommentsCommand::class,
+        StatisticsCommand::class
     ];
 
     protected $providers = [
@@ -144,6 +146,7 @@ class ServiceProvider extends AddonServiceProvider
             $globalConfiguration->autoPublishAnonymousPosts = $this->getConfig('publishing.auto_publish', false);
             $globalConfiguration->autoPublishAuthenticatedPosts = $this->getConfig('publishing.auto_publish_authenticated_users', false);
             $globalConfiguration->storageDirectory = PathProvider::contentPath();
+            $globalConfiguration->indexDirectory = storage_path('meerkat/index');
 
             foreach ($this->getConfig('authors', []) as $configSetting => $configValue) {
                 $globalConfiguration->set('author_'.$configSetting, $configValue);

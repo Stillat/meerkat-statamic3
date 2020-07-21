@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat\Http\Controllers;
 
+use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Logging\ErrorCodeRepositoryContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Errors;
@@ -24,7 +25,18 @@ class DashboardController extends Controller
 
     public function index(CommentStorageManagerContract $comments)
     {
-        dd(count($comments->getCommentsForThreadId('af43e0fb-a338-4433-b60a-3bed773be344')));
+        $data = $comments->getCommentsForThreadId('af43e0fb-a338-4433-b60a-3bed773be344');
+        /** @var CommentContract $firstComment */
+        $firstComment = array_shift($data);
+
+        dd($firstComment->getAuthor());
+        //$firstComment->setRawContent('hello, world ' . time());
+
+//        $didSave = $comments->save($firstComment);
+        //$firstComment->publish();
+
+        dd($firstComment);
+
         return view('meerkat::dashboard');
     }
 

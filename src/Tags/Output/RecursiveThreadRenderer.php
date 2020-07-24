@@ -57,7 +57,7 @@ class RecursiveThreadRenderer
 
             $template = preg_replace($nestedTagRegex, $subKey, $template);
 
-            // Create some regexes to find the opening and closing comments.
+            // Create some regular expressions to find the opening and closing comments.
             $openingTagRegex = '/\{\{\s*' . $collectionName . '\s*\}\}/ms';
             $closingTagRegex = '/\{\{\s*\/' . $collectionName . '\s*\}\}/ms';
 

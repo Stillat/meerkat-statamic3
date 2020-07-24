@@ -5,9 +5,26 @@ namespace Stillat\Meerkat\Tags\Output;
 use Illuminate\Support\Str;
 use Statamic\Facades\Parse;
 
+/**
+ * Class RecursiveThreadRenderer
+ *
+ * Provides utilities to render recursive comment threads.
+ *
+ * @package Stillat\Meerkat\Tags\Output
+ * @since 2.0.0
+ */
 class RecursiveThreadRenderer
 {
 
+    /**
+     * Recursively renders a comment thread.
+     *
+     * @param string $template The template.
+     * @param array $data The comment data to render.
+     * @param array $context Optional context data.
+     * @param string $collectionName The name of the nested collection.
+     * @return string|string[]
+     */
     public static function renderRecursiveThread($template, $data, $context, $collectionName)
     {
         $nestedTagRegex = '/\{\{\s*' . $collectionName . '\s*\}\}.*?\{\{\s*\/' . $collectionName . '\s*\}\}/ms';
@@ -19,6 +36,7 @@ class RecursiveThreadRenderer
             $nestedCommentsString = $match[0];
             // Remove tag pair from the original template.
 
+            // Wraps the recursive call in a `has_replies` check to prevent memory issues.
             if (Str::contains($nestedCommentsString, '{{ if has_replies }}') === false) {
                 $templateParts = preg_split("/\r\n|\n|\r/", $nestedCommentsString);
                 $newParts = [];

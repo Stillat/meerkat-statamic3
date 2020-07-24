@@ -123,20 +123,13 @@ class Paths
         return $this->cleanSegment(join($this->config->directorySeparator, $segments));
     }
 
-    public function seekFiles($directory, $targetFile)
-    {
-        $result = [];
-        $dir = new RecursiveDirectoryIterator($directory);
-        $iterator = new RecursiveIteratorIterator($dir);
-
-        foreach ($dir as $info) {
-            $result[] = $info->getPathname();
-        }
-
-
-        return $result;
-    }
-
+    /**
+     * Gets all the files with the given pattern, recursively.
+     *
+     * @param string $pattern The glob search pattern.
+     * @param int $flags The glob flags.
+     * @return array|false
+     */
     public function getFilesRecursively($pattern, $flags = 0)
     {
         $files = glob($pattern, $flags);
@@ -145,4 +138,5 @@ class Paths
         }
         return $files;
     }
+
 }

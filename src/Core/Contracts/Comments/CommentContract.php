@@ -40,6 +40,8 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     const KEY_PUBLISHED = 'published';
     const KEY_SPAM = 'spam';
 
+    const KEY_HAS_REPLIES = 'has_replies';
+
     const KEY_NAME = 'name';
     const KEY_EMAIL = 'email';
     const KEY_USER_IP = 'user_ip';
@@ -311,5 +313,12 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
      * @return bool
      */
     public function updateCommentContent($content);
+
+    /**
+     * Converts the comment into an array.
+     *
+     * @return array
+     */
+    public function toArray();
 
 }

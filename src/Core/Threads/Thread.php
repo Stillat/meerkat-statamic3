@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat\Core\Threads;
 
+use http\Header\Parser;
 use JsonSerializable;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContextContract;
@@ -43,18 +44,11 @@ class Thread implements ThreadContract, JsonSerializable
     private $contextId = '';
 
     /**
-     * The relative storage path for the thread.
+     * The storage path for the thread.
      *
      * @var string
      */
     public $path = '';
-
-    /**
-     * The comments on the thread.
-     *
-     * @var array
-     */
-    private $comments = [];
 
     /**
      * The total number of all comments in the thread.
@@ -94,6 +88,13 @@ class Thread implements ThreadContract, JsonSerializable
      * @var bool
      */
     private $isUsable = false;
+
+    /**
+     * The thread's hierarchy.
+     *
+     * @var ThreadHierarchy|null
+     */
+    private $hierarchy = null;
 
     /**
      * Sets if the thread is usable.
@@ -234,7 +235,7 @@ class Thread implements ThreadContract, JsonSerializable
      */
     public function getComments()
     {
-        return $this->comments;
+        return $this->hierarchy->getComments();
     }
 
     /**
@@ -245,7 +246,7 @@ class Thread implements ThreadContract, JsonSerializable
      */
     public function setComments($comments)
     {
-        $this->comments = $comments;
+        $this->hierarchy->setComments($comments);
     }
 
     /**
@@ -323,6 +324,80 @@ class Thread implements ThreadContract, JsonSerializable
         }
 
         return ThreadManagerFactory::$instance->removeById($this->getId());
+    }
+
+
+    /**
+     * Sets the thread's hierarchy.
+     *
+     * @param ThreadHierarchy $hierarchy The thread's structure.
+     * @return void
+     */
+    public function setHierarchy(ThreadHierarchy $hierarchy)
+    {
+        $this->hierarchy = $hierarchy;
+        $this->totalCommentCount = $hierarchy->getTotalCommentCount();
+        $this->totalRootLevelCommentCount = $hierarchy->getRootLevelCommentCount();
+    }
+
+    /**
+     * Gets the thread's hierarchy.
+     *
+     * @return ThreadHierarchy|null
+     */
+    public function getHierarchy()
+    {
+        return $this->hierarchy;
+    }
+
+    /**
+     * Converts the thread's comments into an array; sets the comment reply property to the provided name
+     *
+     * @param string $repliesName The replies data property to use.
+     * @return array
+     */
+    public function getCommentCollection($repliesName)
+    {
+        /** @var CommentContract[] $comments */
+        $comments = $this->hierarchy->getComments();
+
+        // Do the initial conversion.
+        foreach ($comments as $comment) {
+            $commentArray = $comment->toArray();
+            $commentArray[$repliesName] = [];
+
+            $comments[$comment->getId()] = $commentArray;
+        }
+
+        // Update the comment properties to use the array form.
+       foreach ($comments as &$comment)
+        {
+            /** @var CommentContract[] $currentChildren */
+            $currentChildren = $comment[CommentContract::KEY_CHILDREN];
+            $newChildren = [];
+
+            foreach ($currentChildren as &$child) {
+                $newChildren[] =& $comments[$child->getId()];
+            }
+
+            $comment[$repliesName] = $newChildren;
+
+            if (array_key_exists(CommentContract::KEY_PARENT, $comment)) {
+                $commentParent = [];
+
+                foreach ($comments[$comment[CommentContract::KEY_PARENT]->getId()] as $property => $value) {
+                    if ($property === $repliesName || $property === CommentContract::KEY_CHILDREN) {
+                        continue;
+                    }
+
+                    $commentParent[$property] = $value;
+                }
+
+                $comment[CommentContract::KEY_PARENT] = $commentParent;
+            }
+        }
+
+        return $comments;
     }
 
     public function jsonSerialize()

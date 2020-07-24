@@ -620,6 +620,15 @@ class Comment implements CommentContract
         return $this->save();
     }
 
+    public function toArray()
+    {
+        $data = $this->getDataAttributes();
+
+        $data[CommentContract::KEY_CONTENT] = $data[CommentContract::INTERNAL_CONTENT_RAW];
+
+        return $data;
+    }
+
     public function __toString()
     {
         return $this->getId();

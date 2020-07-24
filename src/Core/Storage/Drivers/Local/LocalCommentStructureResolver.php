@@ -4,6 +4,7 @@ namespace Stillat\Meerkat\Core\Storage\Drivers\Local;
 
 use Stillat\Meerkat\Core\Contracts\Storage\StructureResolverInterface;
 use Stillat\Meerkat\Core\Storage\Paths;
+use Stillat\Meerkat\Core\Threads\ThreadHierarchy;
 
 /**
  * Class LocalCommentStructureResolver
@@ -116,6 +117,13 @@ class LocalCommentStructureResolver implements StructureResolverInterface
      */
     protected $internalRepliesPathMapping = [];
 
+    /**
+     * A list of previously resolve hierarchies.
+     *
+     * @var array
+     */
+    private $hierarchyCache = [];
+
     public function __construct()
     {
         $this->replyReplacement = Paths::SYM_FORWARD_SEPARATOR . LocalCommentStorageManager::PATH_REPLIES_DIRECTORY;
@@ -130,6 +138,15 @@ class LocalCommentStructureResolver implements StructureResolverInterface
     {
         $this->paths = [];
         $this->threadPath = '';
+        $this->threadPathLength = 0;
+        $this->commentIdPathMapping = [];
+        $this->depthMapping = [];
+        $this->commentDepthMapping = [];
+        $this->directAncestorMapping = [];
+        $this->directDescendentMapping = [];
+        $this->ancestorMapping = [];
+        $this->descendentMapping = [];
+        $this->internalRepliesPathMapping = [];
     }
 
     /**
@@ -149,10 +166,17 @@ class LocalCommentStructureResolver implements StructureResolverInterface
      *
      * @param string $threadPath The thread's base path.
      * @param array $commentPaths A collection of comment absolute paths.
+     * @return ThreadHierarchy
      */
     public function resolve($threadPath, $commentPaths)
     {
+        if (array_key_exists($threadPath, $this->hierarchyCache)) {
+            return $this->hierarchyCache[$threadPath];
+        }
+
         $this->reset();
+
+        $hierarchy = new ThreadHierarchy();
 
         $this->threadPathLength = mb_strlen($threadPath) + 1;
         $this->threadPath = $threadPath;
@@ -245,98 +269,19 @@ class LocalCommentStructureResolver implements StructureResolverInterface
 
             $this->paths[] = $path;
         }
-    }
 
-    /**
-     * Gets the depth of the provided comment identifier.
-     *
-     * @param string $commentId The comment's identifier.
-     * @return integer
-     */
-    public function getDepth($commentId)
-    {
-        if (array_key_exists($commentId, $this->commentDepthMapping)) {
-            return $this->commentDepthMapping[$commentId];
-        }
+        $hierarchy->setCommentIdPathMapping($this->commentIdPathMapping);
+        $hierarchy->setIdentifierDepthMapping($this->commentDepthMapping);
+        $hierarchy->setCommentDepthMapping($this->depthMapping);
+        $hierarchy->setDirectAncestorMapping($this->directAncestorMapping);
+        $hierarchy->setDirectDescendentMapping($this->directDescendentMapping);
+        $hierarchy->setAncestorMapping($this->ancestorMapping);
 
-        return 0;
-    }
+        $this->hierarchyCache[$threadPath] = $hierarchy;
 
-    /**
-     * Indicates if the comment has a direct ancestor.
-     *
-     * @param string $commentId The comment ID.
-     * @return bool
-     */
-    public function hasAncestor($commentId)
-    {
-        return array_key_exists($commentId, $this->directAncestorMapping);
-    }
+        $this->reset();
 
-    /**
-     * Gets the comment's ancestor identifiers.
-     *
-     * @param string $commentId The comment's identifier.
-     * @return string[]
-     */
-    public function getAllAncestors($commentId)
-    {
-        if (array_key_exists($commentId, $this->ancestorMapping)) {
-            return $this->ancestorMapping[$commentId];
-        }
-
-        return [];
-    }
-
-    /**
-     * Gets the comment's parent identifier, if any.
-     *
-     * @param string $commentId The comment's identifier.
-     * @return string|null
-     */
-    public function getParent($commentId)
-    {
-        if (array_key_exists($commentId, $this->directAncestorMapping)) {
-            return $this->directAncestorMapping[$commentId];
-        }
-
-        return null;
-    }
-
-    /**
-     * Gets the comment's descendent identifiers, if any.
-     *
-     * This method will all comment identifiers from:
-     *    Comment Depth + 1 to MaxSubThreadDepth
-     *
-     * @param string $commentId The comment's identifier.
-     * @return string[]
-     */
-    public function getAllDescendents($commentId)
-    {
-        if (array_key_exists($commentId, $this->descendentMapping)) {
-            return $this->descendentMapping[$commentId];
-        }
-
-        return [];
-    }
-
-    /**
-     * Gets the comment's direct descendent identifiers, if any.
-     *
-     * This method will return all comment identifiers from:
-     *    Comment Depth + 1
-     *
-     * @param string $commentId The comment's identifier.
-     * @return string[]
-     */
-    public function getDirectDescendents($commentId)
-    {
-        if (array_key_exists($commentId, $this->directDescendentMapping)) {
-            return $this->directDescendentMapping[$commentId];
-        }
-
-        return [];
+        return $hierarchy;
     }
 
 }

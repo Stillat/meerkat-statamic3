@@ -80,4 +80,5 @@ abstract class AbstractMarkdownParser implements MarkdownParserContract
 
         $dataContainer[CommentContract::KEY_CONTENT] = $parsedContent;
     }
+
 }

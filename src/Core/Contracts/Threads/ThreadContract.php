@@ -6,6 +6,7 @@ use Serializable;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\StorableContract;
 use Stillat\Meerkat\Core\Contracts\DataObjectContract;
+use Stillat\Meerkat\Core\Threads\ThreadHierarchy;
 use Stillat\Meerkat\Core\Threads\ThreadMetaData;
 
 /**
@@ -153,5 +154,28 @@ interface ThreadContract extends DataObjectContract, StorableContract, Serializa
      * @return ThreadMetaData|null
      */
     public function getMetaData();
+
+    /**
+     * Sets the thread's hierarchy.
+     *
+     * @param ThreadHierarchy $hierarchy The thread's structure.
+     * @return void
+     */
+    public function setHierarchy(ThreadHierarchy $hierarchy);
+
+    /**
+     * Gets the thread's hierarchy.
+     *
+     * @return ThreadHierarchy|null
+     */
+    public function getHierarchy();
+
+    /**
+     * Converts the thread's comments into an array; sets the comment reply property to the provided name
+     *
+     * @param string $repliesName The replies data property to use.
+     * @return array
+     */
+    public function getCommentCollection($repliesName);
 
 }

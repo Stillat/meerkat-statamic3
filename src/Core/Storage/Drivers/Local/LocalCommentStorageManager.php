@@ -19,6 +19,7 @@ use Stillat\Meerkat\Core\Storage\Drivers\Local\Attributes\TruthyAttributes;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\Indexing\ShadowIndex;
 use Stillat\Meerkat\Core\Storage\Paths;
 use Stillat\Meerkat\Core\Support\TypeConversions;
+use Stillat\Meerkat\Core\Threads\ThreadHierarchy;
 use Stillat\Meerkat\Core\ValidationResult;
 use Stillat\Meerkat\Core\Validators\PathPrivilegeValidator;
 
@@ -26,6 +27,10 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
 {
 
     const PATH_REPLIES_DIRECTORY = 'replies';
+    const KEY_HEADERS = 'headers';
+    const KEY_RAW_HEADERS = 'raw_headers';
+    const KEY_CONTENT = 'content';
+    const KEY_NEEDS_MIGRATION = 'needs_content_migration';
 
     /**
      * The Meerkat configuration instance.
@@ -40,16 +45,19 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      * @var string
      */
     protected $storagePath = '';
+
     /**
      * @var Paths|null
      */
     protected $paths = null;
+
     /**
      * Indicates if the configured storage directory was validated.
      *
      * @var bool
      */
     private $directoryValidated = false;
+
     /**
      * Indicates if the configured storage directory is usable.
      *
@@ -179,12 +187,16 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      * Gets all comments for the requested thread.
      *
      * @param string $threadId The identifier of the thread.
-     * @return array|mixed
+     * @return ThreadHierarchy
      */
     public function getCommentsForThreadId($threadId)
     {
         if ($this->canUseDirectory === false) {
-            return [];
+            return new ThreadHierarchy();
+        }
+
+        if (array_key_exists($threadId, $this->threadStructureCache)) {
+            return $this->threadStructureCache[$threadId];
         }
 
         if ($this->commentShadowIndex->hasProtoTypeIndex($threadId)) {
@@ -206,26 +218,29 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         }
 
         // Build up statistics for the located comments.
-        $this->commentStructureResolver->resolve($threadPath, $commentPaths);
+        $hierarchy = $this->commentStructureResolver->resolve($threadPath, $commentPaths);
 
         for ($i = 0; $i < count($commentPaths); $i += 1) {
             // First, let's get the "prototype" form of this comment.
             $commentInternalPath = $this->paths->normalize($commentPaths[$i]);
             $commentPrototype = $this->getCommentPrototype($commentInternalPath);
 
-            if (count($commentPrototype['headers']) == 0) {
+            if (count($commentPrototype[LocalCommentStorageManager::KEY_HEADERS]) == 0) {
                 continue;
             }
 
-            if (array_key_exists(CommentContract::KEY_ID, $commentPrototype['headers']) === false) {
+            if (array_key_exists(
+                CommentContract::KEY_ID,
+                $commentPrototype[LocalCommentStorageManager::KEY_HEADERS]) === false
+            ) {
                 continue;
             }
 
-            $commentId = $commentPrototype['headers'][CommentContract::KEY_ID];
+            $commentId = $commentPrototype[LocalCommentStorageManager::KEY_HEADERS][CommentContract::KEY_ID];
             $commentId = ltrim($commentId, '"\'');
             $commentId = rtrim($commentId, '"\'');
 
-            $commentPrototype['headers'][CommentContract::INTERNAL_PATH] = $commentInternalPath;
+            $commentPrototype[LocalCommentStorageManager::KEY_HEADERS][CommentContract::INTERNAL_PATH] = $commentInternalPath;
 
             $comment = new Comment();
 
@@ -234,13 +249,13 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             $comment->setAuthorRetriever($this->authorRetriever);
             // End:   Comment Implementation Specifics
 
-            $comment->setDataAttributes($commentPrototype['headers']);
-            $comment->setRawAttributes($commentPrototype['raw_headers']);
-            $comment->setRawContent($commentPrototype['content']);
+            $comment->setDataAttributes($commentPrototype[LocalCommentStorageManager::KEY_HEADERS]);
+            $comment->setRawAttributes($commentPrototype[LocalCommentStorageManager::KEY_RAW_HEADERS]);
+            $comment->setRawContent($commentPrototype[LocalCommentStorageManager::KEY_CONTENT]);
             $comment->setYamlParser($this->yamlParser);
             $comment->setMarkdownParser($this->markdownParser);
 
-            if ($commentPrototype['needs_content_migration']) {
+            if ($commentPrototype[LocalCommentStorageManager::KEY_NEEDS_MIGRATION]) {
                 $comment->setDataAttribute(CommentContract::INTERNAL_STRUCTURE_NEEDS_MIGRATION, true);
             }
 
@@ -254,9 +269,9 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
          * @var CommentContract $comment
          */
         foreach ($commentPrototypes as $commentId => $comment) {
-            $hasAncestor = $this->commentStructureResolver->hasAncestor($commentId);
-            $directChildren = $this->commentStructureResolver->getDirectDescendents($commentId);
-            $allDescendents = $this->commentStructureResolver->getAllDescendents($commentId);
+            $hasAncestor = $hierarchy->hasAncestor($commentId);
+            $directChildren = $hierarchy->getDirectDescendents($commentId);
+            $allDescendents = $hierarchy->getAllDescendents($commentId);
             $children = [];
 
             $isParent = count($directChildren) > 0;
@@ -280,12 +295,12 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
 
             $comment->setDataAttribute(
                 CommentContract::KEY_DEPTH,
-                $this->commentStructureResolver->getDepth($commentId)
+                $hierarchy->getDepth($commentId)
             );
 
             $comment->setDataAttribute(
                 CommentContract::KEY_ANCESTORS,
-                $this->commentStructureResolver->getAllAncestors($commentId)
+                $hierarchy->getAllAncestors($commentId)
             );
 
             if ($isParent) {
@@ -294,22 +309,29 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
                         $children[] = $commentPrototypes[$child];
                     }
                 }
+
+                $comment->setDataAttribute(CommentContract::KEY_HAS_REPLIES, true);
+            } else {
+                $comment->setDataAttribute(CommentContract::KEY_HAS_REPLIES, false);
             }
 
             if ($hasAncestor) {
-                $commentParent = $this->commentStructureResolver->getParent($commentId);
+                $commentParent = $hierarchy->getParent($commentId);
                 $comment->setDataAttribute(CommentContract::KEY_PARENT, $commentPrototypes[$commentParent]);
             }
 
             $comment->setDataAttribute(CommentContract::KEY_CHILDREN, $children);
             $comment->setDataAttribute(CommentContract::KEY_IS_REPLY, $hasAncestor);
             $comment->setReplies($children);
-
         }
 
         $this->commentShadowIndex->buildProtoTypeIndex($threadId, $commentPrototypes);
 
-        return $commentPrototypes;
+        $hierarchy->setComments($commentPrototypes);
+
+        $this->threadStructureCache[$threadId] = $hierarchy;
+
+        return $hierarchy;
     }
 
     /**
@@ -397,10 +419,10 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         }
 
         return [
-            'headers' => $headers,
-            'raw_headers' => $rawHeaders,
-            'content' => $content,
-            'needs_content_migration' => $alreadyFoundContent
+            LocalCommentStorageManager::KEY_HEADERS => $headers,
+            LocalCommentStorageManager::KEY_RAW_HEADERS => $rawHeaders,
+            LocalCommentStorageManager::KEY_CONTENT => $content,
+            LocalCommentStorageManager::KEY_NEEDS_MIGRATION => $alreadyFoundContent
         ];
     }
 
@@ -418,21 +440,37 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         return $attributeValue;
     }
 
-    public function isChildOf($child, $testParent)
+    /**
+     * Tests if the provided comment identifier is a descendent of the parent.
+     *
+     * @param string $commentId The child identifier to test.
+     * @param string $testParent The parent identifier to test.
+     * @return bool
+     */
+    public function isChildOf($commentId, $testParent)
     {
         // TODO: Implement isChildOf() method.
+        return false;
     }
 
-    public function isParentOf($parent, $testChild)
+    /**
+     * Tests if the parent identifier is the direct ancestor of the provided comment.
+     *
+     * @param string $testParent The parent identifier to test.
+     * @param string $commentId The child identifier to test.
+     * @return bool
+     */
+    public function isParentOf($testParent, $commentId)
     {
         // TODO: Implement isParentOf() method.
+        return false;
     }
 
     /**
      * Attempts to save the comment data.
      *
      * @param CommentContract $comment The comment to save.
-     * @return false
+     * @return bool
      */
     public function save(CommentContract $comment)
     {
@@ -449,8 +487,15 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         return file_put_contents($comment->getVirtualPath(), $contentToSave);
     }
 
+    /**
+     * Attempts to update the comment data.
+     *
+     * @param CommentContract $comment The comment to save.
+     * @return bool
+     */
     public function update(CommentContract $comment)
     {
         // TODO: Implement update() method.
+        return false;
     }
 }

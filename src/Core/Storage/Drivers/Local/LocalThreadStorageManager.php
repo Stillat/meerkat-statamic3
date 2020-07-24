@@ -19,6 +19,7 @@ use Stillat\Meerkat\Core\Storage\Drivers\Local\Conversions\ThreadSoftDeleteConve
 use Stillat\Meerkat\Core\Storage\Paths;
 use Stillat\Meerkat\Core\Support\Str;
 use Stillat\Meerkat\Core\Threads\Thread;
+use Stillat\Meerkat\Core\Threads\ThreadHierarchy;
 use Stillat\Meerkat\Core\Threads\ThreadMetaData;
 use Stillat\Meerkat\Core\ValidationResult;
 use Stillat\Meerkat\Core\Validators\PathPrivilegeValidator;
@@ -340,7 +341,7 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
         $targetPath = $this->storagePath . Paths::SYM_FORWARD_SEPARATOR .
             $contextId . Paths::SYM_FORWARD_SEPARATOR . self::EXT_THREAD_META;
 
-        $wasSuccess = file_put_contents($targetPath, $this->yamlParser->toYaml($data->toArray()));
+        $wasSuccess = file_put_contents($targetPath, $this->yamlParser->toYaml($data->toArray(), null));
 
         if ($wasSuccess == false) {
             LocalErrorCodeRepository::log(ErrorLog::make(
@@ -383,7 +384,11 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
             }
         }
 
-        return null;
+        $newMeta = $this->createMetaFromExistingThread($contextId);
+
+        $this->saveMetaData($contextId, $newMeta);
+
+        return $newMeta;
     }
 
     /**
@@ -419,8 +424,10 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
         }
 
         if ($includeComments) {
-            $newThread->setComments($this->getAllComments($newThread));
+            $newThread->setHierarchy($this->getAllCommentsById($threadId));
         }
+
+        $newThread->path = $this->determineVirtualPathById($threadId);
 
         return $newThread;
     }
@@ -429,7 +436,7 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
      * Retrieves the comments for the provided thread.
      *
      * @param ThreadContract $thread
-     * @return CommentContract[]
+     * @return ThreadHierarchy
      */
     public function getAllComments(ThreadContract $thread)
     {
@@ -440,12 +447,12 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
      * Gets all the comments for the provided thread identifier.
      *
      * @param string $threadId The thread's string identifier.
-     * @return CommentContract[]
+     * @return ThreadHierarchy
      */
     public function getAllCommentsById($threadId)
     {
         if ($this->canUseDirectory === false) {
-            return [];
+            return new ThreadHierarchy();
         }
 
         return $this->commentStorageManager->getCommentsForThreadId($threadId);
@@ -587,6 +594,9 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
             return false;
         }
 
+        // TODO: Need to emit the thread removal event
+        //       and handle the possibility of soft deletes.
+
         // Danger Zone: This method permanently deletes things.
         $targetPath = $this->storagePath . Paths::SYM_FORWARD_SEPARATOR . $id;
 
@@ -613,6 +623,8 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
      */
     private function recursivelyRemoveDirectory($directory)
     {
+        // TODO: Refactor to paths.
+
         if (is_dir($directory)) {
             $objects = scandir($directory);
             foreach ($objects as $object) {
@@ -761,6 +773,8 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
      */
     private function recursivelyCopyDirectory($source, $destination, $cleanUpSource)
     {
+        // TODO: Refactor to Paths.
+
         if (file_exists($destination) == false) {
             mkdir($destination, Paths::DIRECTORY_PERMISSIONS, true);
         }

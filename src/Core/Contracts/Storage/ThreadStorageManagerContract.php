@@ -6,6 +6,7 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContextContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContract;
 use Stillat\Meerkat\Core\Threads\Thread;
+use Stillat\Meerkat\Core\Threads\ThreadHierarchy;
 use Stillat\Meerkat\Core\Threads\ThreadMetaData;
 use Stillat\Meerkat\Core\ValidationResult;
 
@@ -65,7 +66,7 @@ interface ThreadStorageManagerContract
      * Retrieves the comments for the provided thread.
      *
      * @param ThreadContract $thread
-     * @return CommentContract[]
+     * @return ThreadHierarchy
      */
     public function getAllComments(ThreadContract $thread);
 
@@ -73,7 +74,7 @@ interface ThreadStorageManagerContract
      * Gets all the comments for the provided thread identifier.
      *
      * @param string $threadId The thread's string identifier.
-     * @return CommentContract[]
+     * @return ThreadHierarchy
      */
     public function getAllCommentsById($threadId);
 

@@ -8,9 +8,11 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentFactoryContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\ThreadStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ContextResolverContract;
+use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadMutationPipelineContract;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalCommentStorageManager;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalThreadStorageManager;
+use Stillat\Meerkat\Core\Threads\ThreadManager;
 use Stillat\Meerkat\Threads\ContextResolver;
 use Stillat\Meerkat\Threads\ThreadMutationPipeline;
 
@@ -80,6 +82,10 @@ class ThreadServiceProvider extends AddonServiceProvider
 
         $this->app->singleton(ThreadStorageManagerContract::class, function ($app) use ($driverConfiguration) {
             return $app->make($driverConfiguration[self::CONFIG_THREAD_DRIVER]);
+        });
+
+        $this->app->singleton(ThreadManagerContract::class, function ($app) {
+            return $app->make(ThreadManager::class);
         });
     }
 

@@ -36,25 +36,6 @@ interface ThreadManagerContract
     public function existsForContext($contextId, $withTrashed);
 
     /**
-     * Returns all comments attached to the provided thread.
-     *
-     * @param  ThreadContract $thread
-     *
-     * @return CommentContract[]
-     */
-    public function all(ThreadContract $thread);
-
-    /**
-     * Attempts to locate and return all comments attached
-     * to a thread with the provided string identifier.
-     *
-     * @param  string $id
-     *
-     * @return CommentContract[]
-     */
-    public function allForId($id);
-
-    /**
      * Persists the specified thread to disk.
      *
      * @param  ThreadContract $thread

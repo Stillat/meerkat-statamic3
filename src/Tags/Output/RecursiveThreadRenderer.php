@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat\Tags\Output;
 
+use Illuminate\Support\Str;
 use Statamic\Facades\Parse;
 
 class RecursiveThreadRenderer
@@ -17,6 +18,24 @@ class RecursiveThreadRenderer
         if ($match && count($match) > 0) {
             $nestedCommentsString = $match[0];
             // Remove tag pair from the original template.
+
+            if (Str::contains($nestedCommentsString, '{{ if has_replies }}') === false) {
+                $templateParts = preg_split("/\r\n|\n|\r/", $nestedCommentsString);
+                $newParts = [];
+                $recursiveTagToLookFor = '{{ *recursive '.$collectionName.'* }}';
+
+                foreach ($templateParts as $part) {
+                    if (Str::contains($part, $recursiveTagToLookFor)) {
+                        $newParts[] = '{{ if has_replies }}';
+                        $newParts[] = $part;
+                        $newParts[] = '{{ /if }}';
+                    } else {
+                        $newParts[] = $part;
+                    }
+                }
+
+                $nestedCommentsString = implode("\n", $newParts);
+            }
 
             $template = preg_replace($nestedTagRegex, $subKey, $template);
 

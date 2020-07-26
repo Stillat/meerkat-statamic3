@@ -2,10 +2,9 @@
 
 namespace Stillat\Meerkat\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Concerns\InteractsWithInput;
+use Statamic\Http\Controllers\CP\CpController;
 use Statamic\Statamic;
-use Stillat\Meerkat\Addon;
 use Stillat\Meerkat\Core\Contracts\Logging\ErrorCodeRepositoryContract;
 use Stillat\Meerkat\Feedback\SolutionProvider;
 
@@ -17,7 +16,7 @@ use Stillat\Meerkat\Feedback\SolutionProvider;
  * @package Stillat\Meerkat\Http\Controllers
  * @since 2.0.0
  */
-class ErrorLogsController extends Controller
+class ErrorLogsController extends CpController
 {
     use InteractsWithInput;
 

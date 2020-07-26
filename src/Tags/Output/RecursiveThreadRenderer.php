@@ -27,6 +27,9 @@ class RecursiveThreadRenderer
      */
     public static function renderRecursiveThread($template, $data, $context, $collectionName)
     {
+        // TODO: Capture memory exhaustion and throw a custom exception
+        //       when the template has malformed safety checks.
+
         $nestedTagRegex = '/\{\{\s*' . $collectionName . '\s*\}\}.*?\{\{\s*\/' . $collectionName . '\s*\}\}/ms';
         preg_match($nestedTagRegex, $template, $match);
 

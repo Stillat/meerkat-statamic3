@@ -6,6 +6,9 @@ use Illuminate\Http\Concerns\InteractsWithInput;
 use Illuminate\Support\MessageBag;
 use Statamic\Http\Controllers\Controller;
 use Statamic\Support\Arr;
+use Stillat\Meerkat\Core\Comments\Comment;
+use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
+use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Exceptions\FormValidationException;
 use Stillat\Meerkat\Exceptions\RejectSubmissionException;
 use Stillat\Meerkat\Forms\FormHandler;
@@ -39,6 +42,7 @@ class SocializeController extends Controller
     public function postSocialize()
     {
         $this->formHandler->setData(collect(request()->all()));
+        $commentData = [];
 
         try {
             $this->formHandler->handleRequest();
@@ -55,6 +59,13 @@ class SocializeController extends Controller
                 }
             }
 
+            if (array_key_exists('submission', $eventResults)) {
+                if ($eventResults['submission'] !== null) {
+                    if ($eventResults['submission'] instanceof MockSubmission) {
+                        $commentData = $eventResults['submission']->data();
+                    }
+                }
+            }
         } catch (FormValidationException $validationException) {
             return $this->formFailure(
                 $this->formHandler->getSubmissionParameters(),
@@ -67,6 +78,61 @@ class SocializeController extends Controller
                 $this->formHandler->getSubmissionData()
             );
         }
+
+        $commentData = $this->fillWithRequestData($commentData);
+        $commentData = $this->fillWithUserData($commentData);
+        $commentData = $this->fillWithEntryData($commentData);
+
+        $this->formHandler->store($commentData);
+    }
+
+    /**
+     * Fills the comment data with the context's information.
+     *
+     * @param array $data The comment's data.
+     * @return array
+     */
+    private function fillWithEntryData($data)
+    {
+        return array_merge($data, $this->formHandler->getEntryData());
+    }
+
+    /**
+     * Adds the current authenticated user information, if the email addresses match.
+     *
+     * @param array $data The comment's data.
+     * @return array
+     */
+    private function fillWithUserData($data)
+    {
+        $currentUser = auth()->user();
+
+        if ($currentUser === null) {
+            return $data;
+        }
+
+        if ($data[AuthorContract::KEY_EMAIL_ADDRESS] === $currentUser->email()) {
+            $data[AuthorContract::AUTHENTICATED_USER_ID] = $currentUser->getAuthIdentifier();
+        }
+
+        return $data;
+    }
+
+    /**
+     * Adds the request information (such as User-Agent) to the comment's data.
+     *
+     * @param array $data The comment data.
+     * @return array
+     */
+    private function fillWithRequestData($data)
+    {
+        $requestData = [
+            AuthorContract::KEY_USER_AGENT => request()->header('User-Agent'),
+            AuthorContract::KEY_USER_IP => request()->getClientIp(),
+            CommentContract::KEY_REFERRER => request()->server('HTTP_REFERER'),
+        ];
+
+        return array_merge($data, $requestData);
     }
 
     /**

@@ -11,6 +11,7 @@ use Stillat\Meerkat\Core\InconsistentCompositionException;
 use Stillat\Meerkat\Core\Parsing\UsesMarkdownParser;
 use Stillat\Meerkat\Core\Parsing\UsesYAMLParser;
 use Stillat\Meerkat\Core\Storage\Data\CommentAuthorRetriever;
+use Stillat\Meerkat\Core\Storage\Paths;
 use Stillat\Meerkat\Core\Support\TypeConversions;
 
 /**
@@ -99,6 +100,21 @@ class Comment implements CommentContract
      * @var CommentAuthorRetriever|null
      */
     private $authorManager = null;
+
+    private $isNew = false;
+
+    private $threadId = null;
+
+
+    public function setIsNew($isNew)
+    {
+        $this->isNew = $isNew;
+    }
+
+    public function setThreadId($threadId)
+    {
+        $this->threadId = $threadId;
+    }
 
     public function setStorageManager(&$manager)
     {
@@ -227,7 +243,9 @@ class Comment implements CommentContract
             return false;
         }
 
-        $attributes = $this->getAttributesToSave();
+        return $this->storageManager->save($this);
+
+        /*$attributes = $this->getAttributesToSave();
         $content = '';
 
         if (array_key_exists(CommentContract::KEY_CONTENT, $attributes)) {
@@ -248,7 +266,7 @@ class Comment implements CommentContract
             return false;
         }
 
-        return true;
+        return true;*/
     }
 
     /**
@@ -544,7 +562,15 @@ class Comment implements CommentContract
      */
     public function getIsNew()
     {
+        if ($this->isNew === true) {
+            return true;
+        }
+
         $virtualPath = $this->getVirtualPath();
+
+        if ($virtualPath === null) {
+            return true;
+        }
 
         return !file_exists($virtualPath);
     }
@@ -556,6 +582,10 @@ class Comment implements CommentContract
      */
     public function getVirtualPath()
     {
+        if ($this->isNew) {
+            return $this->storageManager->generateVirtualPath($this->threadId, $this->getId());
+        }
+
         return $this->getDataAttribute(CommentContract::INTERNAL_PATH);
     }
 

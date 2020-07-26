@@ -239,6 +239,7 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
 
     private function publishAddonControlPanelAssets()
     {
+        // TODO: Cleanup old versions, and refactor to shared storage methods.
         $resources = PathProvider::getResourcesDirectory('/dist/js');
         $publicPath = public_path('/vendor/meerkat/js/'.Addon::VERSION);
 

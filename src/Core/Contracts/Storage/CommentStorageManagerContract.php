@@ -3,10 +3,20 @@
 namespace Stillat\Meerkat\Core\Contracts\Storage;
 
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
+use Stillat\Meerkat\Core\Storage\Paths;
 use Stillat\Meerkat\Core\Threads\ThreadHierarchy;
 
 interface CommentStorageManagerContract
 {
+
+    /**
+     * Gets the virtual path manager.
+     *
+     * @return Paths
+     */
+    public function getPaths();
+
+    public function generateVirtualPath($threadId, $commentId);
 
     /**
      * Gets all comments for the requested thread.

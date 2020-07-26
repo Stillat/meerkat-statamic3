@@ -46,7 +46,7 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     const KEY_EMAIL = 'email';
     const KEY_USER_IP = 'user_ip';
     const KEY_USER_AGENT = 'user_agent';
-    const KEY_REFERRER = 'referrer';
+    const KEY_REFERRER = 'referer';
     const KEY_PAGE_URL = 'page_url';
 
     const INTERNAL_ABSOLUTE_ROOT = 'internal_root';
@@ -60,6 +60,10 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     const INTERNAL_RESPONSE_CONTEXT = 'internal_response_context';
     const INTERNAL_RESPONSE_HAS_REPLIES = 'internal_response_has_replies';
     const INTERNAL_STRUCTURE_NEEDS_MIGRATION = 'internal_needs_structure_migration';
+
+    public function setIsNew($isNew);
+
+    public function setThreadId($threadId);
 
     /**
      * Returns the identifier for the comment.

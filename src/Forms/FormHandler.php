@@ -5,11 +5,17 @@ namespace Stillat\Meerkat\Forms;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Factory;
+use Statamic\Facades\Entry;
 use Statamic\Fields\Blueprint;
 use Statamic\Fields\BlueprintRepository;
 use Statamic\Fields\Field;
 use Stillat\Meerkat\Addon;
 use Stillat\Meerkat\Concerns\UsesConfig;
+use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
+use Stillat\Meerkat\Core\Contracts\Comments\CommentFactoryContract;
+use Stillat\Meerkat\Core\Contracts\Threads\ThreadContract;
+use Stillat\Meerkat\Core\Threads\Thread;
+use Stillat\Meerkat\Core\Threads\ThreadManager;
 use Stillat\Meerkat\Exceptions\FormValidationException;
 use Stillat\Meerkat\Exceptions\RejectSubmissionException;
 
@@ -53,9 +59,23 @@ class FormHandler
      */
     protected $fieldConfig = null;
 
-    public function __construct(BlueprintRepository $blueprintRepository)
+    /**
+     * The thread manager implementation instance.
+     *
+     * @var ThreadManager|null
+     */
+    protected $threadManager = null;
+
+    protected $commentFactory = null;
+
+    public function __construct(
+        BlueprintRepository $blueprintRepository,
+        ThreadManager $manager,
+        CommentFactoryContract $commentFactory)
     {
         $this->blueprints = $blueprintRepository;
+        $this->threadManager = $manager;
+        $this->commentFactory = $commentFactory;
     }
 
     /**
@@ -187,9 +207,42 @@ class FormHandler
      */
     public function getSubmissionData()
     {
-        return $this->data->filter(function ($value, $key) {
+        $submissionData = $this->data->filter(function ($value, $key) {
             return Str::startsWith($key, '_') === false;
         })->all();
+
+        $honeypotField = $this->getConfig('publishing.honeypot', null);
+
+        if ($honeypotField !== null && array_key_exists($honeypotField, $submissionData)) {
+            unset($submissionData[$honeypotField]);
+        }
+
+        return $submissionData;
+    }
+
+    /**
+     * Gets the context's associated data.
+     *
+     * @return array
+     */
+    public function getEntryData()
+    {
+        $params = $this->getSubmissionParameters();
+
+        if (array_key_exists(MeerkatForm::KEY_MEERKAT_CONTEXT, $params)) {
+            $entry = Entry::find($params[MeerkatForm::KEY_MEERKAT_CONTEXT]);
+
+            if ($entry !== null) {
+                $entryId = $entry->id();
+                $entryUrl = url($entry->url());
+
+                return [
+                    CommentContract::KEY_PAGE_URL => $entryUrl
+                ];
+            }
+        }
+
+        return [];
     }
 
     /**
@@ -202,6 +255,47 @@ class FormHandler
         return $this->data->filter(function ($value, $key) {
             return Str::startsWith($key, '_') === true;
         })->all();
+    }
+
+    public function store($data)
+    {
+        $data = [CommentContract::KEY_ID => time()] + $data;
+
+        $threadId = $this->getThreadId();
+
+        if ($threadId === null) {
+            return false;
+        }
+
+        /** @var ThreadContract $thread */
+        $thread = null;
+
+        if ($this->threadManager->existsForContext($threadId, true)) {
+            $thread = $this->threadManager->findById($threadId);
+        } else {
+            $thread = new Thread();
+            $thread->setId($threadId);
+
+            $thread = $this->threadManager->create($thread);
+        }
+
+        $thread->attachNewComment($this->commentFactory->makeComment($data));
+    }
+
+    /**
+     * Attempts to locate the thread's string identifier.
+     *
+     * @return string|null
+     */
+    private function getThreadId()
+    {
+        $params = $this->getSubmissionParameters();
+
+        if (array_key_exists(MeerkatForm::KEY_MEERKAT_CONTEXT, $params)) {
+            return $params[MeerkatForm::KEY_MEERKAT_CONTEXT];
+        }
+
+        return null;
     }
 
 }

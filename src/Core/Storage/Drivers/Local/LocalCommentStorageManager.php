@@ -466,6 +466,20 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         return false;
     }
 
+    public function getPaths()
+    {
+        return $this->paths;
+    }
+
+    public function generateVirtualPath($threadId, $commentId)
+    {
+        return $this->getPaths()->combineWithStorage([
+            $threadId,
+            $commentId,
+            CommentContract::COMMENT_FILENAME
+        ]);
+    }
+
     /**
      * Attempts to save the comment data.
      *
@@ -482,7 +496,14 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             }
         }
 
+        $storagePath = $comment->getVirtualPath();
         $contentToSave = $this->yamlParser->toYaml($storableAttributes, $comment->getRawContent());
+
+        $directoryName = dirname($storagePath);
+
+        if (!file_exists($directoryName)) {
+            mkdir($directoryName);
+        }
 
         return file_put_contents($comment->getVirtualPath(), $contentToSave);
     }

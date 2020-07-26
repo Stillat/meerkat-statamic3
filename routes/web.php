@@ -12,9 +12,7 @@ Route::post('/!/Meerkat/update', function () {
 
 });
 
-Route::post('/!/Meerkat/socialize', function () {
-   return 'testing Legacy Route Structure.';
-});
+Route::post('/!/Meerkat/socialize', '\Stillat\Meerkat\Http\Controllers\SocializeController@postSocialize');
 
 Route::get('/!/Meerkat/test', function () {
     return 'testing Legacy Route Structure.';

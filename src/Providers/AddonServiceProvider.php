@@ -240,7 +240,7 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
     private function publishAddonControlPanelAssets()
     {
         $resources = PathProvider::getResourcesDirectory('/dist/js');
-        $publicPath = public_path('/vendor/meerkat/js');
+        $publicPath = public_path('/vendor/meerkat/js/'.Addon::VERSION);
 
         if (file_exists($publicPath) == false) {
             mkdir($publicPath, 644, true);

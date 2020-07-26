@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat\Http\Emitter;
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 use Statamic\Statamic;
 use Stillat\Meerkat\Addon;
 use Stillat\Meerkat\Http\RequestHelpers;
@@ -25,7 +26,7 @@ class Emit
         Statamic::style($assetNameForStatamic, $fileName);
 
 
-        Route::get('/' . Addon::CODE_ADDON_NAME . '/css/' . $fileName . '.css', function  () use ($callback) {
+        Route::get('/' . Addon::CODE_ADDON_NAME . '/css/' . $fileName . '.css', function () use ($callback) {
             $content = $callback();
 
             return response($content)->header('Content-Type', 'text/css');
@@ -45,7 +46,6 @@ class Emit
         $fileName = basename($dynamicJsName);
 
         Statamic::script($assetNameForStatamic, $fileName);
-
 
         Route::get('/' . Addon::CODE_ADDON_NAME . '/js/' . $fileName . '.js', function () use ($callback) {
             $content = $callback();

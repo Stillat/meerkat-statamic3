@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat\Providers;
 
+use Statamic\Statamic;
 use Stillat\Meerkat\Addon;
 use Stillat\Meerkat\PathProvider;
 use Stillat\Meerkat\Statamic\ControlPanel\AddonNavIcons;
@@ -50,6 +51,9 @@ class ControlPanelServiceProvider extends AddonServiceProvider
 
         $this->addonIconInstaller->installAddonIcons(Addon::CODE_ADDON_NAME, PathProvider::getResourcesDirectory('svg'));
         $this->navigation->create();
+
+        Statamic::script('meerkat', Addon::VERSION.'/meerkat');
+        Statamic::script('meerkat', Addon::VERSION.'/bootstrap');
     }
 
 }

@@ -22,6 +22,6 @@ sections:
         field:
           type: text
           display: Comment
-          validate: 'required|min:5|2500'
+          validate: 'required|min:5|max:2500'
           listable: hidden
           input_type: text

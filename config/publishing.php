@@ -11,5 +11,6 @@ return [
     'auto_check_spam' => true,
     'auto_delete_spam' => false,
     'auto_submit_results' => false,
+    'honeypot' => 'honeypot'
 
 ];

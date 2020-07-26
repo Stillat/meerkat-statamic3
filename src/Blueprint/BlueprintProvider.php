@@ -87,4 +87,16 @@ class BlueprintProvider
         }
     }
 
+    /**
+     * Gets the Meerkat blueprint.
+     *
+     * @return Blueprint
+     */
+    public function getBlueprint()
+    {
+        $this->ensureExistence();
+
+        return $this->blueprints->find(Addon::CODE_ADDON_NAME);
+    }
+
 }

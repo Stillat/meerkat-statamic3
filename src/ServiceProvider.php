@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat;
 
+use Stillat\Meerkat\Blueprint\BlueprintProvider;
 use Stillat\Meerkat\Concerns\UsesConfig;
 use Stillat\Meerkat\Console\Commands\MigrateCommentsCommand;
 use Stillat\Meerkat\Console\Commands\StatisticsCommand;
@@ -68,8 +69,17 @@ class ServiceProvider extends AddonServiceProvider
         $this->registerMeerkatFormattingConfiguration(); // Global Configuration relies on the formatting config.
         $this->registerMeerkatGlobalConfiguration();
         $this->registerCoreDependencies();
+        $this->checkIntegrationResourcesExist();
 
         parent::register();
+    }
+
+    private function checkIntegrationResourcesExist()
+    {
+        /** @var BlueprintProvider $blueprintProvider */
+        $blueprintProvider = app(BlueprintProvider::class);
+
+        $blueprintProvider->ensureExistence();
     }
 
     private function registerMeerkatCoreErrorLogRepository()

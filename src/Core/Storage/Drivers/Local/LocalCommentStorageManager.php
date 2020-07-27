@@ -18,6 +18,7 @@ use Stillat\Meerkat\Core\Storage\Drivers\Local\Attributes\PrototypeAttributes;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\Attributes\TruthyAttributes;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\Indexing\ShadowIndex;
 use Stillat\Meerkat\Core\Storage\Paths;
+use Stillat\Meerkat\Core\Support\Str;
 use Stillat\Meerkat\Core\Support\TypeConversions;
 use Stillat\Meerkat\Core\Threads\ThreadHierarchy;
 use Stillat\Meerkat\Core\ValidationResult;
@@ -31,6 +32,9 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     const KEY_RAW_HEADERS = 'raw_headers';
     const KEY_CONTENT = 'content';
     const KEY_NEEDS_MIGRATION = 'needs_content_migration';
+
+    const KEY_PATH = 'path';
+    const KEY_ID = 'id';
 
     /**
      * The Meerkat configuration instance.
@@ -217,7 +221,23 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             $commentPaths = $this->commentShadowIndex->getThreadIndex($threadId);
         }
 
-        // Build up statistics for the located comments.
+        $hierarchy = $this->getThreadHierarchy($threadPath, $threadId, $commentPaths);
+
+        $this->threadStructureCache[$threadId] = $hierarchy;
+
+        return $hierarchy;
+    }
+
+    /**
+     * Builds a thread comment hierarchy for the provided details.
+     *
+     * @param string $threadPath The thread path.
+     * @param string $threadId The thread's string identifier.
+     * @param string[] $commentPaths The comment paths.
+     * @return ThreadHierarchy
+     */
+    private function getThreadHierarchy($threadPath, $threadId, $commentPaths)
+    {
         $hierarchy = $this->commentStructureResolver->resolve($threadPath, $commentPaths);
 
         for ($i = 0; $i < count($commentPaths); $i += 1) {
@@ -230,8 +250,8 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             }
 
             if (array_key_exists(
-                CommentContract::KEY_ID,
-                $commentPrototype[LocalCommentStorageManager::KEY_HEADERS]) === false
+                    CommentContract::KEY_ID,
+                    $commentPrototype[LocalCommentStorageManager::KEY_HEADERS]) === false
             ) {
                 continue;
             }
@@ -317,7 +337,10 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
 
             if ($hasAncestor) {
                 $commentParent = $hierarchy->getParent($commentId);
-                $comment->setDataAttribute(CommentContract::KEY_PARENT, $commentPrototypes[$commentParent]);
+
+                if (array_key_exists($commentParent, $commentPrototypes)) {
+                    $comment->setDataAttribute(CommentContract::KEY_PARENT, $commentPrototypes[$commentParent]);
+                }
             }
 
             $comment->setDataAttribute(CommentContract::KEY_CHILDREN, $children);
@@ -329,10 +352,9 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
 
         $hierarchy->setComments($commentPrototypes);
 
-        $this->threadStructureCache[$threadId] = $hierarchy;
-
         return $hierarchy;
     }
+
 
     /**
      * Retrieves only the core meta-data for the comment.
@@ -506,6 +528,67 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         }
 
         return file_put_contents($comment->getVirtualPath(), $contentToSave);
+    }
+
+    /**
+     * Gets thread information from a comment's physical path.
+     *
+     * @param string $path The comment path to analyze.
+     * @return array|null
+     */
+    private function getThreadDetailsFromPath($path)
+    {
+        $relativePath = $this->paths->makeRelative($path);
+        $parts = explode(Paths::SYM_FORWARD_SEPARATOR, $relativePath);
+
+        if (is_array($parts) && count($parts) > 0) {
+            $threadId = $parts[0];
+            $threadPath = $this->paths->combine([$this->storagePath, $threadId]);
+
+            return [
+                self::KEY_ID => $threadId,
+                self::KEY_PATH => $threadPath
+            ];
+        }
+
+        return null;
+    }
+
+    public function findById($id)
+    {
+        $path = $this->getPathById($id);
+
+        if ($path !== null) {
+            $threadDetails = $this->getThreadDetailsFromPath($path);
+
+            if ($threadDetails !== null) {
+                $threadId = $threadDetails[self::KEY_ID];
+                $threadPath = $threadDetails[self::KEY_PATH];
+                // Convert the path to an array.
+                $commentPaths  = [$path];
+
+                $simpleHierarchy = $this->getThreadHierarchy($threadPath, $threadId, $commentPaths);
+
+                if ($simpleHierarchy->hasComment($id)) {
+                    return $simpleHierarchy->getComment($id);
+                }
+            }
+        }
+
+        return null;
+    }
+
+
+    public function getPathById($commentId)
+    {
+        $threadFilter = $this->paths->combine([$this->storagePath, '*' . $commentId . '*']);
+        $commentPath = $this->paths->searchForFile($threadFilter, $this->paths->combine([$commentId, 'comment.md']), 'comment.md');
+
+        if (is_string($commentPath)) {
+            return $commentPath;
+        }
+
+        return null;
     }
 
     /**

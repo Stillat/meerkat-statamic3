@@ -2,6 +2,8 @@
 
 namespace Stillat\Meerkat\Core\Contracts\Comments;
 
+use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
+
 /**
  * Interface CommentManagerContract
  *
@@ -12,6 +14,13 @@ namespace Stillat\Meerkat\Core\Contracts\Comments;
  */
 interface CommentManagerContract
 {
+
+    /**
+     * Gets the comment storage manager implementation.
+     *
+     * @return CommentStorageManagerContract
+     */
+    public function getStorageManager();
 
     public function getAll($withTrashed = false);
 

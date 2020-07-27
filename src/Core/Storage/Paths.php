@@ -2,9 +2,8 @@
 
 namespace Stillat\Meerkat\Core\Storage;
 
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
 use Stillat\Meerkat\Core\Configuration;
+use Stillat\Meerkat\Core\Support\Str;
 
 /**
  * Class Paths
@@ -133,9 +132,36 @@ class Paths
     public function getFilesRecursively($pattern, $flags = 0)
     {
         $files = glob($pattern, $flags);
+
         foreach (glob(dirname($pattern) . '/*', GLOB_NOSORT) as $dir) {
-            $files = array_merge($files, $this->getFilesRecursively($dir . '/' . basename($pattern), $flags));
+            $temp = array_merge($files, $this->getFilesRecursively($dir . '/' . basename($pattern), $flags));
         }
+
+        return $files;
+    }
+
+    public function searchForFile($pattern, $subPattern, $fileName)
+    {
+        $files = glob($pattern, 0);
+
+        foreach ($files as $file) {
+            $target = $this->combine([$file, $fileName]);
+
+            if (Str::endsWith($target, $subPattern) && file_exists($target)) {
+                return $target;
+            }
+        }
+
+        foreach (glob(dirname($pattern) . '/*', GLOB_NOSORT) as $dir) {
+            $temp = $this->searchForFile($dir . '/' . basename($pattern), $subPattern, $fileName);
+
+            if (is_array($temp)) {
+                $files = array_merge($files, $temp);
+            } else if (is_string($temp)) {
+                return $temp;
+            }
+        }
+
         return $files;
     }
 

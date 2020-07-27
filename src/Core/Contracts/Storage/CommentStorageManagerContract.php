@@ -16,7 +16,11 @@ interface CommentStorageManagerContract
      */
     public function getPaths();
 
+    public function findById($id);
+
     public function generateVirtualPath($threadId, $commentId);
+
+    public function getPathById($commentId);
 
     /**
      * Gets all comments for the requested thread.

@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat\Core\Contracts\Threads;
 
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
+use Stillat\Meerkat\Core\Contracts\Storage\ThreadStorageManagerContract;
 
 /**
  * Interface ThreadManagerContract
@@ -14,6 +15,13 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
  */
 interface ThreadManagerContract
 {
+
+    /**
+     * Gets the thread storage manager implementation instance.
+     *
+     * @return ThreadStorageManagerContract
+     */
+    public function getStorageManager();
 
     public function getAllThreads($includeTrashed = false);
 

@@ -73,6 +73,17 @@ class ThreadManager implements ThreadManagerContract
         $this->pathManager = new Paths($this->config);
     }
 
+
+    /**
+     * Gets the thread storage manager implementation instance.
+     *
+     * @return ThreadStorageManagerContract
+     */
+    public function getStorageManager()
+    {
+        return $this->threadStorageManager;
+    }
+
     public function getAllThreads($includeTrashed = false)
     {
         return $this->threadStorageManager->getAllThreads($includeTrashed);

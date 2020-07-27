@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat\Core\Comments;
 
 use DateTime;
+use Stillat\Meerkat\Core\Comments\StaticApi\ProvidesDiscovery;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
@@ -11,7 +12,6 @@ use Stillat\Meerkat\Core\InconsistentCompositionException;
 use Stillat\Meerkat\Core\Parsing\UsesMarkdownParser;
 use Stillat\Meerkat\Core\Parsing\UsesYAMLParser;
 use Stillat\Meerkat\Core\Storage\Data\CommentAuthorRetriever;
-use Stillat\Meerkat\Core\Storage\Paths;
 use Stillat\Meerkat\Core\Support\TypeConversions;
 
 /**
@@ -24,7 +24,7 @@ use Stillat\Meerkat\Core\Support\TypeConversions;
  */
 class Comment implements CommentContract
 {
-    use DataObject, UsesMarkdownParser, UsesYAMLParser;
+    use DataObject, UsesMarkdownParser, UsesYAMLParser, ProvidesDiscovery;
 
     /**
      * The comment's parent instance, if available.

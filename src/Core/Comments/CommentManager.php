@@ -4,6 +4,7 @@ namespace Stillat\Meerkat\Core\Comments;
 
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentManagerContract;
+use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 
 /**
  * Class CommentManager
@@ -16,6 +17,28 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentManagerContract;
 class CommentManager implements CommentManagerContract
 {
 
+
+    /**
+     * The storage manager implementation instance.
+     *
+     * @var CommentStorageManagerContract|null
+     */
+    protected $commentStorageManager = null;
+
+    public function __construct(CommentStorageManagerContract $storageManager)
+    {
+        $this->commentStorageManager = $storageManager;
+    }
+
+    /**
+     * Gets the comment storage manager implementation.
+     *
+     * @return CommentStorageManagerContract
+     */
+    public function getStorageManager()
+    {
+        return $this->commentStorageManager;
+    }
 
     public function getAll($withTrashed = false)
     {
@@ -31,8 +54,7 @@ class CommentManager implements CommentManagerContract
      */
     public function findById($id)
     {
-        // TODO: Implement findById() method.
-        return null;
+        return $this->commentStorageManager->findById($id);
     }
 
     /**

@@ -2,6 +2,8 @@
 
 namespace Stillat\Meerkat\Core\Threads;
 
+use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
+
 /**
  * Class ThreadHierarchy
  *
@@ -228,6 +230,37 @@ class ThreadHierarchy
         return $this->comments;
     }
 
+    /**
+     * Tests if the hierarchy contains the comment.
+     *
+     * @param string $commentId The comment's string identifier.
+     * @return bool
+     */
+    public function hasComment($commentId)
+    {
+       return array_key_exists($commentId, $this->comments);
+    }
+
+    /**
+     * Attempts to retrieve the specified comment.
+     *
+     * @param string $commentId The comment's string identifier.
+     * @return CommentContract|null
+     */
+    public function getComment($commentId)
+    {
+        if ($this->hasComment($commentId)) {
+            return $this->comments[$commentId];
+        }
+
+        return null;
+    }
+
+    /**
+     * Executes the mutation callback on each comment in the hierarchy.
+     *
+     * @param callable $callback The callback to execute.
+     */
     public function mapComments(callable $callback)
     {
         $this->comments = array_map($callback, $this->comments);

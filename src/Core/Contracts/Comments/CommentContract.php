@@ -34,6 +34,8 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     const KEY_DESCENDENTS = 'descendents';
     const KEY_CHILDREN = 'children';
     const KEY_PARENT = 'parent';
+    // TODO: Make sure this doesn't get saved.
+    const KEY_PARENT_ID = 'parent_id';
     const KEY_IS_PARENT = 'is_parent';
     const KEY_IS_ROOT = 'is_root';
     const KEY_IS_DELETED = 'is_deleted';
@@ -317,6 +319,8 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
      * @return bool
      */
     public function updateCommentContent($content);
+
+    public function setParentId($parentId);
 
     /**
      * Converts the comment into an array.

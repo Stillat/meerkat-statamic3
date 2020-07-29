@@ -17,7 +17,6 @@ use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 class CommentManager implements CommentManagerContract
 {
 
-
     /**
      * The storage manager implementation instance.
      *
@@ -38,6 +37,29 @@ class CommentManager implements CommentManagerContract
     public function getStorageManager()
     {
         return $this->commentStorageManager;
+    }
+
+
+    public function replyTo($parentId, CommentContract $comment)
+    {
+        $comment->setIsNew(true);
+        $comment->setParentId($parentId);
+
+        return $comment;
+    }
+
+    /**
+     * Saves a new reply for the provided parent comment.
+     *
+     * @param string $parentId The parent comment string identifier.
+     * @param CommentContract $comment The comment to save as a reply.
+     * @return bool
+     */
+    public function saveReplyTo($parentId, CommentContract $comment)
+    {
+        $commentToSave = $this->replyTo($parentId, $comment);
+
+        return $this->commentStorageManager->save($commentToSave);
     }
 
     public function getAll($withTrashed = false)
@@ -92,8 +114,7 @@ class CommentManager implements CommentManagerContract
      */
     public function determinePath($comment)
     {
-        // TODO: Implement determinePath() method.
-        return null;
+        return $this->determinePathById($comment->getId());
     }
 
     /**
@@ -105,7 +126,6 @@ class CommentManager implements CommentManagerContract
      */
     public function determinePathById($id)
     {
-        // TODO: Implement determinePathById() method.
-        return null;
+        return $this->commentStorageManager->getPathById($id);
     }
 }

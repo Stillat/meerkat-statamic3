@@ -134,7 +134,7 @@ class Paths
         $files = glob($pattern, $flags);
 
         foreach (glob(dirname($pattern) . '/*', GLOB_NOSORT) as $dir) {
-            $temp = array_merge($files, $this->getFilesRecursively($dir . '/' . basename($pattern), $flags));
+            $files = array_merge($files, $this->getFilesRecursively($dir . '/' . basename($pattern), $flags));
         }
 
         return $files;

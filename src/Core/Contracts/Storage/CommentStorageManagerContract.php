@@ -20,7 +20,17 @@ interface CommentStorageManagerContract
 
     public function generateVirtualPath($threadId, $commentId);
 
+    /**
+     * Constructs a comment from the prototype data.
+     *
+     * @param array $data The comment prototype.
+     * @return CommentContract|null
+     */
+    public function makeFromArrayPrototype($data);
+
     public function getPathById($commentId);
+
+    public function getReplyPathById($parentId, $childId);
 
     /**
      * Gets all comments for the requested thread.

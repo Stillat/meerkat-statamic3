@@ -24,6 +24,10 @@ interface CommentManagerContract
 
     public function getAll($withTrashed = false);
 
+    public function replyTo($parentId, CommentContract $comment);
+
+    public function saveReplyTo($parentId, CommentContract $comment);
+
     /**
      * Attempts to locate a comment by it's string identifier.
      *

@@ -75,7 +75,8 @@ class SocializeController extends Controller
         } catch (RejectSubmissionException $rejectSubmissionException) {
             return $this->formSuccess(
                 $this->formHandler->getSubmissionParameters(),
-                $this->formHandler->getSubmissionData()
+                $this->formHandler->getSubmissionData(),
+                $this->formHandler->blueprintName()
             );
         }
 
@@ -83,7 +84,21 @@ class SocializeController extends Controller
         $commentData = $this->fillWithUserData($commentData);
         $commentData = $this->fillWithEntryData($commentData);
 
-        $this->formHandler->store($commentData);
+        $didStore = $this->formHandler->store($commentData);
+
+        if ($didStore) {
+            return $this->formSuccess(
+                $this->formHandler->getSubmissionParameters(),
+                $this->formHandler->getSubmissionData(),
+                $this->formHandler->blueprintName()
+            );
+        }
+
+        return $this->formFailure(
+            $this->formHandler->getSubmissionParameters(),
+            [],
+            $this->formHandler->blueprintName()
+        );
     }
 
     /**
@@ -189,7 +204,7 @@ class SocializeController extends Controller
         );
     }
 
-    private function formSuccess($params, $data)
+    private function formSuccess($params, $data, $meerkatBlueprint)
     {
         if (request()->ajax()) {
             return response([
@@ -202,9 +217,11 @@ class SocializeController extends Controller
 
         $response = $redirect ? redirect($redirect) : back();
 
-        // TODO: Refactor to get Meerkat's session name.
-        // session()->flash("form.{$submission->form()->handle()}.success", __('Submission successful.'));
-        // session()->flash('submission', $submission);
+        $mockSubmission = new MockSubmission();
+        $mockSubmission->data($data);
+
+        session()->flash(MeerkatForm::getFormSessionHandle($meerkatBlueprint).'.success', __('Submission successful.'));
+        session()->flash('submission', $mockSubmission);
 
         return $response;
     }

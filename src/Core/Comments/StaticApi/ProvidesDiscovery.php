@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat\Core\Comments\StaticApi;
 
 use Stillat\Meerkat\Core\Comments\CommentManagerFactory;
+use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Exceptions\CommentNotFoundException;
 
 /**
@@ -20,7 +21,7 @@ trait ProvidesDiscovery
      * Attempts to locate the specified comment.
      *
      * @param string $commentId The comment's string identifier.
-     * @return \Stillat\Meerkat\Core\Contracts\Comments\CommentContract|null
+     * @return CommentContract|null
      */
     public static function find($commentId)
     {
@@ -35,7 +36,7 @@ trait ProvidesDiscovery
      * Attemps to locate the specified comment.
      *
      * @param string $commentId The comment's string identifier.
-     * @return \Stillat\Meerkat\Core\Contracts\Comments\CommentContract
+     * @return CommentContract
      * @throws CommentNotFoundException
      */
     public static function findOrFail($commentId)

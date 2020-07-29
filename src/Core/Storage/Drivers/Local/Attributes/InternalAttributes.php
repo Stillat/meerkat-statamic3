@@ -45,6 +45,7 @@ class InternalAttributes
                 CommentContract::KEY_DESCENDENTS,
                 CommentContract::KEY_CHILDREN,
                 CommentContract::KEY_PARENT,
+                CommentContract::KEY_PARENT_ID,
                 CommentContract::INTERNAL_CONTENT_TRUNCATED,
                 CommentContract::INTERNAL_CONTEXT,
                 CommentContract::INTERNAL_CONTENT_RAW,

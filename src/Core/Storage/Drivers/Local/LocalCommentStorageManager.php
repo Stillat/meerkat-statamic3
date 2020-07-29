@@ -6,6 +6,7 @@ use DateTime;
 use Stillat\Meerkat\Core\Comments\Comment;
 use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
+use Stillat\Meerkat\Core\Contracts\Comments\CommentFactoryContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\YAMLParserContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
@@ -138,11 +139,19 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      */
     private $authorRetriever = null;
 
+    /**
+     * The comment factory implementation instance.
+     *
+     * @var CommentFactoryContract|null
+     */
+    private $commentFactory = null;
+
     public function __construct(
         Configuration $config,
         YAMLParserContract $yamlParser,
         MarkdownParserContract $markdownParser,
-        CommentAuthorRetriever $authorRetriever)
+        CommentAuthorRetriever $authorRetriever,
+        CommentFactoryContract $commentFactory)
     {
         $this->commentShadowIndex = new ShadowIndex($config);
         $this->commentStructureResolver = new LocalCommentStructureResolver();
@@ -152,6 +161,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
 
         // Quick alias for less typing.
         $this->storagePath = PathUtilities::normalize($this->config->storageDirectory);
+        $this->commentFactory = $commentFactory;
 
         $this->prototypeElements = PrototypeAttributes::getPrototypeAttributes();
         $this->internalElements = InternalAttributes::getInternalAttributes();
@@ -188,6 +198,17 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     }
 
     /**
+     * Constructs a comment from the prototype data.
+     *
+     * @param array $data The comment prototype.
+     * @return CommentContract|null
+     */
+    public function makeFromArrayPrototype($data)
+    {
+        return $this->commentFactory->makeComment($data);
+    }
+
+    /**
      * Gets all comments for the requested thread.
      *
      * @param string $threadId The identifier of the thread.
@@ -210,7 +231,6 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         $threadPath = $this->paths->combine([$this->storagePath, $threadId]);
 
         $commentPaths = [];
-        $commentPrototypes = [];
 
         if ($this->commentShadowIndex->hasIndex($threadId) === false) {
             $threadFilter = $this->paths->combine([$threadPath, '*comment.md']);
@@ -238,6 +258,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      */
     private function getThreadHierarchy($threadPath, $threadId, $commentPaths)
     {
+        $commentPrototypes = [];
         $hierarchy = $this->commentStructureResolver->resolve($threadPath, $commentPaths);
 
         for ($i = 0; $i < count($commentPaths); $i += 1) {
@@ -488,11 +509,6 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         return false;
     }
 
-    public function getPaths()
-    {
-        return $this->paths;
-    }
-
     public function generateVirtualPath($threadId, $commentId)
     {
         return $this->getPaths()->combineWithStorage([
@@ -500,6 +516,11 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             $commentId,
             CommentContract::COMMENT_FILENAME
         ]);
+    }
+
+    public function getPaths()
+    {
+        return $this->paths;
     }
 
     /**
@@ -519,15 +540,52 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         }
 
         $storagePath = $comment->getVirtualPath();
+
         $contentToSave = $this->yamlParser->toYaml($storableAttributes, $comment->getRawContent());
 
         $directoryName = dirname($storagePath);
 
         if (!file_exists($directoryName)) {
-            mkdir($directoryName);
+            mkdir($directoryName, Paths::DIRECTORY_PERMISSIONS, true);
         }
 
         return file_put_contents($comment->getVirtualPath(), $contentToSave);
+    }
+
+    public function findById($id)
+    {
+        $path = $this->getPathById($id);
+
+        if ($path !== null) {
+            $threadDetails = $this->getThreadDetailsFromPath($path);
+
+            if ($threadDetails !== null) {
+                $threadId = $threadDetails[self::KEY_ID];
+                $threadPath = $threadDetails[self::KEY_PATH];
+                // Convert the path to an array.
+                $commentPaths = [$path];
+
+                $simpleHierarchy = $this->getThreadHierarchy($threadPath, $threadId, $commentPaths);
+
+                if ($simpleHierarchy->hasComment($id)) {
+                    return $simpleHierarchy->getComment($id);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public function getPathById($commentId)
+    {
+        $threadFilter = $this->paths->combine([$this->storagePath, '*' . $commentId . '*']);
+        $commentPath = $this->paths->searchForFile($threadFilter, $this->paths->combine([$commentId, 'comment.md']), 'comment.md');
+
+        if (is_string($commentPath)) {
+            return $commentPath;
+        }
+
+        return null;
     }
 
     /**
@@ -554,41 +612,24 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         return null;
     }
 
-    public function findById($id)
+    public function getReplyPathById($parentId, $childId)
     {
-        $path = $this->getPathById($id);
+        $basePath = $this->getPathById($parentId);
 
-        if ($path !== null) {
-            $threadDetails = $this->getThreadDetailsFromPath($path);
-
-            if ($threadDetails !== null) {
-                $threadId = $threadDetails[self::KEY_ID];
-                $threadPath = $threadDetails[self::KEY_PATH];
-                // Convert the path to an array.
-                $commentPaths  = [$path];
-
-                $simpleHierarchy = $this->getThreadHierarchy($threadPath, $threadId, $commentPaths);
-
-                if ($simpleHierarchy->hasComment($id)) {
-                    return $simpleHierarchy->getComment($id);
-                }
-            }
+        if (Str::endsWith($basePath, CommentContract::COMMENT_FILENAME)) {
+            $basePath = mb_substr($basePath, 0, -1 * (mb_strlen(CommentContract::COMMENT_FILENAME)));
         }
 
-        return null;
-    }
-
-
-    public function getPathById($commentId)
-    {
-        $threadFilter = $this->paths->combine([$this->storagePath, '*' . $commentId . '*']);
-        $commentPath = $this->paths->searchForFile($threadFilter, $this->paths->combine([$commentId, 'comment.md']), 'comment.md');
-
-        if (is_string($commentPath)) {
-            return $commentPath;
+        if (Str::endsWith($basePath, Paths::SYM_FORWARD_SEPARATOR)) {
+            $basePath = mb_substr($basePath, 0, -1);
         }
 
-        return null;
+        return $this->paths->combine([
+            $basePath,
+            self::PATH_REPLIES_DIRECTORY,
+            $childId,
+            CommentContract::COMMENT_FILENAME
+        ]);
     }
 
     /**

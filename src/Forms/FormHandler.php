@@ -11,6 +11,8 @@ use Statamic\Fields\BlueprintRepository;
 use Statamic\Fields\Field;
 use Stillat\Meerkat\Addon;
 use Stillat\Meerkat\Concerns\UsesConfig;
+use Stillat\Meerkat\Core\Comments\CommentManager;
+use Stillat\Meerkat\Core\Comments\IdRetriever;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentFactoryContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContract;
@@ -68,13 +70,17 @@ class FormHandler
 
     protected $commentFactory = null;
 
+    protected $commentManager = null;
+
     public function __construct(
         BlueprintRepository $blueprintRepository,
         ThreadManager $manager,
+        CommentManager $commentManager,
         CommentFactoryContract $commentFactory)
     {
         $this->blueprints = $blueprintRepository;
         $this->threadManager = $manager;
+        $this->commentManager = $commentManager;
         $this->commentFactory = $commentFactory;
     }
 
@@ -106,8 +112,6 @@ class FormHandler
     {
         $this->checkHoneypot();;
         $this->validate();
-
-        // TODO: Save stuffs.
     }
 
     public function checkHoneypot()
@@ -148,7 +152,6 @@ class FormHandler
                 MeerkatForm::KEY_FORM_CONFIG_DISPLAY_NAME, $field_name
             );
         }
-
 
         /** @var Factory $validatorFactory */
         $validatorFactory = app('validator');
@@ -279,7 +282,18 @@ class FormHandler
             $thread = $this->threadManager->create($thread);
         }
 
-        $thread->attachNewComment($this->commentFactory->makeComment($data));
+        $replyData = IdRetriever::getIdAndValidateExistence($data);
+
+        unset($data[IdRetriever::KEY_IDS]);
+
+        if ($replyData[IdRetriever::KEY_IS_REPLYING]) {
+            return $this->commentManager->saveReplyTo(
+                $replyData[CommentContract::KEY_ID],
+                $this->commentFactory->makeComment($data)
+            );
+        }
+
+        return $thread->attachNewComment($this->commentFactory->makeComment($data));
     }
 
     /**

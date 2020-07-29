@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat\Comments;
 
 use Stillat\Meerkat\Core\Comments\Comment;
+use Stillat\Meerkat\Core\Comments\CommentManagerFactory;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentFactoryContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
@@ -18,13 +19,6 @@ use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 class StatamicCommentFactory implements CommentFactoryContract
 {
 
-    private $storageManager = null;
-
-    public function __construct(CommentStorageManagerContract $commentStorageManager)
-    {
-        $this->storageManager = $commentStorageManager;
-    }
-
     /**
      * Converts the comment prototype into an instance of CommentContract.
      *
@@ -34,7 +28,11 @@ class StatamicCommentFactory implements CommentFactoryContract
     public function makeComment($protoComment)
     {
         $comment = new Comment();
-        $comment->setStorageManager($this->storageManager);
+        // Start: Comment class specific implementation details.
+        $storageManager = CommentManagerFactory::$instance->getStorageManager();
+        $comment->setStorageManager($storageManager);
+        // End:   Comment class specific implementation details.
+
         $comment->setDataAttributes($protoComment);
 
         if (array_key_exists('comment', $protoComment)) {

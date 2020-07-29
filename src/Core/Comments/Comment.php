@@ -3,7 +3,9 @@
 namespace Stillat\Meerkat\Core\Comments;
 
 use DateTime;
+use Stillat\Meerkat\Core\Comments\StaticApi\ProvidesCreation;
 use Stillat\Meerkat\Core\Comments\StaticApi\ProvidesDiscovery;
+use Stillat\Meerkat\Core\Comments\StaticApi\ProvidesMutations;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
@@ -24,7 +26,15 @@ use Stillat\Meerkat\Core\Support\TypeConversions;
  */
 class Comment implements CommentContract
 {
-    use DataObject, UsesMarkdownParser, UsesYAMLParser, ProvidesDiscovery;
+    use DataObject, UsesMarkdownParser, UsesYAMLParser,
+        ProvidesDiscovery, ProvidesMutations, ProvidesCreation;
+
+
+    public function __construct()
+    {
+        // TODO: Correctly set the isNew(true) state.
+        //       Will need to set this to false in retrieval methods!
+    }
 
     /**
      * The comment's parent instance, if available.
@@ -427,7 +437,12 @@ class Comment implements CommentContract
      */
     public function getParentId()
     {
-        return $this->getDataAttribute(CommentContract::KEY_PARENT, null);
+        return $this->getDataAttribute(CommentContract::KEY_PARENT_ID, null);
+    }
+
+    public function setParentId($parentId)
+    {
+        $this->setDataAttribute(CommentContract::KEY_PARENT_ID, $parentId);
     }
 
     /**
@@ -583,6 +598,10 @@ class Comment implements CommentContract
     public function getVirtualPath()
     {
         if ($this->isNew) {
+            if ($this->getDataAttribute(CommentContract::KEY_PARENT_ID, null) !== null) {
+                return $this->storageManager->getReplyPathById($this->getDataAttribute(CommentContract::KEY_PARENT_ID), $this->getId());
+            }
+
             return $this->storageManager->generateVirtualPath($this->threadId, $this->getId());
         }
 

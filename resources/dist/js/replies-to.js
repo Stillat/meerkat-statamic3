@@ -3,11 +3,11 @@
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
 	else if(typeof define === 'function' && define.amd)
-		define("meerkat-core", [], factory);
+		define("replies-to", [], factory);
 	else if(typeof exports === 'object')
-		exports["meerkat-core"] = factory();
+		exports["replies-to"] = factory();
 	else
-		root["meerkat-core"] = factory();
+		root["replies-to"] = factory();
 })(window, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -97,79 +97,29 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ({
 
-/***/ "./src/App/application.js":
-/*!********************************!*\
-  !*** ./src/App/application.js ***!
-  \********************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Application = function Application() {
-  _classCallCheck(this, Application);
-};
-
-/* harmony default export */ __webpack_exports__["default"] = (Application);
-
-/***/ }),
-
-/***/ "./src/App/index.js":
-/*!**************************!*\
-  !*** ./src/App/index.js ***!
-  \**************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _application__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./application */ "./src/App/application.js");
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+/***/ "./src/Site/replies.js":
+/*!*****************************!*\
+  !*** ./src/Site/replies.js ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
 
 
-
-var App = function App() {
-  _classCallCheck(this, App);
-};
-
-App.Application = _application__WEBPACK_IMPORTED_MODULE_0__["default"];
-/* harmony default export */ __webpack_exports__["default"] = ({
-  App: App
-});
-
-/***/ }),
-
-/***/ "./src/index.js":
-/*!**********************!*\
-  !*** ./src/index.js ***!
-  \**********************/
-/*! no exports provided */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _App_application__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./App/application */ "./src/App/application.js");
-/* harmony import */ var _App__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./App */ "./src/App/index.js");
-/* empty/unused harmony star reexport */
-
-var instance = new _App_application__WEBPACK_IMPORTED_MODULE_0__["default"]();
 
 /***/ }),
 
 /***/ 0:
-/*!****************************!*\
-  !*** multi ./src/index.js ***!
-  \****************************/
+/*!**************************!*\
+  !*** multi Site/replies ***!
+  \**************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! ./src/index.js */"./src/index.js");
+module.exports = __webpack_require__(/*! Site/replies */"./src/Site/replies.js");
 
 
 /***/ })
 
 /******/ });
 });
-//# sourceMappingURL=meerkat-core.js.map
+//# sourceMappingURL=replies-to.js.map

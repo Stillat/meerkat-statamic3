@@ -256,6 +256,12 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
             }
         }
 
+        // If the current version is a development version
+        // we will always publish any new asset changes.
+        if (Str::endsWith(Addon::VERSION, '-dev')) {
+            $didFindCurrentVersion = false;
+        }
+
         if ($didFindCurrentVersion === false) {
             // First, publish new versions.
             if (file_exists($publicPath) == false) {

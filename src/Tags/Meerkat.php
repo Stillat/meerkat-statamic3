@@ -163,7 +163,7 @@ class Meerkat extends Tags
     {
         $scriptPath = PathProvider::publicJsVendorPath('replies-to');
 
-        return '<script src="' . $scriptPath . '" />';
+        return '<script src="' . $scriptPath . '"></script>';
     }
 
     public function version()

@@ -80,9 +80,11 @@ class SocializeController extends Controller
             );
         }
 
+
         $commentData = $this->fillWithRequestData($commentData);
         $commentData = $this->fillWithUserData($commentData);
         $commentData = $this->fillWithEntryData($commentData);
+
 
         $didStore = $this->formHandler->store($commentData);
 

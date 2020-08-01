@@ -358,11 +358,21 @@ class ThreadHierarchy
         return [];
     }
 
+    /**
+     * Gets the total comment count.
+     *
+     * @return int
+     */
     public function getTotalCommentCount()
     {
         return count($this->comments);
     }
 
+    /**
+     * Gets the total comment count at the root (0) level.
+     *
+     * @return int
+     */
     public function getRootLevelCommentCount()
     {
         if (array_key_exists(0, $this->depthMapping)) {

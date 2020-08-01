@@ -4,6 +4,7 @@ namespace Stillat\Meerkat\Tags\Output;
 
 use Illuminate\Support\Str;
 use Statamic\Facades\Parse;
+use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
 
 /**
  * Class RecursiveThreadRenderer
@@ -19,13 +20,14 @@ class RecursiveThreadRenderer
     /**
      * Recursively renders a comment thread.
      *
+     * @param SanitationManagerContract $sanitizer The sanitizer instance.
      * @param string $template The template.
      * @param array $data The comment data to render.
      * @param array $context Optional context data.
      * @param string $collectionName The name of the nested collection.
      * @return string|string[]
      */
-    public static function renderRecursiveThread($template, $data, $context, $collectionName)
+    public static function renderRecursiveThread(SanitationManagerContract $sanitizer, $template, $data, $context, $collectionName)
     {
         // TODO: Capture memory exhaustion and throw a custom exception
         //       when the template has malformed safety checks.
@@ -70,6 +72,8 @@ class RecursiveThreadRenderer
 
 
             $commentData = $data[$collectionName];
+
+            $sanitizer->sanitizeArrayValues($commentData);
 
             $nestedCommentsString = trim($nestedCommentsString);
 

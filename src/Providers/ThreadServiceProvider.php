@@ -9,15 +9,20 @@ use Stillat\Meerkat\Core\Comments\CommentManager;
 use Stillat\Meerkat\Core\Comments\CommentManagerFactory;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentFactoryContract;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentManagerContract;
+use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\ThreadStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ContextResolverContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadMutationPipelineContract;
+use Stillat\Meerkat\Core\Parsing\SanitationManager;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalCommentStorageManager;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalThreadStorageManager;
 use Stillat\Meerkat\Core\Threads\ThreadManager;
 use Stillat\Meerkat\Core\Threads\ThreadManagerFactory;
+use Stillat\Meerkat\Parsing\Sanitizers\AntlersSanitizer;
+use Stillat\Meerkat\Parsing\Sanitizers\PhpSanitizer;
+use Stillat\Meerkat\Parsing\Sanitizers\XssSanitizer;
 use Stillat\Meerkat\Threads\ContextResolver;
 use Stillat\Meerkat\Threads\ThreadMutationPipeline;
 
@@ -68,6 +73,28 @@ class ThreadServiceProvider extends AddonServiceProvider
         if (!class_exists($driverConfiguration[self::CONFIG_THREAD_DRIVER])) {
             $driverConfiguration[self::CONFIG_THREAD_DRIVER] = LocalThreadStorageManager::class;
         }
+
+        $this->app->singleton(SanitationManagerContract::class, function ($app) {
+            /** @var SanitationManager $sanitizer */
+            $sanitizer = $app->make(SanitationManager::class);
+
+            // Register some default sanitizers.
+            // TODO: Possibly allow addon developers to provide their own at this time?
+            /** @var AntlersSanitizer $antlersSanitizer */
+            $antlersSanitizer = $app->make(AntlersSanitizer::class);
+
+            /** @var PhpSanitizer $phpSanitizer */
+            $phpSanitizer = $app->make(PhpSanitizer::class);
+
+            /** @var XssSanitizer $xssSanitizer */
+            $xssSanitizer = $app->make(XssSanitizer::class);
+
+            $sanitizer->registerSanitizer($antlersSanitizer);
+            $sanitizer->registerSanitizer($phpSanitizer);
+            $sanitizer->registerSanitizer($xssSanitizer);
+
+            return $sanitizer;
+        });
 
         $this->app->singleton(ThreadMutationPipelineContract::class, function ($app) {
             return $app->make(ThreadMutationPipeline::class);

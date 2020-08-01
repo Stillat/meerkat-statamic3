@@ -4,6 +4,7 @@ namespace Stillat\Meerkat\Tags;
 
 use Statamic\API\Parse;
 use Statamic\Tags\Tags;
+use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
 use Stillat\Meerkat\Forms\MeerkatForm;
 use Stillat\Meerkat\Concerns\GetsHiddenContext;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
@@ -20,9 +21,12 @@ class Meerkat extends Tags
 
     private $threadManager = null;
 
-    public function __construct(ThreadManagerContract $threadManager)
+    private $sanitizer = null;
+
+    public function __construct(ThreadManagerContract $threadManager, SanitationManagerContract $sanitizer)
     {
         $this->threadManager = $threadManager;
+        $this->sanitizer = $sanitizer;
     }
 
     /**
@@ -72,6 +76,10 @@ class Meerkat extends Tags
         $displayComments = [];
         $comments = $thread->getCommentCollection($collectionName);
 
+        foreach ($comments as $commentId => $comment) {
+            $comments[$commentId] = $this->sanitizer->sanitizeArrayValues($comment);
+        }
+
         if ($flatList === true) {
             $displayComments = $comments;
         } else {
@@ -92,7 +100,7 @@ class Meerkat extends Tags
         $metaData = ['total_results' => count($data)];
         $data = array_merge($data, $metaData);
 
-        return RecursiveThreadRenderer::renderRecursiveThread($this->content, $data, $context, $collectionName);
+        return RecursiveThreadRenderer::renderRecursiveThread($this->sanitizer, $this->content, $data, $context, $collectionName);
     }
 
     public function index()

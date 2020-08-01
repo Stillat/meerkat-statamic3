@@ -254,29 +254,6 @@ class Comment implements CommentContract
         }
 
         return $this->storageManager->save($this);
-
-        /*$attributes = $this->getAttributesToSave();
-        $content = '';
-
-        if (array_key_exists(CommentContract::KEY_CONTENT, $attributes)) {
-            $content = $attributes[CommentContract::KEY_CONTENT];
-            unset($attributes[CommentContract::KEY_CONTENT]);
-        }
-
-        $contentToSave = $this->yamlParser->toYaml($attributes, $content);
-        $storagePath = $this->getStoragePath();
-
-        if ($storagePath === null) {
-            return false;
-        }
-
-        $saveResult = file_put_contents($storagePath, $contentToSave);
-
-        if ($saveResult === false) {
-            return false;
-        }
-
-        return true;*/
     }
 
     /**

@@ -22,10 +22,30 @@ interface CommentManagerContract
      */
     public function getStorageManager();
 
+    /**
+     * Attempts to retrieve all comments.
+     *
+     * @param bool $withTrashed Indicates if soft-deleted threads should be included.
+     * @return CommentContract[]
+     */
     public function getAll($withTrashed = false);
 
+    /**
+     * Configures the provided comment to be a reply to the specified parent.
+     *
+     * @param string $parentId The parent comment's string identifier.
+     * @param CommentContract $comment The comment to attach as a reply.
+     * @return CommentContract
+     */
     public function replyTo($parentId, CommentContract $comment);
 
+    /**
+     * Saves the provided comment as a reply to the specified parent.
+     *
+     * @param string $parentId The parent comment's string identifier.
+     * @param CommentContract $comment The comment to attach as a reply.
+     * @return bool
+     */
     public function saveReplyTo($parentId, CommentContract $comment);
 
     /**
@@ -72,4 +92,5 @@ interface CommentManagerContract
      * @return string
      */
     public function determinePathById($id);
+
 }

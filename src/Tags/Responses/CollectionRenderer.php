@@ -68,20 +68,14 @@ class CollectionRenderer extends MeerkatTag
             // TODO: Implement...
         } else {
             if ($this->paginated) {
-                $paginateData = PaginatedThreadRenderer::renderPaginatedThread(
-                    collect($displayComments),
-                    $this->pageBy,
-                    $this->pageOffset,
-                    $this->pageLimit
-                );
-
-                $displayData = [
-                    $collectionName => $paginateData[PaginatedThreadRenderer::KEY_RETURN_DATA],
-                    PaginatedThreadRenderer::KEY_PAGINATE => $paginateData[PaginatedThreadRenderer::KEY_RETURN_META],
-                    PaginatedThreadRenderer::KEY_TOTAL_RESULTS => $paginateData[PaginatedThreadRenderer::KEY_TOTAL_RESULTS]
-                ];
-
-                return $this->parseComments($displayData, [], $collectionName);
+                return $this->parseComments(
+                    PaginatedThreadRenderer::preparePaginatedThread($collectionName,
+                        collect($displayComments),
+                        $this->pageBy,
+                        $this->pageOffset,
+                        $this->pageLimit)
+                    ,
+                    [], $collectionName);
             } else {
                 return $this->parseComments([
                     $collectionName => $displayComments
@@ -123,7 +117,7 @@ class CollectionRenderer extends MeerkatTag
 
         if (array_key_exists('total_results', $data) === false) {
             $metaData = [
-              'total_results' => count($data[$collectionName])
+                'total_results' => count($data[$collectionName])
             ];
         }
 

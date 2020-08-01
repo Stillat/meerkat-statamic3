@@ -5,6 +5,14 @@ namespace Stillat\Meerkat\Tags\Output;
 use Illuminate\Support\Collection;
 use Statamic\Extensions\Pagination\LengthAwarePaginator;
 
+/**
+ * Class PaginatedThreadRenderer
+ *
+ * Provides utilities for managing paginated Meerkat threads.
+ *
+ * @package Stillat\Meerkat\Tags\Output
+ * @since 2.0.0
+ */
 class PaginatedThreadRenderer
 {
 
@@ -23,13 +31,15 @@ class PaginatedThreadRenderer
     const KEY_META_LINKS = 'links';
 
     /**
+     * Produces a limited collection of comments and meta data.
+     *
      * @param Collection $collection
-     * @param $pageName
-     * @param $offset
-     * @param $limit
+     * @param string $pageName The name of the URL parameter to use when generating links.
+     * @param int $offset Where to start in the list of comments.
+     * @param int $limit Maximum number of comments per page.
      * @return array
      */
-    public static function renderPaginatedThread($collection, $pageName, $offset, $limit)
+    public static function getPaginationData($collection, $pageName, $offset, $limit)
     {
         if ($limit === null || $limit === 0) {
             $limit = $collection->count();
@@ -58,14 +68,14 @@ class PaginatedThreadRenderer
         $paginator->appends(request()->all());
 
         $paginationMeta = [
-          self::KEY_META_TOTAL_ITEMS => $itemsCount,
-          self::KEY_META_ITEMS_PER_PAGE => $limit,
-          self::KEY_META_TOTAL_PAGES => $paginator->lastPage(),
-          self::KEY_META_CURRENT_PAGE => $paginator->currentPage(),
-          self::KEY_META_PREV_PAGE => $paginator->previousPageUrl(),
-          self::KEY_META_NEXT_PAGE => $paginator->nextPageUrl(),
-          self::KEY_META_AUTO_LINKS => $paginator->render(),
-          self::KEY_META_LINKS => $paginator->renderArray() // NOTE: Specific to Statamic's LengthAwarePaginator.
+            self::KEY_META_TOTAL_ITEMS => $itemsCount,
+            self::KEY_META_ITEMS_PER_PAGE => $limit,
+            self::KEY_META_TOTAL_PAGES => $paginator->lastPage(),
+            self::KEY_META_CURRENT_PAGE => $paginator->currentPage(),
+            self::KEY_META_PREV_PAGE => $paginator->previousPageUrl(),
+            self::KEY_META_NEXT_PAGE => $paginator->nextPageUrl(),
+            self::KEY_META_AUTO_LINKS => $paginator->render(),
+            self::KEY_META_LINKS => $paginator->renderArray() // NOTE: Specific to Statamic's LengthAwarePaginator.
         ];
 
         $paginatedCollection = $paginator->getCollection();
@@ -74,6 +84,27 @@ class PaginatedThreadRenderer
             self::KEY_RETURN_DATA => $paginatedCollection->all(),
             self::KEY_RETURN_META => $paginationMeta,
             self::KEY_TOTAL_RESULTS => $totalResults
+        ];
+    }
+
+    /**
+     * Generates a collection of data that can be used to render paginated comment threads.
+     *
+     * @param $collectionName
+     * @param Collection $collection The comment collection.
+     * @param string $pageName The name of the URL parameter to use when generating links.
+     * @param int $offset Where to start in the list of comments.
+     * @param int $limit Maximum number of comments per page.
+     * @return array
+     */
+    public static function preparePaginatedThread($collectionName, $collection, $pageName, $offset, $limit)
+    {
+        $paginateData = self::getPaginationData($collection, $pageName, $offset, $limit);
+
+        return [
+            $collectionName => $paginateData[self::KEY_RETURN_DATA],
+            self::KEY_PAGINATE => $paginateData[self::KEY_RETURN_META],
+            self::KEY_TOTAL_RESULTS => $paginateData[self::KEY_TOTAL_RESULTS]
         ];
     }
 

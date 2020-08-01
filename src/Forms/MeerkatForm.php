@@ -80,6 +80,10 @@ class MeerkatForm extends MeerkatTag
 
         $html = $this->formOpen('/!/Meerkat/socialize', Client::HTTP_POST, $knownParams);
 
+       foreach ($this->getRenderableContextualFields($sessionHandle) as $field) {
+           $html .= $field['field']->__toString();
+       }
+
         $params = [];
 
         if ($redirect = $this->getRedirectUrl()) {
@@ -122,6 +126,11 @@ class MeerkatForm extends MeerkatTag
         return $hiddenField;
     }
 
+    /**
+     * Returns a collection of "hidden" context fields that should be included.
+     *
+     * @return array
+     */
     private function getContextualFields()
     {
         $meerkatBlueprint = $this->makeHiddenField('_meerkat_form', $this->blueprintName);
@@ -133,6 +142,12 @@ class MeerkatForm extends MeerkatTag
         ];
     }
 
+    /**
+     * Processes the
+     * @param Field $field The field to process.
+     * @param string $errorBag The name of the error message collection.
+     * @return array
+     */
     protected function getRenderableField($field, $errorBag = 'default')
     {
         $errors = session('errors') ? session('errors')->getBag($errorBag) : new MessageBag;
@@ -160,18 +175,32 @@ class MeerkatForm extends MeerkatTag
      * Gets fields with extra data for looping over and rendering.
      *
      * @param string $sessionHandle The form's session handle.
-     * @return array
+     * @return Field[]
      */
     private function getFields($sessionHandle)
     {
-        $fields = $this->getBlueprint()->fields()->all()->merge($this->getContextualFields())
+        return $this->getBlueprint()->fields()->all()
             ->map(function ($field) use ($sessionHandle) {
                 return $this->getRenderableField($field, $sessionHandle);
             })
             ->values()
             ->all();
+    }
 
-        return $fields;
+    /**
+     * Gets the form's contextual "hidden" fields.
+     *
+     * @param string $sessionHandle The form's session handle.
+     * @return Field[]
+     */
+    private function getRenderableContextualFields($sessionHandle)
+    {
+        return collect($this->getContextualFields())
+            ->map(function ($field) use ($sessionHandle) {
+                return $this->getRenderableField($field, $sessionHandle);
+            })
+            ->values()
+            ->all();
     }
 
     /**

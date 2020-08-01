@@ -11,6 +11,7 @@ use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
 use Stillat\Meerkat\Forms\MeerkatForm;
 use Stillat\Meerkat\PathProvider;
 use Stillat\Meerkat\Tags\Output\RecursiveThreadRenderer;
+use Stillat\Meerkat\Tags\Responses\CollectionRenderer;
 
 class Meerkat extends Tags
 {
@@ -104,39 +105,12 @@ class Meerkat extends Tags
             return '';
         }
 
-        $collectionName = $this->getParam('as', 'comments');
-        $flatList = $this->getParam('flat', false);
+        /** @var CollectionRenderer $collectionRenderer */
+        $collectionRenderer = app()->make(CollectionRenderer::class);
+        $collectionRenderer->setFromContext($this);
+        $collectionRenderer->setThreadId($contextId);
 
-        $thread = $this->threadManager->findById($contextId);
-
-        $displayComments = [];
-        $comments = $thread->getCommentCollection($collectionName);
-
-        foreach ($comments as $commentId => $comment) {
-            $comments[$commentId] = $this->sanitizer->sanitizeArrayValues($comment);
-        }
-
-        if ($flatList === true) {
-            $displayComments = $comments;
-        } else {
-            foreach ($comments as $comment) {
-                if ($comment[CommentContract::KEY_DEPTH] === 1) {
-                    $displayComments[] = $comment;
-                }
-            }
-        }
-
-        return $this->parseComments([
-            $collectionName => $displayComments
-        ], [], $collectionName);
-    }
-
-    protected function parseComments($data = [], $context = [], $collectionName = 'comments')
-    {
-        $metaData = ['total_results' => count($data)];
-        $data = array_merge($data, $metaData);
-
-        return RecursiveThreadRenderer::renderRecursiveThread($this->sanitizer, $this->content, $data, $context, $collectionName);
+        return $collectionRenderer->render();
     }
 
     /**

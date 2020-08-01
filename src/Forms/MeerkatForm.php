@@ -76,6 +76,8 @@ class MeerkatForm extends MeerkatTag
 
         $knownParams = array_merge(static::HANDLE_PARAM, ['redirect', 'error_redirect', 'allow_request_redirect']);
 
+        $this->params['data-meerkat-form'] = 'comment-form';
+
         $html = $this->formOpen('/!/Meerkat/socialize', Client::HTTP_POST, $knownParams);
 
         $params = [];

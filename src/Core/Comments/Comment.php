@@ -649,6 +649,7 @@ class Comment implements CommentContract
     public function toArray()
     {
         $data = $this->getDataAttributes();
+        $this->resolveRunTimeAttributes();
 
         $data[CommentContract::KEY_CONTENT] = $data[CommentContract::INTERNAL_CONTENT_RAW];
 

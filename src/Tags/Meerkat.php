@@ -2,18 +2,15 @@
 
 namespace Stillat\Meerkat\Tags;
 
-use Statamic\API\Parse;
 use Statamic\Tags\Tags;
-use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
-use Stillat\Meerkat\Forms\MeerkatForm;
+use Stillat\Meerkat\Addon as MeerkatAddon;
 use Stillat\Meerkat\Concerns\GetsHiddenContext;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
+use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
-use Stillat\Meerkat\Tags\Output\FormRenderer;
+use Stillat\Meerkat\Forms\MeerkatForm;
+use Stillat\Meerkat\PathProvider;
 use Stillat\Meerkat\Tags\Output\RecursiveThreadRenderer;
-use Stillat\Meerkat\Tags\Threads\MeerkatResponses;
-use Stillat\Meerkat\Addon as MeerkatAddon;
-use Stillat\Meerkat\View\Antlers\RecursiveCommentParser;
 
 class Meerkat extends Tags
 {
@@ -27,6 +24,16 @@ class Meerkat extends Tags
     {
         $this->threadManager = $threadManager;
         $this->sanitizer = $sanitizer;
+    }
+
+    /**
+     * {{ meerkat }}
+     *
+     * @return string
+     */
+    public function index()
+    {
+        return '';
     }
 
     /**
@@ -60,6 +67,35 @@ class Meerkat extends Tags
         return $meerkatForm->render();
     }
 
+    /**
+     * Returns a value indicating if comments are enabled for the current page context.
+     *
+     * {{ meerkat:comments-enabled }}
+     *
+     * @return bool
+     */
+    public function commentsEnabled()
+    {
+        // TODO: Implement.
+        return false;
+    }
+
+    /**
+     * {{ meerkat:all-comments }}
+     *
+     * @return string
+     */
+    public function allComments()
+    {
+        // TODO: Implement.
+        return '';
+    }
+
+    /**
+     * {{ meerkat:responses }}
+     *
+     * @return string
+     */
     public function responses()
     {
         $contextId = $this->getHiddenContext();
@@ -103,11 +139,32 @@ class Meerkat extends Tags
         return RecursiveThreadRenderer::renderRecursiveThread($this->sanitizer, $this->content, $data, $context, $collectionName);
     }
 
-    public function index()
+    /**
+     * Creates an anchor link for the current comment context.
+     *
+     * {{ meerkat:cp-link }}
+     *
+     * @return string
+     */
+    public function cpLink()
     {
-        return '';
+        $commentId = $this->getCurrentContextId();
+
+        return '<a id="comment-"' . $commentId . '"></a>';
     }
 
+    /**
+     * Returns a Script element referencing Meerkat's reply JavaScript file.
+     *
+     * {{ meerkat:replies-to }}
+     * @return string
+     */
+    public function repliesTo()
+    {
+        $scriptPath = PathProvider::publicJsVendorPath('replies-to');
+
+        return '<script src="' . $scriptPath . '" />';
+    }
 
     public function version()
     {

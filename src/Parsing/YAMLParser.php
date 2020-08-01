@@ -58,7 +58,7 @@ class YAMLParser extends AbstractYAMLParser implements YAMLParserContract
         // If the site is running in debug mode, we will
         // allow the exception to be thrown. Otherwise
         // we log a warning and continue on running.
-        $isDebug = config('app.debug');
+        $isDebug = false;// config('app.debug');
 
         if ($isDebug === true) {
             return $this->statamicParser->parse($content);

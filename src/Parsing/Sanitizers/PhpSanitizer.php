@@ -4,6 +4,14 @@ namespace Stillat\Meerkat\Parsing\Sanitizers;
 
 use Stillat\Meerkat\Core\Contracts\Parsing\OutputSanitizerContract;
 
+/**
+ * Class PhpSanitizer
+ *
+ * Sanitizes PHP tags from input values.
+ *
+ * @package Stillat\Meerkat\Parsing\Sanitizers
+ * @since 2.0.0
+ */
 class PhpSanitizer implements OutputSanitizerContract
 {
 

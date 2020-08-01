@@ -4,7 +4,6 @@ namespace Stillat\Meerkat\Core\Storage\Drivers\Local;
 
 use DirectoryIterator;
 use Stillat\Meerkat\Core\Configuration;
-use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\YAMLParserContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\ThreadStorageManagerContract;
@@ -605,7 +604,7 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
             return false;
         }
 
-        $this->recursivelyRemoveDirectory($targetPath);
+        Paths::recursivelyRemoveDirectory($targetPath);
 
         $stillExists = file_exists($targetPath);
 
@@ -614,31 +613,6 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
         }
 
         return true;
-    }
-
-    /**
-     * Recursively removes the contents of a directory.
-     *
-     * @param string $directory The path to remove.
-     */
-    private function recursivelyRemoveDirectory($directory)
-    {
-        // TODO: Refactor to paths.
-
-        if (is_dir($directory)) {
-            $objects = scandir($directory);
-            foreach ($objects as $object) {
-                if ($object != '.' && $object != '..') {
-                    if (filetype($directory . Paths::SYM_FORWARD_SEPARATOR . $object) == 'dir') {
-                        $this->recursivelyRemoveDirectory($directory . Paths::SYM_FORWARD_SEPARATOR . $object);
-                    } else {
-                        unlink($directory . Paths::SYM_FORWARD_SEPARATOR . $object);
-                    }
-                }
-            }
-            reset($objects);
-            rmdir($directory);
-        }
     }
 
     /**
@@ -755,56 +729,13 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
         $sourcePath = $this->determineVirtualPathById($sourceThreadId);
         $targetPath = $this->determineVirtualPathById($targetThreadId);
 
-        $this->recursivelyCopyDirectory($sourcePath, $targetPath, true);
+        Paths::recursivelyCopyDirectory($sourcePath, $targetPath, true);
 
         if (file_exists($sourcePath)) {
             return false;
         }
 
         return true;
-    }
-
-    /**
-     * Attempts to copy all the source directories contents to the destination directory.
-     *
-     * @param string $source The path that things should be copied from.
-     * @param string $destination The path that things should be copied to.
-     * @param bool $cleanUpSource Whether to remove all the contents from the source directory.
-     */
-    private function recursivelyCopyDirectory($source, $destination, $cleanUpSource)
-    {
-        // TODO: Refactor to Paths.
-
-        if (file_exists($destination) == false) {
-            mkdir($destination, Paths::DIRECTORY_PERMISSIONS, true);
-        }
-
-        if (is_dir($source)) {
-            $dirHandle = opendir($source);
-
-            while (false !== ($file = readdir($dirHandle))) {
-                if (($file != '.') && ($file != '..')) {
-                    if (is_dir($source . Paths::SYM_FORWARD_SEPARATOR . $file)) {
-                        $this->recursivelyCopyDirectory(
-                            $source . Paths::SYM_FORWARD_SEPARATOR . $file,
-                            $destination . Paths::SYM_FORWARD_SEPARATOR . $file,
-                            false
-                        );
-                    } else {
-                        copy(
-                            $source . Paths::SYM_FORWARD_SEPARATOR . $file,
-                            $destination . Paths::SYM_FORWARD_SEPARATOR . $file
-                        );
-                    }
-                }
-            }
-
-            closedir($dirHandle);
-        }
-
-        if ($cleanUpSource) {
-            $this->recursivelyRemoveDirectory($source);
-        }
     }
 
     /**

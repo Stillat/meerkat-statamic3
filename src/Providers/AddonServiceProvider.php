@@ -7,6 +7,8 @@ use Illuminate\Support\ServiceProvider;
 use Statamic\Providers\AddonServiceProvider as StatamicAddonServiceProvider;
 use Statamic\Statamic;
 use Stillat\Meerkat\Addon;
+use Stillat\Meerkat\Core\Storage\Paths;
+use Stillat\Meerkat\Core\Support\Str;
 use Stillat\Meerkat\Http\RequestHelpers;
 use Stillat\Meerkat\PathProvider;
 
@@ -239,31 +241,33 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
 
     private function publishAddonControlPanelAssets()
     {
-        // TODO: Cleanup old versions, and refactor to shared storage methods.
         $resources = PathProvider::getResourcesDirectory('/dist/js');
-        $publicPath = public_path('/vendor/meerkat/js/'.Addon::VERSION);
+        $rootPublicPath = public_path('/vendor/'.Addon::CODE_ADDON_NAME.'/js/');
+        $publicPath = $rootPublicPath.Addon::VERSION;
+        $currentVersions = Paths::getDirectories($rootPublicPath);
+        $didFindCurrentVersion = false;
+        $versionsToCleanUp = [];
 
-        if (file_exists($publicPath) == false) {
-            mkdir($publicPath, 644, true);
-        }
-
-        $this->recurse_copy($resources, $publicPath);
-    }
-
-    private function recurse_copy($src, $dst)
-    {
-        $dir = opendir($src);
-        @mkdir($dst);
-        while (false !== ($file = readdir($dir))) {
-            if (($file != '.') && ($file != '..')) {
-                if (is_dir($src . '/' . $file)) {
-                    recurse_copy($src . '/' . $file, $dst . '/' . $file);
-                } else {
-                    copy($src . '/' . $file, $dst . '/' . $file);
-                }
+        foreach ($currentVersions as $assetPath) {
+            if (Str::endsWith($assetPath, Addon::VERSION)) {
+                $didFindCurrentVersion = true;
+            } else {
+                $versionsToCleanUp[] = $assetPath;
             }
         }
-        closedir($dir);
+
+        if ($didFindCurrentVersion === false) {
+            // First, publish new versions.
+            if (file_exists($publicPath) == false) {
+                mkdir($publicPath, 644, true);
+            }
+
+            Paths::recursivelyCopyDirectory($resources, $publicPath, false);
+        }
+
+        foreach ($versionsToCleanUp as $assetPath) {
+            Paths::recursivelyRemoveDirectory($assetPath);
+        }
     }
 
     /**

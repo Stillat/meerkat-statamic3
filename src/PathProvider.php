@@ -8,6 +8,18 @@ class PathProvider
     const MEERKAT_COMMENTS_DIRECTORY = '/content/comments/';
 
     /**
+     * Creates the Meerkat comments directory, if it does not exists.
+     */
+    public static function ensureContentPathExists()
+    {
+        $contentPath = PathProvider::contentPath();
+
+        if (!file_exists($contentPath)) {
+            mkdir($contentPath);
+        }
+    }
+
+    /**
      * Resolves the absolute path to the Meerkat comments directory.
      *
      * @return string
@@ -23,16 +35,14 @@ class PathProvider
         return PathProvider::normalize(base_path(PathProvider::MEERKAT_COMMENTS_DIRECTORY));
     }
 
-    /**
-     * Creates the Meerkat comments directory, if it does not exists.
-     */
-    public static function ensureContentPathExists()
+    public static function normalize($path)
     {
-        $contentPath = PathProvider::contentPath();
+        return str_replace('\\', '/', $path);
+    }
 
-        if (!file_exists($contentPath)) {
-            mkdir($contentPath);
-        }
+    public static function getRouteFile($file)
+    {
+        return PathProvider::normalize(realpath(PathProvider::getAddonDirectory() . 'routes/' . $file . '.php'));
     }
 
     /**
@@ -46,11 +56,6 @@ class PathProvider
         return PathProvider::normalize(realpath(__DIR__ . './../' . $path));
     }
 
-    public static function getRouteFile($file)
-    {
-        return PathProvider::normalize(realpath(PathProvider::getAddonDirectory() . 'routes/' . $file . '.php'));
-    }
-
     public static function getResourcesDirectory($path = '')
     {
         return PathProvider::normalize(PathProvider::getAddonDirectory() . '/resources/' . $path);
@@ -61,14 +66,14 @@ class PathProvider
         return PathProvider::normalize(PathProvider::getAddonDirectory('src/_stubs/' . $file));
     }
 
-    public static function normalize($path)
-    {
-        return str_replace('\\', '/', $path);
-    }
-
     public static function winPath($path)
     {
         return str_replace('/', '\\', PathProvider::normalize($path));
+    }
+
+    public static function publicJsVendorPath($resourceName)
+    {
+        return url('vendor/' . Addon::CODE_ADDON_NAME . '/js/' . Addon::VERSION . '/' . $resourceName . '.js');
     }
 
 }

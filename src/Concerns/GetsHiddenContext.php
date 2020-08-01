@@ -15,5 +15,14 @@ trait GetsHiddenContext
         return data_get($this->context, 'page.id', null);
     }
 
+    /**
+     * Attempts to locate the identifier for the current context.
+     *
+     * @return string|null
+     */
+    protected function getCurrentContextId()
+    {
+        return data_get($this->context, 'id', null);
+    }
 
 }

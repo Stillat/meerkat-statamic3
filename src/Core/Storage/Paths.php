@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat\Core\Storage;
 
+use DirectoryIterator;
 use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Support\Str;
 
@@ -140,6 +141,14 @@ class Paths
         return $files;
     }
 
+    /**
+     * Recursively searched for a file using multiple patterns.
+     *
+     * @param string $pattern The primary pattern.
+     * @param string $subPattern The sub-pattern to search.
+     * @param string $fileName The name of the file to locate.
+     * @return array|false|string|string[]
+     */
     public function searchForFile($pattern, $subPattern, $fileName)
     {
         $files = glob($pattern, 0);
@@ -163,6 +172,91 @@ class Paths
         }
 
         return $files;
+    }
+
+    /**
+     * Gets a directory listing for the provided path. Not recursive.
+     *
+     * @param string $path The directory to search.
+     * @return string[]
+     */
+    public static function getDirectories($path)
+    {
+        $dirIterator = new DirectoryIterator($path);
+        $pathsToReturn = [];
+
+        foreach ($dirIterator as $fileInfo) {
+            if ($fileInfo->isDot() || $fileInfo->isFile()) {
+                continue;
+            }
+
+            $pathsToReturn[] = $fileInfo->getRealPath();
+        }
+
+        return $pathsToReturn;
+    }
+
+    /**
+     * Recursively removes the contents of a directory.
+     *
+     * @param string $directory The path to remove.
+     */
+    public static function recursivelyRemoveDirectory($directory) {
+        if (is_dir($directory)) {
+            $objects = scandir($directory);
+            foreach ($objects as $object) {
+                if ($object != '.' && $object != '..') {
+                    if (filetype($directory . Paths::SYM_FORWARD_SEPARATOR . $object) == 'dir') {
+                        Paths::recursivelyRemoveDirectory($directory . Paths::SYM_FORWARD_SEPARATOR . $object);
+                    } else {
+                        unlink($directory . Paths::SYM_FORWARD_SEPARATOR . $object);
+                    }
+                }
+            }
+            reset($objects);
+            rmdir($directory);
+        }
+    }
+
+    /**
+     * Attempts to copy all the source directories contents to the destination directory.
+     *
+     * @param string $source The path that things should be copied from.
+     * @param string $destination The path that things should be copied to.
+     * @param bool $cleanUpSource Whether to remove all the contents from the source directory.
+     */
+    public static function recursivelyCopyDirectory($source, $destination, $cleanUpSource)
+    {
+        if (file_exists($destination) == false) {
+            mkdir($destination, Paths::DIRECTORY_PERMISSIONS, true);
+        }
+
+        if (is_dir($source)) {
+            $dirHandle = opendir($source);
+
+            while (false !== ($file = readdir($dirHandle))) {
+                if (($file != '.') && ($file != '..')) {
+                    if (is_dir($source . Paths::SYM_FORWARD_SEPARATOR . $file)) {
+                        Paths::recursivelyCopyDirectory(
+                            $source . Paths::SYM_FORWARD_SEPARATOR . $file,
+                            $destination . Paths::SYM_FORWARD_SEPARATOR . $file,
+                            false
+                        );
+                    } else {
+                        copy(
+                            $source . Paths::SYM_FORWARD_SEPARATOR . $file,
+                            $destination . Paths::SYM_FORWARD_SEPARATOR . $file
+                        );
+                    }
+                }
+            }
+
+            closedir($dirHandle);
+        }
+
+        if ($cleanUpSource) {
+            Paths::recursivelyRemoveDirectory($source);
+        }
     }
 
 }

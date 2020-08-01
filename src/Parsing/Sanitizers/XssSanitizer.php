@@ -6,6 +6,14 @@ use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Parsing\OutputSanitizerContract;
 use Stillat\Meerkat\Core\Support\TypeConversions;
 
+/**
+ * Class XssSanitizer
+ *
+ * Removes the configured HTML tags from input values.
+ *
+ * @package Stillat\Meerkat\Parsing\Sanitizers
+ * @since 2.0.0
+ */
 class XssSanitizer implements OutputSanitizerContract
 {
 

@@ -4,6 +4,14 @@ namespace Stillat\Meerkat\Parsing\Sanitizers;
 
 use Stillat\Meerkat\Core\Contracts\Parsing\OutputSanitizerContract;
 
+/**
+ * Class AntlersSanitizer
+ *
+ * Sanitizes Antler's variable syntax from input values.
+ *
+ * @package Stillat\Meerkat\Parsing\Sanitizers
+ * @since 2.0.0
+ */
 class AntlersSanitizer implements OutputSanitizerContract
 {
 

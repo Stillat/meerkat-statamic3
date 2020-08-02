@@ -19,11 +19,16 @@ class CollectionRenderer extends MeerkatTag
     protected $pageBy = 'page';
 
     private $threadId = null;
+    private $paginatedThreadRenderer = null;
 
-    public function __construct(ThreadManagerContract $threadManager, SanitationManagerContract $sanitizer)
+    public function __construct(
+        ThreadManagerContract $threadManager,
+        SanitationManagerContract $sanitizer,
+        PaginatedThreadRenderer $pageRenderer)
     {
         $this->threadManager = $threadManager;
         $this->sanitizer = $sanitizer;
+        $this->paginatedThreadRenderer = $pageRenderer;
     }
 
     public function setThreadId($threadId)
@@ -69,7 +74,7 @@ class CollectionRenderer extends MeerkatTag
         } else {
             if ($this->paginated) {
                 return $this->parseComments(
-                    PaginatedThreadRenderer::preparePaginatedThread($collectionName,
+                    $this->paginatedThreadRenderer->preparePaginatedThread($collectionName,
                         collect($displayComments),
                         $this->pageBy,
                         $this->pageOffset,
@@ -99,6 +104,8 @@ class CollectionRenderer extends MeerkatTag
      */
     private function prepareItems($items)
     {
+        // Order
+        // Filter
         // TODO: Implement filters, etc.
         return $items;
     }

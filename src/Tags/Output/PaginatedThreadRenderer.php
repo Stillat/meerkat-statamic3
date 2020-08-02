@@ -3,7 +3,7 @@
 namespace Stillat\Meerkat\Tags\Output;
 
 use Illuminate\Support\Collection;
-use Statamic\Extensions\Pagination\LengthAwarePaginator;
+use Stillat\Meerkat\Core\Contracts\Data\PaginatorContract;
 
 /**
  * Class PaginatedThreadRenderer
@@ -30,61 +30,11 @@ class PaginatedThreadRenderer
     const KEY_META_AUTO_LINKS = 'auto_links';
     const KEY_META_LINKS = 'links';
 
-    /**
-     * Produces a limited collection of comments and meta data.
-     *
-     * @param Collection $collection
-     * @param string $pageName The name of the URL parameter to use when generating links.
-     * @param int $offset Where to start in the list of comments.
-     * @param int $limit Maximum number of comments per page.
-     * @return array
-     */
-    public static function getPaginationData($collection, $pageName, $offset, $limit)
+    private $paginator = null;
+
+    public function __construct(PaginatorContract $paginator)
     {
-        if ($limit === null || $limit === 0) {
-            $limit = $collection->count();
-        }
-
-        $limit = (int)$limit;
-
-        $totalResults = $collection->count();
-        $currentPage = (int)request()->get($pageName);
-        $currentOffset = (($currentPage - 1) * $limit) + $offset;
-
-        $displayItems = $collection->slice($currentOffset, $limit);
-        $itemsCount = $totalResults - $offset;
-        $lastPage = (int)ceil($itemsCount / $limit);
-
-
-        if ($currentPage > $lastPage) {
-            $currentPage = $lastPage;
-        } elseif ($currentPage < 1) {
-            $currentPage = 1;
-        }
-
-        $paginator = new LengthAwarePaginator($displayItems, $itemsCount, $limit, $currentPage);
-        $paginator->setPageName($pageName);
-        $paginator->setPath(url()->current());
-        $paginator->appends(request()->all());
-
-        $paginationMeta = [
-            self::KEY_META_TOTAL_ITEMS => $itemsCount,
-            self::KEY_META_ITEMS_PER_PAGE => $limit,
-            self::KEY_META_TOTAL_PAGES => $paginator->lastPage(),
-            self::KEY_META_CURRENT_PAGE => $paginator->currentPage(),
-            self::KEY_META_PREV_PAGE => $paginator->previousPageUrl(),
-            self::KEY_META_NEXT_PAGE => $paginator->nextPageUrl(),
-            self::KEY_META_AUTO_LINKS => $paginator->render(),
-            self::KEY_META_LINKS => $paginator->renderArray() // NOTE: Specific to Statamic's LengthAwarePaginator.
-        ];
-
-        $paginatedCollection = $paginator->getCollection();
-
-        return [
-            self::KEY_RETURN_DATA => $paginatedCollection->all(),
-            self::KEY_RETURN_META => $paginationMeta,
-            self::KEY_TOTAL_RESULTS => $totalResults
-        ];
+        $this->paginator = $paginator;
     }
 
     /**
@@ -97,7 +47,7 @@ class PaginatedThreadRenderer
      * @param int $limit Maximum number of comments per page.
      * @return array
      */
-    public static function preparePaginatedThread($collectionName, $collection, $pageName, $offset, $limit)
+    public function preparePaginatedThread($collectionName, $collection, $pageName, $offset, $limit)
     {
         $paginateData = self::getPaginationData($collection, $pageName, $offset, $limit);
 
@@ -106,6 +56,26 @@ class PaginatedThreadRenderer
             self::KEY_PAGINATE => $paginateData[self::KEY_RETURN_META],
             self::KEY_TOTAL_RESULTS => $paginateData[self::KEY_TOTAL_RESULTS]
         ];
+    }
+
+    /**
+     * Produces a limited collection of comments and meta data.
+     *
+     * @param Collection $collection
+     * @param string $pageName The name of the URL parameter to use when generating links.
+     * @param int $offset Where to start in the list of comments.
+     * @param int $limit Maximum number of comments per page.
+     * @return array
+     */
+    public function getPaginationData($collection, $pageName, $offset, $limit)
+    {
+        return $this->paginator->paginate(
+            $collection->all(),
+            $pageName,
+            (int)request()->get($pageName),
+            $offset,
+            $limit
+        )->toArray();
     }
 
 }

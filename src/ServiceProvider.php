@@ -18,6 +18,7 @@ use Stillat\Meerkat\Parsing\MarkdownParser;
 use Stillat\Meerkat\Parsing\YAMLParser;
 use Stillat\Meerkat\Providers\AddonServiceProvider;
 use Stillat\Meerkat\Providers\ControlPanelServiceProvider;
+use Stillat\Meerkat\Providers\DataServiceProvider;
 use Stillat\Meerkat\Providers\IdentityServiceProvider;
 use Stillat\Meerkat\Providers\TagsServiceProvider;
 use Stillat\Meerkat\Providers\ThreadServiceProvider;
@@ -44,6 +45,7 @@ class ServiceProvider extends AddonServiceProvider
         /** Start: Meerkat Core Dependency Providers */
         IdentityServiceProvider::class,
         ThreadServiceProvider::class,
+        DataServiceProvider::class,
         /** End: Meerkat Core Dependency Providers */
 
         TagsServiceProvider::class,

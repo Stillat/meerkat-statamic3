@@ -33,7 +33,7 @@ trait ProvidesDiscovery
     }
 
     /**
-     * Attemps to locate the specified comment.
+     * Attempts to locate the specified comment.
      *
      * @param string $commentId The comment's string identifier.
      * @return CommentContract

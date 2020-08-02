@@ -66,11 +66,11 @@ abstract class PaginatorBase implements PaginatorContract
     protected $lastPageNumber = 0;
 
     /**
-     * The name of the data page.
+     * The name of the page collection.
      *
      * @var string
      */
-    protected $pageName = '';
+    protected $pageName = 'page';
 
     /**
      * Creates a paged data set for the provided data and constraints.
@@ -85,6 +85,7 @@ abstract class PaginatorBase implements PaginatorContract
     public function paginate($collection, $pageName, $currentPage, $offset, $limit)
     {
         $this->pageName = $pageName;
+
         $this->preparePagedData($collection, $pageName, $currentPage, $offset, $limit);
 
         return $this->getResult();

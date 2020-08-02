@@ -16,7 +16,7 @@ use Stillat\Meerkat\Core\Data\PaginationResult;
  */
 class PaginatedThreadRenderer
 {
-    
+
     private $paginator = null;
 
     public function __construct(PaginatorContract $paginator)

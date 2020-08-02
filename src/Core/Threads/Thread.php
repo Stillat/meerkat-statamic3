@@ -7,6 +7,7 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContextContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContract;
 use Stillat\Meerkat\Core\DataObject;
+use Stillat\Meerkat\Core\Threads\StaticApi\ProvidesDiscovery;
 
 /**
  * Class Thread
@@ -22,7 +23,7 @@ use Stillat\Meerkat\Core\DataObject;
  */
 class Thread implements ThreadContract, JsonSerializable
 {
-    use DataObject;
+    use DataObject, ProvidesDiscovery;
 
     /**
      * The storage path for the thread.

@@ -4,6 +4,7 @@ namespace Stillat\Meerkat\Tags\Output;
 
 use Illuminate\Support\Collection;
 use Stillat\Meerkat\Core\Contracts\Data\PaginatorContract;
+use Stillat\Meerkat\Core\Data\PaginationResult;
 
 /**
  * Class PaginatedThreadRenderer
@@ -15,21 +16,7 @@ use Stillat\Meerkat\Core\Contracts\Data\PaginatorContract;
  */
 class PaginatedThreadRenderer
 {
-
-    const KEY_PAGINATE = 'paginate';
-    const KEY_RETURN_META = 'meta';
-    const KEY_RETURN_DATA = 'data';
-    const KEY_TOTAL_RESULTS = 'total_results';
-
-    const KEY_META_TOTAL_ITEMS = 'total_items';
-    const KEY_META_ITEMS_PER_PAGE = 'items_per_page';
-    const KEY_META_TOTAL_PAGES = 'total_pages';
-    const KEY_META_CURRENT_PAGE = 'current_page';
-    const KEY_META_PREV_PAGE = 'prev_page';
-    const KEY_META_NEXT_PAGE = 'next_page';
-    const KEY_META_AUTO_LINKS = 'auto_links';
-    const KEY_META_LINKS = 'links';
-
+    
     private $paginator = null;
 
     public function __construct(PaginatorContract $paginator)
@@ -52,9 +39,9 @@ class PaginatedThreadRenderer
         $paginateData = self::getPaginationData($collection, $pageName, $offset, $limit);
 
         return [
-            $collectionName => $paginateData[self::KEY_RETURN_DATA],
-            self::KEY_PAGINATE => $paginateData[self::KEY_RETURN_META],
-            self::KEY_TOTAL_RESULTS => $paginateData[self::KEY_TOTAL_RESULTS]
+            $collectionName => $paginateData[PaginationResult::KEY_RETURN_DATA],
+            PaginationResult::KEY_PAGINATE => $paginateData[PaginationResult::KEY_RETURN_META],
+            PaginationResult::KEY_TOTAL_RESULTS => $paginateData[PaginationResult::KEY_TOTAL_RESULTS]
         ];
     }
 

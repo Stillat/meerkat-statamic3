@@ -4,6 +4,7 @@ namespace Stillat\Meerkat\Core\Data\Filters;
 
 class CommentFilter
 {
+    const PARAM_GLOBAL_CURRENT = '*current*';
 
     /**
      * A collection of parameters supplied to the filter.

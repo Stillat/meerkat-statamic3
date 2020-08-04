@@ -56,4 +56,28 @@ class TypeConversions
         return (array)$value;
     }
 
+    /**
+     * Converts the provided value to an array.
+     *
+     * @param string $value The input string.
+     * @param string $delimiter The string that separates values.
+     * @return array
+     */
+    public static function parseToArray($value, $delimiter = ',')
+    {
+        if (is_string($value)) {
+            $temp = explode($delimiter, $value);
+
+            if ($temp == false) {
+                $temp = [];
+            } else {
+                $temp = array_map('trim', $temp);
+            }
+
+            $value = $temp;
+        }
+
+        return self::getArray($value);
+    }
+
 }

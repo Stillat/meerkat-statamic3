@@ -8,8 +8,15 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentManagerContract;
 use Stillat\Meerkat\Core\Contracts\Logging\ErrorCodeRepositoryContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
+use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
+use Stillat\Meerkat\Core\Data\DataQuery;
+use Stillat\Meerkat\Core\Data\Filters\CommentFilter;
+use Stillat\Meerkat\Core\Data\Filters\CommentFilterManager;
+use Stillat\Meerkat\Core\Data\PredicateBuilder;
+use Stillat\Meerkat\Core\Data\RuntimeContext;
 use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Logging\ErrorLog;
+use Stillat\Meerkat\Core\Threads\Thread;
 use Stillat\Meerkat\Feedback\SolutionProvider;
 use Illuminate\Support\Facades\Event;
 use Statamic\Contracts\Auth\UserRepository;
@@ -25,25 +32,22 @@ class DashboardController extends CpController
 {
     use UsesTranslations;
 
-    public function index(CommentManagerContract $manager)
+    public function index(ThreadManagerContract $threads, DataQuery $query, CommentFilterManager $filters)
     {
 
-        dd(
-          Comment::saveReplyTo('1595945413', Comment::newFromArray([
-              'email' => 'test@test2.com',
-              'name' => 'Hello Test',
-              'comment' => 'Hello, world test test',
-          ]))
-        );
 
-        Comment::replyTo('1582351200', Comment::newFromArray([
-            'email' => 'test@test.com',
-            'name' => 'Hello Name',
-            'comment' => 'Hello, world',
-        ]))->save();
+        $thread = Thread::find('7ac0bdda-1b84-45f8-ac52-2575dd7e8251');
+        $builder = new PredicateBuilder();
+        $context = new RuntimeContext();
+        $context->templateTagContext = '';
+        $context->context = null;
+        $context->parameters = [];
 
-        dd(Comment::find('1582351200'));
-        //$comment = $manager->findById('1582351200');
+
+        $data = $query->withContext($context)->skip(2)->limit(2)->sortAsc(CommentContract::KEY_ID)
+            ->filterBy('is:spam')->get($thread->getComments());
+
+        dd($data);
 
 
         return view('meerkat::dashboard');

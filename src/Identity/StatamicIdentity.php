@@ -163,4 +163,14 @@ class StatamicIdentity implements AuthorContract
         $this->permissionSet = $permissionSet;
     }
 
+    /**
+     * Gets the host system's user object, if available.
+     *
+     * @return mixed
+     */
+    public function getHostUser()
+    {
+
+    }
+
 }

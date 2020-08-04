@@ -164,6 +164,7 @@ class StatamicIdentityManager implements IdentityManagerContract, PermissionsMan
             return null;
         }
 
+        // TODO: Refactor  param type. General cleanup.
         return $this->authorFactory->makeAuthor($currentUser);
     }
 

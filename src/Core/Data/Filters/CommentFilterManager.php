@@ -262,7 +262,7 @@ class CommentFilterManager
     }
 
     /**
-     * Gets the currently used Statamic user, if any.
+     * Gets the currently used user identity, if any.
      *
      * @return mixed|null
      */
@@ -272,12 +272,12 @@ class CommentFilterManager
     }
 
     /**
-     * The current Statamic user.
-     * @param mixed|null $statamicUser
+     * The current user identity.
+     * @param mixed|null $identity
      */
-    public function setUser(AuthorContract $statamicUser)
+    public function setUser(AuthorContract $identity)
     {
-        $this->user = $statamicUser;
+        $this->user = $identity;
     }
 
 }

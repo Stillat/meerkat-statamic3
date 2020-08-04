@@ -126,6 +126,11 @@ class Comment implements CommentContract
         $this->threadId = $threadId;
     }
 
+    public function getThreadId()
+    {
+        return $this->threadId;
+    }
+
     public function setStorageManager(&$manager)
     {
         $this->storageManager = $manager;

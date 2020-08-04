@@ -122,4 +122,11 @@ interface AuthorContract extends DataObjectContract, Serializable
      */
     public function setPermissionsSet($permissionSet);
 
+    /**
+     * Gets the host system's user object, if available.
+     *
+     * @return mixed
+     */
+    public function getHostUser();
+
 }

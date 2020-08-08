@@ -2,6 +2,16 @@
 
 namespace Stillat\Meerkat\Core\Data\Filters;
 
+use Closure;
+
+/**
+ * Class FilterVariable
+ *
+ * Represents a value that can be resolved dynamically.
+ *
+ * @package Stillat\Meerkat\Core\Data\Filters
+ * @since 1.5.85
+ */
 class FilterVariable
 {
     /**
@@ -130,17 +140,6 @@ class FilterVariable
     }
 
     /**
-     * Checks if a parameter with the given name exists.
-     *
-     * @param string $key The key to check.
-     * @return bool
-     */
-    public function has($key)
-    {
-        return array_key_exists($key, $this->parameters);
-    }
-
-    /**
      * Gets a parameter's value, or a default if it does not exist.
      *
      * @param string $key The parameter name to get.
@@ -157,13 +156,24 @@ class FilterVariable
     }
 
     /**
+     * Checks if a parameter with the given name exists.
+     *
+     * @param string $key The key to check.
+     * @return bool
+     */
+    public function has($key)
+    {
+        return array_key_exists($key, $this->parameters);
+    }
+
+    /**
      * Sets the variable callable.
      *
      * @param callable $callable The variable to resolve.
      */
     public function setCallback($callable)
     {
-        $this->variableCallback = \Closure::bind($callable, $this, get_class());
+        $this->variableCallback = Closure::bind($callable, $this, get_class());
     }
 
     /**

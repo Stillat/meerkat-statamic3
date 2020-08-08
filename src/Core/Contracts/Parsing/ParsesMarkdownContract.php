@@ -2,8 +2,6 @@
 
 namespace Stillat\Meerkat\Core\Contracts\Parsing;
 
-use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
-
 /**
  * Interface ParsesMarkdownContract
  *

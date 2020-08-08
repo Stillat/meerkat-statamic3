@@ -42,62 +42,6 @@ class ThreadMetaData
     protected $createdUtc = 0;
 
     /**
-     * Sets the timestamp the thread was created on.
-     *
-     * @param int $time The timestamp.
-     */
-    public function setCreatedOn($time)
-    {
-        $this->createdUtc = $time;
-    }
-
-    /**
-     * Gets the timestamp the thread was created on.
-     *
-     * @return int
-     */
-    public function getCreatedUtc()
-    {
-        return $this->createdUtc;
-    }
-
-    /**
-     * Sets whether or not the thread has been deleted.
-     *
-     * @param bool $isTrashed Whether the thread is deleted.
-     */
-    public function setIsTrashed($isTrashed)
-    {
-        $this->isTrashed = $isTrashed;
-    }
-
-    /**
-     * Gets whether or not the thread has been deleted.
-     *
-     * @return bool
-     */
-    public function getIsTrashed()
-    {
-        return $this->isTrashed;
-    }
-
-    /**
-     * Updates the thread's meta data using the values from the provided data set.
-     *
-     * Creation time is only updated if the incoming value is older than the current value.
-     *
-     * @param ThreadMetaData $newData The data to update the current state with.
-     */
-    public function update(ThreadMetaData $newData)
-    {
-        if ($this->createdUtc == 0 || ($newData->getCreatedUtc() !== 0 && $newData->getCreatedUtc() < $this->createdUtc)) {
-            $this->createdUtc = $newData->getCreatedUtc();
-        }
-
-        $this->isTrashed = $newData->getIsTrashed();
-    }
-
-    /**
      * Attempts to create a thread from the provided data.
      *
      * @param array $data The thread data.
@@ -131,6 +75,62 @@ class ThreadMetaData
         if (array_key_exists(self::KEY_ATTRIBUTES, $data)) {
             $this->setDataAttributes($data[self::KEY_ATTRIBUTES]);
         }
+    }
+
+    /**
+     * Sets the timestamp the thread was created on.
+     *
+     * @param int $time The timestamp.
+     */
+    public function setCreatedOn($time)
+    {
+        $this->createdUtc = $time;
+    }
+
+    /**
+     * Updates the thread's meta data using the values from the provided dataset.
+     *
+     * Creation time is only updated if the incoming value is older than the current value.
+     *
+     * @param ThreadMetaData $newData The data to update the current state with.
+     */
+    public function update(ThreadMetaData $newData)
+    {
+        if ($this->createdUtc == 0 || ($newData->getCreatedUtc() !== 0 && $newData->getCreatedUtc() < $this->createdUtc)) {
+            $this->createdUtc = $newData->getCreatedUtc();
+        }
+
+        $this->isTrashed = $newData->getIsTrashed();
+    }
+
+    /**
+     * Gets the timestamp the thread was created on.
+     *
+     * @return int
+     */
+    public function getCreatedUtc()
+    {
+        return $this->createdUtc;
+    }
+
+    /**
+     * Gets whether or not the thread has been deleted.
+     *
+     * @return bool
+     */
+    public function getIsTrashed()
+    {
+        return $this->isTrashed;
+    }
+
+    /**
+     * Sets whether or not the thread has been deleted.
+     *
+     * @param bool $isTrashed Whether the thread is deleted.
+     */
+    public function setIsTrashed($isTrashed)
+    {
+        $this->isTrashed = $isTrashed;
     }
 
     /**

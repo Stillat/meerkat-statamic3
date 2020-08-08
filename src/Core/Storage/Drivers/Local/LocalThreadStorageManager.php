@@ -316,8 +316,8 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
             }
         } else {
             LocalErrorCodeRepository::log(ErrorLog::warning(
-               Errors::THREAD_META_REQUESTED_FOR_MISSING_THREAD,
-               $contextId
+                Errors::THREAD_META_REQUESTED_FOR_MISSING_THREAD,
+                $contextId
             ));
         }
 
@@ -344,7 +344,7 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
 
         if ($wasSuccess == false) {
             LocalErrorCodeRepository::log(ErrorLog::make(
-               Errors::THREAD_META_DATA_COULD_NOT_BE_SAVED,
+                Errors::THREAD_META_DATA_COULD_NOT_BE_SAVED,
                 $contextId
             ));
         }
@@ -432,17 +432,6 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
     }
 
     /**
-     * Retrieves the comments for the provided thread.
-     *
-     * @param ThreadContract $thread
-     * @return ThreadHierarchy
-     */
-    public function getAllComments(ThreadContract $thread)
-    {
-        return $this->getAllCommentsById($thread->getId());
-    }
-
-    /**
      * Gets all the comments for the provided thread identifier.
      *
      * @param string $threadId The thread's string identifier.
@@ -455,6 +444,28 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
         }
 
         return $this->commentStorageManager->getCommentsForThreadId($threadId);
+    }
+
+    /**
+     * Generates an internal path for the given thread identifier.
+     *
+     * @param string $id The thread's identifier.
+     * @return string
+     */
+    public function determineVirtualPathById($id)
+    {
+        return $this->storagePath . Paths::SYM_FORWARD_SEPARATOR . $id;
+    }
+
+    /**
+     * Retrieves the comments for the provided thread.
+     *
+     * @param ThreadContract $thread
+     * @return ThreadHierarchy
+     */
+    public function getAllComments(ThreadContract $thread)
+    {
+        return $this->getAllCommentsById($thread->getId());
     }
 
     /**
@@ -536,17 +547,6 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
         }
 
         return true;
-    }
-
-    /**
-     * Generates an internal path for the given thread identifier.
-     *
-     * @param string $id The thread's identifier.
-     * @return string
-     */
-    public function determineVirtualPathById($id)
-    {
-        return $this->storagePath . Paths::SYM_FORWARD_SEPARATOR . $id;
     }
 
     /**
@@ -763,4 +763,5 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
 
         return false;
     }
+
 }

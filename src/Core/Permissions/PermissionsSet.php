@@ -74,15 +74,25 @@ class PermissionsSet
      */
     public function grantAll()
     {
-        $this->canViewComments = true;
-        $this->canApproveComments = true;
-        $this->canUnApproveComments = true;
-        $this->canReplyToComments = true;
-        $this->canReplyToComments = true;
-        $this->canEditComments = true;
-        $this->canReportAsHam = true;
-        $this->canReportAsSpam = true;
-        $this->canRemoveComments = true;
+        $this->setAuthState(true);
+    }
+
+    /**
+     * Sets the user's access to all applicable permissions.
+     *
+     * @param bool $canAccess Whether the identity has the permissions.
+     */
+    private function setAuthState($canAccess)
+    {
+        $this->canViewComments = $canAccess;
+        $this->canApproveComments = $canAccess;
+        $this->canUnApproveComments = $canAccess;
+        $this->canReplyToComments = $canAccess;
+        $this->canReplyToComments = $canAccess;
+        $this->canEditComments = $canAccess;
+        $this->canReportAsHam = $canAccess;
+        $this->canReportAsSpam = $canAccess;
+        $this->canRemoveComments = $canAccess;
     }
 
     /**
@@ -90,15 +100,7 @@ class PermissionsSet
      */
     public function revokeAll()
     {
-        $this->canViewComments = false;
-        $this->canApproveComments = false;
-        $this->canUnApproveComments = false;
-        $this->canReplyToComments = false;
-        $this->canReplyToComments = false;
-        $this->canEditComments = false;
-        $this->canReportAsHam = false;
-        $this->canReportAsSpam = false;
-        $this->canRemoveComments = false;
+        $this->setAuthState(false);
     }
 
     /**

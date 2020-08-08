@@ -23,7 +23,7 @@ abstract class AbstractYAMLParser implements YAMLParserContract
      * Parses the provided string document and merges the results into the provided data container array.
      *
      * @param string $content
-     * @param array  $dataContainer
+     * @param array $dataContainer
      * @return void
      */
     public function parseAndMerge($content, array &$dataContainer)

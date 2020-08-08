@@ -38,4 +38,5 @@ class CommentManagerFactory
 
         return true;
     }
+
 }

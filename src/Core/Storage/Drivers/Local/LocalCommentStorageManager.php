@@ -25,6 +25,14 @@ use Stillat\Meerkat\Core\Threads\ThreadHierarchy;
 use Stillat\Meerkat\Core\ValidationResult;
 use Stillat\Meerkat\Core\Validators\PathPrivilegeValidator;
 
+/**
+ * Class LocalCommentStorageManager
+ *
+ * Manages the interactions between Meerkat and a local file system.
+ *
+ * @package Stillat\Meerkat\Core\Storage\Drivers\Local
+ * @since 2.0.0
+ */
 class LocalCommentStorageManager implements CommentStorageManagerContract
 {
 
@@ -285,6 +293,8 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
 
             $comment = new Comment();
 
+            $comment->setIsNew(false);
+
             // Start: Comment Implementation Specifics (not contract).
             $comment->setStorageManager($this);
             $comment->setAuthorRetriever($this->authorRetriever);
@@ -375,7 +385,6 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
 
         return $hierarchy;
     }
-
 
     /**
      * Retrieves only the core meta-data for the comment.
@@ -484,19 +493,6 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     }
 
     /**
-     * Tests if the provided comment identifier is a descendent of the parent.
-     *
-     * @param string $commentId The child identifier to test.
-     * @param string $testParent The parent identifier to test.
-     * @return bool
-     */
-    public function isChildOf($commentId, $testParent)
-    {
-        // TODO: Implement isChildOf() method.
-        return false;
-    }
-
-    /**
      * Tests if the parent identifier is the direct ancestor of the provided comment.
      *
      * @param string $testParent The parent identifier to test.
@@ -505,10 +501,59 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      */
     public function isParentOf($testParent, $commentId)
     {
-        // TODO: Implement isParentOf() method.
+        return $this->isChildOf($commentId, $testParent);
+    }
+
+    /**
+     * Tests if the provided comment identifier is a descendent of the parent.
+     *
+     * @param string $commentId The child identifier to test.
+     * @param string $testParent The parent identifier to test.
+     * @return bool
+     */
+    public function isChildOf($commentId, $testParent)
+    {
+        $path = $this->getPathById($commentId);
+        $testParentPos = mb_strpos($path, $testParent);
+
+        if ($testParentPos === false) {
+            return false;
+        }
+
+        $commentPos = mb_strpos($path, $commentId);
+
+        if ($testParentPos < $commentPos) {
+            return true;
+        }
+
         return false;
     }
 
+    /**
+     * Attempts to retrieve a storage path from a comment's identifier.
+     *
+     * @param string $commentId The comment's string identifier.
+     * @return string|null
+     */
+    public function getPathById($commentId)
+    {
+        $threadFilter = $this->paths->combine([$this->storagePath, '*' . $commentId . '*']);
+        $commentPath = $this->paths->searchForFile($threadFilter, $this->paths->combine([$commentId, 'comment.md']), 'comment.md');
+
+        if (is_string($commentPath)) {
+            return $commentPath;
+        }
+
+        return null;
+    }
+
+    /**
+     * Generates a virtual storage path for the provided details.
+     *
+     * @param string $threadId The thread's identifier.
+     * @param string $commentId The comment's identifier.
+     * @return string
+     */
     public function generateVirtualPath($threadId, $commentId)
     {
         return $this->getPaths()->combineWithStorage([
@@ -552,6 +597,12 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         return file_put_contents($comment->getVirtualPath(), $contentToSave);
     }
 
+    /**
+     * Attempts to locate a comment by its identifier.
+     *
+     * @param string $id The comment's string identifier.
+     * @return CommentContract|null
+     */
     public function findById($id)
     {
         $path = $this->getPathById($id);
@@ -571,18 +622,6 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
                     return $simpleHierarchy->getComment($id);
                 }
             }
-        }
-
-        return null;
-    }
-
-    public function getPathById($commentId)
-    {
-        $threadFilter = $this->paths->combine([$this->storagePath, '*' . $commentId . '*']);
-        $commentPath = $this->paths->searchForFile($threadFilter, $this->paths->combine([$commentId, 'comment.md']), 'comment.md');
-
-        if (is_string($commentPath)) {
-            return $commentPath;
         }
 
         return null;
@@ -612,6 +651,13 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         return null;
     }
 
+    /**
+     * Generates a storage replies for the provided identifiers.
+     *
+     * @param string $parentId The parent comment's identifier.
+     * @param string $childId The child comment's identifier.
+     * @return string|string[]
+     */
     public function getReplyPathById($parentId, $childId)
     {
         $basePath = $this->getPathById($parentId);
@@ -643,4 +689,112 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         // TODO: Implement update() method.
         return false;
     }
+
+
+    /**
+     * Attempts to locate the comment's child comments.
+     *
+     * @param string $commentId The comment identifier.
+     * @return string[]
+     */
+    public function getDescendents($commentId)
+    {
+        $rootPath = dirname($this->getPathById($commentId));
+        $rootLen = mb_strlen($rootPath) + 1;
+        $commentPath = $this->paths->combine([$rootPath, '*']);
+        $paths = $this->paths->getFilesRecursively($commentPath);
+        $subParts = [];
+
+        foreach ($paths as $path) {
+            $subPath = mb_substr($path, $rootLen);
+            $subParts = array_merge($subParts, explode(Paths::SYM_FORWARD_SEPARATOR, $subPath));
+        }
+
+        return $this->cleanRelatedListing($commentId, $subParts);
+    }
+
+    /**
+     * Removes structural information from the list of comment identifiers.
+     *
+     * @param string $commentId The comment identifier.
+     * @param array $listing The list of comment identifiers.
+     * @return array
+     */
+    private function cleanRelatedListing($commentId, $listing)
+    {
+        $exclude = [
+            CommentContract::COMMENT_FILENAME,
+            self::PATH_REPLIES_DIRECTORY,
+            $commentId
+        ];
+
+        return array_values(array_unique(array_filter($listing, function ($part) use (&$exclude) {
+            return in_array($part, $exclude) === false;
+        })));
+    }
+
+    /**
+     * Attempts to locate the comment's parent comments.
+     *
+     * @param string $commentId The comment identifier.
+     * @return string[]
+     */
+    public function getAncestors($commentId)
+    {
+        $commentPath = $this->getPathById($commentId);
+        $commentPath = mb_substr($commentPath, mb_strlen($this->storagePath) + 1);
+        $parts = explode(Paths::SYM_FORWARD_SEPARATOR, $commentPath);
+
+        if (count($parts) === 0) {
+            return [];
+        }
+
+        $parts = array_slice($parts, 1);
+
+        return $this->cleanRelatedListing($commentId, $parts);
+    }
+
+    /**
+     * Attempts to locale the comment's parent and child comment identifiers.
+     *
+     * @param string $commentId The comment identifier.
+     * @return string[]
+     */
+    public function getRelatedComments($commentId)
+    {
+        $rootLen = mb_strlen($this->storagePath) + 1;
+        $relatedRootPath = dirname($this->getPathById($commentId));
+        $subRoot = mb_substr($relatedRootPath, $rootLen);
+
+        $rootParts = explode(Paths::SYM_FORWARD_SEPARATOR, $subRoot);
+
+        if (count($rootParts) === 0) {
+            return [];
+        }
+
+        $threadId = $rootParts[0];
+
+        $rootLen = mb_strlen($this->paths->combine([$this->storagePath, $threadId])) + 1;
+
+        $commentPath = $this->paths->combine([$relatedRootPath, '*']);
+        $paths = $this->paths->getFilesRecursively($commentPath);
+        $subParts = [];
+
+        foreach ($paths as $path) {
+            $subPath = mb_substr($path, $rootLen);
+            $parts = array_merge($subParts, explode(Paths::SYM_FORWARD_SEPARATOR, $subPath));
+
+            if (count($parts) === 0) {
+                continue;
+            }
+
+            $parts = array_slice($parts, 1);
+
+            $subParts = array_merge($subParts, $parts);
+            $subParts = array_unique($subParts);
+        }
+
+        return $this->cleanRelatedListing($commentId, $subParts);
+    }
+
 }

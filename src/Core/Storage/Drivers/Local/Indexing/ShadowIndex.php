@@ -4,20 +4,16 @@ namespace Stillat\Meerkat\Core\Storage\Drivers\Local\Indexing;
 
 use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Storage\Paths;
+
 // TODO: Documentation!
 class ShadowIndex
 {
 
     const ALL_THREAD_INDEX = 'all.shadow';
-
-    private $storageDirectory = '';
-
-    private $paths = null;
-
     protected $isThreadIndexEnabled = true;
-
     protected $isProtoTypeIndexEnabled = true;
-
+    private $storageDirectory = '';
+    private $paths = null;
 
     public function __construct(Configuration $config)
     {
@@ -45,14 +41,14 @@ class ShadowIndex
         return unserialize(file_get_contents($this->getThreadIndexPath(($threadId))));
     }
 
-    public function getProtoTypeIndex($threadId)
-    {
-        return unserialize(file_get_contents($this->getProtoTypeIndexPath(($threadId))));
-    }
-
     private function getThreadIndexPath($threadId)
     {
         return $this->paths->combine([$this->storageDirectory, $threadId . '.shadow']);
+    }
+
+    public function getProtoTypeIndex($threadId)
+    {
+        return unserialize(file_get_contents($this->getProtoTypeIndexPath(($threadId))));
     }
 
     private function getProtoTypeIndexPath($threadId)

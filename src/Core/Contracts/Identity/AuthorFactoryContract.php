@@ -19,7 +19,7 @@ interface AuthorFactoryContract
     /**
      * Constructs a valid AuthorContract instance from the prototype.
      *
-     * @param  array $protoAuthor
+     * @param array $protoAuthor
      * @return AuthorContract
      */
     public function makeAuthor($protoAuthor);

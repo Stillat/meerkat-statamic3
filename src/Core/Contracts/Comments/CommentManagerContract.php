@@ -51,7 +51,7 @@ interface CommentManagerContract
     /**
      * Attempts to locate a comment by it's string identifier.
      *
-     * @param  string $id
+     * @param string $id
      *
      * @return CommentContract|null
      */
@@ -60,7 +60,7 @@ interface CommentManagerContract
     /**
      * Attempts to remove the provided comment completely.
      *
-     * @param  CommentContract $comment
+     * @param CommentContract $comment
      *
      * @return boolean
      */
@@ -69,7 +69,7 @@ interface CommentManagerContract
     /**
      * Attempts to locate and remove the comment by it's string identifier.
      *
-     * @param  string  $id
+     * @param string $id
      *
      * @return boolean
      */
@@ -78,7 +78,7 @@ interface CommentManagerContract
     /**
      * Resolves the storage path for the provided comment.
      *
-     * @param  CommentContract $comment
+     * @param CommentContract $comment
      *
      * @return string
      */
@@ -87,7 +87,7 @@ interface CommentManagerContract
     /**
      * Resolves the storage path for a comment with the provided string identifier.
      *
-     * @param  string $id
+     * @param string $id
      *
      * @return string
      */

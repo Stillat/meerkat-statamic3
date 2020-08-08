@@ -4,7 +4,7 @@ namespace Stillat\Meerkat\Tags\Output;
 
 use Illuminate\Support\Collection;
 use Stillat\Meerkat\Core\Contracts\Data\PaginatorContract;
-use Stillat\Meerkat\Core\Data\PaginationResult;
+use Stillat\Meerkat\Core\Data\PagedDataSet;
 
 /**
  * Class PaginatedThreadRenderer
@@ -39,9 +39,9 @@ class PaginatedThreadRenderer
         $paginateData = self::getPaginationData($collection, $pageName, $offset, $limit);
 
         return [
-            $collectionName => $paginateData[PaginationResult::KEY_RETURN_DATA],
-            PaginationResult::KEY_PAGINATE => $paginateData[PaginationResult::KEY_RETURN_META],
-            PaginationResult::KEY_TOTAL_RESULTS => $paginateData[PaginationResult::KEY_TOTAL_RESULTS]
+            $collectionName => $paginateData[PagedDataSet::KEY_RETURN_DATA],
+            PagedDataSet::KEY_PAGINATE => $paginateData[PagedDataSet::KEY_RETURN_META],
+            PagedDataSet::KEY_TOTAL_RESULTS => $paginateData[PagedDataSet::KEY_TOTAL_RESULTS]
         ];
     }
 

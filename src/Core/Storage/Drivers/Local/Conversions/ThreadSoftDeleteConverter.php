@@ -2,9 +2,9 @@
 
 namespace Stillat\Meerkat\Core\Storage\Drivers\Local\Conversions;
 
-use Stillat\Meerkat\Core\Support\Str;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalThreadStorageManager;
 use Stillat\Meerkat\Core\Storage\Paths;
+use Stillat\Meerkat\Core\Support\Str;
 use Stillat\Meerkat\Core\Threads\ThreadMetaData;
 
 /**
@@ -31,8 +31,8 @@ class ThreadSoftDeleteConverter
             $threadId = ltrim($threadId, '_');
         }
 
-        $sourcePath = $threadPath.Paths::SYM_FORWARD_SEPARATOR.'_'.$threadId;
-        $targetPath = $threadPath.Paths::SYM_FORWARD_SEPARATOR.$threadId;
+        $sourcePath = $threadPath . Paths::SYM_FORWARD_SEPARATOR . '_' . $threadId;
+        $targetPath = $threadPath . Paths::SYM_FORWARD_SEPARATOR . $threadId;
 
         if (file_exists($sourcePath) == false || is_dir($sourcePath) == false) {
             return;

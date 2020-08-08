@@ -41,7 +41,7 @@ interface SpamGuardContract
      * Marks an object as a spam, and communicates this
      * to third-party vendors if configured to do so.
      *
-     * @param  DataObjectContract $data
+     * @param DataObjectContract $data
      *
      * @return boolean
      */
@@ -51,7 +51,7 @@ interface SpamGuardContract
      * Marks a object as not-spam, and communicates this
      * to third-party vendors if configured to do so.
      *
-     * @param  DataObjectContract $data
+     * @param DataObjectContract $data
      *
      * @return boolean
      */
@@ -76,8 +76,8 @@ interface SpamGuardContract
     /**
      * Returns a value indicating if the guard encountered errors.
      *
-     * @since 2.0.0
      * @return boolean
+     * @since 2.0.0
      */
     public function hasErrors();
 

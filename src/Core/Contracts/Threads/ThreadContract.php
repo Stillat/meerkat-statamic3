@@ -4,8 +4,8 @@ namespace Stillat\Meerkat\Core\Contracts\Threads;
 
 use Serializable;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
-use Stillat\Meerkat\Core\Contracts\StorableContract;
 use Stillat\Meerkat\Core\Contracts\DataObjectContract;
+use Stillat\Meerkat\Core\Contracts\StorableContract;
 use Stillat\Meerkat\Core\Threads\ThreadHierarchy;
 use Stillat\Meerkat\Core\Threads\ThreadMetaData;
 
@@ -38,7 +38,7 @@ interface ThreadContract extends DataObjectContract, StorableContract, Serializa
     /**
      * Sets the ID for the current thread.
      *
-     * @param  string $id
+     * @param string $id
      *
      * @return void
      */
@@ -67,14 +67,25 @@ interface ThreadContract extends DataObjectContract, StorableContract, Serializa
      */
     public function getContextId();
 
+    /**
+     * Sets if the thread is usable, based on it's persistence state.
+     *
+     * @param bool $isUsable If the thread is usable.
+     * @return void
+     */
     public function setIsUsable($isUsable);
 
+    /**
+     * Returns a value indicating if the thread is usable.
+     *
+     * @return bool
+     */
     public function getIsUsable();
 
     /**
      * Sets the context identifier for the thread.
      *
-     * @param  string $id
+     * @param string $id
      *
      * @return void
      */
@@ -90,7 +101,7 @@ interface ThreadContract extends DataObjectContract, StorableContract, Serializa
     /**
      * Sets the comments for the current thread.
      *
-     * @param  CommentContract[] $comments The comments to set on the thread.
+     * @param CommentContract[] $comments The comments to set on the thread.
      * @return void
      */
     public function setComments($comments);
@@ -105,7 +116,7 @@ interface ThreadContract extends DataObjectContract, StorableContract, Serializa
     /**
      * Sets the total number of comments in the thread.
      *
-     * @param  int $count The total number of comments in the thread.
+     * @param int $count The total number of comments in the thread.
      * @return void
      */
     public function setTotalCommentCount($count);
@@ -120,7 +131,7 @@ interface ThreadContract extends DataObjectContract, StorableContract, Serializa
     /**
      * Sets the total number of root comment counts.
      *
-     * @param  int $count The total number of root-level comments in the thread.
+     * @param int $count The total number of root-level comments in the thread.
      * @return void
      */
     public function setRootCommentCount($count);
@@ -135,7 +146,7 @@ interface ThreadContract extends DataObjectContract, StorableContract, Serializa
     /**
      * Sets whether or not the Meerkat thread was soft-deleted.
      *
-     * @param  bool $isTrashed A value indicating if the thread wa soft-deleted.
+     * @param bool $isTrashed A value indicating if the thread wa soft-deleted.
      * @return void
      */
     public function setIsTrashed($isTrashed);
@@ -178,6 +189,13 @@ interface ThreadContract extends DataObjectContract, StorableContract, Serializa
      */
     public function getCommentCollection($repliesName);
 
+    /**
+     * Saves the provided comment to the thread.
+     *
+     * @param CommentContract $comment The comment to attach to the thread.
+     * @return bool
+     */
     public function attachNewComment(CommentContract $comment);
 
 }
+

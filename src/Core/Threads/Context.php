@@ -2,8 +2,8 @@
 
 namespace Stillat\Meerkat\Core\Threads;
 
-use Stillat\Meerkat\Core\DataObject;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContextContract;
+use Stillat\Meerkat\Core\DataObject;
 
 /**
  * Class Context

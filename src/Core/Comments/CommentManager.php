@@ -39,15 +39,6 @@ class CommentManager implements CommentManagerContract
         return $this->commentStorageManager;
     }
 
-
-    public function replyTo($parentId, CommentContract $comment)
-    {
-        $comment->setIsNew(true);
-        $comment->setParentId($parentId);
-
-        return $comment;
-    }
-
     /**
      * Saves a new reply for the provided parent comment.
      *
@@ -60,6 +51,21 @@ class CommentManager implements CommentManagerContract
         $commentToSave = $this->replyTo($parentId, $comment);
 
         return $this->commentStorageManager->save($commentToSave);
+    }
+
+    /**
+     * Configures a comment as a reply to the provided parent.
+     *
+     * @param string $parentId The parent comment string identifier.
+     * @param CommentContract $comment The child comment instance.
+     * @return CommentContract|null
+     */
+    public function replyTo($parentId, CommentContract $comment)
+    {
+        $comment->setIsNew(true);
+        $comment->setParentId($parentId);
+
+        return $comment;
     }
 
     public function getAll($withTrashed = false)

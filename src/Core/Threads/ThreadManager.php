@@ -3,7 +3,6 @@
 namespace Stillat\Meerkat\Core\Threads;
 
 use Stillat\Meerkat\Core\Configuration;
-use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Storage\ThreadStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ContextResolverContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContract;
@@ -84,6 +83,12 @@ class ThreadManager implements ThreadManagerContract
         return $this->threadStorageManager;
     }
 
+    /**
+     * Attempts to locate all threads.
+     *
+     * @param bool $includeTrashed Whether to include soft-deleted threads.
+     * @return ThreadContract[]
+     */
     public function getAllThreads($includeTrashed = false)
     {
         return $this->threadStorageManager->getAllThreads($includeTrashed);

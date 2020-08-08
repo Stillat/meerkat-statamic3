@@ -15,13 +15,6 @@ class ValidationResult
     use DataObject;
 
     /**
-     * A collection of additional validation attributes.
-     *
-     * @var array
-     */
-    protected $attributes = [];
-
-    /**
      * Indicates if validation was a success.
      *
      * @var boolean
@@ -34,6 +27,13 @@ class ValidationResult
      * @var array
      */
     public $reasons = [];
+
+    /**
+     * A collection of additional validation attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [];
 
     /**
      * Adds a new failure reason to the validation result.
@@ -50,6 +50,18 @@ class ValidationResult
     }
 
     /**
+     * Merges the reasons with the current results and updates the validity.
+     *
+     * @param string[] $reasons The validation results to merge.
+     * @return void
+     */
+    public function mergeReasons($reasons)
+    {
+        $this->reasons = array_merge($this->reasons, $reasons);
+        $this->updateValidity();
+    }
+
+    /**
      * Updates the `$isValid` member based on the number of reasons provided.
      *
      * @return void
@@ -60,23 +72,9 @@ class ValidationResult
     }
 
     /**
-     * Merges the reasons with the current results and updates the validity.
-     *
-     * @param string[] $reasons The validation results to merge.
-     *
-     * @return void
-     */
-    public function mergeReasons($reasons)
-    {
-        $this->reasons = array_merge($this->reasons, $reasons);
-        $this->updateValidity();
-    }
-
-    /**
      * Indicates if the current results contains the provided error code.
      *
      * @param string $errorCode The error code to test.
-     *
      * @return bool
      */
     public function containsError($errorCode)

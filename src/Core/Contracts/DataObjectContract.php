@@ -23,14 +23,14 @@ interface DataObjectContract
     /**
      * Sets the data attributes for the current data object.
      *
-     * @param  array $attributes The data attributes to set.
+     * @param array $attributes The data attributes to set.
      */
     public function setDataAttributes($attributes);
 
     /**
      * Returns a value indicating if the provided attribute exists.
      *
-     * @param  string  $key The key to check for existence.
+     * @param string $key The key to check for existence.
      * @return boolean
      */
     public function hasDataAttribute($key);
@@ -38,7 +38,7 @@ interface DataObjectContract
     /**
      * Set the data on the object identified by the $key with the given $value.
      *
-     * @param string $key   The key of the attribute to set.
+     * @param string $key The key of the attribute to set.
      * @param string|mixed $value The value to set.
      *
      * @return void
@@ -64,10 +64,11 @@ interface DataObjectContract
     /**
      * Get the value for the provided $key, if one exists.
      *
-     * @param string      $key     The key of the attribute to get.
+     * @param string $key The key of the attribute to get.
      * @param string|null $default The default value to return if the attribute does not exist.
      *
      * @return string|null
      */
     public function getDataAttribute($key, $default = null);
+    
 }

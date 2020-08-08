@@ -8,6 +8,7 @@ use Stillat\Meerkat\Core\GuardConfiguration;
 use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\SpamGuardContract;
 
+// TODO: Documentation/maybe deprecation
 /**
  * @since 2.0.0
  */

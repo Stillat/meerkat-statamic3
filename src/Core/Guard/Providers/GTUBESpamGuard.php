@@ -2,9 +2,9 @@
 
 namespace Stillat\Meerkat\Core\Guard\Providers;
 
-use Stillat\Meerkat\Core\Support\Str;
 use Stillat\Meerkat\Core\Contracts\DataObjectContract;
 use Stillat\Meerkat\Core\Contracts\SpamGuardContract;
+use Stillat\Meerkat\Core\Support\Str;
 
 /**
  * Class GTUBESpamGuard
@@ -68,7 +68,7 @@ class GTUBESpamGuard implements SpamGuardContract
      * Marks an object as a spam, and communicates this
      * to third-party vendors if configured to do so.
      *
-     * @param  DataObjectContract $data
+     * @param DataObjectContract $data
      *
      * @return boolean
      */
@@ -81,7 +81,7 @@ class GTUBESpamGuard implements SpamGuardContract
      * Marks a object as not-spam, and communicates this
      * to third-party vendors if configured to do so.
      *
-     * @param  DataObjectContract $data
+     * @param DataObjectContract $data
      *
      * @return boolean
      */
@@ -115,8 +115,8 @@ class GTUBESpamGuard implements SpamGuardContract
     /**
      * Returns a value indicating if the guard encountered errors.
      *
-     * @since 2.0.0
      * @return boolean
+     * @since 2.0.0
      */
     public function hasErrors()
     {

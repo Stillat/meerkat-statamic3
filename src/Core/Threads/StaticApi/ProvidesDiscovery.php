@@ -2,9 +2,9 @@
 
 namespace Stillat\Meerkat\Core\Threads\StaticApi;
 
+use Stillat\Meerkat\Core\Contracts\Threads\ThreadContract;
 use Stillat\Meerkat\Core\Exceptions\ThreadNotFoundException;
 use Stillat\Meerkat\Core\Threads\ThreadManagerFactory;
-use Stillat\Meerkat\Core\Contracts\Threads\ThreadContract;
 
 /**
  * Trait ProvidesDiscovery
@@ -22,6 +22,24 @@ trait ProvidesDiscovery
      *
      * @param string $threadId The thread's string identifier.
      * @return ThreadContract|null
+     * @throws ThreadNotFoundException
+     */
+    public static function findOrFail($threadId)
+    {
+        $thread = self::find($threadId);
+
+        if ($thread === null) {
+            throw new ThreadNotFoundException("Thread {$threadId} was not found.");
+        }
+
+        return $thread;
+    }
+
+    /**
+     * Attempts to locate the specified thread.
+     *
+     * @param string $threadId The thread's string identifier.
+     * @return ThreadContract|null
      */
     public static function find($threadId)
     {
@@ -30,24 +48,6 @@ trait ProvidesDiscovery
         }
 
         return null;
-    }
-
-    /**
-     * Attempts to locate the specified thread.
-     *
-     * @param string $threadId The thread's string identifier.
-     * @return ThreadContract|null
-     * @throws ThreadNotFoundException
-     */
-    public static function findOrFail($threadId)
-    {
-        $thread = self::find($threadId);
-
-        if ($thread === nulll) {
-            throw new ThreadNotFoundException("Thread {$threadId} was not found.");
-        }
-
-        return $thread;
     }
 
 }

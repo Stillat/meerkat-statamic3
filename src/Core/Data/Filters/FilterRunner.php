@@ -3,8 +3,8 @@
 namespace Stillat\Meerkat\Core\Data\Filters;
 
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
-use Stillat\Meerkat\Core\Exceptions\FilterException;
 use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
+use Stillat\Meerkat\Core\Exceptions\FilterException;
 
 /**
  * Class FilterRunner
@@ -86,13 +86,13 @@ class FilterRunner
                     });
                 }
             } else {
-                throw new FilterException($filter. ' Meerkat Filter could not be found.');
+                throw new FilterException($filter . ' Meerkat Filter could not be found.');
             }
         }
 
         // Re-create the main data array.
         return array_filter($comments, function ($comment) use ($commentIdsToKeep) {
-           return in_array($comment->getId(), $commentIdsToKeep);
+            return in_array($comment->getId(), $commentIdsToKeep);
         });
     }
 

@@ -4,8 +4,8 @@ namespace Stillat\Meerkat\Core\Contracts\Comments;
 
 use DateTime;
 use Serializable;
-use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\DataObjectContract;
+use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\ParsesMarkdownContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\ParsesYamlContract;
 
@@ -20,7 +20,7 @@ use Stillat\Meerkat\Core\Contracts\Parsing\ParsesYamlContract;
 interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdownContract, ParsesYamlContract
 {
     const COMMENT_FILENAME = 'comment.md';
-    
+
     const KEY_REPLIES = 'replies';
     const KEY_COMMENT_DATE_FORMATTED = 'comment_date_formatted';
     const KEY_CONTENT = 'content';
@@ -34,6 +34,7 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     const KEY_DESCENDENTS = 'descendents';
     const KEY_CHILDREN = 'children';
     const KEY_PARENT = 'parent';
+
     // TODO: Make sure this doesn't get saved.
     const KEY_PARENT_ID = 'parent_id';
     const KEY_IS_PARENT = 'is_parent';
@@ -70,10 +71,27 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
      */
     public function leftByAuthenticatedUser();
 
+    /**
+     * Sets if the comment is a new comment.
+     *
+     * @param bool $isNew Indicates if the comment is a "new" comment.
+     * @return mixed
+     */
     public function setIsNew($isNew);
 
+    /**
+     * Sets the thread's string identifier.
+     *
+     * @param string $threadId The thread string identifier.
+     * @return void
+     */
     public function setThreadId($threadId);
 
+    /**
+     * Gets the comment's thread string identifier.
+     *
+     * @return string|null
+     */
     public function getThreadId();
 
     /**
@@ -93,7 +111,7 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     /**
      * Sets the comment's content.
      *
-     * @param  string $content The content.
+     * @param string $content The content.
      * @return CommentContract
      */
     public function setContent($content);
@@ -166,7 +184,7 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     /**
      * Sets the comment's replies.
      *
-     * @param  CommentContract[] $replies The replies to the comment.
+     * @param CommentContract[] $replies The replies to the comment.
      * @return CommentContract
      */
     public function setReplies($replies);
@@ -237,7 +255,7 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     /**
      * Sets the parent comment for this comment instance.
      *
-     * @param  CommentContract $comment The parent comment.
+     * @param CommentContract $comment The parent comment.
      * @return CommentContract
      */
     public function setParentComment($comment);
@@ -266,7 +284,7 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     /**
      * Sets the comment's author context.
      *
-     * @param  AuthorContract $author The author of the comment.
+     * @param AuthorContract $author The author of the comment.
      * @return CommentContract
      */
     public function setAuthor($author);
@@ -288,7 +306,7 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     /**
      * Sets the comment's participants.
      *
-     * @param  AuthorContract[] $participants The comment's participants.
+     * @param AuthorContract[] $participants The comment's participants.
      * @return CommentContract
      */
     public function setParticipants($participants);
@@ -329,6 +347,12 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
      */
     public function updateCommentContent($content);
 
+    /**
+     * Sets the string identifier of the parent comment.
+     *
+     * @param string $parentId The parent comment's identifier.
+     * @return void
+     */
     public function setParentId($parentId);
 
     /**

@@ -70,20 +70,6 @@ class SearchOptions
     }
 
     /**
-     * Indicates if the search options contains author limiters.
-     *
-     * @return bool
-     */
-    public function hasAuthorLimits()
-    {
-        if ($this->limitToAuthors === null || mb_strlen(trim($this->limitToAuthors)) === 0) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
      * Returns a collection of all authors to limit the search to.
      *
      * Note: This method will internally call haAuthorLimits().
@@ -110,13 +96,13 @@ class SearchOptions
     }
 
     /**
-     * Indicates if the search options contains thread limiters.
+     * Indicates if the search options contains author limiters.
      *
      * @return bool
      */
-    public function hasThreadLimits()
+    public function hasAuthorLimits()
     {
-        if ($this->limitToThreads === null || mb_strlen(trim($this->limitToThreads)) === 0) {
+        if ($this->limitToAuthors === null || mb_strlen(trim($this->limitToAuthors)) === 0) {
             return false;
         }
 
@@ -147,6 +133,20 @@ class SearchOptions
         }
 
         return $threadsToReturn;
+    }
+
+    /**
+     * Indicates if the search options contains thread limiters.
+     *
+     * @return bool
+     */
+    public function hasThreadLimits()
+    {
+        if ($this->limitToThreads === null || mb_strlen(trim($this->limitToThreads)) === 0) {
+            return false;
+        }
+
+        return true;
     }
 
 }

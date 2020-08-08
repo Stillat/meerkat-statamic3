@@ -32,21 +32,21 @@ class UserFromAuth
             $includeUsers = TypeConversions::getBooleanValue($this->get(IsFilters::PARAM_COMPARISON, false));
 
             return array_filter($comments, function (CommentContract $comment) use ($includeUsers) {
-               $hasUser = $comment->leftByAuthenticatedUser();
+                $hasUser = $comment->leftByAuthenticatedUser();
 
-               if ($includeUsers) {
-                   if ($hasUser) {
-                       return true;
-                   } else {
-                       return false;
-                   }
-               }
+                if ($includeUsers) {
+                    if ($hasUser) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
 
-               if ($hasUser) {
-                   return false;
-               }
+                if ($hasUser) {
+                    return false;
+                }
 
-               return true;
+                return true;
             });
         }, IsFilters::PARAM_COMPARISON);
     }

@@ -3,7 +3,7 @@
 namespace Stillat\Meerkat\Core\Parsing;
 
 use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
-use Stillat\Meerkat\Core\InconsistentCompositionException;
+use Stillat\Meerkat\Core\Exceptions\InconsistentCompositionException;
 
 /**
  * Trait UsesMarkdownParser

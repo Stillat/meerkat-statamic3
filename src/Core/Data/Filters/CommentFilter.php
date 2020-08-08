@@ -2,6 +2,16 @@
 
 namespace Stillat\Meerkat\Core\Data\Filters;
 
+use Closure;
+
+/**
+ * Class CommentFilter
+ *
+ * Represents a comment filter that can be applied to a collection of comments.
+ *
+ * @package Stillat\Meerkat\Core\Data\Filters
+ * @since 1.5.85
+ */
 class CommentFilter
 {
     const PARAM_GLOBAL_CURRENT = '*current*';
@@ -49,16 +59,6 @@ class CommentFilter
     protected $supportedTags = [];
 
     /**
-     * Sets the user context.
-     *
-     * @param mixed|null $user The user context.
-     */
-    public function setUser($user)
-    {
-        $this->user = $user;
-    }
-
-    /**
      * Gets the user context.
      *
      * @return mixed|null
@@ -66,6 +66,16 @@ class CommentFilter
     public function getUser()
     {
         return $this->user;
+    }
+
+    /**
+     * Sets the user context.
+     *
+     * @param mixed|null $user The user context.
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
     }
 
     /**
@@ -79,16 +89,6 @@ class CommentFilter
     }
 
     /**
-     * Sets the tags that this filter supports.
-     *
-     * @param array $tags The tags this filter supports.
-     */
-    public function setSupportedTags($tags)
-    {
-        $this->supportedTags = $tags;
-    }
-
-    /**
      * Gets the tags that this filter supports.
      *
      * @return array
@@ -96,6 +96,16 @@ class CommentFilter
     public function getSupportedTags()
     {
         return $this->supportedTags;
+    }
+
+    /**
+     * Sets the tags that this filter supports.
+     *
+     * @param array $tags The tags this filter supports.
+     */
+    public function setSupportedTags($tags)
+    {
+        $this->supportedTags = $tags;
     }
 
     /**
@@ -119,16 +129,6 @@ class CommentFilter
     }
 
     /**
-     * Sets the filter's context.
-     *
-     * @param mixed|null $context The context.
-     */
-    public function setContext($context)
-    {
-        $this->context = $context;
-    }
-
-    /**
      * Gets the filter context, if available.
      *
      * @return mixed|null
@@ -136,6 +136,16 @@ class CommentFilter
     public function getContext()
     {
         return $this->context;
+    }
+
+    /**
+     * Sets the filter's context.
+     *
+     * @param mixed|null $context The context.
+     */
+    public function setContext($context)
+    {
+        $this->context = $context;
     }
 
     /**
@@ -169,17 +179,6 @@ class CommentFilter
     }
 
     /**
-     * Checks if a parameter with the given name exists.
-     *
-     * @param string $key The key to check.
-     * @return bool
-     */
-    public function has($key)
-    {
-        return array_key_exists($key, $this->parameters);
-    }
-
-    /**
      * Gets a parameter's value, or a default if it does not exist.
      *
      * @param string $key The parameter name to get.
@@ -196,13 +195,24 @@ class CommentFilter
     }
 
     /**
+     * Checks if a parameter with the given name exists.
+     *
+     * @param string $key The key to check.
+     * @return bool
+     */
+    public function has($key)
+    {
+        return array_key_exists($key, $this->parameters);
+    }
+
+    /**
      * Sets the filter callable.
      *
      * @param callable $callable The function to run.
      */
     public function setCallback($callable)
     {
-        $this->filterCallback = \Closure::bind($callable, $this, get_class());
+        $this->filterCallback = Closure::bind($callable, $this, get_class());
     }
 
     /**
@@ -218,7 +228,7 @@ class CommentFilter
     /**
      * Runs the filter against the provided comments.
      *
-     * @param  array|mixed $comments The comments.
+     * @param array|mixed $comments The comments.
      * @return mixed
      */
     public function runFilter($comments)

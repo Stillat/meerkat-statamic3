@@ -2,6 +2,8 @@
 
 namespace Stillat\Meerkat\Core\Search;
 
+use Stillat\Meerkat\Core\Contracts\Search\SearchAlgorithmContract;
+
 /**
  * Class Engine
  *
@@ -14,38 +16,33 @@ class Engine
 {
 
     /**
+     * The search algorithm implementation instance.
+     *
+     * @var SearchAlgorithmContract|null
+     */
+    protected $searchAlgorithm = null;
+
+    /**
      * The data attributes to include when searching a data-set.
+     *
      * @var string[]
      */
     private $searchAttributes = [];
+
+    public function __construct(SearchAlgorithmContract $searchAlgorithm)
+    {
+        $this->searchAlgorithm = $searchAlgorithm;
+    }
 
     /**
      * Sets the search attributes to search for.
      * @param string[] $attributes The attributes to search for in the data-set.
      */
-    public function setSearchAttributes($attributes) {
+    public function setSearchAttributes($attributes)
+    {
         if (is_array($attributes)) {
             $this->searchAttributes = $attributes;
         }
-    }
-
-    /**
-     * Crude search implementation.
-     *
-     * TODO: REFACTOR TO BE BETTER.
-     *
-     * @param $needles
-     * @param $haystack
-     * @return bool
-     */
-    protected  function containsMatch($needles, $haystack) {
-        foreach (explode(' ', $needles) as $needle) {
-            if (stristr($haystack, $needle)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**
@@ -55,7 +52,8 @@ class Engine
      * @param $dataset
      * @return array
      */
-    public function search($searchTerms, $dataset) {
+    public function search($searchTerms, $dataset)
+    {
         $itemsToReturn = [];
 
         foreach ($dataset as $itemKey => $item) {
@@ -70,13 +68,8 @@ class Engine
                     }
                 }
 
-                if ($valueToSearch === null) {
-                    continue;
-                }
-
-                if ($this->containsMatch($searchTerms, $valueToSearch)) {
-                    $itemsToReturn[$itemKey] = $item;
-                    break;
+                if ($this->searchAlgorithm->search($valueToSearch, $searchTerms) >= 0) {
+                    $itemsToReturn[] = $item;
                 }
             }
         }

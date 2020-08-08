@@ -18,6 +18,51 @@ class Configuration extends ConfigurationContainer
 {
 
     /**
+     * Indicates if comments created by an authenticated
+     * system user should be marked as "published".
+     *
+     * @var boolean
+     */
+    public $autoPublishAuthenticatedPosts = false;
+
+    /**
+     * Indicates if comments created by an anonymous
+     * user should be marked as "published=true".
+     * @var bool
+     */
+    public $autoPublishAnonymousPosts = false;
+
+    /**
+     * Specifies the storage directory that should be used
+     * to persist threads and their associated comments.
+     *
+     * @var string
+     */
+    public $storageDirectory = '';
+
+    /**
+     * Specifies the storage directory that should be used
+     * to store data for the comment indexes and caches.
+     * @var string
+     */
+    public $indexDirectory = '';
+
+    /**
+     * The directory separator character to use when constructing storage paths.
+     *
+     * @var string
+     */
+    public $directorySeparator = DIRECTORY_SEPARATOR;
+
+    /**
+     * The comment length limit. If this limit is reached when
+     * reading the comment's content data will be truncated.
+     *
+     * @var int
+     */
+    public $hardCommentLengthCap = 5000;
+
+    /**
      * The FormattingConfiguration instance.
      *
      * @var FormattingConfiguration
@@ -48,45 +93,5 @@ class Configuration extends ConfigurationContainer
     {
         return $this->formatConfiguration;
     }
-
-    /**
-     * Indicates if comments created by an authenticated
-     * system user should be marked as "published".
-     *
-     * @var boolean
-     */
-    public $autoPublishAuthenticatedPosts = false;
-
-    /**
-     * Indicates if comments created by an anonymous
-     * user should be marked as "published=true".
-     * @var bool
-     */
-    public $autoPublishAnonymousPosts = false;
-
-    /**
-     * Specifies the storage directory that should be used
-     * to persist threads and their associated comments.
-     *
-     * @var string
-     */
-    public $storageDirectory = '';
-
-    public $indexDirectory = '';
-
-    /**
-     * The directory separator character to use when constructing storage paths.
-     *
-     * @var string
-     */
-    public $directorySeparator = DIRECTORY_SEPARATOR;
-
-    /**
-     * The comment length limit. If this limit is reached when
-     * reading the comment's content data will be truncated.
-     *
-     * @var int
-     */
-    public $hardCommentLengthCap = 5000;
 
 }

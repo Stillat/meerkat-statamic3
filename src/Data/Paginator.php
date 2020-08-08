@@ -4,7 +4,7 @@ namespace Stillat\Meerkat\Data;
 
 use Statamic\Extensions\Pagination\LengthAwarePaginator;
 use Stillat\Meerkat\Core\Data\PaginatorBase;
-use Stillat\Meerkat\Core\Data\PaginationResult;
+use Stillat\Meerkat\Core\Data\PagedDataSet;
 
 /**
  * Class Paginator
@@ -30,12 +30,12 @@ class Paginator extends PaginatorBase
         $paginator->appends(request()->all());
 
         return [
-            PaginationResult::KEY_META_TOTAL_PAGES => $paginator->lastPage(),
-            PaginationResult::KEY_META_CURRENT_PAGE => $paginator->currentPage(),
-            PaginationResult::KEY_META_PREV_PAGE => $paginator->previousPageUrl(),
-            PaginationResult::KEY_META_NEXT_PAGE => $paginator->nextPageUrl(),
-            PaginationResult::KEY_META_AUTO_LINKS => $paginator->render(),
-            PaginationResult::KEY_META_LINKS => $paginator->renderArray()
+            PagedDataSet::KEY_META_TOTAL_PAGES => $paginator->lastPage(),
+            PagedDataSet::KEY_META_CURRENT_PAGE => $paginator->currentPage(),
+            PagedDataSet::KEY_META_PREV_PAGE => $paginator->previousPageUrl(),
+            PagedDataSet::KEY_META_NEXT_PAGE => $paginator->nextPageUrl(),
+            PagedDataSet::KEY_META_AUTO_LINKS => $paginator->render(),
+            PagedDataSet::KEY_META_LINKS => $paginator->renderArray()
         ];
     }
 

@@ -8,7 +8,7 @@ use Stillat\Meerkat\Core\Contracts\Data\PaginatorContract;
 /**
  * Class PaginatorBase
  *
- * Provides a base implementation for data paginators.
+ * Provides a base implementation for data pagination.
  *
  * @package Stillat\Meerkat\Core\Data
  * @since 2.0.0
@@ -73,12 +73,12 @@ abstract class PaginatorBase implements PaginatorContract
     protected $pageName = 'page';
 
     /**
-     * Creates a paged data set for the provided data and constraints.
+     * Creates a paged dataset for the provided data and constraints.
      *
      * @param array $collection The data to page.
      * @param string $pageName The name of the pages to create.
      * @param int $currentPage The current data page.
-     * @param int $offset Where to start in the data set.
+     * @param int $offset Where to start in the dataset.
      * @param int $limit The maximum number of records per page.
      * @return PagedDataSetContract
      */
@@ -92,41 +92,12 @@ abstract class PaginatorBase implements PaginatorContract
     }
 
     /**
-     * Creates a paginator result and returns it.
-     *
-     * @return PaginationResult
-     */
-    protected function getResult()
-    {
-        $result = new PaginationResult();
-
-        $result->limit = $this->limit;
-        $result->totalResults = $this->totalResults;
-        $result->currentPage = $this->currentPage;
-        $result->currentOffset = $this->currentOffset;
-        $result->displayItems = $this->displayItems;
-        $result->itemsCount = $this->itemsCount;
-        $result->lastPageNumber = $this->lastPageNumber;
-
-        $result->additionalMeta = $this->getMetaData();
-
-        return $result;
-    }
-
-    /**
-     * Generates a collection of additional page meta data.
-     *
-     * @return array
-     */
-    abstract protected function getMetaData();
-
-    /**
      * Prepares the data collection for paging.
      *
      * @param array $collection The data to page.
      * @param string $pageName The name of the pages to create.
      * @param int $currentPage The current data page.
-     * @param int $offset Where to start in the data set.
+     * @param int $offset Where to start in the dataset.
      * @param int $limit The maximum number of records per page.
      * @return void
      */
@@ -157,10 +128,39 @@ abstract class PaginatorBase implements PaginatorContract
         $this->limit = $limit;
         $this->totalResults = $totalResults;
         $this->displayItems = $displayItems;
+        $this->pageName = $pageName;
         $this->currentOffset = $currentOffset;
         $this->currentPage = $currentPage;
         $this->lastPageNumber = $lastPage;
         $this->itemsCount = $itemsCount;
     }
+
+    /**
+     * Creates a paginator result and returns it.
+     *
+     * @return PagedDataSet
+     */
+    protected function getResult()
+    {
+        $result = new PagedDataSet();
+
+        $result->setLimit($this->limit);
+        $result->setTotalResults($this->totalResults);
+        $result->setCurrentPage($this->currentPage);
+        $result->setCurrentOffset($this->currentOffset);
+        $result->setDisplayItems($this->displayItems);
+        $result->setItemsCount($this->itemsCount);
+        $result->setLastPageNumber($this->lastPageNumber);
+        $result->setAdditionalMetaData($this->getMetaData());
+
+        return $result;
+    }
+
+    /**
+     * Generates a collection of additional page meta data.
+     *
+     * @return array
+     */
+    abstract protected function getMetaData();
 
 }

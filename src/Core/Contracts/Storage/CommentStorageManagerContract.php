@@ -6,6 +6,14 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Storage\Paths;
 use Stillat\Meerkat\Core\Threads\ThreadHierarchy;
 
+/**
+ * Interface CommentStorageManagerContract
+ *
+ * Provides a consistent API for managing comment interactions and storage.
+ *
+ * @package Stillat\Meerkat\Core\Contracts\Storage
+ * @since 2.0.0
+ */
 interface CommentStorageManagerContract
 {
 
@@ -16,8 +24,21 @@ interface CommentStorageManagerContract
      */
     public function getPaths();
 
+    /**
+     * Attempts to locate a comment by it's identifier.
+     *
+     * @param string $id The comment's string identifier.
+     * @return CommentContract|null
+     */
     public function findById($id);
 
+    /**
+     * Generates a virtual path for the provided thread and comment.
+     *
+     * @param string $threadId The thread identifier.
+     * @param string $commentId The comment identifier.
+     * @return string
+     */
     public function generateVirtualPath($threadId, $commentId);
 
     /**
@@ -28,8 +49,21 @@ interface CommentStorageManagerContract
      */
     public function makeFromArrayPrototype($data);
 
+    /**
+     * Attempts to get the storage path for the provided comment.
+     *
+     * @param string $commentId The comment's identifier.
+     * @return string
+     */
     public function getPathById($commentId);
 
+    /**
+     * Attempts to get the reply storage path for the provided parent and child comment.
+     *
+     * @param string $parentId The parent comment's identifier.
+     * @param string $childId The child comment's identifier.
+     * @return string
+     */
     public function getReplyPathById($parentId, $childId);
 
     /**
@@ -73,5 +107,29 @@ interface CommentStorageManagerContract
      * @return bool
      */
     public function isParentOf($testParent, $commentId);
+
+    /**
+     * Attempts to locate the comment's child comments.
+     *
+     * @param string $commentId The comment identifier.
+     * @return string[]
+     */
+    public function getDescendents($commentId);
+
+    /**
+     * Attempts to locate the comment's parent comments.
+     *
+     * @param string $commentId The comment identifier.
+     * @return string[]
+     */
+    public function getAncestors($commentId);
+
+    /**
+     * Attempts to locale the comment's parent and child comment identifiers.
+     *
+     * @param string $commentId The comment identifier.
+     * @return string[]
+     */
+    public function getRelatedComments($commentId);
 
 }

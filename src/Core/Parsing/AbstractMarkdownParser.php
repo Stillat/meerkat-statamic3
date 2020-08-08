@@ -40,34 +40,6 @@ abstract class AbstractMarkdownParser implements MarkdownParserContract
     }
 
     /**
-     * Removes problematic HTML elements from the provided document.
-     *
-     * @param  string $content
-     *
-     * @return string
-     */
-    public function cleanDocument($content)
-    {
-        $tagsToKeep = implode('', TypeConversions::getArray(
-            $this->configuration->getFormattingConfiguration()->tagsToKeep
-        ));
-
-        return strip_tags($content, $tagsToKeep);
-    }
-
-    /**
-     * Parses and cleans the provided content and returns the result.
-     *
-     * @param  string $content
-     *
-     * @return string
-     */
-    public function parse($content)
-    {
-        return $this->cleanDocument($this->parseDocument($content));
-    }
-
-    /**
      * Parses the provided string content and merges the results into the provided data container array.
      *
      * @param string $stringContent The content to parse.
@@ -79,6 +51,34 @@ abstract class AbstractMarkdownParser implements MarkdownParserContract
         $parsedContent = $this->parse($stringContent);
 
         $dataContainer[CommentContract::KEY_CONTENT] = $parsedContent;
+    }
+
+    /**
+     * Parses and cleans the provided content and returns the result.
+     *
+     * @param string $content
+     *
+     * @return string
+     */
+    public function parse($content)
+    {
+        return $this->cleanDocument($this->parseDocument($content));
+    }
+
+    /**
+     * Removes problematic HTML elements from the provided document.
+     *
+     * @param string $content
+     *
+     * @return string
+     */
+    public function cleanDocument($content)
+    {
+        $tagsToKeep = implode('', TypeConversions::getArray(
+            $this->configuration->getFormattingConfiguration()->tagsToKeep
+        ));
+
+        return strip_tags($content, $tagsToKeep);
     }
 
 }

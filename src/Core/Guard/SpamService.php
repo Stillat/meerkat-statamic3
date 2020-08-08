@@ -51,7 +51,7 @@ class SpamService
     /**
      * Registers a spam guard with the service.
      *
-     * @param  SpamGuardContract $guard
+     * @param SpamGuardContract $guard
      *
      * @return void
      */
@@ -83,19 +83,9 @@ class SpamService
     }
 
     /**
-     * Returns a value indicating if any spam guards were registered.
-     *
-     * @return boolean
-     */
-    public function hasGuards()
-    {
-        return count($this->spamGuards) > 0;
-    }
-
-    /**
      * Iterates each spam guard and submits the comment as spam.
      *
-     * @param  DataObjectContract $data
+     * @param DataObjectContract $data
      *
      * @return GuardResult
      */
@@ -113,9 +103,19 @@ class SpamService
     }
 
     /**
+     * Returns a value indicating if any spam guards were registered.
+     *
+     * @return boolean
+     */
+    public function hasGuards()
+    {
+        return count($this->spamGuards) > 0;
+    }
+
+    /**
      * Uses each registered spam guard to submit the comment as spam.
      *
-     * @param  DataObjectContract $data
+     * @param DataObjectContract $data
      *
      * @return GuardResult
      */
@@ -148,7 +148,7 @@ class SpamService
     /**
      * Iterates each spam guard and submits the comment as "ham" (not spam).
      *
-     * @param  DataObjectContract $data
+     * @param DataObjectContract $data
      *
      * @return GuardResult
      */
@@ -168,7 +168,7 @@ class SpamService
     /**
      * Uses each registered spam guard to submit the comment as spam.
      *
-     * @param  DataObjectContract $data
+     * @param DataObjectContract $data
      *
      * @return GuardResult
      */
@@ -201,7 +201,7 @@ class SpamService
     /**
      * Checks the provided comment against any registered spam guards.
      *
-     * @param  CommentContract $comment
+     * @param CommentContract $comment
      *
      * @return boolean
      */

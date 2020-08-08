@@ -10,39 +10,51 @@ use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\UserIn;
 use Stillat\Meerkat\Core\Exceptions\FilterException;
 use Stillat\Meerkat\Core\Support\Str;
 
+/**
+ * Class CommentFilterManager
+ *
+ * Manages comment filters and their runtime contexts.
+ *
+ * @package Stillat\Meerkat\Core\Data\Filters
+ * @since 1.5.85
+ */
 class CommentFilterManager
 {
-
 
     /**
      * The current parameter mapping.
      * @var array
      */
     protected $paramMapping = [];
+
     /***
      * A mapping of a filters required parameters.
      *
      * @var array
      */
     protected $filterRequiredParamMapping = [];
+
     /**
      * A collection of registered filters.
      *
-     * @var array
+     * @var CommentFilter[]
      */
     private $filters = [];
+
     /**
      * A mapping of group names to many filters.
      *
      * @var array
      */
     private $groups = [];
+
     /**
      * The current identity.
      *
      * @var AuthorContract|null
      */
     private $user = null;
+
     /**
      * A collection of registered resolvable variables.
      * @var array
@@ -144,6 +156,60 @@ class CommentFilterManager
     }
 
     /**
+     * Restricts a filter to specific tag contexts.
+     *
+     * @param string $filterName The filter name.
+     * @param array $tagContexts The filter tag contexts.
+     */
+    public function restrictFilter($filterName, $tagContexts)
+    {
+        $filterName = $this->getFilterName($filterName);
+
+        if ($filterName !== null) {
+            if (array_key_exists($filterName, $this->filters)) {
+                $this->filters[$filterName]->setSupportedTags($tagContexts);
+            }
+        }
+    }
+
+    /**
+     * Parses the filter name from the input string.
+     *
+     * @param string $filterName The filter name input.
+     * @return string|null
+     */
+    protected function getFilterName($filterName)
+    {
+        if (Str::contains($filterName, '(')) {
+            $filterParts = explode('(', $filterName);
+
+            if (count($filterParts) == 2) {
+                $filterName = trim($filterParts[0]);
+            } else {
+                return null;
+            }
+        }
+
+        return $filterName;
+    }
+
+    /**
+     * Removes tag context restrictions from the provided filter name.
+     *
+     * @param string $filterName The filter name.
+     */
+    public function removeRestrictions($filterName)
+    {
+        $filterName = $this->getFilterName($filterName);
+
+        if ($filterName !== null) {
+            if (array_key_exists($filterName, $this->filters)) {
+                $this->filters[$filterName]->setSupportedTags([]);
+            }
+        }
+    }
+
+    /**
      * Runs the requested filter against the comments within context.
      *
      * @param string $filterName The name of the filter.
@@ -202,7 +268,6 @@ class CommentFilterManager
         }
 
         if (array_key_exists($filterName, $this->filters)) {
-            /** @var CommentFilter $filter */
             $filter = $this->filters[$filterName];
             $filter->setContext($context);
             $filter->setParameters($parameters);

@@ -21,7 +21,7 @@ interface ContextResolverContract
     /**
      * Attempts to locate a thread context by it's string identifier.
      *
-     * @param  string $contextId The context's unique identifier.
+     * @param string $contextId The context's unique identifier.
      *
      * @return ThreadContextContract
      */

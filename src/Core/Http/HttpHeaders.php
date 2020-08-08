@@ -51,14 +51,23 @@ class HttpHeaders
     }
 
     /**
-     * Checks if a header with the provided name exists.
+     * Determines if the request was sent with a chunked transfer encoding.
      *
-     * @param $header string The header to test.
      * @return bool
      */
-    public function hasHeader($header)
+    public function isChunked()
     {
-        return array_key_exists(mb_strtolower($header), $this->keyedHeaders);
+        $transferValue = $this->getHeaderValue('transfer-encoding');
+
+        if ($transferValue == null) {
+            return false;
+        }
+
+        if (mb_strtolower(trim($transferValue)) == 'chunked') {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -78,23 +87,14 @@ class HttpHeaders
     }
 
     /**
-     * Determines if the request was sent with a chunked transfer encoding.
+     * Checks if a header with the provided name exists.
      *
+     * @param $header string The header to test.
      * @return bool
      */
-    public function isChunked()
+    public function hasHeader($header)
     {
-        $transferValue = $this->getHeaderValue('transfer-encoding');
-
-        if ($transferValue == null) {
-            return false;
-        }
-
-        if (mb_strtolower(trim($transferValue)) == 'chunked') {
-            return true;
-        }
-
-        return false;
+        return array_key_exists(mb_strtolower($header), $this->keyedHeaders);
     }
 
 }

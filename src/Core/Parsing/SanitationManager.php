@@ -15,7 +15,7 @@ use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
  * @package Stillat\Meerkat\Core\Parsing
  * @since 2.0.0
  */
-class SanitationManager implements  SanitationManagerContract
+class SanitationManager implements SanitationManagerContract
 {
 
     /**
@@ -51,24 +51,6 @@ class SanitationManager implements  SanitationManagerContract
     }
 
     /**
-     * Sanitizes the input value using all registered sanitizers.
-     *
-     * @param string $input The input value to sanitize.
-     * @return string
-     */
-    public function sanitize($input)
-    {
-        $sanitizedValue = $input;
-
-        foreach ($this->sanitizers as $sanitizer) {
-            $sanitizedValue = $sanitizer->sanitize($sanitizedValue);
-        }
-
-        return $sanitizedValue;
-    }
-
-
-    /**
      * Sanitizes the provided array's values using all reigstered sanitizers.
      *
      * @param array $array The array of values to sanitize.
@@ -83,6 +65,23 @@ class SanitationManager implements  SanitationManagerContract
         }
 
         return $array;
+    }
+
+    /**
+     * Sanitizes the input value using all registered sanitizers.
+     *
+     * @param string $input The input value to sanitize.
+     * @return string
+     */
+    public function sanitize($input)
+    {
+        $sanitizedValue = $input;
+
+        foreach ($this->sanitizers as $sanitizer) {
+            $sanitizedValue = $sanitizer->sanitize($sanitizedValue);
+        }
+
+        return $sanitizedValue;
     }
 
 }

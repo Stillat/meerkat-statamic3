@@ -36,11 +36,11 @@ class UserIn
             $userList = UserHelpers::buildContextualUserList($tempUsers);
 
             return array_filter($comments, function (CommentContract $comment) use ($userList) {
-               if ($comment->leftByAuthenticatedUser() && $comment->getAuthor() !== null) {
-                   return in_array($comment->getAuthor()->getId(), $userList);
-               }
+                if ($comment->leftByAuthenticatedUser() && $comment->getAuthor() !== null) {
+                    return in_array($comment->getAuthor()->getId(), $userList);
+                }
 
-               return false;
+                return false;
             });
         }, UserIn::PARAM_USERS);
 

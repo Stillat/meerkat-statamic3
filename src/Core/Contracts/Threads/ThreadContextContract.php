@@ -9,7 +9,7 @@ use Stillat\Meerkat\Core\Contracts\DataObjectContract;
  * Interface ThreadContextContract
  *
  * Provides a consistent representation of cross-platform posts/pages/etc
- * 
+ *
  * Thread contexts represent an entity that a comment thread
  * may be attached to. Context's are identified by an ID,
  * and may have a name associated with them. Examples of

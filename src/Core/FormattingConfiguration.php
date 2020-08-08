@@ -31,6 +31,6 @@ class FormattingConfiguration extends ConfigurationContainer
      *
      * @var string
      */
-    public $tagsToKeep = ['strong','em'];
+    public $tagsToKeep = ['strong', 'em'];
 
 }

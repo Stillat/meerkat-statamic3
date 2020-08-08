@@ -2,37 +2,23 @@
 
 namespace Stillat\Meerkat\Http\Controllers;
 
-use Statamic\Http\Controllers\CP\CpController;
-use Stillat\Meerkat\Core\Comments\Comment;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
-use Stillat\Meerkat\Core\Contracts\Comments\CommentManagerContract;
-use Stillat\Meerkat\Core\Contracts\Logging\ErrorCodeRepositoryContract;
+use Statamic\Http\Controllers\CP\CpController;
+use Stillat\Meerkat\Concerns\UsesTranslations;
+use Stillat\Meerkat\Core\Contracts\Data\DataSetContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
 use Stillat\Meerkat\Core\Data\DataQuery;
-use Stillat\Meerkat\Core\Data\Filters\CommentFilter;
 use Stillat\Meerkat\Core\Data\Filters\CommentFilterManager;
 use Stillat\Meerkat\Core\Data\PredicateBuilder;
 use Stillat\Meerkat\Core\Data\RuntimeContext;
-use Stillat\Meerkat\Core\Errors;
-use Stillat\Meerkat\Core\Logging\ErrorLog;
 use Stillat\Meerkat\Core\Threads\Thread;
-use Stillat\Meerkat\Feedback\SolutionProvider;
-use Illuminate\Support\Facades\Event;
-use Statamic\Contracts\Auth\UserRepository;
-use Stillat\Meerkat\Concerns\UsesTranslations;
-use Stillat\Meerkat\Core\Contracts\Identity\AuthorFactoryContract;
-use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
-use Stillat\Meerkat\Core\Contracts\Storage\ThreadStorageManagerContract;
-use Stillat\Meerkat\Core\Contracts\Threads\ContextResolverContract;
-use Stillat\Meerkat\Core\Threads\ThreadManager;
-use Stillat\Meerkat\PathProvider;
 
 class DashboardController extends CpController
 {
     use UsesTranslations;
 
-    public function index(ThreadManagerContract $threads, DataQuery $query, CommentFilterManager $filters)
+    public function index(CommentStorageManagerContract $comments, ThreadManagerContract $threads, DataQuery $query, CommentFilterManager $filters)
     {
 
 
@@ -43,11 +29,22 @@ class DashboardController extends CpController
         $context->context = null;
         $context->parameters = [];
 
+        /**
+         *
+         * ->nameAllGroups('date_groups')
+         *
+         * ->skip(6)->limit(5)
+         * ->nameAllGroups('date_groups')->groupName('date_group')
+         * ->collectionName('comments')->groupBy('group:date', function (CommentContract $comment) {
+         * $comment->setDataAttribute('group:date', $comment->getCommentDate()->format('Y m, d'));
+         * })
+         */
 
-        $data = $query->withContext($context)->skip(2)->limit(2)->sortAsc(CommentContract::KEY_ID)
-            ->filterBy('is:spam')->get($thread->getComments());
+        /** @var DataSetContract $data */
+        $data = $query->withContext($context)->searchFor('2016')->get($thread->getComments());
 
-        dd($data);
+
+        dd('asdf222', $data);
 
 
         return view('meerkat::dashboard');

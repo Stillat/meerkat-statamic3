@@ -20,7 +20,7 @@ class Gravatar
     /**
      * Returns the value expected by Gravatar for the provided email address.
      *
-     * @param  string $emailAddress
+     * @param string $emailAddress
      * @return string
      */
     public static function gravatarValue($emailAddress)
@@ -31,7 +31,7 @@ class Gravatar
     /**
      * Returns a Gravatar URI for the provided email address.
      *
-     * @param  string $email
+     * @param string $email
      * @return string
      */
     public function gravatar($email)

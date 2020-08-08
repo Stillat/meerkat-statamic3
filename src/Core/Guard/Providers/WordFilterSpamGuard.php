@@ -2,12 +2,12 @@
 
 namespace Stillat\Meerkat\Core\Guard\Providers;
 
-use Stillat\Meerkat\Core\Support\Str;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
-use Stillat\Meerkat\Core\GuardConfiguration;
 use Stillat\Meerkat\Core\Contracts\DataObjectContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\SpamGuardContract;
+use Stillat\Meerkat\Core\GuardConfiguration;
+use Stillat\Meerkat\Core\Support\Str;
 
 /**
  * Class WordFilterSpamGuard
@@ -70,7 +70,7 @@ class WordFilterSpamGuard implements SpamGuardContract
         $name = $data->getDataAttribute(AuthorContract::KEY_NAME);
         $content = $data->getDataAttribute(CommentContract::KEY_COMMENT);
         $contentComment = $data->getDataAttribute(CommentContract::KEY_CONTENT);
-    
+
         foreach ($this->guardConfig->bannedWords as $word) {
             if (Str::contains($emailAddress, $word)) {
                 return true;
@@ -88,7 +88,7 @@ class WordFilterSpamGuard implements SpamGuardContract
                 return true;
             }
         }
-        
+
         return false;
     }
 
@@ -96,7 +96,7 @@ class WordFilterSpamGuard implements SpamGuardContract
      * Marks a comment as a spam, and communicates this
      * to third-party vendors if configured to do so.
      *
-     * @param  DataObjectContract $data
+     * @param DataObjectContract $data
      *
      * @return boolean
      */
@@ -109,7 +109,7 @@ class WordFilterSpamGuard implements SpamGuardContract
      * Marks a comment as not-spam, and communicates this
      * to third-party vendors if configured to do so.
      *
-     * @param  DataObjectContract $data
+     * @param DataObjectContract $data
      *
      * @return boolean
      */
@@ -143,8 +143,8 @@ class WordFilterSpamGuard implements SpamGuardContract
     /**
      * Returns a value indicating if the guard encountered errors.
      *
-     * @since 2.0.0
      * @return boolean
+     * @since 2.0.0
      */
     public function hasErrors()
     {

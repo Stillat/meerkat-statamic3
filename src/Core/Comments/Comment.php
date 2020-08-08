@@ -9,8 +9,9 @@ use Stillat\Meerkat\Core\Comments\StaticApi\ProvidesMutations;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
+use Stillat\Meerkat\Core\Data\Retrievers\PathThreadIdRetriever;
 use Stillat\Meerkat\Core\DataObject;
-use Stillat\Meerkat\Core\InconsistentCompositionException;
+use Stillat\Meerkat\Core\Exceptions\InconsistentCompositionException;
 use Stillat\Meerkat\Core\Parsing\UsesMarkdownParser;
 use Stillat\Meerkat\Core\Parsing\UsesYAMLParser;
 use Stillat\Meerkat\Core\Storage\Data\CommentAuthorRetriever;
@@ -28,13 +29,6 @@ class Comment implements CommentContract
 {
     use DataObject, UsesMarkdownParser, UsesYAMLParser,
         ProvidesDiscovery, ProvidesMutations, ProvidesCreation;
-
-
-    public function __construct()
-    {
-        // TODO: Correctly set the isNew(true) state.
-        //       Will need to set this to false in retrieval methods!
-    }
 
     /**
      * The comment's parent instance, if available.
@@ -111,32 +105,96 @@ class Comment implements CommentContract
      */
     private $authorManager = null;
 
+    /**
+     * Indicates if the comment has already been persisted to storage or not.
+     *
+     * @var bool
+     */
     private $isNew = false;
 
+    /**
+     * The thread identifier, if available.
+     *
+     * @var null|string
+     */
     private $threadId = null;
 
-
-    public function setIsNew($isNew)
+    public function __construct()
     {
-        $this->isNew = $isNew;
+        $this->setIsNew(true);
     }
 
+    /**
+     * Gets the comment's thread string identifier.
+     *
+     * @return string|null
+     */
+    public function getThreadId()
+    {
+        if ($this->threadId === null) {
+            $threadId = PathThreadIdRetriever::idFromStoragePath($this->getVirtualPath());
+
+            $this->setThreadId($threadId);
+        }
+
+        return $this->threadId;
+    }
+
+    /**
+     * Sets the thread's string identifier.
+     *
+     * @param string $threadId The thread string identifier.
+     * @return void
+     */
     public function setThreadId($threadId)
     {
         $this->threadId = $threadId;
     }
 
-    public function getThreadId()
+    /**
+     * Gets the comments virtual storage path.
+     *
+     * @return string
+     */
+    public function getVirtualPath()
     {
-        return $this->threadId;
+        if ($this->isNew) {
+            if ($this->getDataAttribute(CommentContract::KEY_PARENT_ID, null) !== null) {
+                return $this->storageManager->getReplyPathById($this->getDataAttribute(CommentContract::KEY_PARENT_ID), $this->getId());
+            }
+
+            return $this->storageManager->generateVirtualPath($this->threadId, $this->getId());
+        }
+
+        return $this->getDataAttribute(CommentContract::INTERNAL_PATH);
     }
 
-    public function setStorageManager(&$manager)
+    /**
+     * Returns the identifier for the comment.
+     *
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->getDataAttribute(CommentContract::KEY_ID);
+    }
+
+    /**
+     * Sets a reference to a shared storage manager instance.
+     *
+     * @param CommentStorageManagerContract $manager The storage manager instance.
+     */
+    public function setStorageManager(CommentStorageManagerContract &$manager)
     {
         $this->storageManager = $manager;
     }
 
-    public function setAuthorRetriever(&$retriever)
+    /**
+     * Sets a reference to a shared author retriever instance.
+     *
+     * @param CommentAuthorRetriever $retriever The author retriever instance.
+     */
+    public function setAuthorRetriever(CommentAuthorRetriever &$retriever)
     {
         $this->authorManager = $retriever;
     }
@@ -259,45 +317,6 @@ class Comment implements CommentContract
         }
 
         return $this->storageManager->save($this);
-    }
-
-    /**
-     * Filters the run-time data attributes and returns only those that should be saved.
-     *
-     * @return array
-     */
-    private function getAttributesToSave()
-    {
-        $cleanableProperties = CleanableCommentAttributes::getCleanableAttributes();
-        $transientProperties = TransientCommentAttributes::getTransientProperties();
-        $attributes = $this->attributes;
-
-        foreach ($transientProperties as $property) {
-            if (array_key_exists($property, $attributes)) {
-                unset($attributes[$property]);
-            }
-        }
-
-        foreach ($attributes as $attributeName => $value) {
-            if (in_array($attributeName, $cleanableProperties)) {
-                $value = ltrim($value, '"\' ');
-                $value = rtrim($value, '"\' ');
-
-                $attributes[$attributeName] = $value;
-            }
-        }
-
-        return $attributes;
-    }
-
-    /**
-     * Gets the internal storage path for this comment.
-     *
-     * @return string
-     */
-    private function getStoragePath()
-    {
-        return $this->getDataAttribute(CommentContract::INTERNAL_PATH, null);
     }
 
     /**
@@ -449,16 +468,6 @@ class Comment implements CommentContract
     }
 
     /**
-     * Returns the identifier for the comment.
-     *
-     * @return string
-     */
-    public function getId()
-    {
-        return $this->getDataAttribute(CommentContract::KEY_ID);
-    }
-
-    /**
      * Gets whether or not the comment is deleted.
      *
      * @return boolean
@@ -505,20 +514,6 @@ class Comment implements CommentContract
     }
 
     /**
-     * Gets the comment's author instance.
-     *
-     * @return AuthorContract
-     */
-    public function getAuthor()
-    {
-        if ($this->commentAuthor === null && $this->authorManager !== null) {
-            $this->commentAuthor = $this->authorManager->getCommentAuthor($this);
-        }
-
-        return $this->commentAuthor;
-    }
-
-    /**
      * Gets the comment's storable data.
      *
      * @return array
@@ -553,6 +548,35 @@ class Comment implements CommentContract
     }
 
     /**
+     * Filters the run-time data attributes and returns only those that should be saved.
+     *
+     * @return array
+     */
+    private function getAttributesToSave()
+    {
+        $cleanableProperties = CleanableCommentAttributes::getCleanableAttributes();
+        $transientProperties = TransientCommentAttributes::getTransientProperties();
+        $attributes = $this->attributes;
+
+        foreach ($transientProperties as $property) {
+            if (array_key_exists($property, $attributes)) {
+                unset($attributes[$property]);
+            }
+        }
+
+        foreach ($attributes as $attributeName => $value) {
+            if (in_array($attributeName, $cleanableProperties)) {
+                $value = ltrim($value, '"\' ');
+                $value = rtrim($value, '"\' ');
+
+                $attributes[$attributeName] = $value;
+            }
+        }
+
+        return $attributes;
+    }
+
+    /**
      * Indicates if the comment is a new instance, or one loaded from storage.
      *
      * @return bool
@@ -572,22 +596,9 @@ class Comment implements CommentContract
         return !file_exists($virtualPath);
     }
 
-    /**
-     * Gets the comments virtual storage path.
-     *
-     * @return string
-     */
-    public function getVirtualPath()
+    public function setIsNew($isNew)
     {
-        if ($this->isNew) {
-            if ($this->getDataAttribute(CommentContract::KEY_PARENT_ID, null) !== null) {
-                return $this->storageManager->getReplyPathById($this->getDataAttribute(CommentContract::KEY_PARENT_ID), $this->getId());
-            }
-
-            return $this->storageManager->generateVirtualPath($this->threadId, $this->getId());
-        }
-
-        return $this->getDataAttribute(CommentContract::INTERNAL_PATH);
+        $this->isNew = $isNew;
     }
 
     /**
@@ -663,6 +674,44 @@ class Comment implements CommentContract
     public function __toString()
     {
         return $this->getId();
+    }
+
+    /**
+     * Indicates if the comment was left by an authenticated user.
+     *
+     * @return bool
+     */
+    public function leftByAuthenticatedUser()
+    {
+        if ($this->getAuthor() !== null) {
+            return $this->getAuthor()->getIsTransient() === false;
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets the comment's author instance.
+     *
+     * @return AuthorContract
+     */
+    public function getAuthor()
+    {
+        if ($this->commentAuthor === null && $this->authorManager !== null) {
+            $this->commentAuthor = $this->authorManager->getCommentAuthor($this);
+        }
+
+        return $this->commentAuthor;
+    }
+
+    /**
+     * Gets the internal storage path for this comment.
+     *
+     * @return string
+     */
+    private function getStoragePath()
+    {
+        return $this->getDataAttribute(CommentContract::INTERNAL_PATH, null);
     }
 
 }

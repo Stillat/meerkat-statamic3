@@ -43,7 +43,7 @@ class PredicateBuilder
     }
 
     /**
-     * Sorts the collection using the provided proeprty in ascending order.
+     * Sorts the collection using the provided property in ascending order.
      *
      * @param string $p The property name.
      * @return $this
@@ -119,6 +119,8 @@ class PredicateBuilder
     }
 
     /**
+     * Sorts the provided data using previously defined sort predicates.
+     *
      * @param array $data The data to sort.
      * @return array
      */
@@ -175,15 +177,15 @@ class PredicateBuilder
                 }
             }
 
-          if ($mapA == $mapB) {
-              return 0;
-          }
+            if ($mapA == $mapB) {
+                return 0;
+            }
 
-          if ($mapA < $mapB) {
-              return -1;
-          }
+            if ($mapA < $mapB) {
+                return -1;
+            }
 
-          return 1;
+            return 1;
         };
     }
 

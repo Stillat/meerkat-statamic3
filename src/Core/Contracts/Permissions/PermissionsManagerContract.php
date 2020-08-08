@@ -20,7 +20,6 @@ interface PermissionsManagerContract
      * Resolves the permissions set for the provided identity.
      *
      * @param AuthorContract $identity
-     *
      * @return PermissionsSet
      */
     public function getPermissions(AuthorContract $identity);

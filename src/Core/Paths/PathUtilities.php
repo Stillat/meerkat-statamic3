@@ -14,17 +14,6 @@ class PathUtilities
 {
 
     /**
-     * Replaces all back-slashes with forward-slashes in the provided path.
-     *
-     * @param string $path The path to normalize.
-     * @return string|string[]
-     */
-    public static function normalize($path)
-    {
-        return str_replace('\\', '/', $path);
-    }
-
-    /**
      * Converts a path to the Windows back-slash format.
      *
      * @param string $path The path to convert to the Windows format.
@@ -33,6 +22,17 @@ class PathUtilities
     public static function winPath($path)
     {
         return str_replace('/', '\\', PathUtilities::normalize($path));
+    }
+
+    /**
+     * Replaces all back-slashes with forward-slashes in the provided path.
+     *
+     * @param string $path The path to normalize.
+     * @return string|string[]
+     */
+    public static function normalize($path)
+    {
+        return str_replace('\\', '/', $path);
     }
 
 }

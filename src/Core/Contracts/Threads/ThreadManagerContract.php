@@ -2,7 +2,6 @@
 
 namespace Stillat\Meerkat\Core\Contracts\Threads;
 
-use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Storage\ThreadStorageManagerContract;
 
 /**
@@ -23,6 +22,12 @@ interface ThreadManagerContract
      */
     public function getStorageManager();
 
+    /**
+     * Attempts to retrieve all threads.
+     *
+     * @param bool $includeTrashed Whether to include soft-deleted threads.
+     * @return ThreadContract[]
+     */
     public function getAllThreads($includeTrashed = false);
 
     /**
@@ -37,8 +42,8 @@ interface ThreadManagerContract
     /**
      * Returns a value indicating if a thread exists for the provided context identifier.
      *
-     * @param  string  $contextId   The context's string identifier.
-     * @param  boolean $withTrashed Indicates if Meerkat should look for soft-deleted threads.
+     * @param string $contextId The context's string identifier.
+     * @param boolean $withTrashed Indicates if Meerkat should look for soft-deleted threads.
      * @return boolean
      */
     public function existsForContext($contextId, $withTrashed);
@@ -46,7 +51,7 @@ interface ThreadManagerContract
     /**
      * Persists the specified thread to disk.
      *
-     * @param  ThreadContract $thread
+     * @param ThreadContract $thread
      *
      * @return ThreadContract
      */
@@ -55,9 +60,9 @@ interface ThreadManagerContract
     /**
      * Attempts to locate and return a thread for the provided string identifier.
      *
-     * @param  string  $id The string identifier of the thread to locate.
-     * @param  boolean $withTrashed Indicates if Meerkat should look for soft-deleted threads.
-     * @param  boolean $includeComments Indicates if Meerkat should pre-load the thread's comments.
+     * @param string $id The string identifier of the thread to locate.
+     * @param boolean $withTrashed Indicates if Meerkat should look for soft-deleted threads.
+     * @param boolean $includeComments Indicates if Meerkat should pre-load the thread's comments.
      *
      * @return ThreadContract|null
      */
@@ -66,7 +71,7 @@ interface ThreadManagerContract
     /**
      * Resolves the storage path for the provided thread instance.
      *
-     * @param  ThreadContract $thread
+     * @param ThreadContract $thread
      *
      * @return string
      */
@@ -84,7 +89,7 @@ interface ThreadManagerContract
     /**
      * Restores a previously soft-deleted thread.
      *
-     * @param  string $threadId The string identifier of the thread.
+     * @param string $threadId The string identifier of the thread.
      * @return boolean
      */
     public function restoreThread($threadId);
@@ -92,7 +97,7 @@ interface ThreadManagerContract
     /**
      * Resolves the storage path for the provided thread string identifier.
      *
-     * @param  string $id
+     * @param string $id
      *
      * @return string
      */
@@ -101,7 +106,7 @@ interface ThreadManagerContract
     /**
      * Attempts to remove a thread instance.
      *
-     * @param  ThreadContract $thread The thread instance.
+     * @param ThreadContract $thread The thread instance.
      * @return boolean
      */
     public function remove(ThreadContract $thread);
@@ -109,7 +114,7 @@ interface ThreadManagerContract
     /**
      * Attempts to remove a thread by it's identifier.
      *
-     * @param  string $id The comment's identifier.
+     * @param string $id The comment's identifier.
      * @return boolean
      */
     public function removeById($id);

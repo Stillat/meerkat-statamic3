@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat\Core;
 
 use Stillat\Meerkat\Core\Contracts\UniqueIdentifierGeneratorContract;
+use Stillat\Meerkat\Core\Exceptions\InconsistentCompositionException;
 
 /**
  * Trait DataObject
@@ -32,66 +33,6 @@ trait DataObject
 {
 
     /**
-     * Returns access to the unique identifier generator.
-     *
-     * @return UniqueIdentifierGeneratorContract
-     *
-     * @throws InconsistentCompositionException
-     */
-    protected function getIdGenerator()
-    {
-        if (property_exists($this, 'uidGenerator')) {
-            return $this->uidGenerator;
-        }
-
-        throw InconsistentCompositionException::make('uidGenerator', __CLASS__);
-    }
-
-    /**
-     * Generates and returns a UUIDv4 string identifier.
-     *
-     * @return string
-     *
-     * @throws InconsistentCompositionException
-     */
-    protected function getNewId()
-    {
-        return $this->getIdGenerator()->newId();
-    }
-
-    /**
-     * Gets an associative array representing all actionable data held in the data container.
-     *
-     * @return array
-     */
-    public function getDataAttributes()
-    {
-        return $this->attributes;
-    }
-
-    /**
-     * Returns a value indicating if the provided attribute exists.
-     *
-     * @param  string  $key The key to check for existence.
-     *
-     * @return boolean
-     */
-    public function hasDataAttribute($key)
-    {
-        return array_key_exists($key, $this->attributes);
-    }
-
-    /**
-     * Sets the data attributes for the current data object.
-     *
-     * @param  array $attributes The data attributes to set.
-     */
-    public function setDataAttributes($attributes)
-    {
-        $this->attributes = $attributes;
-    }
-
-    /**
      * Merges the attributes into the current data object.
      *
      * @param array $attributes The attributes to merge.
@@ -106,9 +47,54 @@ trait DataObject
     }
 
     /**
+     * Reassigns the provided attribute names and removes the source.
+     *
+     * @param string $sourceAttribute The source attribute.
+     * @param string $targetAttribute The target attribute.
+     * @return mixed
+     */
+    public function reassignDataProperty($sourceAttribute, $targetAttribute)
+    {
+        $temp = $this->getDataAttribute($sourceAttribute, null);
+        $this->setDataAttribute($targetAttribute, $temp);
+
+        $this->removeDataAttribute($sourceAttribute);
+    }
+
+    /**
+     * Get the value for the provided $key, if one exists.
+     *
+     *
+     * @param string $key The key of the attribute to get.
+     * @param string|null $default The default value to return if the attribute does not exist.
+     *
+     * @return string|mixed|null
+     */
+    public function getDataAttribute($key, $default = null)
+    {
+        if ($this->hasDataAttribute($key)) {
+            return $this->attributes[$key];
+        }
+
+        return $default;
+    }
+
+    /**
+     * Returns a value indicating if the provided attribute exists.
+     *
+     * @param string $key The key to check for existence.
+     *
+     * @return boolean
+     */
+    public function hasDataAttribute($key)
+    {
+        return array_key_exists($key, $this->attributes);
+    }
+
+    /**
      * Set the data on the object identified by the $key with the given $value.
      *
-     * @param string $key   The key of the attribute to set.
+     * @param string $key The key of the attribute to set.
      * @param string $value The value to set.
      *
      * @return void
@@ -131,39 +117,6 @@ trait DataObject
     }
 
     /**
-     * Reassigns the provided attribute names and removes the source.
-     *
-     * @param string $sourceAttribute The source attribute.
-     * @param string $targetAttribute The target attribute.
-     * @return mixed
-     */
-    public function reassignDataProperty($sourceAttribute, $targetAttribute)
-    {
-        $temp = $this->getDataAttribute($sourceAttribute, null);
-        $this->setDataAttribute($targetAttribute, $temp);
-
-        $this->removeDataAttribute($sourceAttribute);
-    }
-
-    /**
-     * Get the value for the provided $key, if one exists.
-     *
-     *
-     * @param string      $key     The key of the attribute to get.
-     * @param string|null $default The default value to return if the attribute does not exist.
-     *
-     * @return string|mixed|null
-     */
-    public function getDataAttribute($key, $default = null)
-    {
-        if ($this->hasDataAttribute($key)) {
-            return $this->attributes[$key];
-        }
-
-        return $default;
-    }
-
-    /**
      * Returns a string representation of the current data object.
      *
      * @return string
@@ -174,13 +127,61 @@ trait DataObject
     }
 
     /**
+     * Gets an associative array representing all actionable data held in the data container.
+     *
+     * @return array
+     */
+    public function getDataAttributes()
+    {
+        return $this->attributes;
+    }
+
+    /**
      * Returns a run-time instance of an object from serialized form.
      *
-     * @param  string $serialized The serialized contents.
+     * @param string $serialized The serialized contents.
      */
     public function unserialize($serialized)
     {
         $this->setDataAttributes((array)json_decode($serialized));
+    }
+
+    /**
+     * Sets the data attributes for the current data object.
+     *
+     * @param array $attributes The data attributes to set.
+     */
+    public function setDataAttributes($attributes)
+    {
+        $this->attributes = $attributes;
+    }
+
+    /**
+     * Generates and returns a UUIDv4 string identifier.
+     *
+     * @return string
+     *
+     * @throws InconsistentCompositionException
+     */
+    protected function getNewId()
+    {
+        return $this->getIdGenerator()->newId();
+    }
+
+    /**
+     * Returns access to the unique identifier generator.
+     *
+     * @return UniqueIdentifierGeneratorContract
+     *
+     * @throws InconsistentCompositionException
+     */
+    protected function getIdGenerator()
+    {
+        if (property_exists($this, 'uidGenerator')) {
+            return $this->uidGenerator;
+        }
+
+        throw InconsistentCompositionException::make('uidGenerator', __CLASS__);
     }
 
 }

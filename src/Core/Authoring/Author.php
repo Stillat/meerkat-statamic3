@@ -2,8 +2,8 @@
 
 namespace Stillat\Meerkat\Core\Authoring;
 
-use Stillat\Meerkat\Core\DataObject;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
+use Stillat\Meerkat\Core\DataObject;
 
 /**
  * Class Author
@@ -59,7 +59,7 @@ abstract class Author implements AuthorContract
     /**
      * Sets whether or not the user is persisted in the host system.
      *
-     * @param  boolean $isTransient Whether or not the user is persisted.
+     * @param boolean $isTransient Whether or not the user is persisted.
      * @return void
      */
     public function setIsTransient($isTransient)
@@ -80,7 +80,7 @@ abstract class Author implements AuthorContract
     /**
      * Sets the user string identifier.
      *
-     * @param  string $userId
+     * @param string $userId
      * @return void
      */
     public function setId($userId)
@@ -101,7 +101,7 @@ abstract class Author implements AuthorContract
     /**
      * Sets the display name for the current author context.
      *
-     * @param  string $displayName The display name to use for this author.
+     * @param string $displayName The display name to use for this author.
      * @return void
      */
     public function setDisplayName($displayName)

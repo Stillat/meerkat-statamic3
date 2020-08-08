@@ -5,6 +5,7 @@ namespace Stillat\Meerkat\Tags\Responses;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
+use Stillat\Meerkat\Core\Data\DataQuery;
 use Stillat\Meerkat\Tags\MeerkatTag;
 use Stillat\Meerkat\Tags\Output\PaginatedThreadRenderer;
 use Stillat\Meerkat\Tags\Output\RecursiveThreadRenderer;
@@ -17,6 +18,7 @@ class CollectionRenderer extends MeerkatTag
     protected $pageLimit = null;
     protected $pageOffset = 0;
     protected $pageBy = 'page';
+    protected $query = null;
 
     private $threadId = null;
     private $paginatedThreadRenderer = null;
@@ -24,8 +26,10 @@ class CollectionRenderer extends MeerkatTag
     public function __construct(
         ThreadManagerContract $threadManager,
         SanitationManagerContract $sanitizer,
-        PaginatedThreadRenderer $pageRenderer)
+        PaginatedThreadRenderer $pageRenderer,
+        DataQuery $query)
     {
+        $this->query = $query;
         $this->threadManager = $threadManager;
         $this->sanitizer = $sanitizer;
         $this->paginatedThreadRenderer = $pageRenderer;
@@ -69,7 +73,8 @@ class CollectionRenderer extends MeerkatTag
 
         $displayComments = $this->prepareItems($displayComments);
 
-        if ($this->get('group_by_date')) {
+        if ($this->get('group_by_date') || $this->get('group_by')) {
+            dd('group by date!');
             // TODO: Implement...
         } else {
             if ($this->paginated) {

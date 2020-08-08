@@ -2,8 +2,8 @@
 
 namespace Stillat\Meerkat\Core\Data\Filters\DefaultFilters;
 
-use Stillat\Meerkat\Core\Data\Filters\CommentFilter;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
+use Stillat\Meerkat\Core\Data\Filters\CommentFilter;
 use Stillat\Meerkat\Core\Data\Filters\CommentFilterManager;
 use Stillat\Meerkat\Core\Support\TypeConversions;
 

@@ -24,21 +24,9 @@ class ConfigurationContainer
     private $otherConfiguration = [];
 
     /**
-     * Returns a value indicating if the provided configuration key exists.
-     *
-     * @param  string  $key The configuration key to lookup.
-     *
-     * @return boolean
-     */
-    public function has($key)
-    {
-        return array_key_exists($key, $this->otherConfiguration);
-    }
-
-    /**
      * Returns the configuration value for the provided key, or the default.
      *
-     * @param string $key     The configuration key to lookup.
+     * @param string $key The configuration key to lookup.
      * @param object $default The default value to return if no configuration key is found.
      *
      * @return string|object
@@ -53,9 +41,21 @@ class ConfigurationContainer
     }
 
     /**
+     * Returns a value indicating if the provided configuration key exists.
+     *
+     * @param string $key The configuration key to lookup.
+     *
+     * @return boolean
+     */
+    public function has($key)
+    {
+        return array_key_exists($key, $this->otherConfiguration);
+    }
+
+    /**
      * Sets the configuration value for the provided key.
      *
-     * @param string       $key    The configuration key to set.
+     * @param string $key The configuration key to set.
      * @param string|object $value The configuration value to set for the key.
      *
      * @return void

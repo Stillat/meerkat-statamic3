@@ -21,21 +21,6 @@ trait ProvidesDiscovery
      * Attempts to locate the specified comment.
      *
      * @param string $commentId The comment's string identifier.
-     * @return CommentContract|null
-     */
-    public static function find($commentId)
-    {
-        if (CommentManagerFactory::hasInstance()) {
-            return CommentManagerFactory::$instance->findById($commentId);
-        }
-
-        return null;
-    }
-
-    /**
-     * Attempts to locate the specified comment.
-     *
-     * @param string $commentId The comment's string identifier.
      * @return CommentContract
      * @throws CommentNotFoundException
      */
@@ -48,6 +33,21 @@ trait ProvidesDiscovery
         }
 
         return $comment;
+    }
+
+    /**
+     * Attempts to locate the specified comment.
+     *
+     * @param string $commentId The comment's string identifier.
+     * @return CommentContract|null
+     */
+    public static function find($commentId)
+    {
+        if (CommentManagerFactory::hasInstance()) {
+            return CommentManagerFactory::$instance->findById($commentId);
+        }
+
+        return null;
     }
 
 }

@@ -31,7 +31,14 @@ class Thread implements ThreadContract, JsonSerializable
      * @var string
      */
     public $path = '';
+
+    /**
+     * The thread's context, if any.
+     *
+     * @var ThreadContextContract|null
+     */
     private $context = null;
+
     /**
      * The ID for the thread.
      *
@@ -40,12 +47,14 @@ class Thread implements ThreadContract, JsonSerializable
      * @var string
      */
     private $threadId = '';
+
     /**
      * The thread context string identifier.
      *
      * @var string
      */
     private $contextId = '';
+
     /**
      * The total number of all comments in the thread.
      *
@@ -370,7 +379,7 @@ class Thread implements ThreadContract, JsonSerializable
             $currentChildren = $comment[CommentContract::KEY_CHILDREN];
             $newChildren = [];
 
-            foreach ($currentChildren as &$child) {
+            foreach ($currentChildren as $child) {
                 $newChildren[] =& $comments[$child->getId()];
             }
 
@@ -394,7 +403,12 @@ class Thread implements ThreadContract, JsonSerializable
         return $comments;
     }
 
-
+    /**
+     * Attempts to attach the provided comment to the thread.
+     *
+     * @param CommentContract $comment The comment to attach to the thread.
+     * @return bool
+     */
     public function attachNewComment(CommentContract $comment)
     {
         $comment->setIsNew(true);
@@ -403,8 +417,14 @@ class Thread implements ThreadContract, JsonSerializable
         return $comment->save();
     }
 
+    /**
+     * Returns the data to serialize as JSON.
+     *
+     * @return array|mixed
+     */
     public function jsonSerialize()
     {
+        // TODO: What should this return?
         return $this->getDataAttributes();
     }
 

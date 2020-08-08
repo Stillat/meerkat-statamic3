@@ -19,13 +19,13 @@ class Str
      * Origin: Laravel Framework 6.x
      * https://github.com/laravel/framework/blob/6.x/src/Illuminate/Support/Str.php#L139-L154
      *
-     * @param  string  $haystack
-     * @param  string|array  $needles
+     * @param string $haystack
+     * @param string|array $needles
      * @return bool
      */
     public static function contains($haystack, $needles)
     {
-        foreach ((array) $needles as $needle) {
+        foreach ((array)$needles as $needle) {
             if ($needle !== '' && mb_strpos($haystack, $needle) !== false) {
                 return true;
             }
@@ -39,14 +39,14 @@ class Str
      * Origin: Laravel Framework 6.x
      * https://github.com/laravel/framework/blob/6.x/src/Illuminate/Support/Str.php#L567-L583
      *
-     * @param  string  $haystack
-     * @param  string|string[]  $needles
+     * @param string $haystack
+     * @param string|string[] $needles
      * @return bool
      */
     public static function startsWith($haystack, $needles)
     {
-        foreach ((array) $needles as $needle) {
-            if ($needle !== '' && substr($haystack, 0, strlen($needle)) === (string) $needle) {
+        foreach ((array)$needles as $needle) {
+            if ($needle !== '' && substr($haystack, 0, strlen($needle)) === (string)$needle) {
                 return true;
             }
         }
@@ -57,14 +57,14 @@ class Str
     /**
      * Determine if a given string ends with a given substring.
      *
-     * @param  string  $haystack
-     * @param  string|string[]  $needles
+     * @param string $haystack
+     * @param string|string[] $needles
      * @return bool
      */
     public static function endsWith($haystack, $needles)
     {
-        foreach ((array) $needles as $needle) {
-            if (substr($haystack, -strlen($needle)) === (string) $needle) {
+        foreach ((array)$needles as $needle) {
+            if (substr($haystack, -strlen($needle)) === (string)$needle) {
                 return true;
             }
         }

@@ -130,38 +130,6 @@ class LocalCommentStructureResolver implements StructureResolverInterface
     }
 
     /**
-     * Resets the internal state of the resolver.
-     *
-     * @return void
-     */
-    public function reset()
-    {
-        $this->paths = [];
-        $this->threadPath = '';
-        $this->threadPathLength = 0;
-        $this->commentIdPathMapping = [];
-        $this->depthMapping = [];
-        $this->commentDepthMapping = [];
-        $this->directAncestorMapping = [];
-        $this->directDescendentMapping = [];
-        $this->ancestorMapping = [];
-        $this->descendentMapping = [];
-        $this->internalRepliesPathMapping = [];
-    }
-
-    /**
-     * Compares the lengths of the provided values.
-     *
-     * @param string $a First test value.
-     * @param string $b Second test value.
-     * @return int
-     */
-    private function compareLength($a, $b)
-    {
-        return mb_strlen($b) - mb_strlen($a);
-    }
-
-    /**
      * Resolves the comment dependency graph.
      *
      * @param string $threadPath The thread's base path.
@@ -282,6 +250,38 @@ class LocalCommentStructureResolver implements StructureResolverInterface
         $this->reset();
 
         return $hierarchy;
+    }
+
+    /**
+     * Resets the internal state of the resolver.
+     *
+     * @return void
+     */
+    public function reset()
+    {
+        $this->paths = [];
+        $this->threadPath = '';
+        $this->threadPathLength = 0;
+        $this->commentIdPathMapping = [];
+        $this->depthMapping = [];
+        $this->commentDepthMapping = [];
+        $this->directAncestorMapping = [];
+        $this->directDescendentMapping = [];
+        $this->ancestorMapping = [];
+        $this->descendentMapping = [];
+        $this->internalRepliesPathMapping = [];
+    }
+
+    /**
+     * Compares the lengths of the provided values.
+     *
+     * @param string $a First test value.
+     * @param string $b Second test value.
+     * @return int
+     */
+    private function compareLength($a, $b)
+    {
+        return mb_strlen($b) - mb_strlen($a);
     }
 
 }

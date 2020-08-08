@@ -61,6 +61,21 @@ class ErrorLog implements Serializable
      */
     public $type = self::TYPE_ERROR;
 
+    /**
+     * Creates a new warning instance of ErrorLog.
+     *
+     * @param string $errorCode The error code.
+     * @param string $context The error's surrounding context.
+     * @return ErrorLog
+     */
+    public static function warning($errorCode, $context)
+    {
+        $errorLog = ErrorLog::make($errorCode, $context);
+
+        $errorLog->type = self::TYPE_WARNING;
+
+        return $errorLog;
+    }
 
     /**
      * Creates a new instance of ErrorLog.
@@ -95,22 +110,6 @@ class ErrorLog implements Serializable
     }
 
     /**
-     * Creates a new warning instance of ErrorLog.
-     *
-     * @param string $errorCode The error code.
-     * @param string $context The error's surrounding context.
-     * @return ErrorLog
-     */
-    public static function warning($errorCode, $context)
-    {
-        $errorLog = ErrorLog::make($errorCode, $context);
-
-        $errorLog->type = self::TYPE_WARNING;
-
-        return $errorLog;
-    }
-
-    /**
      * Creates a new message instance of ErrorLog.
      *
      * @param string $errorCode The error code.
@@ -127,6 +126,16 @@ class ErrorLog implements Serializable
     }
 
     /**
+     * Returns a string representation of the current error log.
+     *
+     * @return false|string
+     */
+    public function serialize()
+    {
+        return json_encode($this->toArray());
+    }
+
+    /**
      * Converts the error log to an array.
      *
      * @return array
@@ -140,16 +149,6 @@ class ErrorLog implements Serializable
             self::KEY_DATE => $this->dateTimeUtc,
             self::KEY_TYPE => $this->type
         ];
-    }
-
-    /**
-     * Returns a string representation of the current error log.
-     *
-     * @return false|string
-     */
-    public function serialize()
-    {
-        return json_encode($this->toArray());
     }
 
     /**

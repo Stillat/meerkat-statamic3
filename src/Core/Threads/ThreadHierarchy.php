@@ -91,16 +91,6 @@ class ThreadHierarchy
     protected $comments = [];
 
     /**
-     * Sets the comment ID path mapping.
-     *
-     * @param array $mapping The ID > path mapping.
-     */
-    public function setCommentIdPathMapping($mapping)
-    {
-        $this->commentIdPathMapping = $mapping;
-    }
-
-    /**
      * Gets the comment ID path mapping.
      *
      * @return array
@@ -108,6 +98,16 @@ class ThreadHierarchy
     public function getCommentIdPathMapping()
     {
         return $this->commentIdPathMapping;
+    }
+
+    /**
+     * Sets the comment ID path mapping.
+     *
+     * @param array $mapping The ID > path mapping.
+     */
+    public function setCommentIdPathMapping($mapping)
+    {
+        $this->commentIdPathMapping = $mapping;
     }
 
     /**
@@ -131,16 +131,6 @@ class ThreadHierarchy
     }
 
     /**
-     * Sets the comment depth mapping.
-     *
-     * @param array $mapping The depth > comment mapping.
-     */
-    public function setCommentDepthMapping($mapping)
-    {
-        $this->depthMapping = $mapping;
-    }
-
-    /**
      * Gets the comment depth mapping.
      *
      * @return array
@@ -151,13 +141,13 @@ class ThreadHierarchy
     }
 
     /**
-     * Sets the director ancestor comment mapping.
+     * Sets the comment depth mapping.
      *
-     * @param array $mapping The mapping.
+     * @param array $mapping The depth > comment mapping.
      */
-    public function setDirectAncestorMapping($mapping)
+    public function setCommentDepthMapping($mapping)
     {
-        $this->directAncestorMapping = $mapping;
+        $this->depthMapping = $mapping;
     }
 
     /**
@@ -171,13 +161,13 @@ class ThreadHierarchy
     }
 
     /**
-     * Sets the direct descendent mapping table.
+     * Sets the director ancestor comment mapping.
      *
      * @param array $mapping The mapping.
      */
-    public function setDirectDescendentMapping($mapping)
+    public function setDirectAncestorMapping($mapping)
     {
-        $this->directDescendentMapping = $mapping;
+        $this->directAncestorMapping = $mapping;
     }
 
     /**
@@ -191,13 +181,13 @@ class ThreadHierarchy
     }
 
     /**
-     * Sets the ancestor mapping table.
+     * Sets the direct descendent mapping table.
      *
      * @param array $mapping The mapping.
      */
-    public function setAncestorMapping($mapping)
+    public function setDirectDescendentMapping($mapping)
     {
-        $this->ancestorMapping = $mapping;
+        $this->directDescendentMapping = $mapping;
     }
 
     /**
@@ -211,13 +201,13 @@ class ThreadHierarchy
     }
 
     /**
-     * Sets the hierarchy's comments.
+     * Sets the ancestor mapping table.
      *
-     * @param array $comments The comments.
+     * @param array $mapping The mapping.
      */
-    public function setComments($comments)
+    public function setAncestorMapping($mapping)
     {
-        $this->comments = $comments;
+        $this->ancestorMapping = $mapping;
     }
 
     /**
@@ -231,14 +221,13 @@ class ThreadHierarchy
     }
 
     /**
-     * Tests if the hierarchy contains the comment.
+     * Sets the hierarchy's comments.
      *
-     * @param string $commentId The comment's string identifier.
-     * @return bool
+     * @param array $comments The comments.
      */
-    public function hasComment($commentId)
+    public function setComments($comments)
     {
-       return array_key_exists($commentId, $this->comments);
+        $this->comments = $comments;
     }
 
     /**
@@ -254,6 +243,17 @@ class ThreadHierarchy
         }
 
         return null;
+    }
+
+    /**
+     * Tests if the hierarchy contains the comment.
+     *
+     * @param string $commentId The comment's string identifier.
+     * @return bool
+     */
+    public function hasComment($commentId)
+    {
+        return array_key_exists($commentId, $this->comments);
     }
 
     /**

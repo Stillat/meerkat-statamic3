@@ -16,9 +16,9 @@ class InitialsGenerator
     /**
      * Parses the input string to create a human-friendly initialism.
      *
-     * @param string  $name         The input string to create an initialism from.
+     * @param string $name The input string to create an initialism from.
      * @param boolean $onlyCapitals Indicates if the method should only consider UPPER-cased characters.
-     * @param string  $separator    The separator to use when deconstructing the input string.
+     * @param string $separator The separator to use when deconstructing the input string.
      *
      * @return string
      */

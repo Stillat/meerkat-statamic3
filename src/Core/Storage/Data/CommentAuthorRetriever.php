@@ -2,8 +2,8 @@
 
 namespace Stillat\Meerkat\Core\Storage\Data;
 
-use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
+use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorFactoryContract;
 
 /**
@@ -22,7 +22,7 @@ class CommentAuthorRetriever
 
     /**
      * An author factory implementation instance.
-     * 
+     *
      * @var AuthorFactoryContract
      */
     protected $authorFactory = null;
@@ -43,7 +43,7 @@ class CommentAuthorRetriever
      * Attempts to locate author details from a collection of comments.
      *
      *
-     * @param  CommentContract[] $comments
+     * @param CommentContract[] $comments
      * @return AuthorContract[]
      */
     public function getAuthorDetails($comments)
@@ -65,6 +65,34 @@ class CommentAuthorRetriever
         return array_map(function ($proto) {
             return $this->authorFactory->makeAuthor($proto);
         }, $this->authEmailMappings);
+    }
+
+    /**
+     * Finds author data prototype data.
+     *
+     * @param CommentContract $comment The comment to find authorship data in.
+     * @return array
+     */
+    private function getAuthorDataPrototype($comment)
+    {
+        $emailAddress = $comment->getDataAttribute(AuthorContract::KEY_EMAIL_ADDRESS, null);
+
+        // Guard against empty/missing email address entries.
+        if ($emailAddress === null || mb_strlen(trim($emailAddress)) === 0) {
+            return null;
+        }
+
+        // Locate author details, if available.
+        $userIp = $comment->getDataAttribute(AuthorContract::KEY_USER_IP);
+        $userAgent = $comment->getDataAttribute(AuthorContract::KEY_USER_AGENT);
+        $name = $comment->getDataAttribute(AuthorContract::KEY_NAME);
+
+        return [
+            AuthorContract::KEY_EMAIL_ADDRESS => $emailAddress,
+            AuthorContract::KEY_USER_AGENT => $userAgent,
+            AuthorContract::KEY_USER_IP => $userIp,
+            AuthorContract::KEY_NAME => $name
+        ];
     }
 
     /***
@@ -90,34 +118,6 @@ class CommentAuthorRetriever
         }
 
         return null;
-    }
-
-    /**
-     * Finds author data prototype data.
-     *
-     * @param  CommentContract $comment The comment to find authorship data in.
-     * @return array
-     */
-    private function getAuthorDataPrototype($comment)
-    {
-        $emailAddress = $comment->getDataAttribute(AuthorContract::KEY_EMAIL_ADDRESS, null);
-
-        // Guard against empty/missing email address entries.
-        if ($emailAddress === null || mb_strlen(trim($emailAddress)) === 0) {
-            return null;
-        }
-
-        // Locate author details, if available.
-        $userIp = $comment->getDataAttribute(AuthorContract::KEY_USER_IP);
-        $userAgent = $comment->getDataAttribute(AuthorContract::KEY_USER_AGENT);
-        $name = $comment->getDataAttribute(AuthorContract::KEY_NAME);
-
-        return [
-            AuthorContract::KEY_EMAIL_ADDRESS => $emailAddress,
-            AuthorContract::KEY_USER_AGENT => $userAgent,
-            AuthorContract::KEY_USER_IP => $userIp,
-            AuthorContract::KEY_NAME => $name
-        ];
     }
 
 }

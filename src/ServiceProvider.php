@@ -7,6 +7,7 @@ use Stillat\Meerkat\Concerns\UsesConfig;
 use Stillat\Meerkat\Console\Commands\MigrateCommentsCommand;
 use Stillat\Meerkat\Console\Commands\StatisticsCommand;
 use Stillat\Meerkat\Console\Commands\ValidateCommand;
+use Stillat\Meerkat\Core\ConfigurationFactories;
 use Stillat\Meerkat\Core\Contracts\Logging\ErrorCodeRepositoryContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\YAMLParserContract;
@@ -163,6 +164,8 @@ class ServiceProvider extends AddonServiceProvider
             foreach ($this->getConfig('authors', []) as $configSetting => $configValue) {
                 $globalConfiguration->set('author_'.$configSetting, $configValue);
             }
+
+            ConfigurationFactories::$configurationInstance = $globalConfiguration;
 
             return $globalConfiguration;
         });

@@ -22,17 +22,16 @@ class LocalErrorCodeRepository implements ErrorCodeRepositoryContract
      * @var LocalErrorCodeRepository|null
      */
     public static $instance = null;
-
     /**
-     * Logs an error through the shared instance.
+     * The local path to store error code logs.
      *
-     * @param ErrorLog $log The error to log.
+     * @var string
      */
-    public static function log(ErrorLog $log)
+    private $storageDirectory = '';
+
+    public function __construct($storageDirectory)
     {
-        if (self::$instance !== null) {
-            self::$instance->logError($log);
-        }
+        $this->storageDirectory = $storageDirectory;
     }
 
     /**
@@ -49,30 +48,16 @@ class LocalErrorCodeRepository implements ErrorCodeRepositoryContract
     }
 
     /**
-     * The local path to store error code logs.
+     * Logs an error through the shared instance.
      *
-     * @var string
+     * @param ErrorLog $log The error to log.
      */
-    private $storageDirectory = '';
-
-    public function __construct($storageDirectory)
+    public static function log(ErrorLog $log)
     {
-        $this->storageDirectory = $storageDirectory;
+        if (self::$instance !== null) {
+            self::$instance->logError($log);
+        }
     }
-
-    /**
-     * Constructs a storage path for the provided error log.
-     *
-     * @param ErrorLog $log The error log to construct the path for.
-     * @return string
-     */
-    private function makePath(ErrorLog $log)
-    {
-        $logPath = 'e'.$log->errorCode.'-'.$log->instanceId.'.json';
-
-        return $this->storageDirectory.'/'.$logPath;
-    }
-
 
     /**
      * Logs an error code.
@@ -99,6 +84,19 @@ class LocalErrorCodeRepository implements ErrorCodeRepositoryContract
     }
 
     /**
+     * Constructs a storage path for the provided error log.
+     *
+     * @param ErrorLog $log The error log to construct the path for.
+     * @return string
+     */
+    private function makePath(ErrorLog $log)
+    {
+        $logPath = 'e' . $log->errorCode . '-' . $log->instanceId . '.json';
+
+        return $this->storageDirectory . '/' . $logPath;
+    }
+
+    /**
      * Removes all error code logs.
      *
      * @return bool
@@ -111,7 +109,7 @@ class LocalErrorCodeRepository implements ErrorCodeRepositoryContract
 
         $wasSuccess = true;
 
-        $logs = glob($this->storageDirectory.'/e*.json');
+        $logs = glob($this->storageDirectory . '/e*.json');
 
         if ($logs !== null && is_array($logs)) {
             foreach ($logs as $logPath) {
@@ -138,7 +136,7 @@ class LocalErrorCodeRepository implements ErrorCodeRepositoryContract
             return false;
         }
 
-        $logs = glob($this->storageDirectory.'/e*'.$instanceId.'.json');
+        $logs = glob($this->storageDirectory . '/e*' . $instanceId . '.json');
 
         if ($logs !== null && is_array($logs) && count($logs) == 1) {
             return unlink($logs[0]);
@@ -158,7 +156,7 @@ class LocalErrorCodeRepository implements ErrorCodeRepositoryContract
             return [];
         }
 
-        $logs = glob($this->storageDirectory.'/e*.json');
+        $logs = glob($this->storageDirectory . '/e*.json');
         $logsToReturn = [];
 
         if ($logs !== null && is_array($logs)) {

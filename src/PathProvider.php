@@ -2,6 +2,14 @@
 
 namespace Stillat\Meerkat;
 
+/**
+ * Class PathProvider
+ *
+ * Provides utilities and helpers for interacting with the addon's storage directories.
+ *
+ * @package Stillat\Meerkat
+ * @since 2.0.0
+ */
 class PathProvider
 {
 

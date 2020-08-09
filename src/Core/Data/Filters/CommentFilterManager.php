@@ -4,6 +4,7 @@ namespace Stillat\Meerkat\Core\Data\Filters;
 
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\IsFilters;
+use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\Search;
 use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\ThreadIn;
 use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\UserFromAuth;
 use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\UserIn;
@@ -88,6 +89,7 @@ class CommentFilterManager
         (new UserIn())->register($this);
         (new ThreadIn())->register($this);
         (new IsFilters())->register($this);
+        (new Search())->register($this);
     }
 
     /**

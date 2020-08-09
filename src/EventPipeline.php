@@ -7,6 +7,9 @@ use Stillat\Meerkat\Core\Contracts\MutationPipelineContract;
 
 /**
  * Class EventPipeline
+ *
+ * Provides a consistent implementation for managing event mutation pipelines.
+ *
  * @package Stillat\Meerkat
  * @since 2.0.0
  */

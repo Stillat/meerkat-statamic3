@@ -14,7 +14,11 @@ use Stillat\Meerkat\PathProvider;
 
 /**
  * Class AddonServiceProvider
+ *
+ * Provides additional features for registering Statamic Addon services and features.
+ *
  * @package Stillat\Meerkat\Providers
+ * @since 2.0.0
  */
 class AddonServiceProvider extends StatamicAddonServiceProvider
 {
@@ -239,6 +243,9 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
         }
     }
 
+    /**
+     * Attempts to automatically publish the addon's control panel assets.
+     */
     private function publishAddonControlPanelAssets()
     {
         $resources = PathProvider::getResourcesDirectory('/dist/js');
@@ -293,8 +300,6 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
 
         AddonServiceProvider::$langIncluded = true;
     }
-
-    // TODO: REFACTOR OUT
 
     /**
      * Registers the current provider and all additional providers, if required.

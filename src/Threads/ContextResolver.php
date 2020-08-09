@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat\Threads;
 
+use Illuminate\Support\Collection;
 use Statamic\Contracts\Entries\EntryRepository;
 use Statamic\Entries\Entry;
 use Stillat\Meerkat\Core\Contracts\Threads\ContextResolverContract;
@@ -82,6 +83,7 @@ class ContextResolver implements ContextResolverContract
         $contextData = $statamicContext->data();
 
         if ($contextData !== null) {
+            /** @var Collection $contextData */
             $contextData = $contextData->toArray();
         }
 

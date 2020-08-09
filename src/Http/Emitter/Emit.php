@@ -10,7 +10,7 @@ use Stillat\Meerkat\Http\RequestHelpers;
 /**
  * Class Emit
  *
- * Provides features for emitting dynamic stylesheets and JavaScript assets.
+ * Provides utilities for emitting dynamic stylesheets and JavaScript assets.
  *
  * @package Stillat\Meerkat\Http\Emitter
  * @since 2.0.0
@@ -18,6 +18,12 @@ use Stillat\Meerkat\Http\RequestHelpers;
 class Emit
 {
 
+    /**
+     * Injects a dynamic stylesheet asset into the Control Panel request.
+     *
+     * @param string $dynamicCssName The CSS asset name.
+     * @param callable $callback The stylesheet generation callback.
+     */
     public static function cpCss($dynamicCssName, $callback)
     {
         if (RequestHelpers::isControlPanelRequestFromHeaders(request())) {
@@ -25,6 +31,12 @@ class Emit
         }
     }
 
+    /**
+     * Injects a dynamic stylesheet into a general Web request.
+     *
+     * @param string $dynamicCssName The CSS asset name.
+     * @param callable $callback The stylesheet generation callback.
+     */
     public static function css($dynamicCssName, $callback)
     {
         $assetNameForStatamic = './../' . Addon::CODE_ADDON_NAME;
@@ -40,6 +52,12 @@ class Emit
         });
     }
 
+    /**
+     * Injects a dynamic JavaScript asset into the Control Panel request.
+     *
+     * @param string $dynamicJsName The JavaScript asset name.
+     * @param callable $callback The JavaScript generation callback.
+     */
     public static function cpJs($dynamicJsName, $callback)
     {
         if (RequestHelpers::isControlPanelRequestFromHeaders(request())) {
@@ -47,6 +65,12 @@ class Emit
         }
     }
 
+    /**
+     * Injects a dynamic JavaScript asset into a general Web request.
+     *
+     * @param string $dynamicJsName The JavaScript asset name.
+     * @param callable $callback The JavaScript generation callback.
+     */
     public static function js($dynamicJsName, $callback)
     {
         $assetNameForStatamic = './../' . Addon::CODE_ADDON_NAME;

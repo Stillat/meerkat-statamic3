@@ -46,7 +46,7 @@ class StorageDriverValidator
         }
 
         if (array_key_exists(ThreadServiceProvider::CONFIG_THREAD_DRIVER, $driverConfiguration) === false) {
-            $driverConfiguration[self::CONFIG_THREAD_DRIVER] = LocalThreadStorageManager::class;
+            $driverConfiguration[ThreadServiceProvider::CONFIG_THREAD_DRIVER] = LocalThreadStorageManager::class;
             $validationResults->add(Errors::DRIVER_THREAD_NONE_SUPPLIED, 'Thread storage driver not found. Using fallback: ' . LocalThreadStorageManager::class);
             $driverConfiguration[ThreadServiceProvider::CONFIG_THREAD_DRIVER] = LocalThreadStorageManager::class;
         }

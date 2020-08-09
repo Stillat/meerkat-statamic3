@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat\Http;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 /**
@@ -18,7 +19,7 @@ class RequestHelpers
     /**
      * Determines if the current request is accessing the Statamic Control Panel.
      *
-     * @param $request Illuminate\Http\Request The request context.
+     * @param $request Request The request context.
      * @return bool
      */
     public static function isControlPanelRequest($request)

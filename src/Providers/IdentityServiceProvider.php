@@ -10,6 +10,14 @@ use Stillat\Meerkat\Permissions\StatamicAccessManager;
 use Stillat\Meerkat\Identity\StatamicAuthorFactory;
 use Stillat\Meerkat\Identity\StatamicIdentityManager;
 
+/**
+ * Class IdentityServiceProvider
+ *
+ * Manages the registration of Meerkat's Identity and Authoring services.
+ *
+ * @package Stillat\Meerkat\Providers
+ * @since 2.0.0
+ */
 class IdentityServiceProvider extends AddonServiceProvider
 {
 

@@ -6,7 +6,11 @@ use Statamic\Facades\CP\Nav;
 
 /**
  * Class Navigation
+ *
+ * Manages interactions between Meerkat and the Statamic Control Panel navigation menu.
+ *
  * @package Stillat\Meerkat\ControlPanel
+ * @since 2.0.0
  */
 class Navigation
 {

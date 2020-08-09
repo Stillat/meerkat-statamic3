@@ -8,6 +8,7 @@ use Stillat\Meerkat\Core\Contracts\Data\GroupedDataSetContract;
 use Stillat\Meerkat\Core\Contracts\Data\PagedDataSetContract;
 use Stillat\Meerkat\Core\Contracts\Data\PaginatorContract;
 use Stillat\Meerkat\Core\Data\Filters\FilterRunner;
+use Stillat\Meerkat\Core\Data\Retrievers\CommentIdRetriever;
 use Stillat\Meerkat\Core\Exceptions\FilterException;
 use Stillat\Meerkat\Core\Search\Engine;
 use Stillat\Meerkat\Core\Search\Providers\BitapSearchProvider;
@@ -467,12 +468,7 @@ class DataQuery
 
         if ($this->searchTerms !== null) {
             $results = $this->searchEngine->search($this->searchTerms, $data);
-            $commentIdsToKeep = [];
-
-            /** @var CommentContract $comment */
-            foreach ($results as $comment) {
-                $commentIdsToKeep[] = $comment->getId();
-            }
+            $commentIdsToKeep = CommentIdRetriever::getCommentIds($results);
 
             $data = array_filter($data, function (CommentContract $comment) use (&$commentIdsToKeep) {
                 return in_array($comment->getId(), $commentIdsToKeep);

@@ -4,6 +4,14 @@ namespace Stillat\Meerkat;
 
 use Statamic\Extend\AddonRepository;
 
+/**
+ * Class Addon
+ *
+ * Provides basic addon identification details and utilities.
+ *
+ * @package Stillat\Meerkat
+ * @since 2.0.0
+ */
 class Addon
 {
     public const ADDON_NAME = 'Meerkat';

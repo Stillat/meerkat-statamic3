@@ -12,6 +12,7 @@ use Stillat\Meerkat\PathProvider;
  * translation string key/value pairs in the Statamic Control Panel.
  *
  * @package Stillat\Meerkat\Statamic\ControlPanel
+ * @since 2.0.0
  */
 class TranslationEmitter
 {

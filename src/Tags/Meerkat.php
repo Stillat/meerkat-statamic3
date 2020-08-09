@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat\Tags;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Statamic\Tags\Tags;
 use Stillat\Meerkat\Addon as MeerkatAddon;
 use Stillat\Meerkat\Concerns\GetsHiddenContext;
@@ -42,7 +43,7 @@ class Meerkat extends Tags
      * Alias of {{ meerkat:form }}
      *
      * @return string
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws BindingResolutionException
      */
     public function create()
     {
@@ -55,7 +56,7 @@ class Meerkat extends Tags
      * Maps to {{ meerkat:form }}
      *
      * @return string
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws BindingResolutionException
      */
     public function form()
     {
@@ -93,7 +94,8 @@ class Meerkat extends Tags
     /**
      * {{ meerkat:responses }}
      *
-     * @return string
+     * @return string|string[]
+     * @throws BindingResolutionException
      */
     public function responses()
     {

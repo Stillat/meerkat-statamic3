@@ -6,6 +6,14 @@ use Stillat\Meerkat\Core\Contracts\Data\PaginatorContract;
 use Stillat\Meerkat\Core\Data\Filters\CommentFilterManager;
 use Stillat\Meerkat\Data\Paginator;
 
+/**
+ * Class DataServiceProvider
+ *
+ * Manages the registration of Meerkat's data querying, filtering, and management services.
+ *
+ * @package Stillat\Meerkat\Providers
+ * @since 2.0.0
+ */
 class DataServiceProvider extends AddonServiceProvider
 {
 

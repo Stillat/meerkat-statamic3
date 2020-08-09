@@ -7,13 +7,13 @@ use Stillat\Meerkat\Concerns\UsesConfig;
 use Stillat\Meerkat\Console\Commands\MigrateCommentsCommand;
 use Stillat\Meerkat\Console\Commands\StatisticsCommand;
 use Stillat\Meerkat\Console\Commands\ValidateCommand;
+use Stillat\Meerkat\Core\Configuration as GlobalConfiguration;
 use Stillat\Meerkat\Core\ConfigurationFactories;
 use Stillat\Meerkat\Core\Contracts\Logging\ErrorCodeRepositoryContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\YAMLParserContract;
 use Stillat\Meerkat\Core\FormattingConfiguration;
 use Stillat\Meerkat\Core\GuardConfiguration;
-use Stillat\Meerkat\Core\Configuration as GlobalConfiguration;
 use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
 use Stillat\Meerkat\Parsing\MarkdownParser;
 use Stillat\Meerkat\Parsing\YAMLParser;
@@ -25,6 +25,14 @@ use Stillat\Meerkat\Providers\TagsServiceProvider;
 use Stillat\Meerkat\Providers\ThreadServiceProvider;
 use Stillat\Meerkat\Support\Facades\Configuration;
 
+/**
+ * Class Servicerovider
+ *
+ * Bootstraps the core Meerkat services, configuration, and utilities.
+ *
+ * @package Stillat\Meerkat
+ * @since 2.0.0
+ */
 class ServiceProvider extends AddonServiceProvider
 {
     use UsesConfig;

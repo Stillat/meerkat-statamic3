@@ -10,6 +10,7 @@ namespace Stillat\Meerkat\Core\Comments;
  * @package Stillat\Meerkat\Core\Comments
  * @since 2.0.0
  */
+// TODO: Evaluate if needed anymore (should be replaced by DataSet).
 class CommentCollection
 {
 

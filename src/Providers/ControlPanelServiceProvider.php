@@ -7,10 +7,15 @@ use Stillat\Meerkat\Addon;
 use Stillat\Meerkat\PathProvider;
 use Stillat\Meerkat\Statamic\ControlPanel\AddonNavIcons;
 use Stillat\Meerkat\Statamic\ControlPanel\Navigation;
+use Stillat\Meerkat\Translation\LanguagePatcher;
 
 /**
- * Class NavigationServiceProvider
+ * Class ControlPanelServiceProvider
+ *
+ * Registers various Meerkat features that interact directly with the Statamic Control Panel.
+ *
  * @package Stillat\Meerkat\Providers
+ * @since 2.0.0
  */
 class ControlPanelServiceProvider extends AddonServiceProvider
 {
@@ -34,7 +39,7 @@ class ControlPanelServiceProvider extends AddonServiceProvider
     /**
      * The language translation patcher instance.
      *
-     * @var \Stillat\Meerkat\Translation\LanguagePatcher|null
+     * @var LanguagePatcher|null
      */
     protected $languagePatcher = null;
 
@@ -49,11 +54,15 @@ class ControlPanelServiceProvider extends AddonServiceProvider
     {
         parent::boot();
 
-        $this->addonIconInstaller->installAddonIcons(Addon::CODE_ADDON_NAME, PathProvider::getResourcesDirectory('svg'));
+        $this->addonIconInstaller->installAddonIcons(
+            Addon::CODE_ADDON_NAME,
+            PathProvider::getResourcesDirectory('svg')
+        );
+
         $this->navigation->create();
 
-        Statamic::script('meerkat', Addon::VERSION.'/meerkat');
-        Statamic::script('meerkat', Addon::VERSION.'/bootstrap');
+        Statamic::script('meerkat', Addon::VERSION . '/meerkat');
+        Statamic::script('meerkat', Addon::VERSION . '/bootstrap');
     }
 
 }

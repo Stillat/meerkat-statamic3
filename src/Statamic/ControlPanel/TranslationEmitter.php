@@ -17,25 +17,20 @@ class TranslationEmitter
 {
 
     /**
-     * Emits a JavaScript statement to patch the provided translation key/value pari.
+     * Creates a JavaScript snippet that can be utilized to patch the Statamic Control Panel translation system.
      *
-     * @param $transKey string The translation key.
-     * @param $transValue string The translation key value.
-     * @return string
+     * @param $translationKeys array The translation key/value pairs to patch in the Control Panel.
+     * @return string|string[]
      */
-    public static function emit($transKey, $transValue)
+    public static function getStatements($translationKeys)
     {
-        $jsToEmit = '';
+        $replacements = TranslationEmitter::emitAll($translationKeys);
+        $javaScriptStub = file_get_contents(PathProvider::getStub('lang.js'));
 
-        if ($transValue != null && is_array($transValue) && count($transValue) > 0) {
-            foreach ($transValue as $key => $value) {
-                $cpKey = $transKey.'.'.$key;
-                $jsValue = json_encode($value);
-                $jsToEmit .= '_cst[\''.$cpKey.'\']=JSON.parse(\''.$jsValue.'\');';
-            }
-        }
+        $javaScriptStub = str_replace('@addon', Addon::ADDON_NAME . ' v' . Addon::VERSION, $javaScriptStub);
+        $javaScriptStub = str_replace('/*patches*/', $replacements, $javaScriptStub);
 
-        return $jsToEmit;
+        return $javaScriptStub;
     }
 
     /**
@@ -60,20 +55,25 @@ class TranslationEmitter
     }
 
     /**
-     * Creates a JavaScript snippet that can be utilized to patch the Statamic Control Panel translation system.
+     * Emits a JavaScript statement to patch the provided translation key/value pari.
      *
-     * @param $translationKeys array The translation key/value pairs to patch in the Control Panel.
-     * @return string|string[]
+     * @param $transKey string The translation key.
+     * @param $transValue string The translation key value.
+     * @return string
      */
-    public static function getStatements($translationKeys)
+    public static function emit($transKey, $transValue)
     {
-        $replacements = TranslationEmitter::emitAll($translationKeys);
-        $javaScriptStub = file_get_contents(PathProvider::getStub('lang.js'));
+        $jsToEmit = '';
 
-        $javaScriptStub = str_replace('@addon', Addon::ADDON_NAME.' v'.Addon::VERSION, $javaScriptStub);
-        $javaScriptStub = str_replace('/*patches*/', $replacements, $javaScriptStub);
+        if ($transValue != null && is_array($transValue) && count($transValue) > 0) {
+            foreach ($transValue as $key => $value) {
+                $cpKey = $transKey . '.' . $key;
+                $jsValue = json_encode($value);
+                $jsToEmit .= '_cst[\'' . $cpKey . '\']=JSON.parse(\'' . $jsValue . '\');';
+            }
+        }
 
-        return $javaScriptStub;
+        return $jsToEmit;
     }
 
 }

@@ -5,8 +5,16 @@ namespace Stillat\Meerkat\Console\Commands;
 use Illuminate\Console\Command;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Storage\ThreadStorageManagerContract;
-use Stillat\Meerkat\Core\Helpers\TypeConversions;
+use Stillat\Meerkat\Core\Support\TypeConversions;
 
+/**
+ * Class MigrateCommentsCommand
+ *
+ * Provides utilities for migrating comment data structures.
+ *
+ * @package Stillat\Meerkat\Console\Commands
+ * @since 2.0.0
+ */
 class MigrateCommentsCommand extends Command
 {
 
@@ -49,7 +57,7 @@ class MigrateCommentsCommand extends Command
         }
 
         $this->line('Total: ' . $commentCount . ' comments(s) across all threads analyzed.');
-        $this->line(count($comments).' comment(s) need a data structure update.');
+        $this->line(count($comments) . ' comment(s) need a data structure update.');
 
         $commentsUpdated = 0;
 
@@ -61,7 +69,7 @@ class MigrateCommentsCommand extends Command
             }
         }
 
-        $this->line($commentsUpdated.' comment(s) updated!');
+        $this->line($commentsUpdated . ' comment(s) updated!');
 
     }
 

@@ -6,7 +6,6 @@ use Stillat\Meerkat\Core\Comments\Comment;
 use Stillat\Meerkat\Core\Comments\CommentManagerFactory;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentFactoryContract;
-use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 
 /**
  * Class StatamicCommentFactory

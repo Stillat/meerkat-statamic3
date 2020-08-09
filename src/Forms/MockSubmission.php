@@ -32,12 +32,17 @@ class MockSubmission extends Submission
         return $this;
     }
 
-
+    /**
+     * Mocks the save method.
+     */
     public function save()
     {
         return;
     }
 
+    /**
+     * Mocks the delete method.
+     */
     public function delete()
     {
         return;

@@ -6,7 +6,30 @@ class AddonNavIcons
 {
 
     const STATAMIC_ICONS_DIRECTORY = 'vendor/statamic/cp/svg/';
-    const STATAMIC_ADDON_ICONS = self::STATAMIC_ICONS_DIRECTORY.'addons/';
+    const STATAMIC_ADDON_ICONS = self::STATAMIC_ICONS_DIRECTORY . 'addons/';
+
+    public function installAddonIcons($addonName, $iconLocation)
+    {
+        $isAvailable = $this->createRepository();
+
+        if ($isAvailable) {
+            $addonIconPath = public_path(AddonNavIcons::STATAMIC_ADDON_ICONS . '/' . $addonName);
+
+            if (file_exists($addonIconPath) == false) {
+                mkdir($addonIconPath);
+            }
+
+            if (file_exists($iconLocation)) {
+                $svgFiles = glob($iconLocation . '/*.svg');
+
+                if (is_array($svgFiles) && count($svgFiles) > 0) {
+                    foreach ($svgFiles as $iconFile) {
+                        copy($iconFile, $addonIconPath . '/' . basename($iconFile));
+                    }
+                }
+            }
+        }
+    }
 
     protected function createRepository()
     {
@@ -19,29 +42,6 @@ class AddonNavIcons
         }
 
         return file_exists($addonIconDirectory);
-    }
-
-    public function installAddonIcons($addonName, $iconLocation)
-    {
-        $isAvailable = $this->createRepository();
-
-        if ($isAvailable) {
-            $addonIconPath = public_path(AddonNavIcons::STATAMIC_ADDON_ICONS.'/'.$addonName);
-
-            if (file_exists($addonIconPath) == false) {
-                mkdir($addonIconPath);
-            }
-
-            if (file_exists($iconLocation)) {
-                $svgFiles = glob($iconLocation.'/*.svg');
-
-                if (is_array($svgFiles) && count($svgFiles) > 0) {
-                    foreach ($svgFiles as $iconFile) {
-                        copy($iconFile, $addonIconPath.'/'.basename($iconFile));
-                    }
-                }
-            }
-        }
     }
 
 }

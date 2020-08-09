@@ -7,6 +7,14 @@ use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
 use Stillat\Meerkat\Core\Parsing\AbstractMarkdownParser;
 
+/**
+ * Class MarkdownParser
+ *
+ * Handles interactions between Statamic's Markdown parser and Meerkat Core.
+ *
+ * @package Stillat\Meerkat\Parsing
+ * @since 2.0.0
+ */
 class MarkdownParser extends AbstractMarkdownParser implements MarkdownParserContract
 {
 

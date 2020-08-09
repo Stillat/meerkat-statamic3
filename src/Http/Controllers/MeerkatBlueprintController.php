@@ -7,6 +7,14 @@ use Statamic\Http\Controllers\CP\CpController;
 use Statamic\Http\Controllers\CP\Fields\ManagesBlueprints;
 use Stillat\Meerkat\Blueprint\BlueprintProvider;
 
+/**
+ * Class MeerkatBlueprintController
+ *
+ * Contains features and resources for interacting with the Meerkat blueprint.
+ *
+ * @package Stillat\Meerkat\Http\Controllers
+ * @since 2.0.0
+ */
 class MeerkatBlueprintController extends CpController
 {
     use ManagesBlueprints;
@@ -35,7 +43,7 @@ class MeerkatBlueprintController extends CpController
     public function update(Request $request)
     {
         $request->validate([
-           'sections' => 'array'
+            'sections' => 'array'
         ]);
 
         $this->updateBlueprint($request, $this->blueprintProvider->getBlueprint());

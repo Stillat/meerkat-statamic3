@@ -1,11 +1,11 @@
 <?php
 
 namespace Stillat\Meerkat\Translation;
-use Illuminate\Translation\Translator;
 
+use Illuminate\Translation\Translator;
+use Statamic\Facades\Folder;
 use Stillat\Meerkat\Addon;
 use Stillat\Meerkat\PathProvider;
-use Statamic\Facades\Folder;
 
 /**
  * Class LanguagePatcher
@@ -58,8 +58,8 @@ class LanguagePatcher
         }
 
         // Construct a path to our potential language directory.
-        $localeDirectory = PathProvider::getResourcesDirectory('lang') .'/'. $this->currentLocale;
-        $fallbackDirectory = PathProvider::getResourcesDirectory('lang') .'/'. $this->fallbackLocale;
+        $localeDirectory = PathProvider::getResourcesDirectory('lang') . '/' . $this->currentLocale;
+        $fallbackDirectory = PathProvider::getResourcesDirectory('lang') . '/' . $this->fallbackLocale;
 
         // If the configured locale exists, lets find which translation strings do not exist.
         if (Folder::exists($localeDirectory) && Folder::exists($fallbackDirectory)) {
@@ -76,18 +76,18 @@ class LanguagePatcher
                         if (array_key_exists($localeCategory, $targetFlat)) {
 
                             if (array_key_exists($translationKey, $targetFlat[$localeCategory]) == false) {
-                                if (array_key_exists(Addon::CODE_ADDON_NAME.'::' . $localeCategory, $patches) == false) {
-                                    $patches[Addon::CODE_ADDON_NAME.'::'.$localeCategory] = [];
+                                if (array_key_exists(Addon::CODE_ADDON_NAME . '::' . $localeCategory, $patches) == false) {
+                                    $patches[Addon::CODE_ADDON_NAME . '::' . $localeCategory] = [];
                                 }
 
-                                $patches[Addon::CODE_ADDON_NAME.'::'.$localeCategory][$translationKey] = $translationValue;
+                                $patches[Addon::CODE_ADDON_NAME . '::' . $localeCategory][$translationKey] = $translationValue;
                             }
                         } else {
-                            if (array_key_exists(Addon::CODE_ADDON_NAME.'::' . $localeCategory, $patches) == false) {
-                                $patches[Addon::CODE_ADDON_NAME.'::'.$localeCategory] = [];
+                            if (array_key_exists(Addon::CODE_ADDON_NAME . '::' . $localeCategory, $patches) == false) {
+                                $patches[Addon::CODE_ADDON_NAME . '::' . $localeCategory] = [];
                             }
 
-                            $patches[Addon::CODE_ADDON_NAME.'::'.$localeCategory][$translationKey] = $translationValue;
+                            $patches[Addon::CODE_ADDON_NAME . '::' . $localeCategory][$translationKey] = $translationValue;
                         }
                     }
                 }

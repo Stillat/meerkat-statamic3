@@ -5,8 +5,16 @@ namespace Stillat\Meerkat\Console\Commands;
 use Illuminate\Console\Command;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Storage\ThreadStorageManagerContract;
-use Stillat\Meerkat\Core\Helpers\TypeConversions;
+use Stillat\Meerkat\Core\Support\TypeConversions;
 
+/**
+ * Class StatisticsCommand
+ *
+ * Provides utilities for visualizing comment statistics.
+ *
+ * @package Stillat\Meerkat\Console\Commands
+ * @since 2.0.0
+ */
 class StatisticsCommand extends Command
 {
 
@@ -80,14 +88,14 @@ class StatisticsCommand extends Command
             'Pending',
             'Requires Migration'
         ], [[
-                count($threadIds),
-                $commentCount,
-                $isSpam,
-                $publishedAndSpam,
-                $isPublished,
-                $pendingCount,
-                $needsMigration
-            ]]);
+            count($threadIds),
+            $commentCount,
+            $isSpam,
+            $publishedAndSpam,
+            $isPublished,
+            $pendingCount,
+            $needsMigration
+        ]]);
 
         $this->line('Statistics gathered in: ' . $secondsToGenerate . ' seconds.');
     }

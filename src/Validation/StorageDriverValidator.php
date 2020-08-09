@@ -6,7 +6,6 @@ use Stillat\Meerkat\Concerns\UsesConfig;
 use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalCommentStorageManager;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalThreadStorageManager;
-use Stillat\Meerkat\Core\Threads\Thread;
 use Stillat\Meerkat\Core\ValidationResult;
 use Stillat\Meerkat\PathProvider;
 use Stillat\Meerkat\Providers\ThreadServiceProvider;
@@ -42,24 +41,24 @@ class StorageDriverValidator
 
         // Provide local defaults.
         if (array_key_exists(ThreadServiceProvider::CONFIG_COMMENT_DRIVER, $driverConfiguration) === false) {
-            $validationResults->add(Errors::DRIVER_COMMENT_NONE_SUPPLIED, 'Comment storage driver not found. Using fallback: '.LocalCommentStorageManager::class);
+            $validationResults->add(Errors::DRIVER_COMMENT_NONE_SUPPLIED, 'Comment storage driver not found. Using fallback: ' . LocalCommentStorageManager::class);
             $driverConfiguration[ThreadServiceProvider::CONFIG_COMMENT_DRIVER] = LocalCommentStorageManager::class;
         }
 
         if (array_key_exists(ThreadServiceProvider::CONFIG_THREAD_DRIVER, $driverConfiguration) === false) {
             $driverConfiguration[self::CONFIG_THREAD_DRIVER] = LocalThreadStorageManager::class;
-            $validationResults->add(Errors::DRIVER_THREAD_NONE_SUPPLIED, 'Thread storage driver not found. Using fallback: '.LocalThreadStorageManager::class);
+            $validationResults->add(Errors::DRIVER_THREAD_NONE_SUPPLIED, 'Thread storage driver not found. Using fallback: ' . LocalThreadStorageManager::class);
             $driverConfiguration[ThreadServiceProvider::CONFIG_THREAD_DRIVER] = LocalThreadStorageManager::class;
         }
 
         // If for some reason the specified driver does not exist, fallback to local defaults.
         if (!class_exists($driverConfiguration[ThreadServiceProvider::CONFIG_COMMENT_DRIVER])) {
-            $validationResults->add(Errors::DRIVER_COMMENT_PROVIDED_NOT_FOUND, 'The provided comment storage driver ('.$driverConfiguration[ThreadServiceProvider::CONFIG_COMMENT_DRIVER].') could not be found. Using fallback: '.LocalCommentStorageManager::class);
+            $validationResults->add(Errors::DRIVER_COMMENT_PROVIDED_NOT_FOUND, 'The provided comment storage driver (' . $driverConfiguration[ThreadServiceProvider::CONFIG_COMMENT_DRIVER] . ') could not be found. Using fallback: ' . LocalCommentStorageManager::class);
             $driverConfiguration[ThreadServiceProvider::CONFIG_COMMENT_DRIVER] = LocalCommentStorageManager::class;
         }
 
         if (!class_exists($driverConfiguration[ThreadServiceProvider::CONFIG_THREAD_DRIVER])) {
-            $validationResults->add(Errors::DRIVER_THREAD_PROVIDED_NOT_FOUND, 'The provided thread storage driver ('.$driverConfiguration[ThreadServiceProvider::CONFIG_THREAD_DRIVER].') could not be found. Using fallback: '.LocalThreadStorageManager::class);
+            $validationResults->add(Errors::DRIVER_THREAD_PROVIDED_NOT_FOUND, 'The provided thread storage driver (' . $driverConfiguration[ThreadServiceProvider::CONFIG_THREAD_DRIVER] . ') could not be found. Using fallback: ' . LocalThreadStorageManager::class);
             $driverConfiguration[ThreadServiceProvider::CONFIG_THREAD_DRIVER] = LocalThreadStorageManager::class;
         }
 

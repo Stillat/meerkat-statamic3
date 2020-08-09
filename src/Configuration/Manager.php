@@ -6,6 +6,14 @@ use Illuminate\Support\Str;
 use Stillat\Meerkat\Addon;
 use Stillat\Meerkat\PathProvider;
 
+/**
+ * Class Manager
+ *
+ * Provides utilities to retrieve configuration files and mappings.
+ *
+ * @package Stillat\Meerkat\Configuration
+ * @since 2.0.0
+ */
 class Manager
 {
 
@@ -33,7 +41,7 @@ class Manager
 
         foreach ($configFiles as $filePath) {
             $configName = basename($filePath);
-            $targetConfigPath = config_path(Addon::CODE_ADDON_NAME.'/'.$configName);
+            $targetConfigPath = config_path(Addon::CODE_ADDON_NAME . '/' . $configName);
 
             $configMapping[$filePath] = $targetConfigPath;
         }

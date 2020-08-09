@@ -170,7 +170,7 @@ class StatamicIdentity implements AuthorContract
      */
     public function getHostUser()
     {
-
+        // TODO: Implement.
     }
 
 }

@@ -40,6 +40,33 @@ class BlueprintProvider
     }
 
     /**
+     * Gets the Meerkat blueprint.
+     *
+     * @return Blueprint
+     */
+    public function getBlueprint()
+    {
+        $this->ensureExistence();
+
+        return $this->blueprints->find(Addon::CODE_ADDON_NAME);
+    }
+
+    /**
+     * Ensures that the default Meerkat blueprint is available.
+     *
+     * @return void
+     * @throws \Statamic\Yaml\ParseException
+     */
+    public function ensureExistence()
+    {
+        if ($this->hasDefaultBlueprint() === false) {
+            $blueprint = $this->makeBlueprint();
+
+            $blueprint->save();
+        }
+    }
+
+    /**
      * Determines if the Statamic installation has the required blueprint.
      *
      * @return bool
@@ -70,33 +97,6 @@ class BlueprintProvider
         $blueprint->setContents($sections);
 
         return $blueprint;
-    }
-
-    /**
-     * Ensures that the default Meerkat blueprint is available.
-     *
-     * @return void
-     * @throws \Statamic\Yaml\ParseException
-     */
-    public function ensureExistence()
-    {
-        if ($this->hasDefaultBlueprint() === false) {
-            $blueprint = $this->makeBlueprint();
-
-            $blueprint->save();
-        }
-    }
-
-    /**
-     * Gets the Meerkat blueprint.
-     *
-     * @return Blueprint
-     */
-    public function getBlueprint()
-    {
-        $this->ensureExistence();
-
-        return $this->blueprints->find(Addon::CODE_ADDON_NAME);
     }
 
 }

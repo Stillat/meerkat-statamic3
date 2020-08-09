@@ -38,4 +38,3 @@ class PermissionMutationPipeline extends EventPipeline implements PermissionsMut
     }
 
 }
-

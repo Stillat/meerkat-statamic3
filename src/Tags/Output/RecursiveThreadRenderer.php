@@ -45,7 +45,7 @@ class RecursiveThreadRenderer
             if (Str::contains($nestedCommentsString, '{{ if has_replies }}') === false) {
                 $templateParts = preg_split("/\r\n|\n|\r/", $nestedCommentsString);
                 $newParts = [];
-                $recursiveTagToLookFor = '{{ *recursive '.$collectionName.'* }}';
+                $recursiveTagToLookFor = '{{ *recursive ' . $collectionName . '* }}';
 
                 foreach ($templateParts as $part) {
                     if (Str::contains($part, $recursiveTagToLookFor)) {

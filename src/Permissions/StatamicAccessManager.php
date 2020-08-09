@@ -5,7 +5,6 @@ namespace Stillat\Meerkat\Permissions;
 use Stillat\Meerkat\Concerns\EmitsEvents;
 use Stillat\Meerkat\Concerns\UsesConfig;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
-use Stillat\Meerkat\Core\Contracts\Permissions\PermissionsMutationPipelineContract;
 use Stillat\Meerkat\Core\Permissions\AccessManager;
 use Stillat\Meerkat\Core\Permissions\PermissionsSet;
 use Stillat\Meerkat\Identity\StatamicAuthorFactory;
@@ -48,24 +47,6 @@ class StatamicAccessManager extends AccessManager
     private $mutationPipeline = null;
 
     /**
-     * Resets the permission state in-between resolutions.
-     */
-    private function reset()
-    {
-        $this->canViewComments = true;
-        $this->canApproveComments = true;
-        $this->canUnApproveComments = true;
-        $this->canReplyToComments = true;
-        $this->canEditComments = true;
-        $this->canReportAsSpam = true;
-        $this->canReportAsHam = true;
-        $this->canRemoveComments = true;
-        $this->userRoles = [];
-        $this->userRoleInstances = [];
-        $this->identity = null;
-    }
-
-    /**
      * Resolves the permissions set for the provided identity.
      *
      * @param AuthorContract $identity
@@ -100,6 +81,45 @@ class StatamicAccessManager extends AccessManager
         $this->resolveUserPermissions();
 
         return $this->toPermissionSet();
+    }
+
+    /**
+     * Resets the permission state in-between resolutions.
+     */
+    private function reset()
+    {
+        $this->canViewComments = true;
+        $this->canApproveComments = true;
+        $this->canUnApproveComments = true;
+        $this->canReplyToComments = true;
+        $this->canEditComments = true;
+        $this->canReportAsSpam = true;
+        $this->canReportAsHam = true;
+        $this->canRemoveComments = true;
+        $this->userRoles = [];
+        $this->userRoleInstances = [];
+        $this->identity = null;
+    }
+
+    /**
+     * Creates the least-restrictive permissions for a Statamic super user.
+     *
+     * @return PermissionsSet
+     */
+    private function getSuperUserPermissions()
+    {
+        $permissionSet = new PermissionsSet();
+
+        $permissionSet->canViewComments = true;
+        $permissionSet->canApproveComments = true;
+        $permissionSet->canUnApproveComments = true;
+        $permissionSet->canReplyToComments = true;
+        $permissionSet->canEditComments = true;
+        $permissionSet->canReportAsHam = true;
+        $permissionSet->canReportAsSpam = true;
+        $permissionSet->canRemoveComments = true;
+
+        return $permissionSet;
     }
 
     /**
@@ -298,14 +318,14 @@ class StatamicAccessManager extends AccessManager
         return $permissionSet;
     }
 
-    public function canViewComments()
-    {
-        return $this->canViewComments;
-    }
-
     public function canApproveComments()
     {
         return $this->canApproveComments;
+    }
+
+    public function canViewComments()
+    {
+        return $this->canViewComments;
     }
 
     public function canUnApproveComments()
@@ -336,27 +356,6 @@ class StatamicAccessManager extends AccessManager
     public function canRemoveComments()
     {
         return $this->canRemoveComments;
-    }
-
-    /**
-     * Creates the least-restrictive permissions for a Statamic super user.
-     *
-     * @return PermissionsSet
-     */
-    private function getSuperUserPermissions()
-    {
-        $permissionSet = new PermissionsSet();
-
-        $permissionSet->canViewComments = true;
-        $permissionSet->canApproveComments = true;
-        $permissionSet->canUnApproveComments = true;
-        $permissionSet->canReplyToComments = true;
-        $permissionSet->canEditComments = true;
-        $permissionSet->canReportAsHam = true;
-        $permissionSet->canReportAsSpam = true;
-        $permissionSet->canRemoveComments = true;
-
-        return $permissionSet;
     }
 
 }

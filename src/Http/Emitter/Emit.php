@@ -3,11 +3,18 @@
 namespace Stillat\Meerkat\Http\Emitter;
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Str;
 use Statamic\Statamic;
 use Stillat\Meerkat\Addon;
 use Stillat\Meerkat\Http\RequestHelpers;
 
+/**
+ * Class Emit
+ *
+ * Provides features for emitting dynamic stylesheets and JavaScript assets.
+ *
+ * @package Stillat\Meerkat\Http\Emitter
+ * @since 2.0.0
+ */
 class Emit
 {
 

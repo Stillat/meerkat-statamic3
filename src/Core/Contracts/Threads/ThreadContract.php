@@ -27,6 +27,7 @@ interface ThreadContract extends DataObjectContract, StorableContract, Serializa
     const KEY_DIRNAME = 'dirname';
     const KEY_TYPE = 'type';
     const KEY_TYPE_FILE = 'file';
+    const KEY_SHARE_COMMENT_CONTEXT = 'meerkat_share_comments';
 
     /**
      * Returns the string identifier for the current thread.

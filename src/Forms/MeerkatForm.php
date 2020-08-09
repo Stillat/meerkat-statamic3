@@ -19,7 +19,7 @@ use Stillat\Meerkat\Tags\MeerkatTag;
 /**
  * Class MeerkatForm
  *
- *
+ * Handles the interactions between form template behavior and Meerkat Core.
  *
  * @package Stillat\Meerkat\Forms
  * @since 2.0.0
@@ -230,11 +230,14 @@ class MeerkatForm extends MeerkatTag
         $debug = [];
         $debug[$formHandle] = $data;
 
+        // TODO: Figure out blink.
+        /*
         if ($this->blink->exists('debug_bar_data')) {
             $debug = array_merge($debug, $this->blink->get('debug_bar_data'));
         }
 
         $this->blink->put('debug_bar_data', $debug);
+*/
 
         try {
             debugbar()->getCollector('Forms')->setData($debug);

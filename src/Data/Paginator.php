@@ -3,8 +3,8 @@
 namespace Stillat\Meerkat\Data;
 
 use Statamic\Extensions\Pagination\LengthAwarePaginator;
-use Stillat\Meerkat\Core\Data\PaginatorBase;
 use Stillat\Meerkat\Core\Data\PagedDataSet;
+use Stillat\Meerkat\Core\Data\PaginatorBase;
 
 /**
  * Class Paginator

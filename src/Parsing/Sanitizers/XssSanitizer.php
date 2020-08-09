@@ -30,7 +30,7 @@ class XssSanitizer implements OutputSanitizerContract
         $this->config = $config;
 
         $this->tagsToKeep = implode('', TypeConversions::getArray(
-           $this->config->getFormattingConfiguration()->tagsToKeep
+            $this->config->getFormattingConfiguration()->tagsToKeep
         ));
     }
 

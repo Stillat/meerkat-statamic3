@@ -4,9 +4,9 @@ namespace Stillat\Meerkat\Feedback;
 
 use Illuminate\Translation\Translator;
 use Statamic\Facades\Antlers;
+use Statamic\Markdown\Parser as StatamicMarkdownParser;
 use Stillat\Meerkat\Addon;
 use Stillat\Meerkat\PathProvider;
-use Statamic\Markdown\Parser as StatamicMarkdownParser;
 
 /**
  * Class SolutionProvider
@@ -101,8 +101,8 @@ class SolutionProvider
             $this->osPrefix = 'win.';
         }
 
-        $currentLocaleFailurePath = PathProvider::getResourcesDirectory('solutions/'.$this->currentLocale.'/provider_engine_failed.md');
-        $fallbackLocaleFailurePath = PathProvider::getResourcesDirectory('solutions/'.$this->fallbackLocale.'/provider_engine_failed.md');
+        $currentLocaleFailurePath = PathProvider::getResourcesDirectory('solutions/' . $this->currentLocale . '/provider_engine_failed.md');
+        $fallbackLocaleFailurePath = PathProvider::getResourcesDirectory('solutions/' . $this->fallbackLocale . '/provider_engine_failed.md');
 
         if (file_exists($currentLocaleFailurePath)) {
             $this->engineFailureHeader = file_get_contents($currentLocaleFailurePath);
@@ -119,16 +119,6 @@ class SolutionProvider
     }
 
     /**
-     * Sets whether the provider is running in the console.
-     *
-     * @param bool $isCli Whether the provider is running in the console.
-     */
-    public function setIsCli($isCli)
-    {
-        $this->isCli = $isCli;
-    }
-
-    /**
      * Gets whether the provider is running in the console.
      *
      * @return bool
@@ -139,77 +129,13 @@ class SolutionProvider
     }
 
     /**
-     * Attempts to locate a possible solution for the provided error code.
+     * Sets whether the provider is running in the console.
      *
-     * @param string $errorCode The error code to get help with.
-     * @return string|null
+     * @param bool $isCli Whether the provider is running in the console.
      */
-    private function getSolutionPath($errorCode)
+    public function setIsCli($isCli)
     {
-        if ($errorCode === null || mb_strlen(trim($errorCode)) === 0) {
-            return null;
-        }
-
-        $this->errorCode = mb_strtolower($errorCode);
-        $this->foundCliVersion = false;
-
-        // Checks if a CLI-specific version has been supplied. If so, use that instead.
-        if ($this->isCli) {
-
-            $osFilePath = 'cli.'.$this->osPrefix.'code-'.$this->errorCode.'.md';
-            $defaultFilePath = 'cli.code-'.$this->errorCode.'.md';
-
-            $osCurrentLocalePath = PathProvider::getResourcesDirectory('solutions/'.$this->currentLocale.'/'.$osFilePath);
-            $osFallbackLocalePath = PathProvider::getResourcesDirectory('solutions/'.$this->fallbackLocale.'/'.$osFilePath);
-            $defaultCurrentLocalePath = PathProvider::getResourcesDirectory('solutions/'.$this->currentLocale.'/'.$defaultFilePath);
-            $defaultFallbackLocalePath = PathProvider::getResourcesDirectory('solutions/'.$this->fallbackLocale.'/'.$defaultFilePath);
-
-            if (file_exists($osCurrentLocalePath)) {
-                $this->foundCliVersion = true;
-                return $osCurrentLocalePath;
-            }
-
-            if (file_exists($defaultCurrentLocalePath)) {
-                $this->foundCliVersion = true;
-                return $defaultCurrentLocalePath;
-            }
-
-            if (file_exists($osFallbackLocalePath)) {
-                $this->foundCliVersion = true;
-                return $osFallbackLocalePath;
-            }
-
-            if (file_exists($defaultFallbackLocalePath)) {
-                $this->foundCliVersion = true;
-                return $defaultFallbackLocalePath;
-            }
-        }
-
-        $osFilePath = $this->osPrefix.'code-'.$this->errorCode.'.md';
-        $defaultFilePath = 'code-'.$this->errorCode.'.md';
-
-        $osCurrentLocalePath = PathProvider::getResourcesDirectory('solutions/'.$this->currentLocale.'/'.$osFilePath);
-        $osFallbackLocalePath = PathProvider::getResourcesDirectory('solutions/'.$this->fallbackLocale.'/'.$osFilePath);
-        $defaultCurrentLocalePath = PathProvider::getResourcesDirectory('solutions/'.$this->currentLocale.'/'.$defaultFilePath);
-        $defaultFallbackLocalePath = PathProvider::getResourcesDirectory('solutions/'.$this->fallbackLocale.'/'.$defaultFilePath);
-
-        if (file_exists($osCurrentLocalePath)) {
-            return $osCurrentLocalePath;
-        }
-
-        if (file_exists($defaultCurrentLocalePath)) {
-            return $defaultCurrentLocalePath;
-        }
-
-        if (file_exists($osFallbackLocalePath)) {
-            return $osFallbackLocalePath;
-        }
-
-        if (file_exists($defaultFallbackLocalePath)) {
-            return $defaultFallbackLocalePath;
-        }
-
-        return null;
+        $this->isCli = $isCli;
     }
 
     /**
@@ -234,7 +160,7 @@ class SolutionProvider
             // solution provider from crashing out completely.
             try {
                 $parsedContents = $this->getContents($fileContents);
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 $parsedContents = $this->naiveReplaceVars($fileContents);
             }
 
@@ -242,6 +168,80 @@ class SolutionProvider
         }
 
         return '';
+    }
+
+    /**
+     * Attempts to locate a possible solution for the provided error code.
+     *
+     * @param string $errorCode The error code to get help with.
+     * @return string|null
+     */
+    private function getSolutionPath($errorCode)
+    {
+        if ($errorCode === null || mb_strlen(trim($errorCode)) === 0) {
+            return null;
+        }
+
+        $this->errorCode = mb_strtolower($errorCode);
+        $this->foundCliVersion = false;
+
+        // Checks if a CLI-specific version has been supplied. If so, use that instead.
+        if ($this->isCli) {
+
+            $osFilePath = 'cli.' . $this->osPrefix . 'code-' . $this->errorCode . '.md';
+            $defaultFilePath = 'cli.code-' . $this->errorCode . '.md';
+
+            $osCurrentLocalePath = PathProvider::getResourcesDirectory('solutions/' . $this->currentLocale . '/' . $osFilePath);
+            $osFallbackLocalePath = PathProvider::getResourcesDirectory('solutions/' . $this->fallbackLocale . '/' . $osFilePath);
+            $defaultCurrentLocalePath = PathProvider::getResourcesDirectory('solutions/' . $this->currentLocale . '/' . $defaultFilePath);
+            $defaultFallbackLocalePath = PathProvider::getResourcesDirectory('solutions/' . $this->fallbackLocale . '/' . $defaultFilePath);
+
+            if (file_exists($osCurrentLocalePath)) {
+                $this->foundCliVersion = true;
+                return $osCurrentLocalePath;
+            }
+
+            if (file_exists($defaultCurrentLocalePath)) {
+                $this->foundCliVersion = true;
+                return $defaultCurrentLocalePath;
+            }
+
+            if (file_exists($osFallbackLocalePath)) {
+                $this->foundCliVersion = true;
+                return $osFallbackLocalePath;
+            }
+
+            if (file_exists($defaultFallbackLocalePath)) {
+                $this->foundCliVersion = true;
+                return $defaultFallbackLocalePath;
+            }
+        }
+
+        $osFilePath = $this->osPrefix . 'code-' . $this->errorCode . '.md';
+        $defaultFilePath = 'code-' . $this->errorCode . '.md';
+
+        $osCurrentLocalePath = PathProvider::getResourcesDirectory('solutions/' . $this->currentLocale . '/' . $osFilePath);
+        $osFallbackLocalePath = PathProvider::getResourcesDirectory('solutions/' . $this->fallbackLocale . '/' . $osFilePath);
+        $defaultCurrentLocalePath = PathProvider::getResourcesDirectory('solutions/' . $this->currentLocale . '/' . $defaultFilePath);
+        $defaultFallbackLocalePath = PathProvider::getResourcesDirectory('solutions/' . $this->fallbackLocale . '/' . $defaultFilePath);
+
+        if (file_exists($osCurrentLocalePath)) {
+            return $osCurrentLocalePath;
+        }
+
+        if (file_exists($defaultCurrentLocalePath)) {
+            return $defaultCurrentLocalePath;
+        }
+
+        if (file_exists($osFallbackLocalePath)) {
+            return $osFallbackLocalePath;
+        }
+
+        if (file_exists($defaultFallbackLocalePath)) {
+            return $defaultFallbackLocalePath;
+        }
+
+        return null;
     }
 
     /**
@@ -285,11 +285,11 @@ class SolutionProvider
     private function naiveReplaceVars($content)
     {
         foreach ($this->getVars() as $varName => $varValue) {
-            $content = str_replace('{{ '.$varName.' }}', $varValue, $content);
+            $content = str_replace('{{ ' . $varName . ' }}', $varValue, $content);
         }
 
         // Adds the notice that the template engine has failed.
-        $content = trim($this->engineFailureHeader)."\n\n".$content;
+        $content = trim($this->engineFailureHeader) . "\n\n" . $content;
 
         return $content;
     }

@@ -6,7 +6,11 @@ use Illuminate\Support\Str;
 
 /**
  * Class RequestHelpers
+ *
+ * Provides HTTP related helper methods.
+ *
  * @package Stillat\Meerkat\Http
+ * @since 2.0.0
  */
 class RequestHelpers
 {

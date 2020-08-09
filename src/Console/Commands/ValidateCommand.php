@@ -9,6 +9,14 @@ use Stillat\Meerkat\Feedback\SolutionProvider;
 use Stillat\Meerkat\PathProvider;
 use Stillat\Meerkat\Validation\StorageDriverValidator;
 
+/**
+ * Class ValidateCommand
+ *
+ * Provides utilities for validating the Meerkat installation.
+ *
+ * @package Stillat\Meerkat\Console\Commands
+ * @since 2.0.0
+ */
 class ValidateCommand extends Command
 {
 
@@ -74,10 +82,10 @@ class ValidateCommand extends Command
 
         $headerLen = mb_strlen($text);
         $availableWidth = $length;
-        $leftPad = abs(floor( ($availableWidth / 2) - ($headerLen / 2))) - 5;
+        $leftPad = abs(floor(($availableWidth / 2) - ($headerLen / 2))) - 5;
         $rightPad = $availableWidth - $leftPad - $headerLen - 10;
 
-        $this->line(str_repeat('=', 5).str_repeat(' ', $leftPad).$text.str_repeat(' ', $rightPad).str_repeat('=', 5));
+        $this->line(str_repeat('=', 5) . str_repeat(' ', $leftPad) . $text . str_repeat(' ', $rightPad) . str_repeat('=', 5));
 
         $this->line(str_repeat('=', $length));
         $this->line('');
@@ -139,7 +147,7 @@ class ValidateCommand extends Command
             $this->line('');
             $this->line(str_repeat('=', 100));
 
-            $this->error('Error Code: '.$errorCode);
+            $this->error('Error Code: ' . $errorCode);
             $this->line($failureReason['msg']);
 
             $helpText = $this->solutionProvider->findSolution($errorCode);

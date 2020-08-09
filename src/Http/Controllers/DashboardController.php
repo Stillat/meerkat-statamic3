@@ -2,9 +2,9 @@
 
 namespace Stillat\Meerkat\Http\Controllers;
 
-use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Statamic\Http\Controllers\CP\CpController;
 use Stillat\Meerkat\Concerns\UsesTranslations;
+use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Data\DataSetContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
@@ -41,9 +41,14 @@ class DashboardController extends CpController
          */
 
         /** @var DataSetContract $data */
-        $data = $query->withContext($context)->searchFor('2016')->get($thread->getComments());
+        $data = $query->withContext($context)->limit(5)->nameAllGroups('date_groups')->groupName('date_group')
+            ->collectionName('comments')->groupBy('group:date', function (CommentContract $comment) {
+                $comment->setDataAttribute('group:date', $comment->getCommentDate()->format('Y m, d'));
+            })->searchFor('kristof')->get($thread->getComments());
 
 
+
+        dd($data);
         dd('asdf222', $data);
 
 

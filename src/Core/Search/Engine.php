@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat\Core\Search;
 
+use Stillat\Meerkat\Core\Contracts\Search\ProvidesSearchableAttributesContract;
 use Stillat\Meerkat\Core\Contracts\Search\SearchAlgorithmContract;
 
 /**
@@ -57,7 +58,13 @@ class Engine
         $itemsToReturn = [];
 
         foreach ($dataset as $itemKey => $item) {
-            foreach ($this->searchAttributes as $attribute) {
+            $searchAttributes = $this->searchAttributes;
+
+            if ($item instanceof ProvidesSearchableAttributesContract) {
+                $searchAttributes = $item->getSearchableAttributes();
+            }
+
+            foreach ($searchAttributes as $attribute) {
                 $valueToSearch = null;
 
                 if (is_array($item) && array_key_exists($attribute, $item)) {

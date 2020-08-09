@@ -8,6 +8,7 @@ use Stillat\Meerkat\Core\Comments\StaticApi\ProvidesDiscovery;
 use Stillat\Meerkat\Core\Comments\StaticApi\ProvidesMutations;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
+use Stillat\Meerkat\Core\Contracts\Search\ProvidesSearchableAttributesContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Data\Retrievers\PathThreadIdRetriever;
 use Stillat\Meerkat\Core\DataObject;
@@ -25,7 +26,7 @@ use Stillat\Meerkat\Core\Support\TypeConversions;
  * @package Stillat\Meerkat\Core\Comments
  * @since 2.0.0
  */
-class Comment implements CommentContract
+class Comment implements CommentContract, ProvidesSearchableAttributesContract
 {
     use DataObject, UsesMarkdownParser, UsesYAMLParser,
         ProvidesDiscovery, ProvidesMutations, ProvidesCreation;
@@ -714,4 +715,23 @@ class Comment implements CommentContract
         return $this->getDataAttribute(CommentContract::INTERNAL_PATH, null);
     }
 
+    /**
+     * Gets the searchable attributes of an object instance.
+     *
+     * @return array
+     */
+    public function getSearchableAttributes()
+    {
+        return [
+            AuthorContract::KEY_NAME,
+            AuthorContract::KEY_EMAIL_ADDRESS,
+            AuthorContract::KEY_USER_IP,
+            AuthorContract::KEY_USER_AGENT,
+            CommentContract::KEY_COMMENT_DATE_FORMATTED,
+            CommentContract::KEY_CONTENT,
+            CommentContract::KEY_USER_AGENT,
+            CommentContract::KEY_PAGE_URL,
+            CommentContract::INTERNAL_CONTENT_RAW
+        ];
+    }
 }

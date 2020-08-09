@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat\Core\Search\Providers;
 
+use Stillat\Meerkat\Core\Contracts\Search\ProvidesSearchableAttributesContract;
 use Stillat\Meerkat\Core\Contracts\Search\SearchAlgorithmContract;
 
 /**
@@ -18,19 +19,26 @@ class BitapSearchProvider implements SearchAlgorithmContract
     /**
      * Searches the provided text with the given pattern.
      *
-     * @param string $text The text to search.
+     * @param string|ProvidesSearchableAttributesContract $text The text to search.
      * @param string $pattern The search pattern.
      * @return int
      */
     public function search($text, $pattern)
     {
-        if (is_object($text) || is_array($text)) {
+        if (is_array($text)) {
+            return -1;
+        }
+
+        if (is_object($text)) {
             return -1;
         }
 
         if (is_string($text) === false) {
             $text = (string)$text;
         }
+
+        $text = mb_strtolower($text);
+        $pattern = mb_strtolower($pattern);
 
         $patternLen = mb_strlen($pattern);
         $textLen = mb_strlen($text);

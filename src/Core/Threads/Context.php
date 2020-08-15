@@ -32,6 +32,13 @@ class Context implements ThreadContextContract
     public $contextName = '';
 
     /**
+     * The timestamp the context was created.
+     *
+     * @var int
+     */
+    public $createdUtc = 0;
+
+    /**
      * Returns the identifier string of the context.
      *
      * @return string
@@ -49,6 +56,16 @@ class Context implements ThreadContextContract
     public function getName()
     {
         return $this->contextName;
+    }
+
+    /**
+     * Returns the timestamp the context was created.
+     *
+     * @return int
+     */
+    public function getCreatedUtcTimestamp()
+    {
+        return $this->createdUtc;
     }
 
 }

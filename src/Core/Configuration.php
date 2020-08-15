@@ -21,16 +21,26 @@ class Configuration extends ConfigurationContainer
      * Indicates if comments created by an authenticated
      * system user should be marked as "published".
      *
-     * @var boolean
+     * @var bool
      */
     public $autoPublishAuthenticatedPosts = false;
 
     /**
      * Indicates if comments created by an anonymous
      * user should be marked as "published=true".
+     *
      * @var bool
      */
     public $autoPublishAnonymousPosts = false;
+
+    /**
+     * The number of days after which comments become disabled.
+     *
+     * Use "0" to never disable comments.
+     *
+     * @var int
+     */
+    public $disableCommentsAfterDays = 0;
 
     /**
      * Specifies the storage directory that should be used
@@ -92,6 +102,24 @@ class Configuration extends ConfigurationContainer
     public function getFormattingConfiguration()
     {
         return $this->formatConfiguration;
+    }
+
+    /**
+     * Indicates if comment submissions can be disabled.
+     *
+     * @return bool
+     */
+    public function commentsCanBeDisabled()
+    {
+        if (is_int($this->disableCommentsAfterDays)) {
+            if ($this->disableCommentsAfterDays === 0) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }

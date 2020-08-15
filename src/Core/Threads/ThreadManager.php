@@ -9,6 +9,7 @@ use Stillat\Meerkat\Core\Contracts\Threads\ThreadContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadMutationPipelineContract;
 use Stillat\Meerkat\Core\Storage\Paths;
+use Stillat\Meerkat\Core\Support\DateUtilities;
 
 /**
  * Class ThreadManager
@@ -213,6 +214,33 @@ class ThreadManager implements ThreadManagerContract
     public function restoreThread($threadId)
     {
         return $this->threadStorageManager->restoreThread($threadId);
+    }
+
+
+    /**
+     * Determines if new comment submissions are allowed for the requested context identifier.
+     *
+     * @param string $contextId The context's identifier.
+     * @return bool
+     */
+    public function areCommentsEnabledForContext($contextId)
+    {
+        if ($this->config->commentsCanBeDisabled() === false) {
+            return true;
+        }
+
+        // We will use the context resolver directly. If there
+        // are no comments stored for the thread, the exists
+        // methods and utilities will always return false.
+        $context = $this->contextResolver->findById($contextId);
+
+        $daysBetween = DateUtilities::daysBetween(time(), $context->getCreatedUtcTimestamp());
+
+        if ($daysBetween > $this->config->disableCommentsAfterDays) {
+            return false;
+        }
+
+        return true;
     }
 
 }

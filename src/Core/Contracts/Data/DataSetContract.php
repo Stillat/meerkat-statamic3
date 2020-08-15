@@ -31,6 +31,8 @@ interface DataSetContract extends MetadataCollectionContract, Iterator
      */
     public function setData($data);
 
+    public function getData();
+
     /**
      * Flattens the dataset into one-dimensional array.
      *

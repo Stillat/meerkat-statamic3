@@ -29,6 +29,13 @@ interface ThreadContextContract extends DataObjectContract, Serializable
     public function getId();
 
     /**
+     * Returns the timestamp the context was created.
+     *
+     * @return int
+     */
+    public function getCreatedUtcTimestamp();
+
+    /**
      * Returns the context's name.
      *
      * @return string

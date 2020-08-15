@@ -94,6 +94,12 @@ class ContextResolver implements ContextResolverContract
         $threadContext = new Context();
         $threadContext->contextId = $statamicContext->id();
 
+        $contextCreatedDate = $statamicContext->date();
+
+        if ($contextCreatedDate !== null) {
+            $threadContext->createdUtc = $statamicContext->date()->timestamp;
+        }
+
         if (array_key_exists('title', $contextData)) {
             $threadContext->contextName = $contextData['title'];
         }

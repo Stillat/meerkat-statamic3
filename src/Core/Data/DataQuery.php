@@ -6,7 +6,13 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Data\DataSetContract;
 use Stillat\Meerkat\Core\Contracts\Data\GroupedDataSetContract;
 use Stillat\Meerkat\Core\Contracts\Data\PagedDataSetContract;
+use Stillat\Meerkat\Core\Contracts\Data\PagedGroupedDataSetContract;
 use Stillat\Meerkat\Core\Contracts\Data\PaginatorContract;
+use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
+use Stillat\Meerkat\Core\Data\Converters\DataSetCollectionConverter;
+use Stillat\Meerkat\Core\Data\Converters\GroupedCollectionConverter;
+use Stillat\Meerkat\Core\Data\Converters\PagedCollectionConverter;
+use Stillat\Meerkat\Core\Data\Converters\PagedGroupedCollectionConverter;
 use Stillat\Meerkat\Core\Data\Filters\FilterRunner;
 use Stillat\Meerkat\Core\Data\Retrievers\CommentIdRetriever;
 use Stillat\Meerkat\Core\Exceptions\FilterException;
@@ -151,7 +157,47 @@ class DataQuery
      */
     private $pagesGetMetaDataBeforePaging = false;
 
+    /**
+     * A search Engine implementation instance.
+     *
+     * @var Engine
+     */
     private $searchEngine = null;
+
+    /**
+     * The SanitationManagerContract implementation instance.
+     *
+     * @var SanitationManagerContract
+     */
+    private $sanitationManager = null;
+
+    /**
+     * The GroupedCollectionConverter instance.
+     *
+     * @var GroupedCollectionConverter
+     */
+    private $groupedCollectionConverter = null;
+
+    /**
+     * The PagedGroupedCollectionConverter instance.
+     *
+     * @var PagedGroupedCollectionConverter
+     */
+    private $pagedGroupedCollectionConverter = null;
+
+    /**
+     * The PagedCollectionConverter instance.
+     *
+     * @var PagedCollectionConverter
+     */
+    private $pagedCollectionConverter = null;
+
+    /**
+     * The DataSetCollectionConverter instance.
+     *
+     * @var DataSetCollectionConverter
+     */
+    private $basicDataSetConverter = null;
 
     /**
      * Optional search terms.
@@ -162,11 +208,19 @@ class DataQuery
      */
     private $searchTerms = null;
 
-    public function __construct(PaginatorContract $paginator, FilterRunner $filterRunner)
+    public function __construct(
+        PaginatorContract $paginator,
+        FilterRunner $filterRunner,
+        SanitationManagerContract $sanitationManager)
     {
         $this->filterRunner = $filterRunner;
         $this->sortPredicateBuilder = new PredicateBuilder();
         $this->paginator = $paginator;
+        $this->sanitationManager = $sanitationManager;
+        $this->groupedCollectionConverter = new GroupedCollectionConverter($this->sanitationManager);
+        $this->pagedCollectionConverter = new PagedCollectionConverter($this->sanitationManager);
+        $this->pagedGroupedCollectionConverter = new PagedGroupedCollectionConverter($this->sanitationManager);
+        $this->basicDataSetConverter = new DataSetCollectionConverter($this->sanitationManager);
 
         $this->searchEngine = new Engine(new BitapSearchProvider());
         // TODO: Review, and possibly expose this as a configuration item.
@@ -439,6 +493,37 @@ class DataQuery
         $this->searchTerms = $searchTerms;
 
         return $this;
+    }
+
+    /**
+     * Retrieves the results and converts the internal dataset into its array form.
+     *
+     * @param CommentContract[] $sourceComments The comments to analyze.
+     * @param string $repliesName The name of the nested dataset colletion.
+     * @return GroupedDataSetContract|PagedDataSetContract|PagedGroupedDataSetContract|DataSetContract
+     * @throws FilterException
+     */
+    public function getCollection($sourceComments, $repliesName)
+    {
+        $result = $this->get($sourceComments);
+
+        if ($result instanceof GroupedDataSetContract) {
+            if ($result instanceof PagedGroupedDataSetContract) {
+                return $this->pagedGroupedCollectionConverter->covertPagedToArray($result);
+            }
+
+            return $this->groupedCollectionConverter->convertGroupedToArray($result);
+        }
+
+        if ($result instanceof PagedDataSetContract) {
+            return $this->pagedCollectionConverter->convertToArray($result, $repliesName);
+        }
+
+        if ($result instanceof DataSetContract) {
+            return $this->basicDataSetConverter->convertToArray($result, $repliesName);
+        }
+
+        return $result;
     }
 
     /**

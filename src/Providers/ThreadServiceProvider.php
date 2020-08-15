@@ -16,6 +16,7 @@ use Stillat\Meerkat\Core\Contracts\Threads\ContextResolverContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadMutationPipelineContract;
 use Stillat\Meerkat\Core\Parsing\SanitationManager;
+use Stillat\Meerkat\Core\Parsing\SanitationManagerFactory;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalCommentStorageManager;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalThreadStorageManager;
 use Stillat\Meerkat\Core\Threads\ThreadManager;
@@ -92,6 +93,8 @@ class ThreadServiceProvider extends AddonServiceProvider
             $sanitizer->registerSanitizer($antlersSanitizer);
             $sanitizer->registerSanitizer($phpSanitizer);
             $sanitizer->registerSanitizer($xssSanitizer);
+
+            SanitationManagerFactory::$instance = $sanitizer;
 
             return $sanitizer;
         });

@@ -98,6 +98,7 @@ class StatamicAuthorFactory implements AuthorFactoryContract
             $potentialStatamicUser = $this->statamicUserProvider->retrieveById($protoAuthor[AuthorContract::AUTHENTICATED_USER_ID]);
 
             if ($potentialStatamicUser !== null) {
+                // TODO: Refactor to appropriate type.
                 $identity = $this->makeAuthorFromStatamicUser($potentialStatamicUser);
 
                 foreach ($protoAuthor as $key => $value) {

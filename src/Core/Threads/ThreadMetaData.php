@@ -42,6 +42,13 @@ class ThreadMetaData
     protected $createdUtc = 0;
 
     /**
+     * The timestamp the thread's context was created on.
+     *
+     * @var int
+     */
+    protected $contextCreatedUtc = 0;
+
+    /**
      * Attempts to create a thread from the provided data.
      *
      * @param array $data The thread data.
@@ -88,6 +95,16 @@ class ThreadMetaData
     }
 
     /**
+     * Sets the timestamp the thread's context was created on.
+     *
+     * @param int $time The timestamp.
+     */
+    public function setContextCreatedOn($time)
+    {
+        $this->contextCreatedUtc = $time;
+    }
+
+    /**
      * Updates the thread's meta data using the values from the provided dataset.
      *
      * Creation time is only updated if the incoming value is older than the current value.
@@ -111,6 +128,16 @@ class ThreadMetaData
     public function getCreatedUtc()
     {
         return $this->createdUtc;
+    }
+
+    /**
+     * Gets the timestamp the thread's context was created on.
+     *
+     * @return int
+     */
+    public function getContextCreatedOnUtc()
+    {
+        return $this->contextCreatedUtc;
     }
 
     /**

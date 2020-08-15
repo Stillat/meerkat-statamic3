@@ -4,7 +4,6 @@ namespace Stillat\Meerkat\Http\Controllers;
 
 use Statamic\Http\Controllers\CP\CpController;
 use Stillat\Meerkat\Concerns\UsesTranslations;
-use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Data\DataSetContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
@@ -21,13 +20,14 @@ class DashboardController extends CpController
     public function index(CommentStorageManagerContract $comments, ThreadManagerContract $threads, DataQuery $query, CommentFilterManager $filters)
     {
 
-
         $thread = Thread::find('7ac0bdda-1b84-45f8-ac52-2575dd7e8251');
         $builder = new PredicateBuilder();
         $context = new RuntimeContext();
         $context->templateTagContext = '';
         $context->context = null;
         $context->parameters = [];
+
+        dd($thread->getComments());
 
         /**
          *
@@ -37,15 +37,14 @@ class DashboardController extends CpController
          * ->nameAllGroups('date_groups')->groupName('date_group')
          * ->collectionName('comments')->groupBy('group:date', function (CommentContract $comment) {
          * $comment->setDataAttribute('group:date', $comment->getCommentDate()->format('Y m, d'));
-         * })
+             * })
          */
 
         /** @var DataSetContract $data */
         $data = $query->withContext($context)->limit(5)->nameAllGroups('date_groups')->groupName('date_group')
-            ->collectionName('comments')->groupBy('group:date', function (CommentContract $comment) {
+            ->collectionName('comments')->groupBy('group:date', function ($comment) {
                 $comment->setDataAttribute('group:date', $comment->getCommentDate()->format('Y m, d'));
             })->searchFor('kristof')->get($thread->getComments());
-
 
 
         dd($data);

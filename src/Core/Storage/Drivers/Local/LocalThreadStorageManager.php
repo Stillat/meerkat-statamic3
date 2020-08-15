@@ -377,6 +377,10 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
             if ($dataArray !== null && is_array($dataArray)) {
                 $metaData = ThreadMetaData::makeFromArray($dataArray);
 
+                $context = $this->contextResolver->findById($contextId);
+
+                dd('cnte', $context);
+
                 self::$metaResolverCache[$contextId] = $metaData;
 
                 return $metaData;
@@ -530,7 +534,7 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
             return false;
         }
 
-        $targetPath = $this->storagePath . Paths::SYM_FORWARD_SEPARATOR . $contextId;
+        $targetPath = $this->storagePath . Paths::SYM_FORWARD_SEPARATOR . $contextId .Paths::SYM_FORWARD_SEPARATOR;
 
         if (file_exists($targetPath) == false || is_dir($targetPath) == false) {
             return false;

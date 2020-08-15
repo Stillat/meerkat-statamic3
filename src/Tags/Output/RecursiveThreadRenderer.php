@@ -17,6 +17,8 @@ use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
 class RecursiveThreadRenderer
 {
 
+    const TEMPLATE_SUB_KEY = 'meerkat_comment_tags_';
+
     /**
      * Recursively renders a comment thread.
      *
@@ -35,7 +37,7 @@ class RecursiveThreadRenderer
         $nestedTagRegex = '/\{\{\s*' . $collectionName . '\s*\}\}.*?\{\{\s*\/' . $collectionName . '\s*\}\}/ms';
         preg_match($nestedTagRegex, $template, $match);
 
-        $subKey = 'meerkat_comments_tags_' . md5(time());
+        $subKey = RecursiveThreadRenderer::TEMPLATE_SUB_KEY . md5(time());
 
         if ($match && count($match) > 0) {
             $nestedCommentsString = $match[0];

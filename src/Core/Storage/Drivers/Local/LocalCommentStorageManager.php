@@ -46,6 +46,27 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     const KEY_ID = 'id';
 
     /**
+     * A run-time cache of comments and their descendent comment identifiers and paths.
+     *
+     * @var array
+     */
+    protected static $descendentPathCache = [];
+
+    /**
+     * A run-time cache of comments and their ancestor comment identifiers and paths.
+     *
+     * @var array
+     */
+    protected static $ancestorPathCache = [];
+
+    /**
+     * A run-time cache of comments and their related comment identifiers and paths.
+     *
+     * @var array
+     */
+    protected static $relatedPathCache = [];
+
+    /**
      * The Meerkat configuration instance.
      *
      * @var Configuration
@@ -690,7 +711,6 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         return false;
     }
 
-
     /**
      * Attempts to locate the comment's child comments.
      *
@@ -699,18 +719,91 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      */
     public function getDescendents($commentId)
     {
-        $rootPath = dirname($this->getPathById($commentId));
-        $rootLen = mb_strlen($rootPath) + 1;
-        $commentPath = $this->paths->combine([$rootPath, '*']);
-        $paths = $this->paths->getFilesRecursively($commentPath);
-        $subParts = [];
+        return array_keys($this->getDescendentsPaths($commentId));
+    }
 
-        foreach ($paths as $path) {
-            $subPath = mb_substr($path, $rootLen);
-            $subParts = array_merge($subParts, explode(Paths::SYM_FORWARD_SEPARATOR, $subPath));
+    /**
+     * Attempts to locate the comment's child comments and paths.
+     *
+     * @param string $commentId The comment identifier.
+     * @return string[]
+     */
+    public function getDescendentsPaths($commentId)
+    {
+        if (array_key_exists($commentId, self::$descendentPathCache) === false) {
+            $rootPath = dirname($this->getPathById($commentId));
+            $rootLen = mb_strlen($rootPath) + 1;
+            $commentPath = $this->paths->combine([$rootPath, '*']);
+            $paths = $this->paths->getFilesRecursively($commentPath);
+            $subParts = [];
+
+            $exclude = $this->getExclusionList($commentId);
+
+            $pathMapping = [];
+
+            foreach ($paths as $path) {
+                $subPath = mb_substr($path, $rootLen);
+                $subParts = array_merge($subParts, explode(Paths::SYM_FORWARD_SEPARATOR, $subPath));
+
+
+                if (Str::startsWith($path, $rootPath)) {
+                    $mappedPath = dirname($path);
+                    $mappingParts = explode(Paths::SYM_FORWARD_SEPARATOR, $mappedPath);
+
+                    if (count($mappingParts) > 0) {
+                        $startProcessingPaths = false;
+
+                        for ($i = 0; $i < count($mappingParts); $i++) {
+                            if ($mappingParts[$i] === $commentId) {
+                                $startProcessingPaths = true;
+                                continue;
+                            }
+
+                            if ($startProcessingPaths === false) {
+                                continue;
+                            }
+
+                            if (in_array($mappingParts[$i], $exclude) === false) {
+                                if (array_key_exists($mappingParts[$i], $pathMapping) === false) {
+                                    $subMappingParts = array_slice($mappingParts, 0, $i + 1);
+
+                                    $pathMapping[$mappingParts[$i]] = implode(Paths::SYM_FORWARD_SEPARATOR, $subMappingParts);
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            $pathMappingToReturn = [];
+            $cleanedSubparts = $this->cleanRelatedListing($commentId, $subParts);
+
+            foreach ($cleanedSubparts as $subCommentId) {
+                if (array_key_exists($subCommentId, $pathMapping)) {
+                    $pathMappingToReturn[$subCommentId] = $pathMapping[$subCommentId];
+                }
+            }
+
+            self::$descendentPathCache[$commentId] = $pathMappingToReturn;
         }
 
-        return $this->cleanRelatedListing($commentId, $subParts);
+        return self::$descendentPathCache[$commentId];
+    }
+
+    /**
+     * Generates an exclusion list with the provided details.
+     *
+     * @param string $commentId The comment identifier to exclude.
+     * @return array
+     */
+    private function getExclusionList($commentId)
+    {
+        return [
+            CommentContract::COMMENT_FILENAME,
+            self::PATH_REPLIES_DIRECTORY,
+            $commentId
+        ];
     }
 
     /**
@@ -741,60 +834,173 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      */
     public function getAncestors($commentId)
     {
-        $commentPath = $this->getPathById($commentId);
-        $commentPath = mb_substr($commentPath, mb_strlen($this->storagePath) + 1);
-        $parts = explode(Paths::SYM_FORWARD_SEPARATOR, $commentPath);
-
-        if (count($parts) === 0) {
-            return [];
-        }
-
-        $parts = array_slice($parts, 1);
-
-        return $this->cleanRelatedListing($commentId, $parts);
+        return array_keys($this->getAncestorsPaths($commentId));
     }
 
     /**
-     * Attempts to locale the comment's parent and child comment identifiers.
+     * Attempts to locate the comment's parent comments and paths.
+     *
+     * @param string $commentId The comment identifier.
+     * @return string[]
+     */
+    public function getAncestorsPaths($commentId)
+    {
+        if (array_key_exists($commentId, self::$ancestorPathCache) === false) {
+            $commentPath = $this->getPathById($commentId);
+            $subPath = mb_substr($commentPath, mb_strlen($this->storagePath) + 1);
+            $parts = explode(Paths::SYM_FORWARD_SEPARATOR, $subPath);
+
+            if (count($parts) === 0) {
+                return [];
+            }
+
+            $threadId = array_shift($parts);
+
+            $exclude = $this->getExclusionList($commentId);
+
+            $pathMapping = [];
+            $mappingParts = explode(Paths::SYM_FORWARD_SEPARATOR, $commentPath);
+
+            if (count($mappingParts) > 0) {
+                $startProcessingPaths = false;
+
+                for ($i = 0; $i < count($mappingParts); $i++) {
+                    if ($mappingParts[$i] === $threadId) {
+                        $startProcessingPaths = true;
+                        continue;
+                    }
+
+                    if ($mappingParts[$i] === $commentId) {
+                        break;
+                    }
+
+                    if ($startProcessingPaths === false) {
+                        continue;
+                    }
+
+                    if (in_array($mappingParts[$i], $exclude) === false) {
+                        if (array_key_exists($mappingParts[$i], $pathMapping) === false) {
+                            $subMappingParts = array_slice($mappingParts, 0, $i + 1);
+
+                            $pathMapping[$mappingParts[$i]] = implode(Paths::SYM_FORWARD_SEPARATOR, $subMappingParts);
+                        }
+                    }
+                }
+            }
+
+            $pathMappingToReturn = [];
+            $cleanedSubparts = $this->cleanRelatedListing($commentId, $parts);
+
+            foreach ($cleanedSubparts as $subCommentId) {
+                if (array_key_exists($subCommentId, $pathMapping)) {
+                    $pathMappingToReturn[$subCommentId] = $pathMapping[$subCommentId];
+                }
+            }
+
+            self::$ancestorPathCache[$commentId] = $pathMappingToReturn;
+        }
+
+        return self::$ancestorPathCache[$commentId];
+    }
+
+    /**
+     * Attempts to locate the comment's parent and child comment identifiers.
      *
      * @param string $commentId The comment identifier.
      * @return string[]
      */
     public function getRelatedComments($commentId)
     {
-        $rootLen = mb_strlen($this->storagePath) + 1;
-        $relatedRootPath = dirname($this->getPathById($commentId));
-        $subRoot = mb_substr($relatedRootPath, $rootLen);
+        return array_keys($this->getRelatedCommentsPaths($commentId));
+    }
 
-        $rootParts = explode(Paths::SYM_FORWARD_SEPARATOR, $subRoot);
+    /**
+     * Attempts to locate the comment's parent and child comment identifiers and paths.
+     *
+     * The return value will be an array.
+     *   - The key will be the comment identifier.
+     *   - The value will be the directory of the comment.
+     *
+     * @param string $commentId The comment's identifier.
+     * @return string[]
+     */
+    public function getRelatedCommentsPaths($commentId)
+    {
+        if (array_key_exists($commentId, self::$relatedPathCache) === false) {
+            $rootLen = mb_strlen($this->storagePath) + 1;
+            $relatedRootPath = dirname($this->getPathById($commentId));
+            $subRoot = mb_substr($relatedRootPath, $rootLen);
 
-        if (count($rootParts) === 0) {
-            return [];
-        }
+            $rootParts = explode(Paths::SYM_FORWARD_SEPARATOR, $subRoot);
 
-        $threadId = $rootParts[0];
-
-        $rootLen = mb_strlen($this->paths->combine([$this->storagePath, $threadId])) + 1;
-
-        $commentPath = $this->paths->combine([$relatedRootPath, '*']);
-        $paths = $this->paths->getFilesRecursively($commentPath);
-        $subParts = [];
-
-        foreach ($paths as $path) {
-            $subPath = mb_substr($path, $rootLen);
-            $parts = array_merge($subParts, explode(Paths::SYM_FORWARD_SEPARATOR, $subPath));
-
-            if (count($parts) === 0) {
-                continue;
+            if (count($rootParts) === 0) {
+                return [];
             }
 
-            $parts = array_slice($parts, 1);
+            $exclude = $this->getExclusionList($commentId);
 
-            $subParts = array_merge($subParts, $parts);
-            $subParts = array_unique($subParts);
+            $threadId = $rootParts[0];
+
+            $rootLen = mb_strlen($this->paths->combine([$this->storagePath, $threadId])) + 1;
+
+            $commentPath = $this->paths->combine([$relatedRootPath, '*']);
+            $paths = $this->paths->getFilesRecursively($commentPath);
+            $subParts = [];
+
+            $pathMapping = [];
+
+            foreach ($paths as $path) {
+                $subPath = mb_substr($path, $rootLen);
+                $parts = array_merge($subParts, explode(Paths::SYM_FORWARD_SEPARATOR, $subPath));
+
+                if (count($parts) === 0) {
+                    continue;
+                }
+
+                $parts = array_slice($parts, 1);
+
+                $mappedPath = dirname($path);
+                $mappingParts = explode(Paths::SYM_FORWARD_SEPARATOR, $mappedPath);
+
+                if (count($mappingParts) > 0) {
+                    $startProcessingPaths = false;
+
+                    for ($i = 0; $i < count($mappingParts); $i++) {
+                        if ($mappingParts[$i] === $threadId) {
+                            $startProcessingPaths = true;
+                            continue;
+                        }
+
+                        if ($startProcessingPaths === false) {
+                            continue;
+                        }
+
+                        if (in_array($mappingParts[$i], $exclude) === false) {
+                            if (array_key_exists($mappingParts[$i], $pathMapping) === false) {
+                                $subMappingParts = array_slice($mappingParts, 0, $i + 1);
+
+                                $pathMapping[$mappingParts[$i]] = implode(Paths::SYM_FORWARD_SEPARATOR, $subMappingParts);
+                            }
+                        }
+                    }
+                };
+                $subParts = array_merge($subParts, $parts);
+                $subParts = array_unique($subParts);
+            }
+
+            $pathMappingToReturn = [];
+            $cleanedSubparts = $this->cleanRelatedListing($commentId, $subParts);
+
+            foreach ($cleanedSubparts as $subCommentId) {
+                if (array_key_exists($subCommentId, $pathMapping)) {
+                    $pathMappingToReturn[$subCommentId] = $pathMapping[$subCommentId];
+                }
+            }
+
+            self::$relatedPathCache[$commentId] = $pathMappingToReturn;
         }
 
-        return $this->cleanRelatedListing($commentId, $subParts);
+        return self::$relatedPathCache[$commentId];
     }
 
 }

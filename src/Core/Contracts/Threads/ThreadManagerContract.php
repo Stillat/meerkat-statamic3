@@ -119,4 +119,12 @@ interface ThreadManagerContract
      */
     public function removeById($id);
 
+    /**
+     * Determines if new comment submissions are allowed for the requested context identifier.
+     *
+     * @param string $contextId The context's identifier.
+     * @return bool
+     */
+    public function areCommentsEnabledForContext($contextId);
+
 }

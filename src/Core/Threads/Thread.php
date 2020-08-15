@@ -6,8 +6,10 @@ use JsonSerializable;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContextContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContract;
+use Stillat\Meerkat\Core\Data\Converters\BaseCollectionConverter;
 use Stillat\Meerkat\Core\DataObject;
 use Stillat\Meerkat\Core\Threads\StaticApi\ProvidesDiscovery;
+use Stillat\Meerkat\Core\Exceptions\InconsistentCompositionException;
 
 /**
  * Class Thread
@@ -359,48 +361,14 @@ class Thread implements ThreadContract, JsonSerializable
      *
      * @param string $repliesName The replies data property to use.
      * @return array
+     * @throws InconsistentCompositionException
      */
     public function getCommentCollection($repliesName)
     {
         /** @var CommentContract[] $comments */
         $comments = $this->hierarchy->getComments();
 
-        // Do the initial conversion.
-        foreach ($comments as $comment) {
-            $commentArray = $comment->toArray();
-            $commentArray[$repliesName] = [];
-
-            $comments[$comment->getId()] = $commentArray;
-        }
-
-        // Update the comment properties to use the array form.
-        foreach ($comments as &$comment) {
-            /** @var CommentContract[] $currentChildren */
-            $currentChildren = $comment[CommentContract::KEY_CHILDREN];
-            $newChildren = [];
-
-            foreach ($currentChildren as $child) {
-                $newChildren[] =& $comments[$child->getId()];
-            }
-
-            $comment[$repliesName] = $newChildren;
-
-            if (array_key_exists(CommentContract::KEY_PARENT, $comment)) {
-                $commentParent = [];
-
-                foreach ($comments[$comment[CommentContract::KEY_PARENT]->getId()] as $property => $value) {
-                    if ($property === $repliesName || $property === CommentContract::KEY_CHILDREN) {
-                        continue;
-                    }
-
-                    $commentParent[$property] = $value;
-                }
-
-                $comment[CommentContract::KEY_PARENT] = $commentParent;
-            }
-        }
-
-        return $comments;
+        return BaseCollectionConverter::make()->convert($comments, $repliesName);
     }
 
     /**

@@ -166,6 +166,8 @@ class ServiceProvider extends AddonServiceProvider
 
             $globalConfiguration->autoPublishAnonymousPosts = $this->getConfig('publishing.auto_publish', false);
             $globalConfiguration->autoPublishAuthenticatedPosts = $this->getConfig('publishing.auto_publish_authenticated_users', false);
+            $globalConfiguration->disableCommentsAfterDays = $this->getConfig('publishing.automatically_close_comments', 0);
+
             $globalConfiguration->storageDirectory = PathProvider::contentPath();
             $globalConfiguration->indexDirectory = storage_path('meerkat/index');
 

@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat\Core\Data;
 
+use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Data\MetadataCollectionContract;
 use Stillat\Meerkat\Core\Contracts\Data\PagedDataSetContract;
 use Stillat\Meerkat\Core\Data\Concerns\GetsAssociatedDatasetData;
@@ -144,6 +145,16 @@ class PagedDataSet implements PagedDataSetContract
     public function setData($data)
     {
         $this->displayItems = $data;
+    }
+
+    /**
+     * Gets the underlying comment dataset.
+     *
+     * @return CommentContract[]
+     */
+    public function getData()
+    {
+        return $this->displayItems;
     }
 
     /**

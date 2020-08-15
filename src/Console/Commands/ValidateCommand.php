@@ -96,6 +96,7 @@ class ValidateCommand extends Command
      */
     private function validateStorageDrivers()
     {
+        // TODO: Translation support.
         $driverResults = $this->storageDriverValidator->validate();
 
         $this->printHeader('Validating Storage Drivers');

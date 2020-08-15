@@ -141,6 +141,7 @@ class StatamicIdentityManager implements IdentityManagerContract, PermissionsMan
         }
 
         if ($author instanceof User) {
+            // TODO: Should be an array passed in here.
             $identity = $this->authorFactory->makeAuthor($author);
 
             if ($identity !== null) {
@@ -186,6 +187,7 @@ class StatamicIdentityManager implements IdentityManagerContract, PermissionsMan
             return null;
         }
 
+        // TODO: Should be an array here.
         return $this->authorFactory->makeAuthor($statamicUser);
     }
 

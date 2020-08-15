@@ -36,6 +36,11 @@ class DataSet implements DataSetContract, ArrayAccess
         return $this->data;
     }
 
+    public function getData()
+    {
+        return $this->data;
+    }
+
     /**
      * Sets the dataset's raw data.
      *

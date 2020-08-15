@@ -61,7 +61,7 @@ class PathProvider
      */
     public static function getAddonDirectory($path = '')
     {
-        return PathProvider::normalize(realpath(__DIR__ . './../' . $path));
+        return PathProvider::normalize(realpath(__DIR__ . '/../' . $path));
     }
 
     public static function getResourcesDirectory($path = '')

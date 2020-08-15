@@ -156,6 +156,8 @@ class FormHandler
         /** @var Factory $validatorFactory */
         $validatorFactory = app('validator');
 
+        $submissionData = $this->getSubmissionData();
+
         $validator = $validatorFactory->make($this->getSubmissionData(), $rules, [], $attributes);
 
         if ($validator->fails()) {

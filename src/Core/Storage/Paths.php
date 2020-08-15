@@ -5,6 +5,7 @@ namespace Stillat\Meerkat\Core\Storage;
 use DirectoryIterator;
 use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\ConfigurationFactories;
+use Stillat\Meerkat\Core\Support\Env;
 use Stillat\Meerkat\Core\Support\Str;
 
 /**
@@ -98,6 +99,10 @@ class Paths
      */
     public static function getDirectories($path)
     {
+        if (file_exists($path) === false || is_dir($path) === false) {
+            return [];
+        }
+
         $dirIterator = new DirectoryIterator($path);
         $pathsToReturn = [];
 
@@ -240,18 +245,24 @@ class Paths
     {
         $files = glob($pattern, 0);
 
+        if (Str::startsWith($pattern, Paths::SYM_FORWARD_SEPARATOR) === false) {
+            $pattern = Paths::SYM_FORWARD_SEPARATOR . $pattern;
+        }
+
         foreach ($files as $file) {
             $target = $this->combine([$file, $fileName]);
 
-            if (Str::endsWith($target, $subPattern) && file_exists($target)) {
-                return $target;
+            if (Str::endsWith($target, $subPattern)) {
+                if (file_exists($target)) {
+                    return $target;
+                }
             }
         }
 
         foreach (glob(dirname($pattern) . '/*', GLOB_NOSORT) as $dir) {
             $temp = $this->searchForFile($dir . '/' . basename($pattern), $subPattern, $fileName);
 
-            if (is_array($temp)) {
+            if (is_array($temp) && count($temp) > 0) {
                 $files = array_merge($files, $temp);
             } else if (is_string($temp)) {
                 return $temp;
@@ -283,7 +294,13 @@ class Paths
      */
     public function normalize($path)
     {
-        return str_replace('\\', self::SYM_FORWARD_SEPARATOR, $path);
+        $path = str_replace('\\', self::SYM_FORWARD_SEPARATOR, $path);
+
+        if (Env::isWindows() === false && Str::startsWith($path, Paths::SYM_FORWARD_SEPARATOR) === false) {
+            $path = Paths::SYM_FORWARD_SEPARATOR . $path;
+        }
+
+        return $path;
     }
 
 }

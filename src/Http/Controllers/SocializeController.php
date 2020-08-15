@@ -38,8 +38,15 @@ class SocializeController extends Controller
         $this->formHandler = $handler;
     }
 
+    /**
+     * Handle a form submission request.
+     *
+     * @return mixed
+     */
     public function postSocialize()
     {
+        // TODO: Check if comments are disabled!
+
         $this->formHandler->setData(collect(request()->all()));
         $commentData = [];
 

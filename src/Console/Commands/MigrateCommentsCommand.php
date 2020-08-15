@@ -38,6 +38,7 @@ class MigrateCommentsCommand extends Command
 
     public function handle()
     {
+        // TODO: Translation support.
         $threadIds = $this->threadManager->getAllThreadIds();
 
         $this->line('Discovered ' . count($threadIds) . ' thread(s) that will be analyzed.');

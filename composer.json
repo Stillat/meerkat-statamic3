@@ -15,7 +15,5 @@
                 "Stillat\\Meerkat\\ServiceProvider"
             ]
         }
-    },
-    "require-dev": {
     }
 }

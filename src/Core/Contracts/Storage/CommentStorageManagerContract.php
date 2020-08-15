@@ -117,6 +117,14 @@ interface CommentStorageManagerContract
     public function getDescendents($commentId);
 
     /**
+     * Attempts to locate the comment's child comments and paths.
+     *
+     * @param string $commentId The comment identifier.
+     * @return string[]
+     */
+    public function getDescendentsPaths($commentId);
+
+    /**
      * Attempts to locate the comment's parent comments.
      *
      * @param string $commentId The comment identifier.
@@ -125,11 +133,27 @@ interface CommentStorageManagerContract
     public function getAncestors($commentId);
 
     /**
-     * Attempts to locale the comment's parent and child comment identifiers.
+     * Attempts to locate the comment's parent comments and paths.
+     *
+     * @param string $commentId The comment identifier.
+     * @return string[]
+     */
+    public function getAncestorsPaths($commentId);
+
+    /**
+     * Attempts to locate the comment's parent and child comment identifiers.
      *
      * @param string $commentId The comment identifier.
      * @return string[]
      */
     public function getRelatedComments($commentId);
+
+    /**
+     * Attempts to locate the comment's parent and child comment identifiers and paths.
+     *
+     * @param string $commentId The comment's identifier.
+     * @return string[]
+     */
+    public function getRelatedCommentsPaths($commentId);
 
 }

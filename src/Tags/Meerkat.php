@@ -7,6 +7,7 @@ use Statamic\Tags\Tags;
 use Stillat\Meerkat\Addon as MeerkatAddon;
 use Stillat\Meerkat\Concerns\GetsHiddenContext;
 use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
+use Stillat\Meerkat\Core\Contracts\Threads\ContextResolverContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
 use Stillat\Meerkat\Forms\MeerkatForm;
 use Stillat\Meerkat\PathProvider;
@@ -19,6 +20,13 @@ class Meerkat extends Tags
     private $threadManager = null;
 
     private $sanitizer = null;
+
+    /**
+     * The context resolver implementation instance.
+     *
+     * @var ContextResolverContract
+     */
+    private $contextResolver = null;
 
     public function __construct(ThreadManagerContract $threadManager, SanitationManagerContract $sanitizer)
     {
@@ -76,8 +84,7 @@ class Meerkat extends Tags
      */
     public function commentsEnabled()
     {
-        // TODO: Implement.
-        return false;
+        return $this->threadManager->areCommentsEnabledForContext($this->getHiddenContext());
     }
 
     /**

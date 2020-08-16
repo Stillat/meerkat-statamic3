@@ -12,9 +12,11 @@ use Stillat\Meerkat\Core\Contracts\Threads\ContextResolverContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
 use Stillat\Meerkat\Core\Data\DataQuery;
 use Stillat\Meerkat\Core\Exceptions\FilterException;
+use Stillat\Meerkat\Exceptions\TemplateTagsException;
 use Stillat\Meerkat\Forms\MeerkatForm;
 use Stillat\Meerkat\PathProvider;
 use Stillat\Meerkat\Tags\Responses\CollectionRenderer;
+use Stillat\Meerkat\Tags\Testing\OutputThreadDebugInformation;
 
 class Meerkat extends Tags
 {
@@ -71,11 +73,40 @@ class Meerkat extends Tags
      */
     public function form()
     {
-        /** @var MeerkatForm $meerkatForm */
-        $meerkatForm = app()->make(MeerkatForm::class);
-        $meerkatForm->setFromContext($this);
+        return $this->renderDynamic(MeerkatForm::class);
+    }
 
-        return $meerkatForm->render();
+    public function debug()
+    {
+        return $this->renderDynamic(OutputThreadDebugInformation::class);
+    }
+
+    /**
+     * @param $className
+     * @param null $instanceCallback
+     * @return string
+     * @throws BindingResolutionException
+     * @throws TemplateTagsException
+     */
+    private function renderDynamic($className, $instanceCallback = null)
+    {
+        if ($className !== null && mb_strlen(trim($className)) > 0) {
+            /** @var MeerkatTag $instance */
+            $instance = app()->make($className);
+            $instance->setFromContext($this);
+
+            if ($instanceCallback !== null && is_callable($instanceCallback)) {
+                $instance = $instanceCallback($instance);
+
+                if ($instance === null || ($instance instanceof MeerkatTag) === false) {
+                    throw new TemplateTagsException('Instance callback must return instance of ' . $className);
+                }
+            }
+
+            return $instance->render();
+        }
+
+        return '';
     }
 
     /**
@@ -135,17 +166,17 @@ class Meerkat extends Tags
     {
         $contextId = $this->getHiddenContext();
 
-        if ($contextId === null) {
+        if ($contextId === null || mb_strlen(trim($contextId)) === 0) {
             return '';
         }
 
-        /** @var CollectionRenderer $collectionRenderer */
-        $collectionRenderer = app()->make(CollectionRenderer::class);
-        $collectionRenderer->tagContext = 'meerkat:responses';
-        $collectionRenderer->setFromContext($this);
-        $collectionRenderer->setThreadId($contextId);
+        return $this->renderDynamic(
+            CollectionRenderer::class, function (CollectionRenderer $render) use ($contextId) {
+            $render->tagContext = 'meerkat:responses';
+            $render->setThreadId($contextId);
 
-        return $collectionRenderer->render();
+            return $render;
+        });
     }
 
     /**

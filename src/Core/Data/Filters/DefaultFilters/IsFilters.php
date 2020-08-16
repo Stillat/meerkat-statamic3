@@ -23,9 +23,23 @@ class IsFilters
 {
 
     const PARAM_COMPARISON = 'comparison';
+    const PARAM_TIMESTAMP = 'timestamp';
+    const PARAM_RANGE = 'range';
 
     public function register(CommentFilterManager $manager)
     {
+        $manager->filterWithTagContext('is:before', function ($comments) {
+            // TODO: Implement "before timestamp".
+        }, IsFilters::PARAM_TIMESTAMP);
+
+        $manager->filterWithTagContext('is:after', function ($comments) {
+            // TODO: Implement "after timestamp"
+        }, IsFilters::PARAM_TIMESTAMP);
+
+        $manager->filterWithTagContext('is:between', function ($comments) {
+            // TODO: Implement "between timestamp"
+        }, IsFilters::PARAM_RANGE);
+
         $manager->filterWithTagContext('is:spam', function ($comments) {
             $includeSpam = TypeConversions::getBooleanValue($this->get(IsFilters::PARAM_COMPARISON, false));
 

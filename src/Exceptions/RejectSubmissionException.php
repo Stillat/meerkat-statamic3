@@ -12,7 +12,7 @@ use Stillat\Meerkat\Core\Exceptions\MeerkatCoreException;
  * @package Stillat\Meerkat\Exceptions
  * @since 2.0.0
  */
-class RejectSubmissionException extends MeerkatCoreException
+class RejectSubmissionException extends MeerkatStatamicException
 {
 
 }

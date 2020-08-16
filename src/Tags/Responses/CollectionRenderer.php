@@ -25,6 +25,8 @@ class CollectionRenderer extends MeerkatTag
     const PARAM_FILTER = 'filter';
     const PARAM_FLAT = 'flat';
     const PARAM_ORDER = 'order';
+    const PARAM_SINCE = 'since';
+    const PARAM_UNTIL = 'until';
     const PARAM_COLLECTION_ALIAS = 'as';
 
     const DEFAULT_COLLECTION_NAME = 'comments';
@@ -90,6 +92,7 @@ class CollectionRenderer extends MeerkatTag
         $this->applyParamFiltersToQuery();
         $this->applyParamOrdersToQuery();
 
+        // TODO: Non-date groups?
         // TODO: since: filter
         // TODO: until: filter
 
@@ -248,6 +251,17 @@ class CollectionRenderer extends MeerkatTag
 
         if ($this->getBool(CollectionRenderer::PARAM_UNAPPROVED, false) === false) {
             $filters['is:published'] = 'is:published(true)';
+        }
+
+        $untilFilter = $this->getParam(CollectionRenderer::PARAM_UNTIL, null);
+        $sinceFilter = $this->getParam(CollectionRenderer::PARAM_SINCE, null);
+
+        if ($untilFilter !== null && $sinceFilter !== null) {
+            $filters['is:between'] = 'is:between(' . $sinceFilter . ',' . $untilFilter . ')';
+        } elseif ($untilFilter === null && $sinceFilter !== null) {
+            $filters['is:after'] = 'is:after(' . $sinceFilter . ')';
+        } elseif ($untilFilter !== null && $sinceFilter === null) {
+            $filters['is:before'] = 'is:before(' . $untilFilter . ')';
         }
 
         return $filters;

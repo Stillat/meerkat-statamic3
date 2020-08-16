@@ -2,8 +2,6 @@
 
 namespace Stillat\Meerkat\Exceptions;
 
-use Stillat\Meerkat\Core\Exceptions\MeerkatCoreException;
-
 /**
  * Class FormValidationException
  *
@@ -12,7 +10,7 @@ use Stillat\Meerkat\Core\Exceptions\MeerkatCoreException;
  * @package Stillat\Meerkat\Exceptions
  * @since 2.0.0
  */
-class FormValidationException extends MeerkatCoreException
+class FormValidationException extends MeerkatStatamicException
 {
-    
+
 }

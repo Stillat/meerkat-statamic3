@@ -98,9 +98,6 @@ class CollectionRenderer extends MeerkatTag
         $displayComments = [];
         $comments = $thread->getComments();
 
-        // TODO: Add user-defined sorting.
-        $this->query->sortDesc(CommentContract::KEY_ID);
-
         $this->query->limit($this->pageLimit)->skip($this->pageOffset);
 
         if ($this->paginated) {

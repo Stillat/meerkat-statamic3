@@ -29,7 +29,10 @@ trait ProvidesDiscovery
         $comment = self::find($commentId);
 
         if ($comment === null) {
-            throw new CommentNotFoundException("Comment {$commentId} was not found.");
+            $notFoundException = new CommentNotFoundException("Comment {$commentId} was not found.");
+            $notFoundException->commentId = $commentId;
+
+            throw $notFoundException;
         }
 
         return $comment;

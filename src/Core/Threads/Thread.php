@@ -420,7 +420,6 @@ class Thread implements ThreadContract, JsonSerializable
      */
     public function jsonSerialize()
     {
-        // TODO: What should this return?
         return $this->getDataAttributes();
     }
 

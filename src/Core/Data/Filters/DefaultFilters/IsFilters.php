@@ -5,6 +5,7 @@ namespace Stillat\Meerkat\Core\Data\Filters\DefaultFilters;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Data\Filters\CommentFilter;
 use Stillat\Meerkat\Core\Data\Filters\CommentFilterManager;
+use Stillat\Meerkat\Core\Exceptions\FilterException;
 use Stillat\Meerkat\Core\Support\TypeConversions;
 
 /**
@@ -29,15 +30,36 @@ class IsFilters
     public function register(CommentFilterManager $manager)
     {
         $manager->filterWithTagContext('is:before', function ($comments) {
-            // TODO: Implement "before timestamp".
+            $beforeTimestamp = intval($this->get(IsFilters::PARAM_TIMESTAMP));
+
+            return array_filter($comments, function (CommentContract $comment) use ($beforeTimestamp) {
+                return intval($comment->getId()) <= $beforeTimestamp;
+            });
         }, IsFilters::PARAM_TIMESTAMP);
 
         $manager->filterWithTagContext('is:after', function ($comments) {
-            // TODO: Implement "after timestamp"
+            $sinceTimestamp = intval($this->get(IsFilters::PARAM_TIMESTAMP));
+
+            return array_filter($comments, function (CommentContract $comment) use ($sinceTimestamp) {
+               return intval($comment->getId()) >= $sinceTimestamp;
+            });
         }, IsFilters::PARAM_TIMESTAMP);
 
         $manager->filterWithTagContext('is:between', function ($comments) {
-            // TODO: Implement "between timestamp"
+            $range = TypeConversions::parseToArray($this->get(IsFilters::PARAM_RANGE), ',');
+
+            if (count($range) === 2) {
+                $sinceTimestamp = intval($range[0]);
+                $beforeTimestamp = intval($range[1]);
+
+                return array_filter($comments, function (CommentContract $comment) use ($sinceTimestamp, $beforeTimestamp) {
+                    $commentDateValue = intval($comment->getId());
+
+                    return ($commentDateValue >= $sinceTimestamp && $commentDateValue <= $beforeTimestamp);
+                });
+            }
+
+            throw new FilterException('is:between requires two parameters: '.count($range). ' given.');
         }, IsFilters::PARAM_RANGE);
 
         $manager->filterWithTagContext('is:spam', function ($comments) {

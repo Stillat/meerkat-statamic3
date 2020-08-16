@@ -102,6 +102,9 @@ class BaseCollectionConverter
             $commentArray = $comment->toArray();
             $commentArray[$datasetName] = [];
 
+            // TODO: Provide "collecting hook" here?
+            // TODO: Augment with Context here.,
+
             $commentAuthor = $comment->getAuthor();
 
             if ($commentAuthor === null) {

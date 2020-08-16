@@ -18,7 +18,6 @@ class ThreadNotFoundException extends MeerkatCoreException
      *
      * @var string|null
      */
-    // TODO: Set this value.
     public $threadId = null;
 
 }

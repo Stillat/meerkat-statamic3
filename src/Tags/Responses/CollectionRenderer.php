@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat\Tags\Responses;
 
+use Carbon\Carbon;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Data\DataSetContract;
 use Stillat\Meerkat\Core\Contracts\Data\GroupedDataSetContract;
@@ -94,8 +95,6 @@ class CollectionRenderer extends MeerkatTag
         $this->applyParamOrdersToQuery();
 
         // TODO: Non-date groups?
-        // TODO: since: filter
-        // TODO: until: filter
 
         $thread = $this->threadManager->findById($this->threadId);
 
@@ -262,14 +261,34 @@ class CollectionRenderer extends MeerkatTag
         $sinceFilter = $this->getParameterValue(CollectionRenderer::PARAM_SINCE, null);
 
         if ($untilFilter !== null && $sinceFilter !== null) {
-            $filters['is:between'] = 'is:between(' . $sinceFilter . ',' . $untilFilter . ')';
+            $sinceDate = $this->getDateTimeTimestamp($sinceFilter);
+            $untilDate = $this->getDateTimeTimestamp($untilFilter);
+
+            $filters['is:between'] = 'is:between(' . $sinceDate . ',' . $untilDate . ')';
         } elseif ($untilFilter === null && $sinceFilter !== null) {
-            $filters['is:after'] = 'is:after(' . $sinceFilter . ')';
+            $sinceDate = $this->getDateTimeTimestamp($sinceFilter);
+
+            $filters['is:after'] = 'is:after(' . $sinceDate . ')';
         } elseif ($untilFilter !== null && $sinceFilter === null) {
+            $untilDate = $this->getDateTimeTimestamp($untilFilter);
+
             $filters['is:before'] = 'is:before(' . $untilFilter . ')';
         }
 
         return $filters;
+    }
+
+    private function getDateTimeTimestamp($value)
+    {
+        $timestampValue = $value;
+
+        if (is_string($value) && mb_strlen(trim($value)) == 10) {
+            $timestampValue = $value;
+        } else {
+            $timestampValue = Carbon::parse($timestampValue)->timestamp;
+        }
+
+        return $timestampValue;
     }
 
     /**

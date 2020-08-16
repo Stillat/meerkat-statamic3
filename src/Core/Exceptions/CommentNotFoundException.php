@@ -18,7 +18,6 @@ class CommentNotFoundException extends MeerkatCoreException
      *
      * @var null|string
      */
-    // TODO: set this value when thrown.
     public $commentId = null;
 
 }

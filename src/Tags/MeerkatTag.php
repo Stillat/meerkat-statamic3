@@ -17,7 +17,6 @@ use Statamic\Tags\Tags;
 abstract class MeerkatTag extends Tags
 {
 
-
     /**
      * Copies the parent's tag context to the new instance.
      *
@@ -34,6 +33,12 @@ abstract class MeerkatTag extends Tags
         $this->parser = $tags->parser;
     }
 
+    /**
+     * Checks if a parameter exists in the parameter collection.
+     *
+     * @param string $key The parameter name.
+     * @return bool
+     */
     public function hasParameterValue($key)
     {
 
@@ -45,6 +50,13 @@ abstract class MeerkatTag extends Tags
     }
 
 
+    /**
+     * Attempts to retrieve the value of the named parameter.
+     *
+     * @param string $key The name of the parameter.
+     * @param null|mixed $default The default value to return.
+     * @return mixed|null
+     */
     public function getParameterValue($key, $default = null)
     {
         if ($this->params instanceof Parameters) {
@@ -58,9 +70,14 @@ abstract class MeerkatTag extends Tags
         return $default;
     }
 
+    /**
+     * Gets the parameters, as an array.
+     *
+     * @return array
+     */
     public function getParameterArray()
     {
-        if ($this->params instanceof  Parameters) {
+        if ($this->params instanceof Parameters) {
             return $this->params->toArray();
         }
 
@@ -74,6 +91,4 @@ abstract class MeerkatTag extends Tags
      */
     abstract public function render();
 
-
 }
-

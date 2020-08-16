@@ -29,7 +29,10 @@ trait ProvidesDiscovery
         $thread = self::find($threadId);
 
         if ($thread === null) {
-            throw new ThreadNotFoundException("Thread {$threadId} was not found.");
+            $notFoundException = new ThreadNotFoundException("Thread {$threadId} was not found.");
+            $notFoundException->threadId = $threadId;
+
+            throw $notFoundException;
         }
 
         return $thread;

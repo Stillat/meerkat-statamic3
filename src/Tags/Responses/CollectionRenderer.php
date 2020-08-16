@@ -2,7 +2,6 @@
 
 namespace Stillat\Meerkat\Tags\Responses;
 
-use Statamic\Entries\Collection;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Data\DataSetContract;
 use Stillat\Meerkat\Core\Contracts\Data\GroupedDataSetContract;
@@ -12,6 +11,7 @@ use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
 use Stillat\Meerkat\Core\Data\DataQuery;
 use Stillat\Meerkat\Core\Data\Filters\CommentFilterManager;
+use Stillat\Meerkat\Core\Data\PredicateBuilder;
 use Stillat\Meerkat\Core\Data\RuntimeContext;
 use Stillat\Meerkat\Core\Exceptions\FilterException;
 use Stillat\Meerkat\Tags\MeerkatTag;
@@ -24,10 +24,11 @@ class CollectionRenderer extends MeerkatTag
     const PARAM_INCLUDE_SPAM = 'include_spam';
     const PARAM_FILTER = 'filter';
     const PARAM_FLAT = 'flat';
+    const PARAM_ORDER = 'order';
     const PARAM_COLLECTION_ALIAS = 'as';
 
     const DEFAULT_COLLECTION_NAME = 'comments';
-
+    public $tagContext = '';
     protected $filterManager = null;
     protected $threadManager = null;
     protected $sanitizer = null;
@@ -36,11 +37,8 @@ class CollectionRenderer extends MeerkatTag
     protected $pageOffset = 0;
     protected $pageBy = 'page';
     protected $query = null;
-
     private $threadId = null;
     private $paginatedThreadRenderer = null;
-
-    public $tagContext = '';
 
     public function __construct(
         ThreadManagerContract $threadManager,
@@ -57,20 +55,6 @@ class CollectionRenderer extends MeerkatTag
     }
 
     /**
-     * Creates a new RuntimeContext instance and returns it.
-     *
-     * @return RuntimeContext
-     */
-    private function getRuntimeContext()
-    {
-        $context = new RuntimeContext();
-        $context->parameters = $this->parameters;
-        $context->context = $this->context->toArray();
-
-        return $context;
-    }
-
-    /**
      * Sets the internal thread identifier.
      *
      * @param string $threadId The thread identifier.
@@ -78,71 +62,6 @@ class CollectionRenderer extends MeerkatTag
     public function setThreadId($threadId)
     {
         $this->threadId = $threadId;
-    }
-
-    /**
-     * Parses the Antlers parameters and converts them to filter expressions.
-     *
-     * @return array
-     */
-    private function getFiltersFromParams()
-    {
-        $filters = [];
-
-        if ($this->getBool(CollectionRenderer::PARAM_INCLUDE_SPAM, false) === false) {
-            $filters['is:spam'] = 'is:spam(false)';
-        }
-
-        if ($this->getBool(CollectionRenderer::PARAM_UNAPPROVED, false) === false) {
-            $filters['is:published'] = 'is:published(true)';
-        }
-
-        return $filters;
-    }
-
-    /**
-     * Parses the provided tag parameters and applies any filters to the current data query.
-     */
-    private function applyParamFiltersToQuery()
-    {
-        $paramFilters = $this->getFiltersFromParams();
-        $filterString = $this->getParam(CollectionRenderer::PARAM_FILTER, null);
-
-        if ($filterString !== null && mb_strlen(trim($filterString)) > 0) {
-            $parsedFilters = $this->filterManager->parseFilterString($filterString);
-
-            if ($parsedFilters !== null && is_array($parsedFilters)) {
-                $paramFilters = array_merge($paramFilters, $parsedFilters);
-            }
-        }
-
-        unset($filterString);
-
-        if (count($paramFilters) === 0) {
-            return;
-        }
-
-        $primaryFilter = array_shift($paramFilters);
-
-        $this->query->filterBy($primaryFilter);
-
-        if (count($paramFilters) > 0) {
-            foreach ($paramFilters as $filter) {
-                $this->query->thenFilterBy($filter);
-            }
-        }
-    }
-
-    private function applyFilterRestrictions()
-    {
-        $this->filterManager->restrictFilter('thread:in', [
-            'meerkat:all-comments'
-        ]);
-    }
-
-    private function removeFilterRestrictions()
-    {
-        $this->filterManager->restrictFilter('thread:in', []);
     }
 
     /**
@@ -169,9 +88,10 @@ class CollectionRenderer extends MeerkatTag
         $flatList = $this->getParam(CollectionRenderer::PARAM_FLAT, false);
 
         $this->applyParamFiltersToQuery();
+        $this->applyParamOrdersToQuery();
 
-
-        // TODO: Check for user defined filters.
+        // TODO: since: filter
+        // TODO: until: filter
 
         $thread = $this->threadManager->findById($this->threadId);
 
@@ -249,6 +169,163 @@ class CollectionRenderer extends MeerkatTag
     }
 
     /**
+     * Parses the tag's current context and sets the internal state.
+     */
+    private function parseParameters()
+    {
+        $this->paginated = $this->getParam('paginate', false);
+        $this->pageOffset = $this->getParam('offset', 0);
+        $this->pageBy = $this->getParam('pageby', 'page');
+        $this->pageLimit = $this->getParam('limit', null);
+    }
+
+    /**
+     * Applies Antlers specific filter restrictions.
+     */
+    private function applyFilterRestrictions()
+    {
+        $this->filterManager->restrictFilter('thread:in', [
+            'meerkat:all-comments'
+        ]);
+    }
+
+    /**
+     * Creates a new RuntimeContext instance and returns it.
+     *
+     * @return RuntimeContext
+     */
+    private function getRuntimeContext()
+    {
+        $context = new RuntimeContext();
+        $context->parameters = $this->parameters;
+        $context->context = $this->context->toArray();
+
+        return $context;
+    }
+
+    /**
+     * Parses the provided tag parameters and applies any filters to the current data query.
+     */
+    private function applyParamFiltersToQuery()
+    {
+        $paramFilters = $this->getFiltersFromParams();
+        $filterString = $this->getParam(CollectionRenderer::PARAM_FILTER, null);
+
+        if ($filterString !== null && mb_strlen(trim($filterString)) > 0) {
+            $parsedFilters = $this->filterManager->parseFilterString($filterString);
+
+            if ($parsedFilters !== null && is_array($parsedFilters)) {
+                $paramFilters = array_merge($paramFilters, $parsedFilters);
+            }
+        }
+
+        unset($filterString);
+
+        if (count($paramFilters) === 0) {
+            return;
+        }
+
+        $primaryFilter = array_shift($paramFilters);
+
+        $this->query->filterBy($primaryFilter);
+
+        if (count($paramFilters) > 0) {
+            foreach ($paramFilters as $filter) {
+                $this->query->thenFilterBy($filter);
+            }
+        }
+    }
+
+    /**
+     * Parses the Antlers parameters and converts them to filter expressions.
+     *
+     * @return array
+     */
+    private function getFiltersFromParams()
+    {
+        $filters = [];
+
+        if ($this->getBool(CollectionRenderer::PARAM_INCLUDE_SPAM, false) === false) {
+            $filters['is:spam'] = 'is:spam(false)';
+        }
+
+        if ($this->getBool(CollectionRenderer::PARAM_UNAPPROVED, false) === false) {
+            $filters['is:published'] = 'is:published(true)';
+        }
+
+        return $filters;
+    }
+
+    /**
+     * Parses the Antlers order parameter and uses them to build up the sorting predicate.
+     */
+    private function applyParamOrdersToQuery()
+    {
+        $paramOrders = $this->getParam(CollectionRenderer::PARAM_ORDER, null);
+        $orders = [];
+
+        if ($paramOrders === null || mb_strlen(trim($paramOrders)) === 0) {
+            $paramOrders = 'id,desc';
+        }
+
+        $tempOrders = explode('|', $paramOrders);
+
+        foreach ($tempOrders as $order) {
+            $orderParts = explode(',', $order);
+
+            if (count($orderParts) === 0) {
+                continue;
+            } elseif (count($orderParts) === 1) {
+                $orders[] = [
+                    PredicateBuilder::KEY_PROPERTY => trim($orderParts[0]),
+                    PredicateBuilder::KEY_IS_ASC => true
+                ];
+            } else {
+                $ascending = true;
+
+                if (mb_strtolower(trim($orderParts[1])) === 'desc') {
+                    $ascending = false;
+                }
+
+                $orders[] = [
+                    PredicateBuilder::KEY_PROPERTY => trim($orderParts[0]),
+                    PredicateBuilder::KEY_IS_ASC => $ascending
+                ];
+            }
+        }
+
+        unset($tempOrders);
+
+        if (count($orders) === 0) {
+            return;
+        }
+
+        $primaryOrder = array_shift($orders);
+
+        if ($primaryOrder[PredicateBuilder::KEY_IS_ASC]) {
+            $this->query->sortAsc($primaryOrder[PredicateBuilder::KEY_PROPERTY]);
+        } else {
+            $this->query->sortDesc($primaryOrder[PredicateBuilder::KEY_PROPERTY]);
+        }
+
+        foreach ($orders as $order) {
+            if ($order[PredicateBuilder::KEY_IS_ASC]) {
+                $this->query->thenSortAsc($order[PredicateBuilder::KEY_PROPERTY]);
+            } else {
+                $this->query->thenSortDesc($order[PredicateBuilder::KEY_PROPERTY]);
+            }
+        }
+    }
+
+    /**
+     * Removes any Antlers specific filter restrictions.
+     */
+    private function removeFilterRestrictions()
+    {
+        $this->filterManager->restrictFilter('thread:in', []);
+    }
+
+    /**
      * @param $comments
      * @param $collectionName
      * @param $isFlatList
@@ -272,17 +349,6 @@ class CollectionRenderer extends MeerkatTag
             $collectionName => $displayComments
         ], [], $collectionName);
 
-    }
-
-    /**
-     * Parses the tag's current context and sets the internal state.
-     */
-    private function parseParameters()
-    {
-        $this->paginated = $this->getParam('paginate', false);
-        $this->pageOffset = $this->getParam('offset', 0);
-        $this->pageBy = $this->getParam('pageby', 'page');
-        $this->pageLimit = $this->getParam('limit', null);
     }
 
     /**

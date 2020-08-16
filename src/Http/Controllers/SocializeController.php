@@ -6,6 +6,7 @@ use Illuminate\Http\Concerns\InteractsWithInput;
 use Illuminate\Support\MessageBag;
 use Statamic\Http\Controllers\Controller;
 use Statamic\Support\Arr;
+use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Exceptions\FormValidationException;
@@ -33,9 +34,24 @@ class SocializeController extends Controller
      */
     private $formHandler = null;
 
-    public function __construct(FormHandler $handler)
+    /**
+     * The Meerkat Core configuration container.
+     *
+     * @var Configuration
+     */
+    private $coreConfig = null;
+
+    /**
+     * Indicates if the currently authenticated user is submitting the current comment.
+     *
+     * @var bool
+     */
+    private $currentUserIsPublishingComment = false;
+
+    public function __construct(FormHandler $handler, Configuration $coreConfig)
     {
         $this->formHandler = $handler;
+        $this->coreConfig = $coreConfig;
     }
 
     /**
@@ -91,6 +107,16 @@ class SocializeController extends Controller
         $commentData = $this->fillWithUserData($commentData);
         $commentData = $this->fillWithEntryData($commentData);
 
+        if ($this->coreConfig->autoPublishAnonymousPosts === true) {
+            $commentData[CommentContract::KEY_PUBLISHED] = true;
+        } else {
+            if ($this->coreConfig->autoPublishAuthenticatedPosts === true &&
+                $this->currentUserIsPublishingComment) {
+                $commentData[CommentContract::KEY_PUBLISHED] = true;
+            } else {
+                $commentData[CommentContract::KEY_PUBLISHED] = false;
+            }
+        }
 
         $didStore = $this->formHandler->store($commentData);
 
@@ -115,7 +141,6 @@ class SocializeController extends Controller
      *
      * @param array $data The submission data.
      * @return array
-     * @throws \Statamic\Exceptions\PublishException
      */
     private function runStatamicCreatingEvent($data)
     {
@@ -210,6 +235,8 @@ class SocializeController extends Controller
      */
     private function fillWithUserData($data)
     {
+        $this->currentUserIsPublishingComment = false;
+
         $currentUser = auth()->user();
 
         if ($currentUser === null) {
@@ -217,6 +244,7 @@ class SocializeController extends Controller
         }
 
         if ($data[AuthorContract::KEY_EMAIL_ADDRESS] === $currentUser->email()) {
+            $this->currentUserIsPublishingComment = true;
             $data[AuthorContract::AUTHENTICATED_USER_ID] = $currentUser->getAuthIdentifier();
         }
 

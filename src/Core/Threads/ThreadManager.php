@@ -142,7 +142,13 @@ class ThreadManager implements ThreadManagerContract
      */
     public function create(ThreadContract $thread)
     {
-        $this->threadStorageManager->createForContext($thread->getContext());
+        $context = $thread->getContext();
+
+        if ($context === null) {
+            $context = $this->contextResolver->findById($thread->getId());
+        }
+
+        $this->threadStorageManager->createForContext($context);
 
         return $thread;
     }

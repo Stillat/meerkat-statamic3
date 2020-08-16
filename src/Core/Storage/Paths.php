@@ -195,7 +195,7 @@ class Paths
             return $this->cleanSegment($path);
         }
 
-        return $this->cleanSegment(mb_substr($path, mb_strlen(($rootPath))));
+        return $this->normalize($this->cleanSegment(mb_substr($path, mb_strlen(($rootPath)))));
     }
 
     /**
@@ -212,7 +212,7 @@ class Paths
         // We've already cleaned the root storage directory; just put it at the beginning.
         array_unshift($segments, $this->cleanedStorageRoot);
 
-        return $this->cleanSegment(join($this->config->directorySeparator, $segments));
+        return $this->normalize($this->cleanSegment(join($this->config->directorySeparator, $segments)));
     }
 
     /**

@@ -55,7 +55,10 @@ class FilterRunner
 
         $currentIdentity = $this->identityManager->getIdentityContext();
 
-        $this->filterManager->setUser($currentIdentity);
+        if ($currentIdentity !== null) {
+            $this->filterManager->setUser($currentIdentity);
+        }
+
         $themeFilterComments = $comments;
 
         $commentIdsToKeep = [];
@@ -69,7 +72,6 @@ class FilterRunner
                     $context,
                     $tagContext
                 );
-
 
                 if ($filterResults !== null && is_array($filterResults)) {
                     $commentIdsToKeep = [];

@@ -40,4 +40,11 @@ interface DataSetContract extends MetadataCollectionContract, Iterator
      */
     public function flattenDataset();
 
+    /**
+     * Returns the total number of results in the expanded dataset.
+     *
+     * @return int
+     */
+    public function count();
+
 }

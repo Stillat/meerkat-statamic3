@@ -2,10 +2,17 @@
 
 namespace Stillat\Meerkat\Tags\Responses;
 
+use Statamic\Entries\Collection;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
+use Stillat\Meerkat\Core\Contracts\Data\DataSetContract;
+use Stillat\Meerkat\Core\Contracts\Data\GroupedDataSetContract;
+use Stillat\Meerkat\Core\Contracts\Data\PagedDataSetContract;
+use Stillat\Meerkat\Core\Contracts\Data\PagedGroupedDataSetContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
 use Stillat\Meerkat\Core\Data\DataQuery;
+use Stillat\Meerkat\Core\Data\Filters\CommentFilterManager;
+use Stillat\Meerkat\Core\Data\RuntimeContext;
 use Stillat\Meerkat\Core\Exceptions\FilterException;
 use Stillat\Meerkat\Tags\MeerkatTag;
 use Stillat\Meerkat\Tags\Output\PaginatedThreadRenderer;
@@ -13,6 +20,15 @@ use Stillat\Meerkat\Tags\Output\RecursiveThreadRenderer;
 
 class CollectionRenderer extends MeerkatTag
 {
+    const PARAM_UNAPPROVED = 'include_unapproved';
+    const PARAM_INCLUDE_SPAM = 'include_spam';
+    const PARAM_FILTER = 'filter';
+    const PARAM_FLAT = 'flat';
+    const PARAM_COLLECTION_ALIAS = 'as';
+
+    const DEFAULT_COLLECTION_NAME = 'comments';
+
+    protected $filterManager = null;
     protected $threadManager = null;
     protected $sanitizer = null;
     protected $paginated = false;
@@ -24,16 +40,34 @@ class CollectionRenderer extends MeerkatTag
     private $threadId = null;
     private $paginatedThreadRenderer = null;
 
+    public $tagContext = '';
+
     public function __construct(
         ThreadManagerContract $threadManager,
+        CommentFilterManager $filterManager,
         SanitationManagerContract $sanitizer,
         PaginatedThreadRenderer $pageRenderer,
         DataQuery $query)
     {
         $this->query = $query;
+        $this->filterManager = $filterManager;
         $this->threadManager = $threadManager;
         $this->sanitizer = $sanitizer;
         $this->paginatedThreadRenderer = $pageRenderer;
+    }
+
+    /**
+     * Creates a new RuntimeContext instance and returns it.
+     *
+     * @return RuntimeContext
+     */
+    private function getRuntimeContext()
+    {
+        $context = new RuntimeContext();
+        $context->parameters = $this->parameters;
+        $context->context = $this->context->toArray();
+
+        return $context;
     }
 
     /**
@@ -47,6 +81,71 @@ class CollectionRenderer extends MeerkatTag
     }
 
     /**
+     * Parses the Antlers parameters and converts them to filter expressions.
+     *
+     * @return array
+     */
+    private function getFiltersFromParams()
+    {
+        $filters = [];
+
+        if ($this->getBool(CollectionRenderer::PARAM_INCLUDE_SPAM, false) === false) {
+            $filters['is:spam'] = 'is:spam(false)';
+        }
+
+        if ($this->getBool(CollectionRenderer::PARAM_UNAPPROVED, false) === false) {
+            $filters['is:published'] = 'is:published(true)';
+        }
+
+        return $filters;
+    }
+
+    /**
+     * Parses the provided tag parameters and applies any filters to the current data query.
+     */
+    private function applyParamFiltersToQuery()
+    {
+        $paramFilters = $this->getFiltersFromParams();
+        $filterString = $this->getParam(CollectionRenderer::PARAM_FILTER, null);
+
+        if ($filterString !== null && mb_strlen(trim($filterString)) > 0) {
+            $parsedFilters = $this->filterManager->parseFilterString($filterString);
+
+            if ($parsedFilters !== null && is_array($parsedFilters)) {
+                $paramFilters = array_merge($paramFilters, $parsedFilters);
+            }
+        }
+
+        unset($filterString);
+
+        if (count($paramFilters) === 0) {
+            return;
+        }
+
+        $primaryFilter = array_shift($paramFilters);
+
+        $this->query->filterBy($primaryFilter);
+
+        if (count($paramFilters) > 0) {
+            foreach ($paramFilters as $filter) {
+                $this->query->thenFilterBy($filter);
+            }
+        }
+    }
+
+    private function applyFilterRestrictions()
+    {
+        $this->filterManager->restrictFilter('thread:in', [
+            'meerkat:all-comments'
+        ]);
+    }
+
+    private function removeFilterRestrictions()
+    {
+        $this->filterManager->restrictFilter('thread:in', []);
+    }
+
+    /**
      * Renders the tag content.
      *
      * @return string
@@ -56,13 +155,28 @@ class CollectionRenderer extends MeerkatTag
     {
         $this->parseParameters();
 
-        $collectionName = $this->getParam('as', 'comments');
-        $flatList = $this->getParam('flat', false);
+        $collectionName = $this->getParam(
+            CollectionRenderer::PARAM_COLLECTION_ALIAS, CollectionRenderer::DEFAULT_COLLECTION_NAME
+        );
+
+        $this->applyFilterRestrictions();
+
+        $runtimeContext = $this->getRuntimeContext();
+        $runtimeContext->templateTagContext = $this->tagContext;
+
+        $this->query->withContext($runtimeContext);
+
+        $flatList = $this->getParam(CollectionRenderer::PARAM_FLAT, false);
+
+        $this->applyParamFiltersToQuery();
+
+
+        // TODO: Check for user defined filters.
 
         $thread = $this->threadManager->findById($this->threadId);
 
         $displayComments = [];
-        $comments = $thread->getComments($collectionName);
+        $comments = $thread->getComments();
 
         // TODO: Add user-defined sorting.
         $this->query->sortDesc(CommentContract::KEY_ID);
@@ -84,16 +198,29 @@ class CollectionRenderer extends MeerkatTag
                 });
         }
 
-        $results = $this->query->getCollection($comments, $collectionName);
+        $result = $this->query->getCollection($comments, $collectionName);
+
+        $this->removeFilterRestrictions();
+
+        if ($result instanceof GroupedDataSetContract) {
+            if ($result instanceof PagedGroupedDataSetContract) {
+                return '';
+            }
+
+            return '';
+        } elseif ($result instanceof PagedDataSetContract) {
+            return '';
+        } elseif ($result instanceof DataSetContract) {
+            return $this->renderListComments($result->getData(), $collectionName, $flatList);
+        }
 
         // TODO: Re-implement the views.
 
-        dd($results, $comments);
-        foreach ($results as $result) {
+        foreach ($result as $result) {
             dd('111', $result);
         }
 
-        dd('adsf', $results);
+        dd('adsf', $result);
 
         if ($flatList === true) {
             $displayComments = $comments;
@@ -119,6 +246,32 @@ class CollectionRenderer extends MeerkatTag
                 $collectionName => $displayComments
             ], [], $collectionName);
         }
+    }
+
+    /**
+     * @param $comments
+     * @param $collectionName
+     * @param $isFlatList
+     * @return string
+     */
+    private function renderListComments($comments, $collectionName, $isFlatList)
+    {
+        $displayComments = [];
+
+        if ($isFlatList === false) {
+            foreach ($comments as $comment) {
+                if ($comment[CommentContract::KEY_DEPTH] === 1) {
+                    $displayComments[] = $comment;
+                }
+            }
+        } else {
+            $displayComments = $comments;
+        }
+
+        return $this->parseComments([
+            $collectionName => $displayComments
+        ], [], $collectionName);
+
     }
 
     /**

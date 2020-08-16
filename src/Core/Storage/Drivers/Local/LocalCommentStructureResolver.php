@@ -205,7 +205,6 @@ class LocalCommentStructureResolver implements StructureResolverInterface
 
                 for ($i = 0; $i < $descendentGraphLength; $i += 1) {
                     if ($i === $descendentGraphLengthComparison) {
-
                         break;
                     }
 

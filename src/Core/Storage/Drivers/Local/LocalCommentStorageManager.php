@@ -599,6 +599,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     {
         $storableAttributes = $comment->getStorableAttributes();
 
+
         foreach ($this->internalElements as $attribute) {
             if (array_key_exists($attribute, $storableAttributes)) {
                 unset($storableAttributes[$attribute]);
@@ -610,6 +611,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         $contentToSave = $this->yamlParser->toYaml($storableAttributes, $comment->getRawContent());
 
         $directoryName = dirname($storagePath);
+
 
         if (!file_exists($directoryName)) {
             mkdir($directoryName, Paths::DIRECTORY_PERMISSIONS, true);

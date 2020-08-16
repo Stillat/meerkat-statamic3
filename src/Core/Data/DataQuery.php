@@ -537,7 +537,7 @@ class DataQuery
     {
         // Filter
         if (count($this->filters) > 0 && $this->runtimeContext === null) {
-            throw new FilterException('Filters cannot be executed within a run-time context. Supply a runtime context by calling withContext($context).');
+            throw new FilterException('Filters cannot be executed without a run-time context. Supply a runtime context by calling withContext($context).');
         } elseif (count($this->filters) > 0 && $this->runtimeContext !== null) {
             $data = $this->filterRunner->processFilters(
                 $data,

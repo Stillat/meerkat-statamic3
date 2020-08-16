@@ -102,6 +102,16 @@ class BaseCollectionConverter
             $commentArray = $comment->toArray();
             $commentArray[$datasetName] = [];
 
+            $commentAuthor = $comment->getAuthor();
+
+            if ($commentAuthor === null) {
+                $commentAuthor = [];
+            } else {
+                $commentAuthor = $this->sanitationManager->sanitizeArrayValues($commentAuthor->toArray());
+            }
+
+            $commentArray[CommentContract::KEY_AUTHOR] = $commentAuthor;
+
             $comments[$comment->getId()] = $commentArray;
 
             if ((string)$datasetKey !== $comment->getId()) {

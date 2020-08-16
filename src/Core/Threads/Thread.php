@@ -7,9 +7,13 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContextContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContract;
 use Stillat\Meerkat\Core\Data\Converters\BaseCollectionConverter;
+use Stillat\Meerkat\Core\Data\DataQuery;
+use Stillat\Meerkat\Core\Data\DataQueryFactory;
+use Stillat\Meerkat\Core\Data\RuntimeContext;
 use Stillat\Meerkat\Core\DataObject;
-use Stillat\Meerkat\Core\Threads\StaticApi\ProvidesDiscovery;
+use Stillat\Meerkat\Core\Exceptions\DataQueryException;
 use Stillat\Meerkat\Core\Exceptions\InconsistentCompositionException;
+use Stillat\Meerkat\Core\Threads\StaticApi\ProvidesDiscovery;
 
 /**
  * Class Thread
@@ -383,6 +387,30 @@ class Thread implements ThreadContract, JsonSerializable
         $comment->setThreadId($this->getId());
 
         return $comment->save();
+    }
+
+    public function query(callable $builder)
+    {
+        $queryInstance = DataQueryFactory::newQuery();
+
+        if ($queryInstance === null) {
+            throw new InconsistentCompositionException('The DataQueryFactory shared instance must be set in order to use the static APIs.');
+        }
+
+        if ($queryInstance === null) {
+            throw new DataQueryException('Static DataQueryFactory implementations must not return a NULL builder.');
+        }
+
+        $queryInstance = $builder($queryInstance);
+
+        if ($queryInstance === null || ($queryInstance instanceof DataQuery) === false) {
+            throw new DataQueryException('Builder callbacks must return an instance of DataQuery.');
+        }
+
+        $runtimeContext = new RuntimeContext();
+        $runtimeContext->context = $this->getContext();
+
+        return $queryInstance->withContext($runtimeContext)->get($this->getComments());
     }
 
     /**

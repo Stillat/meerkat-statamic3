@@ -379,8 +379,6 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
 
                 $context = $this->contextResolver->findById($contextId);
 
-                dd('cnte', $context);
-
                 self::$metaResolverCache[$contextId] = $metaData;
 
                 return $metaData;
@@ -458,7 +456,7 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
      */
     public function determineVirtualPathById($id)
     {
-        return $this->storagePath . Paths::SYM_FORWARD_SEPARATOR . $id;
+        return Paths::makeNew()->normalize($this->storagePath . Paths::SYM_FORWARD_SEPARATOR . $id);
     }
 
     /**

@@ -6,9 +6,12 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Statamic\Tags\Tags;
 use Stillat\Meerkat\Addon as MeerkatAddon;
 use Stillat\Meerkat\Concerns\GetsHiddenContext;
+use Stillat\Meerkat\Core\Contracts\Data\DataSetContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ContextResolverContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
+use Stillat\Meerkat\Core\Data\DataQuery;
+use Stillat\Meerkat\Core\Exceptions\FilterException;
 use Stillat\Meerkat\Forms\MeerkatForm;
 use Stillat\Meerkat\PathProvider;
 use Stillat\Meerkat\Tags\Responses\CollectionRenderer;
@@ -88,6 +91,29 @@ class Meerkat extends Tags
     }
 
     /**
+     * Returns the number of published, not-spam comments.
+     *
+     * @return int
+     */
+    public function commentCount()
+    {
+        // TODO: Allow override of query. Needs a global "query builder builder".
+        $contextId = $this->getHiddenContext();
+        $thread = $this->threadManager->findById($contextId);
+
+        if ($thread === null) {
+            return 0;
+        }
+
+        /** @var DataSetContract $queryResults */
+        $queryResults = $thread->query(function (DataQuery $builder) {
+            return $builder->filterBy('is:spam(false)')->thenFilterBy('is:published(true)');
+        });
+
+        return $queryResults->count();
+    }
+
+    /**
      * {{ meerkat:all-comments }}
      *
      * @return string
@@ -103,6 +129,7 @@ class Meerkat extends Tags
      *
      * @return string|string[]
      * @throws BindingResolutionException
+     * @throws FilterException
      */
     public function responses()
     {
@@ -114,6 +141,7 @@ class Meerkat extends Tags
 
         /** @var CollectionRenderer $collectionRenderer */
         $collectionRenderer = app()->make(CollectionRenderer::class);
+        $collectionRenderer->tagContext = 'meerkat:responses';
         $collectionRenderer->setFromContext($this);
         $collectionRenderer->setThreadId($contextId);
 

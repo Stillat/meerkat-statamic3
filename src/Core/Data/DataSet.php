@@ -119,4 +119,18 @@ class DataSet implements DataSetContract, ArrayAccess
         return $this->flattenedData;
     }
 
+    /**
+     * Returns the total number of results in the expanded dataset.
+     *
+     * @return int
+     */
+    public function count()
+    {
+        if ($this->data !== null && is_array($this->data)) {
+            return count($this->data);
+        }
+
+        return 0;
+    }
+
 }

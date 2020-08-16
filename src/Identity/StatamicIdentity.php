@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat\Identity;
 
+use Stillat\Meerkat\Core\Authoring\Author;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\DataObject;
 use Stillat\Meerkat\Core\Permissions\PermissionsSet;
@@ -171,6 +172,28 @@ class StatamicIdentity implements AuthorContract
     public function getHostUser()
     {
         // TODO: Implement.
+        return null;
+    }
+
+    /**
+     * Converts the author data into an array.
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        // TODO: Implement.
+        $hostUserArray = [];
+
+        return [
+            AuthorContract::KEY_USER_AGENT => $this->getDataAttribute(AuthorContract::KEY_USER_AGENT, ''),
+            AuthorContract::KEY_USER_IP => $this->getDataAttribute(AuthorContract::KEY_USER_IP, ''),
+            AuthorContract::KEY_NAME => $this->getDisplayName(),
+            AuthorContract::KEY_EMAIL_ADDRESS => $this->getEmailAddress(),
+            AuthorContract::KEY_HAS_USER => $this->getIsTransient() === false,
+            AuthorContract::KEY_USER => $hostUserArray,
+            AuthorContract::KEY_PERMISSIONS => $this->getPermissionSet()->toArray()
+        ];
     }
 
 }

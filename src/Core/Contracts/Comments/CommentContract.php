@@ -36,6 +36,7 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     const KEY_PARENT = 'parent';
 
     // TODO: Make sure this doesn't get saved.
+    const KEY_AUTHOR = 'author';
     const KEY_PARENT_ID = 'parent_id';
     const KEY_IS_PARENT = 'is_parent';
     const KEY_IS_ROOT = 'is_root';

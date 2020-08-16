@@ -3,8 +3,11 @@
 namespace Stillat\Meerkat\Providers;
 
 use Stillat\Meerkat\Core\Contracts\Data\PaginatorContract;
+use Stillat\Meerkat\Core\Contracts\Data\QueryFactoryContract;
+use Stillat\Meerkat\Core\Data\DataQueryFactory;
 use Stillat\Meerkat\Core\Data\Filters\CommentFilterManager;
 use Stillat\Meerkat\Data\Paginator;
+use Stillat\Meerkat\Support\Factories\DataQueryBuilderFactory;
 
 /**
  * Class DataServiceProvider
@@ -27,6 +30,11 @@ class DataServiceProvider extends AddonServiceProvider
         });
         $this->app->bind(PaginatorContract::class, Paginator::class);
 
+        $this->app->singleton(QueryFactoryContract::class, function ($app) {
+            return new DataQueryBuilderFactory();
+        });
+
+        DataQueryFactory::$queryBuilderFactory = app()->make(QueryFactoryContract::class);
 
         // Automatically include helpers, if available.
         $filtersPath = base_path('meerkat/filters.php');

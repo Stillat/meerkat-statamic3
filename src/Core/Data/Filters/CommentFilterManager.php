@@ -212,6 +212,25 @@ class CommentFilterManager
     }
 
     /**
+     * Parses the provided filter string and returns a mapping of the filter name and filter.
+     *
+     * @param string $filterString The delimited filter string.
+     * @param string $delimiter The filter separating character.
+     * @return array
+     */
+    public function parseFilterString($filterString, $delimiter = '|')
+    {
+        $filterParts = explode($delimiter, $filterString);
+        $filterMapping = [];
+
+        foreach ($filterParts as $filter) {
+            $filterMapping[$this->getFilterName($filter)] = $filter;
+        }
+
+        return $filterMapping;
+    }
+
+    /**
      * Runs the requested filter against the comments within context.
      *
      * @param string $filterName The name of the filter.

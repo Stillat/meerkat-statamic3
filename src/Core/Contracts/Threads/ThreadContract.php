@@ -198,5 +198,7 @@ interface ThreadContract extends DataObjectContract, StorableContract, Serializa
      */
     public function attachNewComment(CommentContract $comment);
 
+    public function query(callable $builder);
+
 }
 

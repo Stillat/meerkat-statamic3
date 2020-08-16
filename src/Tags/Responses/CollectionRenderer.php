@@ -397,10 +397,13 @@ class CollectionRenderer extends MeerkatTag
     protected function parseComments($data = [], $context = [], $collectionName = 'comments')
     {
         $metaData = [];
+        $totalResults = count($data[$collectionName]);
+        $hasResults = $totalResults > 0;
 
         if (array_key_exists('total_results', $data) === false) {
             $metaData = [
-                'total_results' => count($data[$collectionName])
+                'total_results' => $totalResults,
+                'has_results' => $hasResults
             ];
         }
 

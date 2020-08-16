@@ -12,6 +12,7 @@ use Stillat\Meerkat\Core\Contracts\Threads\ContextResolverContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
 use Stillat\Meerkat\Core\Data\DataQuery;
 use Stillat\Meerkat\Core\Exceptions\FilterException;
+use Stillat\Meerkat\Core\Support\TypeConversions;
 use Stillat\Meerkat\Exceptions\TemplateTagsException;
 use Stillat\Meerkat\Forms\MeerkatForm;
 use Stillat\Meerkat\PathProvider;
@@ -216,9 +217,43 @@ class Meerkat extends Tags
         return '<script src="' . $scriptPath . '"></script>';
     }
 
+    /**
+     * Returns the current Meerkat version.
+     *
+     * {{ meerkat:version }}
+     *
+     * @return string
+     */
     public function version()
     {
         return MeerkatAddon::VERSION;
+    }
+
+    /**
+     * Helper tag to evaluate if a URL parameter exists.
+     *
+     * {{ meerkat:has-input param="queryParamName" }}
+     *
+     * @return bool
+     */
+    public function hasInput()
+    {
+        $paramName = $this->params->get('param', null);
+
+        if ($paramName === null) {
+            return false;
+        }
+
+        $inputValue = request()->input($paramName, null);
+        $valuesToCheck = $this->params->get('in', null);
+
+        if ($valuesToCheck !== null) {
+            $valuesArray = TypeConversions::parseToArray($valuesToCheck);
+
+            return in_array($inputValue, $valuesArray);
+        }
+
+        return true;
     }
 
 }

@@ -369,4 +369,13 @@ class PagedDataSet implements PagedDataSetContract
         $this->datasetMetadata = $metadataCollection;
     }
 
+    /**
+     * Returns the total number of results in the expanded dataset.
+     *
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->displayItems);
+    }
 }

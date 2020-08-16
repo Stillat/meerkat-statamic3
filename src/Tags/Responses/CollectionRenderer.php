@@ -12,6 +12,7 @@ use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
 use Stillat\Meerkat\Core\Data\DataQuery;
 use Stillat\Meerkat\Core\Data\Filters\CommentFilterManager;
+use Stillat\Meerkat\Core\Data\PagedDataSet;
 use Stillat\Meerkat\Core\Data\PredicateBuilder;
 use Stillat\Meerkat\Core\Data\RuntimeContext;
 use Stillat\Meerkat\Core\Exceptions\FilterException;
@@ -129,7 +130,7 @@ class CollectionRenderer extends MeerkatTag
 
             return '';
         } elseif ($result instanceof PagedDataSetContract) {
-            return '';
+            return $this->renderPaginatedComments($result, $collectionName);
         } elseif ($result instanceof DataSetContract) {
             return $this->renderListComments($result->getData(), $collectionName, $flatList);
         }
@@ -383,7 +384,24 @@ class CollectionRenderer extends MeerkatTag
         return $this->parseComments([
             $collectionName => $displayComments
         ], [], $collectionName);
+    }
 
+    /**
+     * @param PagedDataSetContract $dataset The paginated dataset.
+     * @param string $collectionName The name of the collection.
+     */
+    private function renderPaginatedComments($dataset, $collectionName)
+    {
+        $totalResults = $dataset->count();
+        $hasResults = $totalResults > 0;
+
+        return [
+            $collectionName => $dataset->getDisplayItems(),
+            PagedDataSet::KEY_PAGINATE => $dataset->getAdditionalMetaData(),
+            'total_results' => $totalResults,
+            'has_results' => $hasResults,
+            'items_count' => $dataset->getItemsCount()
+        ];
     }
 
     /**

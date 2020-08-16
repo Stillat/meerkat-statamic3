@@ -71,4 +71,13 @@ class GroupedDataSet implements GroupedDataSetContract
         return $this->flattenedData;
     }
 
+    /**
+     * Returns the total number of results in the expanded dataset.
+     *
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->flattenDataset());
+    }
 }

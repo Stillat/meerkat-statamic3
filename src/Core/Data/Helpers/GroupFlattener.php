@@ -47,11 +47,18 @@ class GroupFlattener
             $index = 0;
 
             foreach ($groupValues as $comment) {
-                $comment->setDataAttribute($individualGroupName, $groupName);
-                $comment->setDataAttribute(DataGroupBuilder::KEY_GROUP, [
+                $groupData = [
                     DataGroupBuilder::KEY_TOTAL_COUNT => $groupTotalItems,
                     DataGroupBuilder::KEY_ITEM_CURRENT_INDEX => $index
-                ]);
+                ];
+
+                if ($comment instanceof CommentContract) {
+                    $comment->setDataAttribute($individualGroupName, $groupName);
+                    $comment->setDataAttribute(DataGroupBuilder::KEY_GROUP, $groupData);
+                } elseif (is_array($comment)) {
+                    $comment[$individualGroupName] = $groupName;
+                    $comment[DataGroupBuilder::KEY_GROUP] = $groupData;
+                }
 
                 $flattenedData[] =& $comment;
                 $index += 1;

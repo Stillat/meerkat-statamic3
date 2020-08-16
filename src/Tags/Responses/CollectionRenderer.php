@@ -14,6 +14,7 @@ use Stillat\Meerkat\Core\Data\Filters\CommentFilterManager;
 use Stillat\Meerkat\Core\Data\PredicateBuilder;
 use Stillat\Meerkat\Core\Data\RuntimeContext;
 use Stillat\Meerkat\Core\Exceptions\FilterException;
+use Stillat\Meerkat\Core\Support\TypeConversions;
 use Stillat\Meerkat\Tags\MeerkatTag;
 use Stillat\Meerkat\Tags\Output\PaginatedThreadRenderer;
 use Stillat\Meerkat\Tags\Output\RecursiveThreadRenderer;
@@ -76,7 +77,7 @@ class CollectionRenderer extends MeerkatTag
     {
         $this->parseParameters();
 
-        $collectionName = $this->getParam(
+        $collectionName = $this->getParameterValue(
             CollectionRenderer::PARAM_COLLECTION_ALIAS, CollectionRenderer::DEFAULT_COLLECTION_NAME
         );
 
@@ -87,7 +88,7 @@ class CollectionRenderer extends MeerkatTag
 
         $this->query->withContext($runtimeContext);
 
-        $flatList = $this->getParam(CollectionRenderer::PARAM_FLAT, false);
+        $flatList = $this->getParameterValue(CollectionRenderer::PARAM_FLAT, false);
 
         $this->applyParamFiltersToQuery();
         $this->applyParamOrdersToQuery();
@@ -109,8 +110,8 @@ class CollectionRenderer extends MeerkatTag
             $this->query->pageBy($this->pageBy)->forPage($currentPage);
         }
 
-        if ($this->get('group_by_date')) {
-            $dateFormat = $this->get('group_by_date');
+        if ($this->hasParameterValue('group_by_date')) {
+            $dateFormat = $this->getParameterValue('group_by_date');
 
             $this->query->nameAllGroups('date_groups')->groupName('date_group')
                 ->collectionName($collectionName)->groupBy('group:date', function (CommentContract $comment) use ($dateFormat) {
@@ -173,10 +174,10 @@ class CollectionRenderer extends MeerkatTag
      */
     private function parseParameters()
     {
-        $this->paginated = $this->getParam('paginate', false);
-        $this->pageOffset = $this->getParam('offset', 0);
-        $this->pageBy = $this->getParam('pageby', 'page');
-        $this->pageLimit = $this->getParam('limit', null);
+        $this->paginated = $this->getParameterValue('paginate', false);
+        $this->pageOffset = $this->getParameterValue('offset', 0);
+        $this->pageBy = $this->getParameterValue('pageby', 'page');
+        $this->pageLimit = $this->getParameterValue('limit', null);
     }
 
     /**
@@ -197,7 +198,7 @@ class CollectionRenderer extends MeerkatTag
     private function getRuntimeContext()
     {
         $context = new RuntimeContext();
-        $context->parameters = $this->parameters;
+        $context->parameters = $this->getParameterArray();
         $context->context = $this->context->toArray();
 
         return $context;
@@ -209,7 +210,7 @@ class CollectionRenderer extends MeerkatTag
     private function applyParamFiltersToQuery()
     {
         $paramFilters = $this->getFiltersFromParams();
-        $filterString = $this->getParam(CollectionRenderer::PARAM_FILTER, null);
+        $filterString = $this->getParameterValue(CollectionRenderer::PARAM_FILTER, null);
 
         if ($filterString !== null && mb_strlen(trim($filterString)) > 0) {
             $parsedFilters = $this->filterManager->parseFilterString($filterString);
@@ -245,16 +246,20 @@ class CollectionRenderer extends MeerkatTag
     {
         $filters = [];
 
-        if ($this->getBool(CollectionRenderer::PARAM_INCLUDE_SPAM, false) === false) {
+        if (TypeConversions::getBooleanValue(
+                $this->getParameterValue(CollectionRenderer::PARAM_INCLUDE_SPAM, false)
+            ) === false) {
             $filters['is:spam'] = 'is:spam(false)';
         }
 
-        if ($this->getBool(CollectionRenderer::PARAM_UNAPPROVED, false) === false) {
+        if (TypeConversions::getBooleanValue(
+                $this->getParameterValue(CollectionRenderer::PARAM_UNAPPROVED, false)
+            ) === false) {
             $filters['is:published'] = 'is:published(true)';
         }
 
-        $untilFilter = $this->getParam(CollectionRenderer::PARAM_UNTIL, null);
-        $sinceFilter = $this->getParam(CollectionRenderer::PARAM_SINCE, null);
+        $untilFilter = $this->getParameterValue(CollectionRenderer::PARAM_UNTIL, null);
+        $sinceFilter = $this->getParameterValue(CollectionRenderer::PARAM_SINCE, null);
 
         if ($untilFilter !== null && $sinceFilter !== null) {
             $filters['is:between'] = 'is:between(' . $sinceFilter . ',' . $untilFilter . ')';
@@ -272,7 +277,7 @@ class CollectionRenderer extends MeerkatTag
      */
     private function applyParamOrdersToQuery()
     {
-        $paramOrders = $this->getParam(CollectionRenderer::PARAM_ORDER, null);
+        $paramOrders = $this->getParameterValue(CollectionRenderer::PARAM_ORDER, null);
         $orders = [];
 
         if ($paramOrders === null || mb_strlen(trim($paramOrders)) === 0) {

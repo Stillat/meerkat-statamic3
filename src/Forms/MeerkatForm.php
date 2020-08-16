@@ -65,7 +65,7 @@ class MeerkatForm extends MeerkatTag
 
     public function render()
     {
-        $bluePrint = $this->getParam('blueprint', Addon::CODE_ADDON_NAME);
+        $bluePrint = $this->getParameterValue('blueprint', Addon::CODE_ADDON_NAME);
         $this->blueprintName = $bluePrint;
         $sessionHandle = self::getFormSessionHandle($bluePrint);
 
@@ -214,7 +214,7 @@ class MeerkatForm extends MeerkatTag
             return $this->blueprint;
         }
 
-        $bluePrintHandle = $this->getParam('blueprint', 'meerkat');
+        $bluePrintHandle = $this->getParameterValue('blueprint', 'meerkat');
 
         $this->blueprint = $this->blueprints->find($bluePrintHandle);
 

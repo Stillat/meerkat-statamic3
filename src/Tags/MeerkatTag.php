@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat\Tags;
 
+use Statamic\Tags\Parameters;
 use Statamic\Tags\Tags;
 
 /**
@@ -16,14 +17,6 @@ use Statamic\Tags\Tags;
 abstract class MeerkatTag extends Tags
 {
 
-    /**
-     * The tag's parameters.
-     *
-     * Used for compatibility with the HasParameters concern.
-     *
-     * @var array
-     */
-    protected $parameters = [];
 
     /**
      * Copies the parent's tag context to the new instance.
@@ -35,11 +28,43 @@ abstract class MeerkatTag extends Tags
         $this->content = $tags->content;
         $this->context = $tags->context;
         $this->params = $tags->params;
-        $this->parameters = $tags->params;
         $this->tag = $tags->tag;
         $this->method = $tags->method;
         $this->isPair = $tags->isPair;
         $this->parser = $tags->parser;
+    }
+
+    public function hasParameterValue($key)
+    {
+
+        if ($this->params instanceof Parameters) {
+            return $this->params->has($key);
+        }
+
+        return array_key_exists($key, $this->params);
+    }
+
+
+    public function getParameterValue($key, $default = null)
+    {
+        if ($this->params instanceof Parameters) {
+            return $this->params->get($key, $default);
+        }
+
+        if (array_key_exists($key, $this->params)) {
+            return $this->params[$key];
+        }
+
+        return $default;
+    }
+
+    public function getParameterArray()
+    {
+        if ($this->params instanceof  Parameters) {
+            return $this->params->toArray();
+        }
+
+        return $this->params;
     }
 
     /**
@@ -49,4 +74,6 @@ abstract class MeerkatTag extends Tags
      */
     abstract public function render();
 
+
 }
+

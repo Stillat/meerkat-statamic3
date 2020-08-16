@@ -18,7 +18,7 @@ class Addon
     public const CODE_ADDON_NAME = 'meerkat';
     public const ROUTE_PREFIX = 'meerkat';
     public const ADDON_ID = 'stillat/meerkat';
-    public const VERSION = '0.0.2-dev';
+    public const VERSION = '0.0.4-dev';
 
     /**
      * Returns an instance of Meerkat for Meerkat.

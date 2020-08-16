@@ -28,7 +28,23 @@ trait GetsHiddenContext
             return $sharing[0];
         }
 
-        return data_get($this->context, 'page.id', null);
+        return $this->getCurrentContextId();
+    }
+
+    /**
+     * Indicates if the current page is sharing it's Meerkat context.
+     *
+     * @return bool
+     */
+    protected function isSharingContext()
+    {
+        $sharing = data_get($this->context, ThreadContract::KEY_SHARE_COMMENT_CONTEXT, null);
+
+        if ($sharing !== null && is_array($sharing) && count($sharing) > 0) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

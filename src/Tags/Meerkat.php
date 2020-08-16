@@ -57,6 +57,7 @@ class Meerkat extends Tags
      *
      * @return string
      * @throws BindingResolutionException
+     * @throws TemplateTagsException
      */
     public function create()
     {
@@ -70,15 +71,11 @@ class Meerkat extends Tags
      *
      * @return string
      * @throws BindingResolutionException
+     * @throws TemplateTagsException
      */
     public function form()
     {
         return $this->renderDynamic(MeerkatForm::class);
-    }
-
-    public function debug()
-    {
-        return $this->renderDynamic(OutputThreadDebugInformation::class);
     }
 
     /**
@@ -107,6 +104,20 @@ class Meerkat extends Tags
         }
 
         return '';
+    }
+
+    /**
+     * Display theme Meerkat diagnostics data, for the current scope.
+     *
+     * Maps to {{ meerkat:debug }}
+     *
+     * @return string
+     * @throws BindingResolutionException
+     * @throws TemplateTagsException
+     */
+    public function debug()
+    {
+        return $this->renderDynamic(OutputThreadDebugInformation::class);
     }
 
     /**
@@ -151,8 +162,7 @@ class Meerkat extends Tags
      */
     public function allComments()
     {
-        // TODO: Implement.
-        return '';
+        return $this->renderDynamic(CollectionRenderer::class);
     }
 
     /**

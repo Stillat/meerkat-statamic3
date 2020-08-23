@@ -42,4 +42,11 @@ interface ThreadContextContract extends DataObjectContract, Serializable
      */
     public function getName();
 
+    /**
+     * Converts the context to an array.
+     *
+     * @return array
+     */
+    public function toArray();
+
 }

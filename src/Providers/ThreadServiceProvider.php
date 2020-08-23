@@ -24,6 +24,7 @@ use Stillat\Meerkat\Core\Parsing\SanitationManagerFactory;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalCommentChangeSetStorageManager;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalCommentStorageManager;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalThreadStorageManager;
+use Stillat\Meerkat\Core\Threads\ContextResolverFactory;
 use Stillat\Meerkat\Core\Threads\ThreadManager;
 use Stillat\Meerkat\Core\Threads\ThreadManagerFactory;
 use Stillat\Meerkat\Parsing\Sanitizers\AntlersSanitizer;
@@ -145,6 +146,7 @@ class ThreadServiceProvider extends AddonServiceProvider
             ThreadManagerFactory::$instance = app(ThreadManagerContract::class);
             CommentManagerFactory::$instance = app(CommentManagerContract::class);
             CommentChangeSetManagerFactory::$instance = app(CommentChangeSetStorageManagerContract::class);
+            ContextResolverFactory::$instance = app(ContextResolverContract::class);
         });
     }
 

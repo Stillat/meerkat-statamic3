@@ -63,6 +63,7 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     const INTERNAL_RESPONSE_PATH = 'internal_response_path';
     const INTERNAL_RESPONSE_ID = 'internal_response_id';
     const INTERNAL_RESPONSE_CONTEXT = 'internal_response_context';
+    const INTERNAL_CONTEXT_ID = 'internal_context_id';
     const INTERNAL_RESPONSE_HAS_REPLIES = 'internal_response_has_replies';
     const INTERNAL_STRUCTURE_NEEDS_MIGRATION = 'internal_needs_structure_migration';
     const INTERNAL_HISTORY_REVISION_COUNT = 'revision_count';

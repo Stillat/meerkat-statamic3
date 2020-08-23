@@ -17,6 +17,9 @@ class Context implements ThreadContextContract
 {
     use DataObject;
 
+    const KEY_NAME = 'name';
+    const KEY_REMOVE_CONTENT = 'content';
+
     /**
      * The string identifier for the context, if available.
      *
@@ -49,16 +52,6 @@ class Context implements ThreadContextContract
     }
 
     /**
-     * Returns the context's name.
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->contextName;
-    }
-
-    /**
      * Returns the timestamp the context was created.
      *
      * @return int
@@ -66,6 +59,33 @@ class Context implements ThreadContextContract
     public function getCreatedUtcTimestamp()
     {
         return $this->createdUtc;
+    }
+
+    /**
+     * Converts the context to an array.
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        $attributes = $this->getDataAttributes();
+        $attributes[self::KEY_NAME] = $this->getName();
+
+        if (array_key_exists(self::KEY_REMOVE_CONTENT, $attributes)) {
+            unset($attributes[self::KEY_REMOVE_CONTENT]);
+        }
+
+        return $attributes;
+    }
+
+    /**
+     * Returns the context's name.
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->contextName;
     }
 
 }

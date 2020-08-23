@@ -6,6 +6,7 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
 use Stillat\Meerkat\Core\Exceptions\InconsistentCompositionException;
 use Stillat\Meerkat\Core\Parsing\SanitationManagerFactory;
+use Stillat\Meerkat\Core\Threads\ContextResolverFactory;
 
 /**
  * Class BaseCollectionConverter
@@ -31,6 +32,13 @@ class BaseCollectionConverter
      * @var SanitationManagerContract
      */
     private $sanitationManager = null;
+
+    /**
+     * A cache of the context's array data.
+     *
+     * @var array
+     */
+    private $contextArrayCache = [];
 
     public function __construct(SanitationManagerContract $sanitationManager)
     {
@@ -106,6 +114,23 @@ class BaseCollectionConverter
             // TODO: Provide "collecting hook" here?
             // TODO: Augment with Context here.,
             // TODO: Markdown?
+
+            if (ContextResolverFactory::hasInstance()) {
+                $threadId = $comment->getThreadId();
+
+                if (array_key_exists($threadId, $this->contextArrayCache) === false) {
+                    $context = ContextResolverFactory::$instance->findById($comment->getThreadId());
+                    $contextValue = [];
+
+                    if ($context !== null) {
+                        $contextValue = $context->toArray();
+                    }
+
+                    $this->contextArrayCache[$threadId] = $contextValue;
+                }
+
+                $commentArray[CommentContract::INTERNAL_CONTEXT] = $this->contextArrayCache[$threadId];
+            }
 
             $commentAuthor = $comment->getAuthor();
 

@@ -395,6 +395,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             $comment->setDataAttribute(CommentContract::KEY_IS_ROOT, !$hasAncestor);
             $comment->setDataAttribute(CommentContract::KEY_IS_PARENT, $isParent);
             $comment->setDataAttribute(CommentContract::KEY_DESCENDENTS, $allDescendents);
+            $comment->setDataAttribute(CommentContract::INTERNAL_CONTEXT_ID, $threadId);
 
             if (count($allDescendents) == 0) {
                 $comment->setDataAttribute(CommentContract::INTERNAL_ABSOLUTE_ROOT, $commentId);

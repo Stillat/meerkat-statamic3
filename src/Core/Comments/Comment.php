@@ -137,6 +137,10 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
      */
     public function getThreadId()
     {
+        if ($this->hasDataAttribute(CommentContract::INTERNAL_CONTEXT_ID)) {
+            return $this->getDataAttribute(CommentContract::INTERNAL_CONTEXT_ID);
+        }
+
         if ($this->threadId === null) {
             $threadId = PathThreadIdRetriever::idFromStoragePath($this->getVirtualPath());
 

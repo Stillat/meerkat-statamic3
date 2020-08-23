@@ -22,8 +22,10 @@ class DashboardController extends CpController
 
     public function index(CommentStorageManagerContract $comments, ThreadManagerContract $threads, DataQuery $query, CommentFilterManager $filters, CommentChangeSetStorageManagerContract $changeSets)
     {
+        $thread = $threads->findById('7ac0bdda-1b84-45f8-ac52-2575dd7e8251');
 
-        dd(Comment::find('1597524673')->getRevisionCount(), 'asdf');
+        dd($thread->getCommentCollection('comments'));
+        dd($thread);
 /*
 
         $comment1 = Comment::find('1597524673');

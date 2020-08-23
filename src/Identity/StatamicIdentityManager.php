@@ -23,6 +23,8 @@ use Stillat\Meerkat\Core\Permissions\PermissionsSet;
 class StatamicIdentityManager implements IdentityManagerContract, PermissionsManagerContract
 {
 
+    // TODO: Update class references!
+
     /**
      * The Statamic UserProvider instance.
      *

@@ -5,6 +5,7 @@ namespace Stillat\Meerkat\Http\Controllers;
 use Illuminate\Http\Concerns\InteractsWithInput;
 use Statamic\Http\Controllers\CP\CpController;
 use Statamic\Statamic;
+use Illuminate\Http\Request;
 use Stillat\Meerkat\Core\Contracts\Logging\ErrorCodeRepositoryContract;
 use Stillat\Meerkat\Feedback\SolutionProvider;
 
@@ -34,8 +35,10 @@ class ErrorLogsController extends CpController
      */
     private $solutions = null;
 
-    public function __construct(ErrorCodeRepositoryContract $errorRepository, SolutionProvider $solutions)
+    public function __construct(Request $request, ErrorCodeRepositoryContract $errorRepository, SolutionProvider $solutions)
     {
+        parent::__construct($request);
+
         $this->errors = $errorRepository;
         $this->solutions = $solutions;
 

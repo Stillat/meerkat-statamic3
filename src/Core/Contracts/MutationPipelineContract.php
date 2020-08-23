@@ -28,4 +28,16 @@ interface MutationPipelineContract
      */
     public function mutate($request, &$object, $callback);
 
+    /**
+     * Broadcasts requests that implementations.
+     *
+     * Implementations may choose to delay the execution of these requests by using a job queue, or some other means.
+     *
+     * @param string $request The type of mutation request to propagate.
+     * @param mixed $object A reference to the object to mutate.
+     * @param callable $callback A callback to be applied to each pipeline stop.
+     * @return mixed
+     */
+    public function delayMutate($request, $object, $callback);
+
 }

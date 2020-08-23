@@ -104,6 +104,7 @@ class BaseCollectionConverter
 
             // TODO: Provide "collecting hook" here?
             // TODO: Augment with Context here.,
+            // TODO: Markdown?
 
             $commentAuthor = $comment->getAuthor();
 

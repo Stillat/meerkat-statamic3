@@ -2,8 +2,6 @@
 
 namespace Stillat\Meerkat\Exceptions;
 
-use Stillat\Meerkat\Core\Exceptions\MeerkatCoreException;
-
 /**
  * Class RejectSubmissionException
  *

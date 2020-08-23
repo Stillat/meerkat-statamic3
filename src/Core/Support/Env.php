@@ -2,6 +2,14 @@
 
 namespace Stillat\Meerkat\Core\Support;
 
+/**
+ * Class Env
+ *
+ * Provides information related to the execution environment and server.
+ *
+ * @package Stillat\Meerkat\Core\Support
+ * @since 2.0.0
+ */
 class Env
 {
 

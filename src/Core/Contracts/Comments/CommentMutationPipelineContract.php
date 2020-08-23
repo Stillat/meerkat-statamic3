@@ -40,4 +40,33 @@ interface CommentMutationPipelineContract extends MutationPipelineContract
     const MUTATION_UNAPPROVING = 'comments.unapproving';
     const MUTATION_UNAPPROVED = 'comments.unapproved';
 
+    public function removing(CommentContract $comment, $callback);
+    public function removed(CommentContract $comment, $callback);
+
+    /**
+     * @param CommentContract $comment
+     * @param $callback
+     * @return CommentContract
+     */
+    public function creating(CommentContract $comment, $callback);
+    public function created(CommentContract $comment, $callback);
+
+    public function updating(CommentContract $comment, $callback);
+    public function updated(CommentContract $comment, $callback);
+
+    public function replying(CommentContract $comment, $callback);
+    public function replied(CommentContract $comment, $callback);
+
+    public function markingAsSpam(CommentContract $comment, $callback);
+    public function markedAsSpam(CommentContract $comment, $callback);
+
+    public function markingAsHam(CommentContract $comment, $callback);
+    public function markedAsHam(CommentContract $comment, $callback);
+
+    public function approving(CommentContract $comment, $callback);
+    public function approved(CommentContract $comment, $callback);
+
+    public function unapproving(CommentContract $comment, $callback);
+    public function unapproved(CommentContract $comment, $callback);
+
 }

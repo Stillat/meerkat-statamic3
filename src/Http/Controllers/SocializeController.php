@@ -9,6 +9,7 @@ use Statamic\Support\Arr;
 use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
+use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
 use Stillat\Meerkat\Exceptions\FormValidationException;
 use Stillat\Meerkat\Exceptions\RejectSubmissionException;
 use Stillat\Meerkat\Forms\FormHandler;
@@ -27,6 +28,10 @@ class SocializeController extends Controller
 {
     use InteractsWithInput;
 
+    const KEY_SUBMISSION = 'submission';
+    const KEY_ERRORS = 'errors';
+    const KEY_SUCCESS = 'success';
+
     /**
      * The form handler instance.
      *
@@ -42,16 +47,22 @@ class SocializeController extends Controller
     private $coreConfig = null;
 
     /**
+     * @var ThreadManagerContract
+     */
+    private $manager = null;
+
+    /**
      * Indicates if the currently authenticated user is submitting the current comment.
      *
      * @var bool
      */
     private $currentUserIsPublishingComment = false;
 
-    public function __construct(FormHandler $handler, Configuration $coreConfig)
+    public function __construct(FormHandler $handler, Configuration $coreConfig, ThreadManagerContract $manager)
     {
         $this->formHandler = $handler;
         $this->coreConfig = $coreConfig;
+        $this->manager = $manager;
     }
 
     /**
@@ -61,9 +72,16 @@ class SocializeController extends Controller
      */
     public function postSocialize()
     {
-        // TODO: Check if comments are disabled!
-
         $this->formHandler->setData(collect(request()->all()));
+
+        if ($this->manager->areCommentsEnabledForContext($this->formHandler->getThreadId()) === false) {
+            return $this->formFailure(
+                $this->formHandler->getSubmissionParameters(),
+                [], // TODO: Better error.
+                $this->formHandler->blueprintName()
+            );
+        }
+
         $commentData = [];
 
         try {
@@ -71,20 +89,20 @@ class SocializeController extends Controller
 
             $eventResults = $this->runStatamicCreatingEvent($this->formHandler->getSubmissionData());
 
-            if (array_key_exists('errors', $eventResults)) {
-                if (is_array($eventResults['errors']) && count($eventResults['errors']) > 0) {
+            if (array_key_exists(self::KEY_ERRORS, $eventResults)) {
+                if (is_array($eventResults[self::KEY_ERRORS]) && count($eventResults[self::KEY_ERRORS]) > 0) {
                     return $this->formFailure(
                         $this->formHandler->getSubmissionParameters(),
-                        $eventResults['errors'],
+                        $eventResults[self::KEY_ERRORS],
                         $this->formHandler->blueprintName()
                     );
                 }
             }
 
-            if (array_key_exists('submission', $eventResults)) {
-                if ($eventResults['submission'] !== null) {
-                    if ($eventResults['submission'] instanceof MockSubmission) {
-                        $commentData = $eventResults['submission']->data();
+            if (array_key_exists(self::KEY_SUBMISSION, $eventResults)) {
+                if ($eventResults[self::KEY_SUBMISSION] !== null) {
+                    if ($eventResults[self::KEY_SUBMISSION] instanceof MockSubmission) {
+                        $commentData = $eventResults[self::KEY_SUBMISSION]->data();
                     }
                 }
             }
@@ -101,7 +119,6 @@ class SocializeController extends Controller
                 $this->formHandler->blueprintName()
             );
         }
-
 
         $commentData = $this->fillWithRequestData($commentData);
         $commentData = $this->fillWithUserData($commentData);
@@ -135,6 +152,24 @@ class SocializeController extends Controller
         );
     }
 
+    private function formFailure($params, $errors, $meerkatBlueprint)
+    {
+        if (request()->ajax()) {
+            return response([
+                self::KEY_ERRORS => (new MessageBag($errors))->all(),
+            ], 400);
+        }
+
+        $redirect = Arr::get($params, MeerkatForm::KEY_PARAM_ERROR_REDIRECT);
+
+        $response = $redirect ? redirect($redirect) : back();
+
+        return $response->withInput()->withErrors(
+            $errors,
+            MeerkatForm::getFormSessionHandle($meerkatBlueprint)
+        );
+    }
+
     /**
      * Runs Statamic's form submission creating event to allow
      * other Statamic addon's to intercept the submission.
@@ -156,44 +191,26 @@ class SocializeController extends Controller
                 continue;
             }
 
-            if ($responseErrors = array_get($response, 'errors')) {
+            if ($responseErrors = array_get($response, self::KEY_ERRORS)) {
                 $errors = array_merge($responseErrors, $errors);
                 continue;
             }
 
-            $mockedSubmission = array_get($response, 'submission');
+            $mockedSubmission = array_get($response, self::KEY_SUBMISSION);
         }
 
         return [
-            'errors' => $errors,
-            'submission' => $mockedSubmission
+            self::KEY_ERRORS => $errors,
+            self::KEY_SUBMISSION => $mockedSubmission
         ];
-    }
-
-    private function formFailure($params, $errors, $meerkatBlueprint)
-    {
-        if (request()->ajax()) {
-            return response([
-                'errors' => (new MessageBag($errors))->all(),
-            ], 400);
-        }
-
-        $redirect = Arr::get($params, MeerkatForm::KEY_PARAM_ERROR_REDIRECT);
-
-        $response = $redirect ? redirect($redirect) : back();
-
-        return $response->withInput()->withErrors(
-            $errors,
-            MeerkatForm::getFormSessionHandle($meerkatBlueprint)
-        );
     }
 
     private function formSuccess($params, $data, $meerkatBlueprint)
     {
         if (request()->ajax()) {
             return response([
-                'success' => true,
-                'submission' => $data
+                self::KEY_SUCCESS => true,
+                self::KEY_SUBMISSION => $data
             ]);
         }
 
@@ -205,7 +222,7 @@ class SocializeController extends Controller
         $mockSubmission->data($data);
 
         session()->flash(MeerkatForm::getFormSessionHandle($meerkatBlueprint) . '.success', __('Submission successful.'));
-        session()->flash('submission', $mockSubmission);
+        session()->flash(self::KEY_SUBMISSION, $mockSubmission);
 
         return $response;
     }
@@ -243,9 +260,11 @@ class SocializeController extends Controller
             return $data;
         }
 
-        if ($data[AuthorContract::KEY_EMAIL_ADDRESS] === $currentUser->email()) {
-            $this->currentUserIsPublishingComment = true;
-            $data[AuthorContract::AUTHENTICATED_USER_ID] = $currentUser->getAuthIdentifier();
+        if (method_exists($currentUser, 'email')) {
+            if ($data[AuthorContract::KEY_EMAIL_ADDRESS] === $currentUser->email()) {
+                $this->currentUserIsPublishingComment = true;
+                $data[AuthorContract::AUTHENTICATED_USER_ID] = $currentUser->getAuthIdentifier();
+            }
         }
 
         return $data;

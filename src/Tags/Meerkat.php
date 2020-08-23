@@ -130,6 +130,7 @@ class Meerkat extends Tags
      */
     public function commentsEnabled()
     {
+        // TODO: Make this value available as a meta property in all tag contexts.
         return $this->threadManager->areCommentsEnabledForContext($this->getHiddenContext());
     }
 
@@ -171,7 +172,7 @@ class Meerkat extends Tags
      *
      * @return string|string[]
      * @throws BindingResolutionException
-     * @throws FilterException
+     * @throws TemplateTagsException
      */
     public function responses()
     {

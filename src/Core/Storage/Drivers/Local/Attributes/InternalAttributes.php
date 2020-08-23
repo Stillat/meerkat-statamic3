@@ -55,7 +55,9 @@ class InternalAttributes
                 CommentContract::INTERNAL_RESPONSE_ID,
                 CommentContract::INTERNAL_RESPONSE_CONTEXT,
                 CommentContract::INTERNAL_RESPONSE_HAS_REPLIES,
-                CommentContract::INTERNAL_STRUCTURE_NEEDS_MIGRATION
+                CommentContract::INTERNAL_STRUCTURE_NEEDS_MIGRATION,
+                CommentContract::INTERNAL_STRUCTURE_HAS_REPLIES,
+                CommentContract::INTERNAL_ABSOLUTE_ROOT,
             ];
         }
 

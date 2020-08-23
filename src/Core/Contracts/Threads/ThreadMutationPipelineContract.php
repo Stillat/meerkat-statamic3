@@ -33,4 +33,15 @@ interface ThreadMutationPipelineContract extends MutationPipelineContract
      */
     public function resolving(ThreadContextContract $thread, $callback);
 
+    public function removing(ThreadContract $thread, $callback);
+    public function removed(ThreadContextContract $threadContext, $callback);
+
+    public function softDeleted(ThreadContextContract $threadContext, $callback);
+
+    public function creating(ThreadContextContract $threadContext, $callback);
+    public function created(ThreadContract $thread, $callback);
+
+    public function moving(ThreadContract $thread, $callback);
+    public function moved(ThreadContract $thread, $callback);
+
 }

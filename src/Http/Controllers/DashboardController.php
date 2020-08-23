@@ -4,6 +4,8 @@ namespace Stillat\Meerkat\Http\Controllers;
 
 use Statamic\Http\Controllers\CP\CpController;
 use Stillat\Meerkat\Concerns\UsesTranslations;
+use Stillat\Meerkat\Core\Comments\Comment;
+use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Data\DataSetContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
@@ -19,7 +21,20 @@ class DashboardController extends CpController
 
     public function index(CommentStorageManagerContract $comments, ThreadManagerContract $threads, DataQuery $query, CommentFilterManager $filters)
     {
+        $comment1 = Comment::find('1597524673');
 
+        $comment = Comment::find('1597524673');
+
+        $comment->removeDataAttribute('asdf');
+        $comment->setDataAttribute(CommentContract::KEY_PUBLISHED, true);
+        // $comment->setDataAttribute('asdf', 'asdfasdf');
+        $comment->save();
+
+        $comment2 = Comment::find('1597524673');
+
+        dd($comment1, $comment2);
+
+/**
         $thread = Thread::find('7ac0bdda-1b84-45f8-ac52-2575dd7e8251');
         $builder = new PredicateBuilder();
         $context = new RuntimeContext();
@@ -29,7 +44,7 @@ class DashboardController extends CpController
 
         dd($thread->getComments());
 
-        /**
+  */      /**
          *
          * ->nameAllGroups('date_groups')
          *

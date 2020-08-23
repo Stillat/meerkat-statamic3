@@ -56,4 +56,23 @@ class TransientCommentAttributes
         return self::$transientPropertyCache;
     }
 
+    /**
+     * Removes any transient properties from the supplied dataset.
+     *
+     * @param array $data The data to filter.
+     * @return array
+     */
+    public static function filter($data)
+    {
+        $transientProperties = self::getTransientProperties();
+
+        foreach ($transientProperties as $property) {
+            if (array_key_exists($property, $data)) {
+                unset($data[$property]);
+            }
+        }
+
+        return $data;
+    }
+
 }

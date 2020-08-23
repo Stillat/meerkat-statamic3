@@ -28,8 +28,17 @@ abstract class EventPipeline implements MutationPipelineContract
     public function mutate($request, &$object, $callback)
     {
         foreach ($this->emitEvent($request, $object) as $pipelineStop) {
-            $callback($pipelineStop);
+            if ($callback !== null) {
+                $callback($pipelineStop);
+            }
         }
+    }
+
+    public function delayMutate($request, $object, $callback)
+    {
+        app()->terminating(function () use ($request, &$object, $callback) {
+            $this->mutate($request, $object, $callback);
+        });
     }
 
 }

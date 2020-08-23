@@ -3,27 +3,35 @@
 namespace Stillat\Meerkat\Core\Storage\Drivers\Local;
 
 use DateTime;
+use InvalidArgumentException;
+use Stillat\Meerkat\Core\Comments\CleanableCommentAttributes;
 use Stillat\Meerkat\Core\Comments\Comment;
+use Stillat\Meerkat\Core\Comments\TransientCommentAttributes;
 use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentFactoryContract;
+use Stillat\Meerkat\Core\Contracts\Comments\CommentMutationPipelineContract;
+use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\YAMLParserContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\StructureResolverInterface;
+use Stillat\Meerkat\Core\Data\Mutations\AttributeDiff;
+use Stillat\Meerkat\Core\Data\Mutations\ChangeSet;
 use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Paths\PathUtilities;
 use Stillat\Meerkat\Core\Storage\Data\CommentAuthorRetriever;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\Attributes\InternalAttributes;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\Attributes\PrototypeAttributes;
+use Stillat\Meerkat\Core\Storage\Drivers\Local\Attributes\PrototypeAttributeValidator;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\Attributes\TruthyAttributes;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\Indexing\ShadowIndex;
 use Stillat\Meerkat\Core\Storage\Paths;
+use Stillat\Meerkat\Core\Storage\Validators\PathPrivilegeValidator;
 use Stillat\Meerkat\Core\Support\Str;
 use Stillat\Meerkat\Core\Support\TypeConversions;
 use Stillat\Meerkat\Core\Threads\ThreadHierarchy;
 use Stillat\Meerkat\Core\ValidationResult;
-use Stillat\Meerkat\Core\Validators\PathPrivilegeValidator;
 
 /**
  * Class LocalCommentStorageManager
@@ -175,16 +183,29 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      */
     private $commentFactory = null;
 
+    /**
+     * The CommentMutationPipelineContract implementation instance.
+     *
+     * @var CommentMutationPipelineContract
+     */
+    private $commentPipeline = null;
+
+    private $identityManager = null;
+
     public function __construct(
         Configuration $config,
         YAMLParserContract $yamlParser,
         MarkdownParserContract $markdownParser,
         CommentAuthorRetriever $authorRetriever,
-        CommentFactoryContract $commentFactory)
+        CommentFactoryContract $commentFactory,
+        CommentMutationPipelineContract $commentPipeline,
+        IdentityManagerContract $identityManager)
     {
         $this->commentShadowIndex = new ShadowIndex($config);
         $this->commentStructureResolver = new LocalCommentStructureResolver();
         $this->authorRetriever = $authorRetriever;
+        $this->commentPipeline = $commentPipeline;
+        $this->identityManager = $identityManager;
         $this->config = $config;
         $this->paths = new Paths($this->config);
 
@@ -584,6 +605,11 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         ]);
     }
 
+    /**
+     * Returns access to the internal Paths instance.
+     *
+     * @return Paths|null
+     */
     public function getPaths()
     {
         return $this->paths;
@@ -594,30 +620,201 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      *
      * @param CommentContract $comment The comment to save.
      * @return bool
+     * @throws InvalidArgumentException
      */
     public function save(CommentContract $comment)
     {
-        $storableAttributes = $comment->getStorableAttributes();
+        if ($comment === null) {
+            return false;
+        }
 
+        if ($comment->getIsNew() === false) {
+            return $this->update($comment);
+        }
 
-        foreach ($this->internalElements as $attribute) {
-            if (array_key_exists($attribute, $storableAttributes)) {
-                unset($storableAttributes[$attribute]);
+        PrototypeAttributeValidator::validateAttributes($comment->getDataAttributes());
+
+        $originalId = $comment->getId();
+
+        // General creating pipeline.
+        $pipelineResult = $this->commentPipeline->creating($comment, null);
+
+        if ($pipelineResult !== null && $pipelineResult instanceof CommentContract) {
+            $pipelineResult->setDataAttribute(CommentContract::KEY_ID, $originalId);
+
+            $comment = $pipelineResult;
+        }
+
+        // Spam/ham pipeline.
+        if ($comment->hasDataAttribute(CommentContract::KEY_SPAM)) {
+            $pipelineResult = null;
+
+            if ($comment->isSpam()) {
+                $pipelineResult = $this->commentPipeline->markingAsSpam($comment, null);
+            } else {
+                $pipelineResult = $this->commentPipeline->markingAsHam($comment, null);
+            }
+
+            if ($pipelineResult !== null && $pipelineResult instanceof CommentContract) {
+                $pipelineResult->setDataAttribute(CommentContract::KEY_ID, $originalId);
+
+                $comment = $pipelineResult;
             }
         }
 
-        $storagePath = $comment->getVirtualPath();
+        // Approving/un-approving pipeline.
+        if ($comment->hasDataAttribute(CommentContract::KEY_PUBLISHED)) {
+            $pipelineResult = null;
 
-        $contentToSave = $this->yamlParser->toYaml($storableAttributes, $comment->getRawContent());
+            if ($comment->published()) {
+                $pipelineResult = $this->commentPipeline->approving($comment, null);
+            } else {
+                $pipelineResult = $this->commentPipeline->unapproving($comment, null);
+            }
 
-        $directoryName = dirname($storagePath);
+            if ($pipelineResult !== null && $pipelineResult instanceof Comment) {
+                $pipelineResult->setDataAttribute(CommentContract::KEY_ID, $originalId);
 
-
-        if (!file_exists($directoryName)) {
-            mkdir($directoryName, Paths::DIRECTORY_PERMISSIONS, true);
+                $comment = $pipelineResult;
+            }
         }
 
-        return file_put_contents($comment->getVirtualPath(), $contentToSave);
+        $didCommentSave = $this->persistComment($comment);
+
+        if ($didCommentSave === true) {
+            $this->commentPipeline->created($comment, false);
+
+            if ($comment->hasDataAttribute(CommentContract::KEY_SPAM)) {
+                if ($comment->isSpam()) {
+                    $this->commentPipeline->markedAsSpam($comment, null);
+                } else {
+                    $this->commentPipeline->markedAsHam($comment, null);
+                }
+            }
+
+            if ($comment->hasDataAttribute(CommentContract::KEY_PUBLISHED)) {
+                if ($comment->published()) {
+                    $this->commentPipeline->approved($comment, null);
+                } else {
+                    $this->commentPipeline->unapproved($comment, null);
+                }
+            }
+
+            if ($comment->isReply()) {
+                $this->commentPipeline->replied($comment, null);
+            }
+
+        }
+
+        return $didCommentSave;
+    }
+
+    /**
+     * Attempts to update the comment data.
+     *
+     * @param CommentContract $comment The comment to save.
+     * @return bool
+     */
+    public function update(CommentContract $comment)
+    {
+        if ($comment === null) {
+            return false;
+        }
+
+        if ($comment->getIsNew() === true) {
+            return $this->save($comment);
+        }
+
+        PrototypeAttributeValidator::validateAttributes($comment->getDataAttributes());
+        $changeSet = $this->getMutationChangeSet($comment);
+
+        $originalId = $comment->getId();
+
+        // General updating pipeline.
+        $pipelineResult = $this->commentPipeline->updating($comment, null);
+
+        if ($pipelineResult !== null && $pipelineResult instanceof CommentContract) {
+            $pipelineResult->setDataAttribute(CommentContract::KEY_ID, $originalId);
+
+            $comment = $pipelineResult;
+        }
+
+        // Marking as spam/ham.
+        if ($changeSet->wasAttributeMutated(CommentContract::KEY_SPAM)) {
+            $pipelineResult = null;
+
+            if ($comment->isSpam()) {
+                $pipelineResult = $this->commentPipeline->markingAsSpam($comment, null);
+            } else {
+                $pipelineResult = $this->commentPipeline->markingAsHam($comment, null);
+            }
+
+            if ($pipelineResult !== null && $pipelineResult instanceof CommentContract) {
+                $pipelineResult->setDataAttribute(CommentContract::KEY_ID, $originalId);
+
+                $comment = $pipelineResult;
+            }
+        }
+
+        // Approving pipeline.
+        if ($changeSet->wasAttributeMutated(CommentContract::KEY_PUBLISHED)) {
+            $pipelineResult = null;
+
+            if ($comment->published()) {
+                $pipelineResult = $this->commentPipeline->approving($comment, null);
+            } else {
+                $pipelineResult = $this->commentPipeline->unapproving($comment, null);
+            }
+
+            if ($pipelineResult !== null && $pipelineResult instanceof CommentContract) {
+                $pipelineResult->setDataAttribute(CommentContract::KEY_ID, $originalId);
+
+                $comment = $pipelineResult;
+            }
+        }
+
+        $didCommentSave = $this->persistComment($comment);
+
+        if ($didCommentSave === true) {
+            $this->commentPipeline->updated($comment, false);
+
+            if ($changeSet->wasAttributeMutated(CommentContract::KEY_SPAM)) {
+                if ($comment->isSpam()) {
+                    $this->commentPipeline->markedAsSpam($comment, null);
+                } else {
+                    $this->commentPipeline->markedAsHam($comment, null);
+                }
+            }
+
+            if ($changeSet->wasAttributeMutated(CommentContract::KEY_PUBLISHED)) {
+                if ($comment->published()) {
+                    $this->commentPipeline->approved($comment, null);
+                } else {
+                    $this->commentPipeline->unapproved($comment, null);
+                }
+            }
+        }
+
+        return $didCommentSave;
+    }
+
+    /**
+     * Retrieves a list of all changes made to the comment.
+     *
+     * @param CommentContract $comment The comment to check.
+     * @return ChangeSet
+     */
+    public function getMutationChangeSet(CommentContract $comment)
+    {
+        $persistedComment = $this->findById($comment->getId());
+        $persistedStorable = $this->cleanCommentStorableData($persistedComment->getStorableAttributes());
+        $currentStorable = $this->cleanCommentStorableData($comment->getStorableAttributes());
+
+        $changeSet = AttributeDiff::analyze($persistedStorable, $currentStorable);
+
+        $changeSet->setIdentity($this->identityManager->getIdentityContext());
+
+        return $changeSet;
     }
 
     /**
@@ -675,6 +872,49 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     }
 
     /**
+     * Cleans the storable comment data.
+     *
+     * @param array $data The data to clean.
+     * @return array
+     */
+    private function cleanCommentStorableData($data)
+    {
+        foreach ($this->internalElements as $attribute) {
+            if (array_key_exists($attribute, $data)) {
+                unset($data[$attribute]);
+            }
+        }
+
+        $data = TransientCommentAttributes::filter($data);
+        $data = CleanableCommentAttributes::clean($data);
+
+        return $data;
+    }
+
+    /**
+     * Attempts to persist the comment data to disk.
+     *
+     * @param CommentContract $comment The comment to save.
+     * @return bool
+     */
+    private function persistComment(CommentContract $comment)
+    {
+        $storableAttributes = $comment->getStorableAttributes();
+
+        $storableAttributes = $this->cleanCommentStorableData($storableAttributes);
+
+        $storagePath = $comment->getVirtualPath();
+        $contentToSave = $this->yamlParser->toYaml($storableAttributes, $comment->getRawContent());
+        $directoryName = dirname($storagePath);
+
+        if (!file_exists($directoryName)) {
+            mkdir($directoryName, Paths::DIRECTORY_PERMISSIONS, true);
+        }
+
+        return file_put_contents($storagePath, $contentToSave);
+    }
+
+    /**
      * Generates a storage replies for the provided identifiers.
      *
      * @param string $parentId The parent comment's identifier.
@@ -699,18 +939,6 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             $childId,
             CommentContract::COMMENT_FILENAME
         ]);
-    }
-
-    /**
-     * Attempts to update the comment data.
-     *
-     * @param CommentContract $comment The comment to save.
-     * @return bool
-     */
-    public function update(CommentContract $comment)
-    {
-        // TODO: Implement update() method.
-        return false;
     }
 
     /**
@@ -1003,6 +1231,158 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         }
 
         return self::$relatedPathCache[$commentId];
+    }
+
+    /**
+     * Attempts to update the comment's spam status.
+     *
+     * @param CommentContract $comment The comment to update.
+     * @param bool $isSpam Whether or not the comment is spam.
+     * @return bool
+     */
+    public function setSpamStatus(CommentContract $comment, $isSpam)
+    {
+        return $this->setSpamStatusById($comment->getId(), $isSpam);
+    }
+
+    /**
+     * Attempts to update the comment's spam status.
+     *
+     * @param string $commentId The comment's identifier.
+     * @param bool $isSpam Whether or not the comment is spam.
+     * @return bool
+     */
+    public function setSpamStatusById($commentId, $isSpam)
+    {
+        $comment = $this->findById($commentId);
+
+        if ($comment === null) {
+            return false;
+        }
+
+        $comment->setDataAttribute(CommentContract::KEY_SPAM, $$isSpam);
+
+        return $this->update($comment);
+    }
+
+    /**
+     * Attempts to mark the comment as spam.
+     *
+     * @param CommentContract $comment The comment to update.
+     * @return bool
+     */
+    public function setIsSpam(CommentContract $comment)
+    {
+        return $this->setIsSpamById($comment->getId());
+    }
+
+    /**
+     * Attempts to mark the comment as spam.
+     *
+     * @param string $commentId The comment's identifier.
+     * @return bool
+     */
+    public function setIsSpamById($commentId)
+    {
+        return $this->setSpamStatusById($commentId, true);
+    }
+
+    /**
+     * Attempts to mark the comment as not-spam.
+     *
+     * @param CommentContract $comment The comment to update.
+     * @return bool
+     */
+    public function setIsHam(CommentContract $comment)
+    {
+        return $this->setIsHamById($comment->getId());
+    }
+
+    /**
+     * Attempts to mark the comment as not-spam.
+     *
+     * @param string $commentId The comment's identifier.
+     * @return bool
+     */
+    public function setIsHamById($commentId)
+    {
+        return $this->setSpamStatusById($commentId, false);
+    }
+
+    /**
+     * Attempts to update the comment's published/approved status.
+     *
+     * @param CommentContract $comment The comment to update.
+     * @param bool $isApproved Whether the comment is "published".
+     * @return bool
+     */
+    public function setApprovedStatus(CommentContract $comment, $isApproved)
+    {
+        return $this->setApprovedStatusById($comment->getId(), $isApproved);
+    }
+
+    /**
+     * Attempts to update the comment's published/approved status.
+     *
+     * @param string $commentId The comment's identifier.
+     * @param bool $isApproved Whether the comment is "published".
+     * @return bool
+     */
+    public function setApprovedStatusById($commentId, $isApproved)
+    {
+        $comment = $this->findById($commentId);
+
+        if ($comment === null) {
+            return false;
+        }
+
+        $comment->setDataAttribute(CommentContract::KEY_PUBLISHED, $isApproved);
+
+        return $this->update($comment);
+    }
+
+    /**
+     * Attempts to mark the comment as approved/published.
+     *
+     * @param CommentContract $comment The comment to update.
+     * @return bool
+     */
+    public function setIsApproved(CommentContract $comment)
+    {
+        return $this->setIsNotApprovedById($comment->getId());
+    }
+
+    /**
+     * Attempts to mark the comment as un-approved/not-published.
+     *
+     * @param string $commentId The comment's identifier.
+     * @return bool
+     */
+    public function setIsNotApprovedById($commentId)
+    {
+        return $this->setApprovedStatusById($commentId, false);
+    }
+
+    /**
+     * Attempts to mark the comment as approved/published.
+     *
+     * @param string $commentId The comment's identifier.
+     * @return bool
+     */
+    public function setIsApprovedById($commentId)
+    {
+        return $this->setApprovedStatusById($commentId, true);
+    }
+
+    /**
+     * Attempts to mark the comment as un-approved/not-published.
+     *
+     * @param CommentContract $comment The comment to update.
+     * @return bool
+     */
+    public function setIsNotApproved(CommentContract $comment)
+    {
+        return $this->setIsNotApprovedById($comment->getId());
     }
 
 }

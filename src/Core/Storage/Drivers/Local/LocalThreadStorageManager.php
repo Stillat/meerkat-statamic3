@@ -21,7 +21,7 @@ use Stillat\Meerkat\Core\Threads\Thread;
 use Stillat\Meerkat\Core\Threads\ThreadHierarchy;
 use Stillat\Meerkat\Core\Threads\ThreadMetaData;
 use Stillat\Meerkat\Core\ValidationResult;
-use Stillat\Meerkat\Core\Validators\PathPrivilegeValidator;
+use Stillat\Meerkat\Core\Storage\Validators\PathPrivilegeValidator;
 
 /**
  * Class LocalThreadStorageManager

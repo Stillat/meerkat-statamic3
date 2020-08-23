@@ -65,6 +65,8 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     const INTERNAL_RESPONSE_HAS_REPLIES = 'internal_response_has_replies';
     const INTERNAL_STRUCTURE_NEEDS_MIGRATION = 'internal_needs_structure_migration';
 
+    const INTERNAL_STRUCTURE_HAS_REPLIES = 'has_replies';
+
     /**
      * Indicates if the comment was left by an authenticated user.
      *

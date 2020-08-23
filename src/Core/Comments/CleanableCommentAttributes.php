@@ -23,6 +23,28 @@ class CleanableCommentAttributes
     protected static $attributesToClean = null;
 
     /**
+     * Cleans up internal storable data attributes.
+     *
+     * @param array $data The data to clean.
+     * @return array
+     */
+    public static function clean($data)
+    {
+        $cleanableProperties = self::getCleanableAttributes();
+
+        foreach ($data as $attributeName => $value) {
+            if (in_array($attributeName, $cleanableProperties)) {
+                $value = ltrim($value, '"\' ');
+                $value = rtrim($value, '"\' ');
+
+                $data[$attributeName] = $value;
+            }
+        }
+
+        return $data;
+    }
+
+    /**
      * Returns an array of data-attributes that should always be cleaned.
      *
      * @return array

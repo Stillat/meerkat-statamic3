@@ -13,6 +13,7 @@ use Stillat\Meerkat\Addon;
 use Stillat\Meerkat\Concerns\UsesConfig;
 use Stillat\Meerkat\Core\Comments\CommentManager;
 use Stillat\Meerkat\Core\Comments\IdRetriever;
+use Stillat\Meerkat\Core\Comments\Mutation\DelayedMutationManager;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentFactoryContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContract;
@@ -32,6 +33,8 @@ use Stillat\Meerkat\Exceptions\RejectSubmissionException;
 class FormHandler
 {
     use UsesConfig;
+
+    const CONFIG_HONEYPOT = 'publishing.honeypot';
 
     /**
      * A collection of the request data.
@@ -216,7 +219,7 @@ class FormHandler
             return Str::startsWith($key, '_') === false;
         })->all();
 
-        $honeypotField = $this->getConfig('publishing.honeypot', null);
+        $honeypotField = $this->getConfig(self::CONFIG_HONEYPOT, null);
 
         if ($honeypotField !== null && array_key_exists($honeypotField, $submissionData)) {
             unset($submissionData[$honeypotField]);
@@ -264,7 +267,8 @@ class FormHandler
 
     public function store($data)
     {
-        $data = [CommentContract::KEY_ID => time()] + $data;
+        $newCommentId = time();
+        $data = [CommentContract::KEY_ID => $newCommentId] + $data;
 
         $threadId = $this->getThreadId();
 
@@ -295,7 +299,19 @@ class FormHandler
             );
         }
 
-        return $thread->attachNewComment($this->commentFactory->makeComment($data));
+        $didSave = $thread->attachNewComment($this->commentFactory->makeComment($data));
+
+        if ($didSave) {
+            // TODO: Is this redunant with core managing this?
+            app()->terminating(function () use ($newCommentId) {
+                /** @var DelayedMutationManager $delayedMutations */
+                $delayedMutations = app(DelayedMutationManager::class);
+
+                $delayedMutations->raiseCreated($newCommentId);
+            });
+        }
+
+        return $didSave;
     }
 
     /**
@@ -303,7 +319,7 @@ class FormHandler
      *
      * @return string|null
      */
-    private function getThreadId()
+    public function getThreadId()
     {
         $params = $this->getSubmissionParameters();
 

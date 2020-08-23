@@ -70,5 +70,5 @@ interface DataObjectContract
      * @return string|null
      */
     public function getDataAttribute($key, $default = null);
-    
+
 }

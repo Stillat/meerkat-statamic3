@@ -4,6 +4,7 @@ namespace Stillat\Meerkat\Core\Storage\Drivers\Local\Attributes;
 
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
+use Stillat\Meerkat\Core\Data\Types;
 
 /**
  * Class PrototypeAttributes
@@ -23,6 +24,8 @@ class PrototypeAttributes
      */
     protected static $prototypeAttributes = null;
 
+    protected static $prototypeExpectedTypes = null;
+
     /**
      * A list of comment prototype elements when parsing comment data.
      *
@@ -35,7 +38,6 @@ class PrototypeAttributes
                 AuthorContract::KEY_NAME,
                 AuthorContract::KEY_EMAIL_ADDRESS,
                 AuthorContract::KEY_USER_IP,
-                AuthorContract::KEY_USER_AGENT,
                 CommentContract::KEY_ID,
                 CommentContract::KEY_PUBLISHED,
                 CommentContract::KEY_USER_AGENT,
@@ -48,6 +50,32 @@ class PrototypeAttributes
         }
 
         return self::$prototypeAttributes;
+    }
+
+    /**
+     * Returns a list of comment prototype expected runtime types.
+     *
+     * @return array
+     */
+    public static function getPrototypeExpectedTypes()
+    {
+        if (self::$prototypeExpectedTypes === null) {
+            self::$prototypeExpectedTypes = [
+                AuthorContract::KEY_NAME => Types::TYPE_STRING,
+                AuthorContract::KEY_EMAIL_ADDRESS => Types::TYPE_STRING,
+                AuthorContract::KEY_USER_IP => Types::TYPE_STRING,
+                AuthorContract::KEY_USER_AGENT => Types::TYPE_STRING,
+                CommentContract::KEY_ID => Types::TYPE_STRING,
+                CommentContract::KEY_PUBLISHED => Types::TYPE_BIT,
+                CommentContract::KEY_REFERRER => Types::TYPE_STRING,
+                CommentContract::KEY_IS_DELETED => Types::TYPE_BIT,
+                CommentContract::KEY_PAGE_URL => Types::TYPE_STRING,
+                CommentContract::KEY_SPAM => Types::TYPE_BIT,
+                AuthorContract::AUTHENTICATED_USER_ID => Types::TYPE_STRING
+            ];
+        }
+
+        return self::$prototypeExpectedTypes;
     }
 
 }

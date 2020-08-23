@@ -3,7 +3,6 @@
 namespace Stillat\Meerkat\Core\Comments;
 
 use DateTime;
-use Stillat\Meerkat\Core\Comments\StaticApi\ProvidesCreation;
 use Stillat\Meerkat\Core\Comments\StaticApi\ProvidesDiscovery;
 use Stillat\Meerkat\Core\Comments\StaticApi\ProvidesMutations;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
@@ -11,12 +10,13 @@ use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Search\ProvidesSearchableAttributesContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Data\Retrievers\PathThreadIdRetriever;
-use Stillat\Meerkat\Core\DataObject;
 use Stillat\Meerkat\Core\Exceptions\InconsistentCompositionException;
 use Stillat\Meerkat\Core\Parsing\UsesMarkdownParser;
 use Stillat\Meerkat\Core\Parsing\UsesYAMLParser;
 use Stillat\Meerkat\Core\Storage\Data\CommentAuthorRetriever;
 use Stillat\Meerkat\Core\Support\TypeConversions;
+use Stillat\Meerkat\Core\Comments\StaticApi\ProvidesCreation;
+use Stillat\Meerkat\Core\DataObject;
 
 /**
  * Class Comment
@@ -28,8 +28,10 @@ use Stillat\Meerkat\Core\Support\TypeConversions;
  */
 class Comment implements CommentContract, ProvidesSearchableAttributesContract
 {
-    use DataObject, UsesMarkdownParser, UsesYAMLParser,
-        ProvidesDiscovery, ProvidesMutations, ProvidesCreation;
+    use UsesMarkdownParser, UsesYAMLParser,
+        ProvidesDiscovery, ProvidesMutations, ProvidesCreation, DataObject {
+        removeDataAttribute as origRemoveDataAttribute;
+    }
 
     /**
      * The comment's parent instance, if available.
@@ -119,6 +121,13 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
      * @var null|string
      */
     private $threadId = null;
+
+    /**
+     * A collection of attributes that may have been removed before actualizing the data.
+     *
+     * @var array
+     */
+    protected $removedAttributes = [];
 
     public function __construct()
     {
@@ -545,6 +554,12 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
 
         $this->yamlParser->parseAndMerge(join('', $this->rawAttributes), $this->attributes);
 
+        foreach ($this->removedAttributes as $removedAttribute) {
+            if (array_key_exists($removedAttribute, $this->attributes)) {
+                unset($this->attributes[$removedAttribute]);
+            }
+        }
+
         $this->runTimeAttributesResolved = true;
     }
 
@@ -555,24 +570,10 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
      */
     private function getAttributesToSave()
     {
-        $cleanableProperties = CleanableCommentAttributes::getCleanableAttributes();
-        $transientProperties = TransientCommentAttributes::getTransientProperties();
         $attributes = $this->attributes;
 
-        foreach ($transientProperties as $property) {
-            if (array_key_exists($property, $attributes)) {
-                unset($attributes[$property]);
-            }
-        }
-
-        foreach ($attributes as $attributeName => $value) {
-            if (in_array($attributeName, $cleanableProperties)) {
-                $value = ltrim($value, '"\' ');
-                $value = rtrim($value, '"\' ');
-
-                $attributes[$attributeName] = $value;
-            }
-        }
+        $attributes = TransientCommentAttributes::filter($attributes);
+        $attributes = CleanableCommentAttributes::clean($attributes);
 
         return $attributes;
     }
@@ -624,6 +625,20 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
         }
 
         return $this->save();
+    }
+
+    /**
+     * Removes a data attribute with the given name.
+     *
+     * @param string $attributeName The name of the attribute to remove.
+     */
+    public function removeDataAttribute($attributeName)
+    {
+        $this->removedAttributes[] = $attributeName;
+
+        if ($this->hasDataAttribute($attributeName)) {
+            unset($this->attributes[$attributeName]);
+        }
     }
 
     /**
@@ -706,16 +721,6 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     }
 
     /**
-     * Gets the internal storage path for this comment.
-     *
-     * @return string
-     */
-    private function getStoragePath()
-    {
-        return $this->getDataAttribute(CommentContract::INTERNAL_PATH, null);
-    }
-
-    /**
      * Gets the searchable attributes of an object instance.
      *
      * @return array
@@ -733,5 +738,15 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
             CommentContract::KEY_PAGE_URL,
             CommentContract::INTERNAL_CONTENT_RAW
         ];
+    }
+
+    /**
+     * Gets the internal storage path for this comment.
+     *
+     * @return string
+     */
+    private function getStoragePath()
+    {
+        return $this->getDataAttribute(CommentContract::INTERNAL_PATH, null);
     }
 }

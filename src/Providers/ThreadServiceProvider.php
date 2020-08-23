@@ -3,12 +3,14 @@
 namespace Stillat\Meerkat\Providers;
 
 use Statamic\Statamic;
+use Stillat\Meerkat\Comments\CommentMutationPipeline;
 use Stillat\Meerkat\Comments\StatamicCommentFactory;
 use Stillat\Meerkat\Concerns\UsesConfig;
 use Stillat\Meerkat\Core\Comments\CommentManager;
 use Stillat\Meerkat\Core\Comments\CommentManagerFactory;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentFactoryContract;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentManagerContract;
+use Stillat\Meerkat\Core\Contracts\Comments\CommentMutationPipelineContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\ThreadStorageManagerContract;
@@ -101,6 +103,10 @@ class ThreadServiceProvider extends AddonServiceProvider
 
         $this->app->singleton(ThreadMutationPipelineContract::class, function ($app) {
             return $app->make(ThreadMutationPipeline::class);
+        });
+
+        $this->app->singleton(CommentMutationPipelineContract::class, function ($app) {
+            return $app->make(CommentMutationPipeline::class);
         });
 
         $this->app->singleton(ContextResolverContract::class, function ($app) {

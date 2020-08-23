@@ -10,18 +10,22 @@ use Stillat\Meerkat\Core\Contracts\Storage\ThreadStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ContextResolverContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContextContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContract;
+use Stillat\Meerkat\Core\Contracts\Threads\ThreadMutationPipelineContract;
 use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Logging\ErrorLog;
 use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
 use Stillat\Meerkat\Core\Paths\PathUtilities;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\Conversions\ThreadSoftDeleteConverter;
 use Stillat\Meerkat\Core\Storage\Paths;
+use Stillat\Meerkat\Core\Storage\Validators\PathPrivilegeValidator;
 use Stillat\Meerkat\Core\Support\Str;
 use Stillat\Meerkat\Core\Threads\Thread;
 use Stillat\Meerkat\Core\Threads\ThreadHierarchy;
 use Stillat\Meerkat\Core\Threads\ThreadMetaData;
+use Stillat\Meerkat\Core\Threads\ThreadMovingEventArgs;
+use Stillat\Meerkat\Core\Threads\ThreadRemovalEventArgs;
+use Stillat\Meerkat\Core\Threads\ThreadRestoringEventArgs;
 use Stillat\Meerkat\Core\ValidationResult;
-use Stillat\Meerkat\Core\Storage\Validators\PathPrivilegeValidator;
 
 /**
  * Class LocalThreadStorageManager
@@ -100,6 +104,13 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
     private $commentStorageManager = null;
 
     /**
+     * The ThreadMutationPipelineContract implementation instance.
+     *
+     * @var ThreadMutationPipelineContract
+     */
+    private $threadPipeline = null;
+
+    /**
      * A collection of storage directory validation results.
      *
      * @var ValidationResult
@@ -110,12 +121,14 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
         Configuration $config,
         YAMLParserContract $yamlParser,
         ContextResolverContract $contextResolver,
-        CommentStorageManagerContract $commentStorageManager)
+        CommentStorageManagerContract $commentStorageManager,
+        ThreadMutationPipelineContract $threadPipeline)
     {
         $this->meerkatConfiguration = $config;
         $this->yamlParser = $yamlParser;
         $this->contextResolver = $contextResolver;
         $this->commentStorageManager = $commentStorageManager;
+        $this->threadPipeline = $threadPipeline;
 
         // Quick alias for less typing.
         $this->storagePath = PathUtilities::normalize($this->meerkatConfiguration->storageDirectory);
@@ -152,10 +165,11 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
     /**
      * Attempts to retrieve all comment threads.
      *
-     * @param false $withTrashed Whether to include soft deleted threads.
+     * @param bool $withTrashed Whether to include soft deleted threads.
+     * @param bool $withComments Whether to include comments.
      * @return ThreadContract[]
      */
-    public function getAllThreads($withTrashed = false)
+    public function getAllThreads($withTrashed = false, $withComments = false)
     {
         if ($this->canUseDirectory === false) {
             return [];
@@ -184,7 +198,7 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
         }
 
         foreach ($threadIdsToUse as $threadId) {
-            $newThread = $this->materializeThread($threadId, false);
+            $newThread = $this->materializeThread($threadId, $withComments);
 
             $threadsToReturn[] = $newThread;
         }
@@ -385,9 +399,17 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
             }
         }
 
+        $threadContext = $this->contextResolver->findById($contextId);
+
+        $this->threadPipeline->creating($threadContext, null);
+
         $newMeta = $this->createMetaFromExistingThread($contextId);
 
-        $this->saveMetaData($contextId, $newMeta);
+        $wasSuccess = $this->saveMetaData($contextId, $newMeta);
+
+        if ($wasSuccess === true) {
+            $this->threadPipeline->created($threadContext, null);
+        }
 
         return $newMeta;
     }
@@ -532,7 +554,7 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
             return false;
         }
 
-        $targetPath = $this->storagePath . Paths::SYM_FORWARD_SEPARATOR . $contextId .Paths::SYM_FORWARD_SEPARATOR;
+        $targetPath = $this->storagePath . Paths::SYM_FORWARD_SEPARATOR . $contextId . Paths::SYM_FORWARD_SEPARATOR;
 
         if (file_exists($targetPath) == false || is_dir($targetPath) == false) {
             return false;
@@ -595,8 +617,22 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
             return false;
         }
 
-        // TODO: Need to emit the thread removal event
-        //       and handle the possibility of soft deletes.
+        $removalEventArgs = new ThreadRemovalEventArgs();
+        $removalEventArgs->threadId = $id;
+
+        $lastResult = null;
+
+        $this->threadPipeline->removing($removalEventArgs, function ($result) use (&$lastResult) {
+            if ($result !== null && $result instanceof ThreadRemovalEventArgs) {
+                $lastResult = $result;
+            }
+        });
+
+        if ($lastResult !== null && $lastResult instanceof ThreadRemovalEventArgs) {
+            if ($lastResult->shouldKeep()) {
+                return $this->softDeleteById($id);
+            }
+        }
 
         // Danger Zone: This method permanently deletes things.
         $targetPath = $this->storagePath . Paths::SYM_FORWARD_SEPARATOR . $id;
@@ -614,22 +650,9 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
             return false;
         }
 
+        $this->threadPipeline->removed($this->contextResolver->findById($id), null);
+
         return true;
-    }
-
-    /**
-     * Attempts to soft-delete the provided thread instance.
-     *
-     * @param ThreadContract $thread The thread instance.
-     * @return bool
-     */
-    public function softDelete(ThreadContract $thread)
-    {
-        $wasSoftDeleted = $this->softDeleteById($thread->getId());
-
-        $thread->setIsTrashed(true);
-
-        return $wasSoftDeleted;
     }
 
     /**
@@ -648,7 +671,13 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
             $metaData = new ThreadMetaData();
             $metaData->setIsTrashed(true);
 
-            return $this->updateMetaData($id, $metaData);
+            $wasSoftDeleted = $this->updateMetaData($id, $metaData);
+
+            if ($wasSoftDeleted) {
+                $this->threadPipeline->softDeleted($this->contextResolver->findById($id), null);
+            }
+
+            return $wasSoftDeleted;
         }
 
         return false;
@@ -712,6 +741,21 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
     }
 
     /**
+     * Attempts to soft-delete the provided thread instance.
+     *
+     * @param ThreadContract $thread The thread instance.
+     * @return bool
+     */
+    public function softDelete(ThreadContract $thread)
+    {
+        $wasSoftDeleted = $this->softDeleteById($thread->getId());
+
+        $thread->setIsTrashed(true);
+
+        return $wasSoftDeleted;
+    }
+
+    /**
      * Attempts to move comments from one thread to another thread.
      *
      * @param string $sourceThreadId The identifier of the thread to move data from.
@@ -728,6 +772,24 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
             return false;
         }
 
+        $eventArgs = new ThreadMovingEventArgs();
+        $eventArgs->sourceThreadId = $sourceThreadId;
+        $eventArgs->targetThreadId = $targetThreadId;
+
+        $lastResult = null;
+
+        $this->threadPipeline->moving($eventArgs, function ($result) use (&$lastResult) {
+            if ($result !== null && $result instanceof ThreadMovingEventArgs) {
+                $lastResult = $result;
+            }
+        });
+
+        if ($lastResult !== null && $lastResult instanceof ThreadMovingEventArgs) {
+            if ($lastResult->shouldMove() === false) {
+                return false;
+            }
+        }
+
         $sourcePath = $this->determineVirtualPathById($sourceThreadId);
         $targetPath = $this->determineVirtualPathById($targetThreadId);
 
@@ -736,6 +798,8 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
         if (file_exists($sourcePath)) {
             return false;
         }
+
+        $this->threadPipeline->moved($this->contextResolver->findById($targetThreadId), null);
 
         return true;
     }
@@ -756,11 +820,34 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
             return false;
         }
 
+        $eventArgs = new ThreadRestoringEventArgs();
+        $eventArgs->threadId = $threadId;
+
+        $lastResult = null;
+
+        $this->threadPipeline->restoring($eventArgs, function ($result) use (&$lastResult) {
+            if ($result !== null && $result instanceof ThreadRestoringEventArgs) {
+                $lastResult = $result;
+            }
+        });
+
+        if ($lastResult !== null && $lastResult instanceof ThreadRestoringEventArgs) {
+            if ($lastResult->shouldRestore() === false) {
+                return false;
+            }
+        }
+
         if ($this->existsForContext($threadId, true)) {
             $metaData = new ThreadMetaData();
             $metaData->setIsTrashed(false);
 
-            return $this->updateMetaData($threadId, $metaData);
+            $wasRestored = $this->updateMetaData($threadId, $metaData);
+
+            if ($wasRestored === true) {
+                $this->threadPipeline->restored($this->contextResolver->findById($threadId), null);
+            }
+
+            return $wasRestored;
         }
 
         return false;

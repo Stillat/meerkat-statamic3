@@ -2,6 +2,8 @@
 
 namespace Stillat\Meerkat\Comments;
 
+use Stillat\Meerkat\Core\Comments\CommentRemovalEventArgs;
+use Stillat\Meerkat\Core\Comments\CommentRestoringEventArgs;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentMutationPipelineContract;
 use Stillat\Meerkat\EventPipeline;
@@ -33,7 +35,7 @@ class CommentMutationPipeline extends EventPipeline implements CommentMutationPi
             $comment
         ];
 
-        $this->mutate(CommentMutationPipelineContract::MUTATION_CREATED, $pipelineArgs, $callback);
+        $this->delayMutate(CommentMutationPipelineContract::MUTATION_CREATED, $pipelineArgs, $callback);
     }
 
     public function updated(CommentContract $comment, $callback)
@@ -42,66 +44,141 @@ class CommentMutationPipeline extends EventPipeline implements CommentMutationPi
             $comment
         ];
 
-        $this->mutate(CommentMutationPipelineContract::MUTATION_EDITED, $pipelineArgs, $callback);
+        $this->delayMutate(CommentMutationPipelineContract::MUTATION_EDITED, $pipelineArgs, $callback);
     }
 
-    public function removing(CommentContract $comment, $callback)
+    public function removing(CommentRemovalEventArgs $eventArgs, $callback)
     {
-        // TODO: Implement removing() method.
+        $pipelineArgs = [
+            $eventArgs
+        ];
+
+        $this->mutate(CommentMutationPipelineContract::MUTATION_REMOVING, $pipelineArgs, $callback);
     }
 
-    public function removed(CommentContract $comment, $callback)
+    public function removed($commentId, $callback)
     {
-        // TODO: Implement removed() method.
+        $pipelineArgs = [
+            $commentId
+        ];
+
+        $this->delayMutate(CommentMutationPipelineContract::MUTATION_REMOVED, $pipelineArgs, $callback);
+    }
+
+    public function softDeleted($commentId, $callback)
+    {
+        $pipelineArgs = [
+            $commentId
+        ];
+
+        $this->delayMutate(CommentMutationPipelineContract::MUTATION_SOFT_DELETED, $pipelineArgs, $callback);
     }
 
     public function replying(CommentContract $comment, $callback)
     {
-        // TODO: Implement replying() method.
+        $pipelineArgs = [
+            $comment
+        ];
+
+        $this->mutate(CommentMutationPipelineContract::MUTATION_REPLYING, $pipelineArgs, $callback);
     }
 
     public function replied(CommentContract $comment, $callback)
     {
-        // TODO: Implement replied() method.
+        $pipelineArgs = [
+            $comment
+        ];
+
+        $this->delayMutate(CommentMutationPipelineContract::MUTATION_REPLIED, $pipelineArgs, $callback);
     }
 
     public function markingAsSpam(CommentContract $comment, $callback)
     {
-        // TODO: Implement markingAsSpam() method.
+        $pipelineArgs = [
+            $comment
+        ];
+
+        $this->mutate(CommentMutationPipelineContract::MUTATION_MARKING_AS_SPAM, $pipelineArgs, $callback);
     }
 
     public function markedAsSpam(CommentContract $comment, $callback)
     {
-        // TODO: Implement markedAsSpam() method.
+        $pipelineArgs = [
+            $comment
+        ];
+
+        $this->delayMutate(CommentMutationPipelineContract::MUTATION_MARKED_AS_SPAM, $pipelineArgs, $callback);
     }
 
     public function markingAsHam(CommentContract $comment, $callback)
     {
-        // TODO: Implement markingAsHam() method.
+        $pipelineArgs = [
+            $comment
+        ];
+
+        $this->mutate(CommentMutationPipelineContract::MUTATION_MARKING_AS_HAM, $pipelineArgs, $callback);
     }
 
     public function markedAsHam(CommentContract $comment, $callback)
     {
-        // TODO: Implement markedAsHam() method.
+        $pipelineArgs = [
+            $comment
+        ];
+
+        $this->delayMutate(CommentMutationPipelineContract::MUTATION_MARKED_AS_HAM, $pipelineArgs, $callback);
     }
 
     public function approving(CommentContract $comment, $callback)
     {
-        // TODO: Implement approving() method.
+        $pipelineArgs = [
+            $comment
+        ];
+
+        $this->mutate(CommentMutationPipelineContract::MUTATION_APPROVING, $pipelineArgs, $callback);
     }
 
     public function approved(CommentContract $comment, $callback)
     {
-        // TODO: Implement approved() method.
+        $pipelineArgs = [
+            $comment
+        ];
+
+        $this->delayMutate(CommentMutationPipelineContract::MUTATION_APPROVED, $pipelineArgs, $callback);
     }
 
     public function unapproving(CommentContract $comment, $callback)
     {
-        // TODO: Implement unapproving() method.
+        $pipelineArgs = [
+            $comment
+        ];
+
+        $this->mutate(CommentMutationPipelineContract::MUTATION_UNAPPROVING, $pipelineArgs, $callback);
     }
 
     public function unapproved(CommentContract $comment, $callback)
     {
-        // TODO: Implement unapproved() method.
+        $pipelineArgs = [
+            $comment
+        ];
+
+        $this->delayMutate(CommentMutationPipelineContract::MUTATION_UNAPPROVED, $pipelineArgs, $callback);
+    }
+
+    public function restoring(CommentRestoringEventArgs $eventArgs, $callback)
+    {
+        $pipelineArgs = [
+            $eventArgs
+        ];
+
+        $this->mutate(CommentMutationPipelineContract::MUTATION_RESTORING, $pipelineArgs, $callback);
+    }
+
+    public function restored(CommentContract $comment, $callback)
+    {
+        $pipelineArgs = [
+            $comment
+        ];
+
+        $this->delayMutate(CommentMutationPipelineContract::MUTATION_RESTORED, $pipelineArgs, $callback);
     }
 }

@@ -3,6 +3,9 @@
 namespace Stillat\Meerkat\Core\Contracts\Threads;
 
 use Stillat\Meerkat\Core\Contracts\MutationPipelineContract;
+use Stillat\Meerkat\Core\Threads\ThreadRemovalEventArgs;
+use Stillat\Meerkat\Core\Threads\ThreadMovingEventArgs;
+use Stillat\Meerkat\Core\Threads\ThreadRestoringEventArgs;
 
 /**
  * Interface ThreadMutationPipelineContract
@@ -16,11 +19,13 @@ interface ThreadMutationPipelineContract extends MutationPipelineContract
 {
 
     const MUTATION_RESOLVING = 'thread.resolving';
-    const MUTATION_REMOVING = 'thread.beforeRemove';
+    const MUTATION_REMOVING = 'thread.removing';
     const MUTATION_REMOVED = 'thread.removed';
     const MUTATION_SOFT_DELETED = 'thread.softDeleted';
     const MUTATION_CREATING = 'thread.beforeCreate';
     const MUTATION_CREATED = 'thread.created';
+    const MUTATION_RESTORING = 'thread.restoring';
+    const MUTATION_RESTORED = 'thread.restored';
     const MUTATION_MOVING = 'thread.moving';
     const MUTATION_MOVED = 'thread.moved';
 
@@ -33,15 +38,18 @@ interface ThreadMutationPipelineContract extends MutationPipelineContract
      */
     public function resolving(ThreadContextContract $thread, $callback);
 
-    public function removing(ThreadContract $thread, $callback);
+    public function removing(ThreadRemovalEventArgs $eventArgs, $callback);
     public function removed(ThreadContextContract $threadContext, $callback);
 
     public function softDeleted(ThreadContextContract $threadContext, $callback);
 
     public function creating(ThreadContextContract $threadContext, $callback);
-    public function created(ThreadContract $thread, $callback);
+    public function created(ThreadContextContract $threadContext, $callback);
 
-    public function moving(ThreadContract $thread, $callback);
-    public function moved(ThreadContract $thread, $callback);
+    public function moving(ThreadMovingEventArgs $eventArgs, $callback);
+    public function moved(ThreadContextContract $thread, $callback);
+
+    public function restoring(ThreadRestoringEventArgs $eventArgs, $callback);
+    public function restored(ThreadContextContract $thread, $callback);
 
 }

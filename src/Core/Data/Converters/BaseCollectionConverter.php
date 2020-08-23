@@ -5,6 +5,7 @@ namespace Stillat\Meerkat\Core\Data\Converters;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
 use Stillat\Meerkat\Core\Exceptions\InconsistentCompositionException;
+use Stillat\Meerkat\Core\Parsing\MarkdownParserFactory;
 use Stillat\Meerkat\Core\Parsing\SanitationManagerFactory;
 use Stillat\Meerkat\Core\Threads\ContextResolverFactory;
 
@@ -112,8 +113,13 @@ class BaseCollectionConverter
             $commentArray[$datasetName] = [];
 
             // TODO: Provide "collecting hook" here?
-            // TODO: Augment with Context here.,
-            // TODO: Markdown?
+
+            if (MarkdownParserFactory::hasInstance()) {
+                $parsedContent = trim(MarkdownParserFactory::$instance->parse($comment->getRawContent()));
+
+                $comment->setDataAttribute(CommentContract::KEY_CONTENT, $parsedContent);
+                $comment->setDataAttribute(CommentContract::KEY_COMMENT_MARKDOWN, $parsedContent);
+            }
 
             if (ContextResolverFactory::hasInstance()) {
                 $threadId = $comment->getThreadId();

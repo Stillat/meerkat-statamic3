@@ -4,8 +4,15 @@ namespace Stillat\Meerkat\Core\Contracts\Threads;
 
 use Serializable;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
+use Stillat\Meerkat\Core\Contracts\Data\DataSetContract;
+use Stillat\Meerkat\Core\Contracts\Data\GroupedDataSetContract;
+use Stillat\Meerkat\Core\Contracts\Data\PagedDataSetContract;
 use Stillat\Meerkat\Core\Contracts\DataObjectContract;
 use Stillat\Meerkat\Core\Contracts\StorableContract;
+use Stillat\Meerkat\Core\Data\DataSet;
+use Stillat\Meerkat\Core\Exceptions\DataQueryException;
+use Stillat\Meerkat\Core\Exceptions\FilterException;
+use Stillat\Meerkat\Core\Exceptions\InconsistentCompositionException;
 use Stillat\Meerkat\Core\Threads\ThreadHierarchy;
 use Stillat\Meerkat\Core\Threads\ThreadMetaData;
 
@@ -198,6 +205,15 @@ interface ThreadContract extends DataObjectContract, StorableContract, Serializa
      */
     public function attachNewComment(CommentContract $comment);
 
+    /**
+     * Queries the thread's comments.
+     *
+     * @param callable $builder A callback to modify the query builder.
+     * @return array|mixed|DataSetContract|GroupedDataSetContract|PagedDataSetContract|DataSet
+     * @throws DataQueryException
+     * @throws InconsistentCompositionException
+     * @throws FilterException
+     */
     public function query(callable $builder);
 
 }

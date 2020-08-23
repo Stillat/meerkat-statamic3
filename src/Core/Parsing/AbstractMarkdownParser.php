@@ -74,9 +74,11 @@ abstract class AbstractMarkdownParser implements MarkdownParserContract
      */
     public function cleanDocument($content)
     {
-        $tagsToKeep = implode('', TypeConversions::getArray(
-            $this->configuration->getFormattingConfiguration()->tagsToKeep
-        ));
+        $tagsToKeep = '';
+
+        foreach ($this->configuration->getFormattingConfiguration()->tagsToKeep as $tag) {
+            $tagsToKeep .= '<'.$tag.'>';
+        }
 
         return strip_tags($content, $tagsToKeep);
     }

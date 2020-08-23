@@ -2,6 +2,8 @@
 
 namespace Stillat\Meerkat\Core\Contracts\Comments;
 
+use Stillat\Meerkat\Core\Comments\CommentRemovalEventArgs;
+use Stillat\Meerkat\Core\Comments\CommentRestoringEventArgs;
 use Stillat\Meerkat\Core\Contracts\MutationPipelineContract;
 
 /**
@@ -22,8 +24,11 @@ interface CommentMutationPipelineContract extends MutationPipelineContract
     /**
      * Identifies a request to remove a comment.
      */
-    const MUTATION_REMOVING = 'comments.beforeRemove';
+    const MUTATION_REMOVING = 'comments.removing';
     const MUTATION_REMOVED = 'comments.removed';
+    const MUTATION_SOFT_DELETED = 'comments.softDeleted';
+    const MUTATION_RESTORING = 'comments.restoring';
+    const MUTATION_RESTORED = 'comments.restored';
 
     const MUTATION_CREATING = 'comments.creating';
     const MUTATION_CREATED = 'comments.created';
@@ -55,8 +60,12 @@ interface CommentMutationPipelineContract extends MutationPipelineContract
     const METHOD_UNAPPROVING = 'unapproving';
     const METHOD_UNAPPROVED = 'unapproved';
 
-    public function removing(CommentContract $comment, $callback);
-    public function removed(CommentContract $comment, $callback);
+    public function removing(CommentRemovalEventArgs $eventArgs, $callback);
+    public function removed($commentId, $callback);
+    public function softDeleted($commentId, $callback);
+
+    public function restoring(CommentRestoringEventArgs $eventArgs, $callback);
+    public function restored(CommentContract $comment, $callback);
 
     /**
      * @param CommentContract $comment

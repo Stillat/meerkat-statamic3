@@ -13,7 +13,6 @@ use Stillat\Meerkat\Addon;
 use Stillat\Meerkat\Concerns\UsesConfig;
 use Stillat\Meerkat\Core\Comments\CommentManager;
 use Stillat\Meerkat\Core\Comments\IdRetriever;
-use Stillat\Meerkat\Core\Comments\Mutation\DelayedMutationManager;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentFactoryContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContract;
@@ -299,19 +298,8 @@ class FormHandler
             );
         }
 
-        $didSave = $thread->attachNewComment($this->commentFactory->makeComment($data));
+        return $thread->attachNewComment($this->commentFactory->makeComment($data));
 
-        if ($didSave) {
-            // TODO: Is this redunant with core managing this?
-            app()->terminating(function () use ($newCommentId) {
-                /** @var DelayedMutationManager $delayedMutations */
-                $delayedMutations = app(DelayedMutationManager::class);
-
-                $delayedMutations->raiseCreated($newCommentId);
-            });
-        }
-
-        return $didSave;
     }
 
     /**

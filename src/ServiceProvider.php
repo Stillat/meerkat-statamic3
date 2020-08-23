@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat;
 
+use Statamic\Statamic;
 use Stillat\Meerkat\Blueprint\BlueprintProvider;
 use Stillat\Meerkat\Concerns\UsesConfig;
 use Stillat\Meerkat\Console\Commands\MigrateCommentsCommand;
@@ -15,6 +16,7 @@ use Stillat\Meerkat\Core\Contracts\Parsing\YAMLParserContract;
 use Stillat\Meerkat\Core\FormattingConfiguration;
 use Stillat\Meerkat\Core\GuardConfiguration;
 use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
+use Stillat\Meerkat\Core\Parsing\MarkdownParserFactory;
 use Stillat\Meerkat\Parsing\MarkdownParser;
 use Stillat\Meerkat\Parsing\YAMLParser;
 use Stillat\Meerkat\Providers\AddonServiceProvider;
@@ -40,8 +42,8 @@ class ServiceProvider extends AddonServiceProvider
     protected $defer = false;
 
     protected $routes = [
-        'cp' => __DIR__.'/../routes/cp.php',
-        'web' => __DIR__.'/../routes/web.php',
+        'cp' => __DIR__ . '/../routes/cp.php',
+        'web' => __DIR__ . '/../routes/web.php',
     ];
 
     protected $commands = [
@@ -64,13 +66,6 @@ class ServiceProvider extends AddonServiceProvider
     protected $policies = [
     ];
 
-    protected function beforeBoot()
-    {
-        // Indicate which configuration entries should be
-        // made available to the Statamic installation.
-        $this->config = Configuration::getConfigurationMap();
-    }
-
     public function register()
     {
         // Registers the error log repository utilized by many Meerkat services and features.
@@ -83,14 +78,6 @@ class ServiceProvider extends AddonServiceProvider
         $this->checkIntegrationResourcesExist();
 
         parent::register();
-    }
-
-    private function checkIntegrationResourcesExist()
-    {
-        /** @var BlueprintProvider $blueprintProvider */
-        $blueprintProvider = app(BlueprintProvider::class);
-
-        $blueprintProvider->ensureExistence();
     }
 
     private function registerMeerkatCoreErrorLogRepository()
@@ -124,8 +111,8 @@ class ServiceProvider extends AddonServiceProvider
             $guardConfiguration->bannedWords = $this->getConfig('wordlist.banned', []);
 
             // Set the Akismet configuration data, if available.
-            foreach($this->getConfig('akismet', []) as $configSetting => $configValue) {
-                $guardConfiguration->set('akismet_'.$configSetting, $configValue);
+            foreach ($this->getConfig('akismet', []) as $configSetting => $configValue) {
+                $guardConfiguration->set('akismet_' . $configSetting, $configValue);
             }
 
             return $guardConfiguration;
@@ -173,7 +160,7 @@ class ServiceProvider extends AddonServiceProvider
             $globalConfiguration->indexDirectory = storage_path('meerkat/index');
 
             foreach ($this->getConfig('authors', []) as $configSetting => $configValue) {
-                $globalConfiguration->set('author_'.$configSetting, $configValue);
+                $globalConfiguration->set('author_' . $configSetting, $configValue);
             }
 
             ConfigurationFactories::$configurationInstance = $globalConfiguration;
@@ -181,7 +168,6 @@ class ServiceProvider extends AddonServiceProvider
             return $globalConfiguration;
         });
     }
-
 
     /**
      * Registers the basic Meerkat Core dependencies.
@@ -195,6 +181,25 @@ class ServiceProvider extends AddonServiceProvider
         $this->app->singleton(MarkdownParserContract::class, function ($app) {
             return $app->make(MarkdownParser::class);
         });
+
+        Statamic::booted(function () {
+            MarkdownParserFactory::$instance = app(MarkdownParserContract::class);
+        });
+    }
+
+    private function checkIntegrationResourcesExist()
+    {
+        /** @var BlueprintProvider $blueprintProvider */
+        $blueprintProvider = app(BlueprintProvider::class);
+
+        $blueprintProvider->ensureExistence();
+    }
+
+    protected function beforeBoot()
+    {
+        // Indicate which configuration entries should be
+        // made available to the Statamic installation.
+        $this->config = Configuration::getConfigurationMap();
     }
 
 }

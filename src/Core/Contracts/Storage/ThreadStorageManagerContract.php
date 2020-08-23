@@ -30,10 +30,11 @@ interface ThreadStorageManagerContract
     /**
      * Attempts to retrieve all comment threads.
      *
-     * @param false $withTrashed Whether to include soft deleted threads.
+     * @param bool $withTrashed Whether to include soft deleted threads.
+     * @param bool $withComments Whether or not to include comments.
      * @return ThreadContract[]
      */
-    public function getAllThreads($withTrashed = false);
+    public function getAllThreads($withTrashed = false, $withComments = false);
 
     /**
      * Returns the identifiers of all currently stored threads.

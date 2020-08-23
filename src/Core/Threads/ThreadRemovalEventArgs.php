@@ -18,6 +18,13 @@ class ThreadRemovalEventArgs implements DataObjectContract
     use DataObject;
 
     /**
+     * The data attributes, if any.
+     *
+     * @var array
+     */
+    protected $attributes = [];
+
+    /**
      * Indicates whether or not the thread should be permanently removed or not.
      *
      * @var boolean
@@ -25,24 +32,35 @@ class ThreadRemovalEventArgs implements DataObjectContract
     protected $doSoftDelete = false;
 
     /**
+     * The thread's string identifier.
+     *
+     * @var null|string
+     */
+    public $threadId = null;
+
+    /**
      * Sets an internal flag indicating that the thread should be hidden,
      * but not completely removed from the underlying storage system.
      *
-     * @return void
+     * @return ThreadRemovalEventArgs
      */
     public function keep()
     {
         $this->doSoftDelete = true;
+
+        return $this;
     }
 
     /**
      * Sets an internal flag indicating that the thread should be completely removed.
      *
-     * @return void
+     * @return ThreadRemovalEventArgs
      */
     public function deletePermanently()
     {
         $this->doSoftDelete = false;
+
+        return $this;
     }
 
     /**

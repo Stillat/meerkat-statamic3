@@ -5,6 +5,8 @@ namespace Stillat\Meerkat\Core\Comments;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
+use Stillat\Meerkat\Core\Data\DataQuery;
+use Stillat\Meerkat\Core\Threads\ThreadManagerFactory;
 
 /**
  * Class CommentManager
@@ -68,9 +70,30 @@ class CommentManager implements CommentManagerContract
         return $comment;
     }
 
+    /**
+     * Attempts to retrieve all comments.
+     *
+     * @param bool $withTrashed Indicates if soft-deleted comments should included.
+     * @return CommentContract[]
+     */
     public function getAll($withTrashed = false)
     {
-        // TODO: Implement getAll() method.
+        if (ThreadManagerFactory::hasInstance()) {
+            $threads = ThreadManagerFactory::$instance->getAllThreads(false, true);
+            $commentsToReturn = [];
+
+            foreach ($threads as $thread) {
+                $result = $thread->query(function (DataQuery $q) use ($withTrashed) {
+                    return $q->withTrashed($withTrashed);
+                });
+
+                $commentsToReturn = array_merge($commentsToReturn, $result->flattenDataset());
+            }
+
+            return $commentsToReturn;
+        }
+
+        return [];
     }
 
     /**
@@ -94,8 +117,7 @@ class CommentManager implements CommentManagerContract
      */
     public function remove($comment)
     {
-        // TODO: Implement remove() method.
-        return null;
+        return $this->removeById($comment->getId());
     }
 
     /**
@@ -107,8 +129,7 @@ class CommentManager implements CommentManagerContract
      */
     public function removeById($id)
     {
-        // TODO: Implement removeById() method.
-        return null;
+        return $this->commentStorageManager->removeById($id);
     }
 
     /**
@@ -134,4 +155,5 @@ class CommentManager implements CommentManagerContract
     {
         return $this->commentStorageManager->getPathById($id);
     }
+
 }

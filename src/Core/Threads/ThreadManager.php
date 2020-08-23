@@ -88,11 +88,12 @@ class ThreadManager implements ThreadManagerContract
      * Attempts to locate all threads.
      *
      * @param bool $includeTrashed Whether to include soft-deleted threads.
+     * @param bool $includeComments Whether to include comments.
      * @return ThreadContract[]
      */
-    public function getAllThreads($includeTrashed = false)
+    public function getAllThreads($includeTrashed = false, $includeComments = false)
     {
-        return $this->threadStorageManager->getAllThreads($includeTrashed);
+        return $this->threadStorageManager->getAllThreads($includeTrashed, $includeComments);
     }
 
     /**

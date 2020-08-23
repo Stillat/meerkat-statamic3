@@ -527,6 +527,31 @@ class DataQuery
     }
 
     /**
+     * Indicates if soft deleted comments shbould be part of the result set.
+     *
+     * @param bool $trashed If false, soft deleted comments will be removed.
+     * @return $this
+     */
+    public function withTrashed($trashed = false)
+    {
+        $filterToApply = 'is:deleted(false)';
+
+        if ($trashed === true) {
+            $filterToApply = null;
+        }
+
+        if ($filterToApply !== null) {
+            if (count($this->filters) > 0) {
+                return $this->thenFilterBy($filterToApply);
+            } else {
+                return $this->filterBy($filterToApply);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * Runs all filters, queries, and sorting operations and returns the dataset.
      *
      * @param CommentContract[] $data

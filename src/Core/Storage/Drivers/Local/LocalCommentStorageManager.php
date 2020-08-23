@@ -6,6 +6,8 @@ use DateTime;
 use InvalidArgumentException;
 use Stillat\Meerkat\Core\Comments\CleanableCommentAttributes;
 use Stillat\Meerkat\Core\Comments\Comment;
+use Stillat\Meerkat\Core\Comments\CommentRemovalEventArgs;
+use Stillat\Meerkat\Core\Comments\CommentRestoringEventArgs;
 use Stillat\Meerkat\Core\Comments\TransientCommentAttributes;
 use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
@@ -1466,6 +1468,124 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     public function setIsNotApproved(CommentContract $comment)
     {
         return $this->setIsNotApprovedById($comment->getId());
+    }
+
+    /**
+     * Attempts to remove the requested comment.
+     *
+     * @param string $commentId The comment's identifier.
+     * @return bool
+     */
+    public function removeById($commentId)
+    {
+        $comment = $this->findById($commentId);
+
+        if ($comment === null) {
+            return false;
+        }
+
+        $descendents = $this->getDescendentsPaths($commentId);
+
+        $commentRemovalEventArgs = new CommentRemovalEventArgs();
+        $commentRemovalEventArgs->comment = $comment;
+
+        if (count($descendents) > 0) {
+            $commentRemovalEventArgs->effectedComments = array_keys($descendents);
+            $commentRemovalEventArgs->willRemoveOthers = true;
+        }
+
+        $lastResult = null;
+
+        $this->commentPipeline->removing($commentRemovalEventArgs, function ($result) use (&$lastResult) {
+            if ($result !== null && $result instanceof CommentRemovalEventArgs) {
+                $lastResult = $result;
+            }
+        });
+
+        if ($lastResult !== null && $lastResult instanceof CommentRemovalEventArgs) {
+            if ($lastResult->shouldKeep()) {
+                return $this->softDeleteById($commentId);
+            }
+        }
+
+        $storageDirectory = dirname($comment->getVirtualPath());
+
+        Paths::recursivelyRemoveDirectory($storageDirectory);
+
+        $this->commentPipeline->removed($commentId, null);
+
+        return true;
+    }
+
+    /**
+     * Attempts to soft delete the requested comment.
+     *
+     * @param string $commentId The comment's identifier.
+     * @return bool
+     */
+    public function softDeleteById($commentId)
+    {
+        $comment = $this->findById($commentId);
+
+        if ($comment === null) {
+            return false;
+        }
+
+        $comment->setDataAttribute(CommentContract::KEY_IS_DELETED, true);
+        $wasUpdated = $this->update($comment);
+
+        if ($wasUpdated === true) {
+            $this->commentPipeline->softDeleted($commentId, null);
+        }
+
+        return $wasUpdated;
+    }
+
+    /**
+     * Attempts to restore a soft-deleted comment.
+     *
+     * @param string $commentId The comment's identifier.
+     * @return bool
+     */
+    public function restoreById($commentId)
+    {
+        $comment = $this->findById($commentId);
+
+        if ($comment === null) {
+            return false;
+        }
+
+
+        if ($comment->isDeleted() === false) {
+            return false;
+        }
+
+        $commentRestoreEventArgs = new CommentRestoringEventArgs();
+        $commentRestoreEventArgs->commentId = $commentId;
+        $commentRestoreEventArgs->comment = $comment;
+
+        $lastResult = null;
+
+        $this->commentPipeline->restoring($commentRestoreEventArgs, function ($result) use (&$lastResult) {
+            if ($result !== null && $result instanceof CommentRestoringEventArgs) {
+                $lastResult = $result;
+            }
+        });
+
+        if ($lastResult !== null && $lastResult instanceof CommentRestoringEventArgs) {
+            if ($lastResult->shouldRestore() === false) {
+                return false;
+            }
+        }
+
+        $comment->setDataAttribute(CommentContract::KEY_IS_DELETED, false);
+        $wasUpdated = $this->update($comment);
+
+        if ($wasUpdated === true) {
+            $this->commentPipeline->restored($comment, null);
+        }
+
+        return $wasUpdated;
     }
 
 }

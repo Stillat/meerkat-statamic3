@@ -105,6 +105,28 @@ class IsFilters
                 return true;
             });
         }, IsFilters::PARAM_COMPARISON);
+
+        $manager->filterWithTagContext('is:deleted', function ($comments) {
+            $includeTrashed = TypeConversions::getBooleanValue($this->get(IsFilters::PARAM_COMPARISON, true));
+
+            return array_filter($comments, function (CommentContract $comment) use ($includeTrashed) {
+                $isDeleted = $comment->isDeleted();
+
+                if ($includeTrashed) {
+                    if ($isDeleted) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    if ($isDeleted) {
+                        return false;
+                    }
+                }
+
+                return true;
+            });
+        }, IsFilters::PARAM_COMPARISON);
     }
 
 }

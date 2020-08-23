@@ -5,6 +5,9 @@ namespace Stillat\Meerkat\Threads;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContextContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadMutationPipelineContract;
+use Stillat\Meerkat\Core\Threads\ThreadRemovalEventArgs;
+use Stillat\Meerkat\Core\Threads\ThreadMovingEventArgs;
+use Stillat\Meerkat\Core\Threads\ThreadRestoringEventArgs;
 use Stillat\Meerkat\EventPipeline;
 
 /**
@@ -18,13 +21,11 @@ use Stillat\Meerkat\EventPipeline;
 class ThreadMutationPipeline extends EventPipeline implements ThreadMutationPipelineContract
 {
 
-
     /**
      * Broadcasts that a thread's context is resolving.
      *
      * @param ThreadContextContract $thread The thread being resolved.
      * @param callable $callback A callback that will be invoked after each pipeline stop.
-     * @return mixed
      */
     public function resolving(ThreadContextContract $thread, $callback)
     {
@@ -33,9 +34,9 @@ class ThreadMutationPipeline extends EventPipeline implements ThreadMutationPipe
         $this->mutate(ThreadMutationPipelineContract::MUTATION_RESOLVING, $pipelineArgs, $callback);
     }
 
-    public function removing(ThreadContract $thread, $callback)
+    public function removing(ThreadRemovalEventArgs $eventArgs, $callback)
     {
-        $pipelineArgs = [$thread];
+        $pipelineArgs = [$eventArgs];
 
         $this->mutate(
             ThreadMutationPipelineContract::MUTATION_REMOVING,
@@ -73,7 +74,7 @@ class ThreadMutationPipeline extends EventPipeline implements ThreadMutationPipe
         );
     }
 
-    public function created(ThreadContract $thread, $callback)
+    public function created(ThreadContextContract $threadContext, $callback)
     {
         $this->delayMutate(
             ThreadMutationPipelineContract::MUTATION_CREATED,
@@ -82,9 +83,9 @@ class ThreadMutationPipeline extends EventPipeline implements ThreadMutationPipe
         );
     }
 
-    public function moving(ThreadContract $thread, $callback)
+    public function moving(ThreadMovingEventArgs $eventArgs, $callback)
     {
-        $pipelineArgs = [$thread];
+        $pipelineArgs = [$eventArgs];
 
         $this->mutate(
             ThreadMutationPipelineContract::MUTATION_MOVING,
@@ -93,10 +94,30 @@ class ThreadMutationPipeline extends EventPipeline implements ThreadMutationPipe
         );
     }
 
-    public function moved(ThreadContract $thread, $callback)
+    public function moved(ThreadContextContract $thread, $callback)
     {
         $this->delayMutate(
             ThreadMutationPipelineContract::MUTATION_MOVED,
+            $thread,
+            $callback
+        );
+    }
+
+    public function restoring(ThreadRestoringEventArgs $eventArgs, $callback)
+    {
+        $pipelineArgs = [$eventArgs];
+
+        $this->mutate(
+            ThreadMutationPipelineContract::MUTATION_RESTORING,
+            $pipelineArgs,
+            $callback
+        );
+    }
+
+    public function restored(ThreadContextContract $thread, $callback)
+    {
+        $this->delayMutate(
+            ThreadMutationPipelineContract::MUTATION_RESTORED,
             $thread,
             $callback
         );

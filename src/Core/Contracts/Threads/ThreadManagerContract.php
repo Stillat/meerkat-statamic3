@@ -26,9 +26,10 @@ interface ThreadManagerContract
      * Attempts to retrieve all threads.
      *
      * @param bool $includeTrashed Whether to include soft-deleted threads.
+     * @param bool $includeComments Whether to include comments.
      * @return ThreadContract[]
      */
-    public function getAllThreads($includeTrashed = false);
+    public function getAllThreads($includeTrashed = false, $includeComments = false);
 
     /**
      * Returns a collection of all thread IDs.

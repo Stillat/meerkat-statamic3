@@ -6,6 +6,7 @@ use Statamic\Http\Controllers\CP\CpController;
 use Stillat\Meerkat\Concerns\UsesTranslations;
 use Stillat\Meerkat\Core\Comments\Comment;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
+use Stillat\Meerkat\Core\Contracts\Comments\CommentManagerContract;
 use Stillat\Meerkat\Core\Contracts\Data\DataSetContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentChangeSetStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
@@ -20,12 +21,14 @@ class DashboardController extends CpController
 {
     use UsesTranslations;
 
-    public function index(CommentStorageManagerContract $comments, ThreadManagerContract $threads, DataQuery $query, CommentFilterManager $filters, CommentChangeSetStorageManagerContract $changeSets)
+    public function index(CommentStorageManagerContract $comments, CommentManagerContract $cman, ThreadManagerContract $threads, DataQuery $query, CommentFilterManager $filters, CommentChangeSetStorageManagerContract $changeSets)
     {
-        $thread = $threads->findById('7ac0bdda-1b84-45f8-ac52-2575dd7e8251');
 
-        dd($thread->getCommentCollection('comments'));
-        dd($thread);
+        $comments->restoreById('1597518821');
+
+        return;
+        //$cman->getAll();
+        //$threads->removeById('7ac0bdda-1b84-45f8-ac52-2575dd7e8251');
 /*
 
         $comment1 = Comment::find('1597524673');

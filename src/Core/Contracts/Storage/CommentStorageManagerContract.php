@@ -3,9 +3,9 @@
 namespace Stillat\Meerkat\Core\Contracts\Storage;
 
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
+use Stillat\Meerkat\Core\Data\Mutations\ChangeSet;
 use Stillat\Meerkat\Core\Storage\Paths;
 use Stillat\Meerkat\Core\Threads\ThreadHierarchy;
-use Stillat\Meerkat\Core\Data\Mutations\ChangeSet;
 
 /**
  * Interface CommentStorageManagerContract
@@ -264,5 +264,29 @@ interface CommentStorageManagerContract
      * @return string[]
      */
     public function getRelatedCommentsPaths($commentId);
+
+    /**
+     * Attempts to remove the requested comment.
+     *
+     * @param string $commentId The comment's identifier.
+     * @return bool
+     */
+    public function removeById($commentId);
+
+    /**
+     * Attempts to soft delete the requested comment.
+     *
+     * @param string $commentId The comment's identifier.
+     * @return bool
+     */
+    public function softDeleteById($commentId);
+
+    /**
+     * Attempts to restore a soft-deleted comment.
+     *
+     * @param string $commentId The comment's identifier.
+     * @return bool
+     */
+    public function restoreById($commentId);
 
 }

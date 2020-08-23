@@ -4,14 +4,19 @@ namespace Stillat\Meerkat\Core\Threads;
 
 use JsonSerializable;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
+use Stillat\Meerkat\Core\Contracts\Data\DataSetContract;
+use Stillat\Meerkat\Core\Contracts\Data\GroupedDataSetContract;
+use Stillat\Meerkat\Core\Contracts\Data\PagedDataSetContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContextContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContract;
 use Stillat\Meerkat\Core\Data\Converters\BaseCollectionConverter;
 use Stillat\Meerkat\Core\Data\DataQuery;
 use Stillat\Meerkat\Core\Data\DataQueryFactory;
+use Stillat\Meerkat\Core\Data\DataSet;
 use Stillat\Meerkat\Core\Data\RuntimeContext;
 use Stillat\Meerkat\Core\DataObject;
 use Stillat\Meerkat\Core\Exceptions\DataQueryException;
+use Stillat\Meerkat\Core\Exceptions\FilterException;
 use Stillat\Meerkat\Core\Exceptions\InconsistentCompositionException;
 use Stillat\Meerkat\Core\Threads\StaticApi\ProvidesDiscovery;
 
@@ -185,28 +190,6 @@ class Thread implements ThreadContract, JsonSerializable
     }
 
     /**
-     * Attempts to locate and return the thread's context.
-     *
-     * @return ThreadContextContract|null
-     */
-    public function getContext()
-    {
-        return $this->context;
-    }
-
-    /**
-     * Sets the thread's context.
-     *
-     * @param ThreadContextContract $context
-     *
-     * @return void
-     */
-    public function setContext(ThreadContextContract $context)
-    {
-        $this->context = $context;
-    }
-
-    /**
      * Attempts to locate and return the thread context string identifier.
      *
      * @return string
@@ -227,16 +210,6 @@ class Thread implements ThreadContract, JsonSerializable
     {
         $this->contextId = $id;
         $this->setDataAttribute(ThreadContract::KEY_CONTEXT_ID, $id);
-    }
-
-    /**
-     * Gets the comments for the current thread.
-     *
-     * @return CommentContract[]
-     */
-    public function getComments()
-    {
-        return $this->hierarchy->getComments();
     }
 
     /**
@@ -389,6 +362,15 @@ class Thread implements ThreadContract, JsonSerializable
         return $comment->save();
     }
 
+    /**
+     * Queries the thread's comments.
+     *
+     * @param callable $builder A callback to modify the query builder.
+     * @return array|mixed|DataSetContract|GroupedDataSetContract|PagedDataSetContract|DataSet
+     * @throws DataQueryException
+     * @throws InconsistentCompositionException
+     * @throws FilterException
+     */
     public function query(callable $builder)
     {
         $queryInstance = DataQueryFactory::newQuery();
@@ -411,6 +393,38 @@ class Thread implements ThreadContract, JsonSerializable
         $runtimeContext->context = $this->getContext();
 
         return $queryInstance->withContext($runtimeContext)->get($this->getComments());
+    }
+
+    /**
+     * Attempts to locate and return the thread's context.
+     *
+     * @return ThreadContextContract|null
+     */
+    public function getContext()
+    {
+        return $this->context;
+    }
+
+    /**
+     * Sets the thread's context.
+     *
+     * @param ThreadContextContract $context
+     *
+     * @return void
+     */
+    public function setContext(ThreadContextContract $context)
+    {
+        $this->context = $context;
+    }
+
+    /**
+     * Gets the comments for the current thread.
+     *
+     * @return CommentContract[]
+     */
+    public function getComments()
+    {
+        return $this->hierarchy->getComments();
     }
 
     /**

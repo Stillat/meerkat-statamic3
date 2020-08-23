@@ -21,6 +21,13 @@ class Context implements ThreadContextContract
     const KEY_REMOVE_CONTENT = 'content';
 
     /**
+     * The data attributes, if any.
+     *
+     * @var array
+     */
+    protected $attributes = [];
+
+    /**
      * The string identifier for the context, if available.
      *
      * @var string

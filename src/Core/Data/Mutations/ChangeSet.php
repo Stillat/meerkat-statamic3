@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat\Core\Data\Mutations;
 
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
+use Stillat\Meerkat\Core\Identity\IdentityManagerFactory;
 
 /**
  * Class ChangeSet
@@ -90,63 +91,118 @@ class ChangeSet
     }
 
     /**
-     * Gets a list of new attributes.
+     * Converts the array into a ChangeSet instance.
+     *
+     * @param array $array The array to convert.
+     * @return ChangeSet
+     */
+    public static function fromArray($array)
+    {
+        $changeSetToReturn = new ChangeSet();
+
+        if (array_key_exists(self::KEY_TIMESTAMP, $array)) {
+            $changeSetToReturn->setTimestampUtc($array[self::KEY_TIMESTAMP]);
+        }
+
+        if (array_key_exists(self::KEY_ORIGINAL_KEY_ORDER, $array)) {
+            $changeSetToReturn->setOriginalKeyOrder(json_decode($array[self::KEY_ORIGINAL_KEY_ORDER]));
+        }
+
+        if (array_key_exists(self::KEY_OLD_SERIALIZED, $array) && array_key_exists(self::KEY_NEW_SERIALIZED, $array)) {
+            $changeSetToReturn->setSerializedRepresentations(
+                $array[self::KEY_OLD_SERIALIZED],
+                $array[self::KEY_NEW_SERIALIZED]
+            );
+        }
+
+        if (array_key_exists(self::KEY_USER_ID, $array)) {
+            if ($array[self::KEY_USER_ID] !== null) {
+                if (IdentityManagerFactory::hasInstance()) {
+                    $identity = IdentityManagerFactory::$instance->locateIdentity($array[self::KEY_USER_ID]);
+
+                    $changeSetToReturn->setIdentity($identity);
+                }
+            }
+        }
+
+        $changeSetToReturn->hydrateFromSerialized();
+
+        return $changeSetToReturn;
+    }
+
+    /**
+     * Sets the original key order.
+     *
+     * @param array $keys The original keys.
+     */
+    public function setOriginalKeyOrder($keys)
+    {
+        $this->originalKeyOrdering = $keys;
+    }
+
+    /**
+     * Sets the serialized versions of the datasets that were compared.
+     *
+     * @param string $old The serialized version of the old data.
+     * @param string $new The serialized version of the new data.
+     */
+    public function setSerializedRepresentations($old, $new)
+    {
+        $this->oldSerialized = $old;
+        $this->newSerialized = $new;
+    }
+
+    /**
+     * Re-hydrates the mutated properties from the serialized contents.
+     */
+    public function hydrateFromSerialized()
+    {
+        $oldContent = $this->getOldProperties();
+        $newContent = $this->getNewProperties();
+
+        $changeSet = AttributeDiff::analyze($oldContent, $newContent);
+
+        $this->setChangedAttributes($changeSet->getChangedAttributes());
+        $this->setUnchangedAttributes($changeSet->getUnchangedAttributes());
+        $this->setRemovedAttributes($changeSet->getRemovedAttributes());
+        $this->setNewAttributes($changeSet->getNewAttributes());
+    }
+
+    /**
+     * Deserializes the old encoded properties and returns an array.
      *
      * @return array
      */
-    public function getNewAttributes()
+    public function getOldProperties()
     {
-        return $this->newAttributes;
+        return $this->getProperties($this->oldSerialized);
     }
 
     /**
-     * Sets the list of new attributes.
+     * Deserializes the content and returns an array.
      *
-     * @param array $attributes The new attributes.
+     * @param string $content The content to decode.
+     * @return array
      */
-    public function setNewAttributes($attributes)
+    private function getProperties($content)
     {
-        $this->newAttributes = $attributes;
+        $content = json_decode($content);
+
+        if (is_array($content) === false) {
+            $content = (array)$content;
+        }
+
+        return $content;
     }
 
     /**
-     * Gets a list of attributes that were removed.
+     * Deserializes the new encoded properties and returns an array.
      *
      * @return array
      */
-    public function getRemovedAttributes()
+    public function getNewProperties()
     {
-        return $this->removedAttributes;
-    }
-
-    /**
-     * Sets the attributes that were removed.
-     *
-     * @param array $attributes The removed attributes.
-     */
-    public function setRemovedAttributes($attributes)
-    {
-        $this->removedAttributes = $attributes;
-    }
-
-    /**
-     * Gets a list of attribute names that remained unchanged.
-     *
-     * @return array
-     */
-    public function getUnchangedAttributes()
-    {
-        return $this->unchangedAttributes;
-    }
-
-    /**
-     * Sets a list attribute names that remained unchanged.
-     *
-     * @param array $attributes The unchanged attributes.
-     */
-    public function setUnchangedAttributes($attributes)
-    {
-        $this->unchangedAttributes = $attributes;
+        return $this->getProperties($this->newSerialized);
     }
 
     /**
@@ -170,35 +226,63 @@ class ChangeSet
     }
 
     /**
-     * Sets the serialized versions of the datasets that were compared.
-     *
-     * @param string $old The serialized version of the old data.
-     * @param string $new The serialized version of the new data.
-     */
-    public function setSerializedRepresentations($old, $new)
-    {
-        $this->oldSerialized = $old;
-        $this->newSerialized = $new;
-    }
-
-    /**
-     * Sets the original key order.
-     *
-     * @param array $keys The original keys.
-     */
-    public function setOriginalKeyOrder($keys)
-    {
-        $this->originalKeyOrdering = $keys;
-    }
-
-    /**
-     * Gets the original key order.
+     * Gets a list of attribute names that remained unchanged.
      *
      * @return array
      */
-    public function getOriginalKeyOrder()
+    public function getUnchangedAttributes()
     {
-        return $this->originalKeyOrdering;
+        return $this->unchangedAttributes;
+    }
+
+    /**
+     * Sets a list attribute names that remained unchanged.
+     *
+     * @param array $attributes The unchanged attributes.
+     */
+    public function setUnchangedAttributes($attributes)
+    {
+        $this->unchangedAttributes = $attributes;
+    }
+
+    /**
+     * Gets a list of attributes that were removed.
+     *
+     * @return array
+     */
+    public function getRemovedAttributes()
+    {
+        return $this->removedAttributes;
+    }
+
+    /**
+     * Sets the attributes that were removed.
+     *
+     * @param array $attributes The removed attributes.
+     */
+    public function setRemovedAttributes($attributes)
+    {
+        $this->removedAttributes = $attributes;
+    }
+
+    /**
+     * Gets a list of new attributes.
+     *
+     * @return array
+     */
+    public function getNewAttributes()
+    {
+        return $this->newAttributes;
+    }
+
+    /**
+     * Sets the list of new attributes.
+     *
+     * @param array $attributes The new attributes.
+     */
+    public function setNewAttributes($attributes)
+    {
+        $this->newAttributes = $attributes;
     }
 
     /**
@@ -238,7 +322,7 @@ class ChangeSet
 
         return [
             self::KEY_TIMESTAMP => $this->getTimestampUtc(),
-            self::KEY_ORIGINAL_KEY_ORDER => $this->getOriginalKeyOrder(),
+            self::KEY_ORIGINAL_KEY_ORDER => json_encode($this->getOriginalKeyOrder()),
             self::KEY_NEW_SERIALIZED => $this->getNewSerialized(),
             self::KEY_OLD_SERIALIZED => $this->getOldSerialized(),
             self::KEY_USER_ID => $identityContext
@@ -266,6 +350,16 @@ class ChangeSet
     }
 
     /**
+     * Gets the original key order.
+     *
+     * @return array
+     */
+    public function getOriginalKeyOrder()
+    {
+        return $this->originalKeyOrdering;
+    }
+
+    /**
      * Gets the serialized version of the new data.
      *
      * @return string
@@ -286,14 +380,20 @@ class ChangeSet
     }
 
     /**
-     * Tests if the attribute was removed in the new dataset.
+     * Tests if any changes were detected for the attribute.
      *
      * @param string $attributeName The attribute name.
      * @return bool
      */
-    public function wasAttributeRemoved($attributeName)
+    public function wasAttributeMutated($attributeName)
     {
-        return array_key_exists($attributeName, $this->removedAttributes);
+        if ($this->wasAttributeAdded($attributeName) ||
+            $this->wasAttributeChanged($attributeName) ||
+            $this->wasAttributeRemoved($attributeName)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -319,20 +419,14 @@ class ChangeSet
     }
 
     /**
-     * Tests if any changes were detected for the attribute.
+     * Tests if the attribute was removed in the new dataset.
      *
      * @param string $attributeName The attribute name.
      * @return bool
      */
-    public function wasAttributeMutated($attributeName)
+    public function wasAttributeRemoved($attributeName)
     {
-        if ($this->wasAttributeAdded($attributeName) ||
-            $this->wasAttributeChanged($attributeName) ||
-            $this->wasAttributeRemoved($attributeName)) {
-            return true;
-        }
-
-        return false;
+        return array_key_exists($attributeName, $this->removedAttributes);
     }
 
 }

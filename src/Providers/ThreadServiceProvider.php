@@ -6,12 +6,14 @@ use Statamic\Statamic;
 use Stillat\Meerkat\Comments\CommentMutationPipeline;
 use Stillat\Meerkat\Comments\StatamicCommentFactory;
 use Stillat\Meerkat\Concerns\UsesConfig;
+use Stillat\Meerkat\Core\Comments\CommentChangeSetManagerFactory;
 use Stillat\Meerkat\Core\Comments\CommentManager;
 use Stillat\Meerkat\Core\Comments\CommentManagerFactory;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentFactoryContract;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentManagerContract;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentMutationPipelineContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
+use Stillat\Meerkat\Core\Contracts\Storage\CommentChangeSetStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\ThreadStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ContextResolverContract;
@@ -19,6 +21,7 @@ use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadMutationPipelineContract;
 use Stillat\Meerkat\Core\Parsing\SanitationManager;
 use Stillat\Meerkat\Core\Parsing\SanitationManagerFactory;
+use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalCommentChangeSetStorageManager;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalCommentStorageManager;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalThreadStorageManager;
 use Stillat\Meerkat\Core\Threads\ThreadManager;
@@ -117,6 +120,10 @@ class ThreadServiceProvider extends AddonServiceProvider
             return $app->make(StatamicCommentFactory::class);
         });
 
+        $this->app->singleton(CommentChangeSetStorageManagerContract::class, function ($app) {
+            return $app->make(LocalCommentChangeSetStorageManager::class);
+        });
+
         $this->app->singleton(CommentStorageManagerContract::class, function ($app) use ($driverConfiguration) {
             return $app->make($driverConfiguration[self::CONFIG_COMMENT_DRIVER]);
         });
@@ -137,6 +144,7 @@ class ThreadServiceProvider extends AddonServiceProvider
             // Register internal factory instances.
             ThreadManagerFactory::$instance = app(ThreadManagerContract::class);
             CommentManagerFactory::$instance = app(CommentManagerContract::class);
+            CommentChangeSetManagerFactory::$instance = app(CommentChangeSetStorageManagerContract::class);
         });
     }
 

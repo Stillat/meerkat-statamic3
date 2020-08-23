@@ -342,7 +342,7 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
 
         $wasSuccess = file_put_contents($targetPath, $this->yamlParser->toYaml($data->toArray(), null));
 
-        if ($wasSuccess == false) {
+        if ($wasSuccess === false) {
             LocalErrorCodeRepository::log(ErrorLog::make(
                 Errors::THREAD_META_DATA_COULD_NOT_BE_SAVED,
                 $contextId

@@ -24,6 +24,7 @@ class BaseCollectionConverter
      * @var null|BaseCollectionConverter
      */
     protected static $cachedInstance = null;
+
     /**
      * The SanitationManagerContract implementation instance.
      *

@@ -58,6 +58,7 @@ class InternalAttributes
                 CommentContract::INTERNAL_STRUCTURE_NEEDS_MIGRATION,
                 CommentContract::INTERNAL_STRUCTURE_HAS_REPLIES,
                 CommentContract::INTERNAL_ABSOLUTE_ROOT,
+                CommentContract::INTERNAL_HISTORY_REVISION_COUNT,
             ];
         }
 

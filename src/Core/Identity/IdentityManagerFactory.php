@@ -33,7 +33,7 @@ class IdentityManagerFactory
             return false;
         }
 
-        if ((ThreadManagerFactory::$instance instanceof IdentityManagerContract) == false) {
+        if ((IdentityManagerFactory::$instance instanceof IdentityManagerContract) == false) {
             return false;
         }
 

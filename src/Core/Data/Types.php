@@ -16,5 +16,6 @@ class Types
     const TYPE_STRING = 0;
     const TYPE_INTEGER = 1;
     const TYPE_BIT = 2;
+    const TYPE_COMMENT = 3;
 
 }

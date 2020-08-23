@@ -8,6 +8,7 @@ use Stillat\Meerkat\Core\Contracts\DataObjectContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\ParsesMarkdownContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\ParsesYamlContract;
+use Stillat\Meerkat\Core\Data\Mutations\ChangeSetCollection;
 
 /**
  * Interface CommentContract
@@ -64,6 +65,7 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     const INTERNAL_RESPONSE_CONTEXT = 'internal_response_context';
     const INTERNAL_RESPONSE_HAS_REPLIES = 'internal_response_has_replies';
     const INTERNAL_STRUCTURE_NEEDS_MIGRATION = 'internal_needs_structure_migration';
+    const INTERNAL_HISTORY_REVISION_COUNT = 'revision_count';
 
     const INTERNAL_STRUCTURE_HAS_REPLIES = 'has_replies';
 
@@ -364,5 +366,19 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
      * @return array
      */
     public function toArray();
+
+    /**
+     * Returns the revision count.
+     *
+     * @return int
+     */
+    public function getRevisionCount();
+
+    /**
+     * Returns the comment's change set collection.
+     *
+     * @return ChangeSetCollection|null
+     */
+    public function getRevisions();
 
 }

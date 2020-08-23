@@ -73,6 +73,13 @@ class Configuration extends ConfigurationContainer
     public $hardCommentLengthCap = 5000;
 
     /**
+     * Indicates if Meerkat should track changes to comment data.
+     *
+     * @var bool
+     */
+    public $trackChanges = true;
+
+    /**
      * The FormattingConfiguration instance.
      *
      * @var FormattingConfiguration
@@ -120,6 +127,24 @@ class Configuration extends ConfigurationContainer
         }
 
         return false;
+    }
+
+    /**
+     * Indicates if comment change tracking is enabled.
+     *
+     * @return bool
+     */
+    public function isTrackingChanges()
+    {
+        return $this->trackChanges;
+    }
+
+    /**
+     * Disables comment change tracking.
+     */
+    public function asNoTracking()
+    {
+        $this->trackChanges = false;
     }
 
 }

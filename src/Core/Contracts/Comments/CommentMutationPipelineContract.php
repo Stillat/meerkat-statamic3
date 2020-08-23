@@ -40,6 +40,21 @@ interface CommentMutationPipelineContract extends MutationPipelineContract
     const MUTATION_UNAPPROVING = 'comments.unapproving';
     const MUTATION_UNAPPROVED = 'comments.unapproved';
 
+    const METHOD_CREATING = 'creating';
+    const METHOD_CREATED = 'created';
+    const METHOD_UPDATING = 'updating';
+    const METHOD_UPDATED = 'updated';
+    const METHOD_REPLYING = 'replying';
+    const METHOD_REPLIED = 'replied';
+    const METHOD_MARKING_AS_SPAM = 'markingAsSpam';
+    const METHOD_MARKED_AS_SPAM = 'markedAsSpam';
+    const METHOD_MARKING_AS_HAM = 'markingAsHam';
+    const METHOD_MARKED_AS_HAM = 'markedAsHam';
+    const METHOD_APPROVING = 'approving';
+    const METHOD_APPROVED = 'approved';
+    const METHOD_UNAPPROVING = 'unapproving';
+    const METHOD_UNAPPROVED = 'unapproved';
+
     public function removing(CommentContract $comment, $callback);
     public function removed(CommentContract $comment, $callback);
 

@@ -3,20 +3,21 @@
 namespace Stillat\Meerkat\Core\Comments;
 
 use DateTime;
+use Stillat\Meerkat\Core\Comments\StaticApi\ProvidesCreation;
 use Stillat\Meerkat\Core\Comments\StaticApi\ProvidesDiscovery;
 use Stillat\Meerkat\Core\Comments\StaticApi\ProvidesMutations;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Search\ProvidesSearchableAttributesContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
+use Stillat\Meerkat\Core\Data\Mutations\ChangeSetCollection;
 use Stillat\Meerkat\Core\Data\Retrievers\PathThreadIdRetriever;
+use Stillat\Meerkat\Core\DataObject;
 use Stillat\Meerkat\Core\Exceptions\InconsistentCompositionException;
 use Stillat\Meerkat\Core\Parsing\UsesMarkdownParser;
 use Stillat\Meerkat\Core\Parsing\UsesYAMLParser;
 use Stillat\Meerkat\Core\Storage\Data\CommentAuthorRetriever;
 use Stillat\Meerkat\Core\Support\TypeConversions;
-use Stillat\Meerkat\Core\Comments\StaticApi\ProvidesCreation;
-use Stillat\Meerkat\Core\DataObject;
 
 /**
  * Class Comment
@@ -95,39 +96,34 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
      * @var bool
      */
     protected $runTimeAttributesResolved = false;
-
-    /**
-     * The storage manager instance.
-     *
-     * @var CommentStorageManagerContract|null
-     */
-    private $storageManager = null;
-
-    /**
-     * @var CommentAuthorRetriever|null
-     */
-    private $authorManager = null;
-
-    /**
-     * Indicates if the comment has already been persisted to storage or not.
-     *
-     * @var bool
-     */
-    private $isNew = false;
-
-    /**
-     * The thread identifier, if available.
-     *
-     * @var null|string
-     */
-    private $threadId = null;
-
     /**
      * A collection of attributes that may have been removed before actualizing the data.
      *
      * @var array
      */
     protected $removedAttributes = [];
+    /**
+     * The storage manager instance.
+     *
+     * @var CommentStorageManagerContract|null
+     */
+    private $storageManager = null;
+    /**
+     * @var CommentAuthorRetriever|null
+     */
+    private $authorManager = null;
+    /**
+     * Indicates if the comment has already been persisted to storage or not.
+     *
+     * @var bool
+     */
+    private $isNew = false;
+    /**
+     * The thread identifier, if available.
+     *
+     * @var null|string
+     */
+    private $threadId = null;
 
     public function __construct()
     {
@@ -741,6 +737,34 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     }
 
     /**
+     * Returns the revision count.
+     *
+     * @return int
+     */
+    public function getRevisionCount()
+    {
+        if ($this->hasDataAttribute(CommentContract::INTERNAL_HISTORY_REVISION_COUNT)) {
+            return intval($this->getDataAttribute(CommentContract::INTERNAL_HISTORY_REVISION_COUNT, 0));
+        }
+
+        return 0;
+    }
+
+    /**
+     * Returns the comment's change set collection.
+     *
+     * @return ChangeSetCollection|null
+     */
+    public function getRevisions()
+    {
+        if (CommentChangeSetManagerFactory::hasInstance()) {
+            return CommentChangeSetManagerFactory::$instance->getChangeSetForComment($this);
+        }
+
+        return null;
+    }
+
+    /**
      * Gets the internal storage path for this comment.
      *
      * @return string
@@ -749,4 +773,5 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     {
         return $this->getDataAttribute(CommentContract::INTERNAL_PATH, null);
     }
+
 }

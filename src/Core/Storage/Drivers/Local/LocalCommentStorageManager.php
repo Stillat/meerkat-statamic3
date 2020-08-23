@@ -14,10 +14,12 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentMutationPipelineContract;
 use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\YAMLParserContract;
+use Stillat\Meerkat\Core\Contracts\Storage\CommentChangeSetStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\StructureResolverInterface;
 use Stillat\Meerkat\Core\Data\Mutations\AttributeDiff;
 use Stillat\Meerkat\Core\Data\Mutations\ChangeSet;
+use Stillat\Meerkat\Core\Data\Validators\CommentValidator;
 use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Paths\PathUtilities;
 use Stillat\Meerkat\Core\Storage\Data\CommentAuthorRetriever;
@@ -36,7 +38,7 @@ use Stillat\Meerkat\Core\ValidationResult;
 /**
  * Class LocalCommentStorageManager
  *
- * Manages the interactions between Meerkat and a local file system.
+ * Manages the interactions between Meerkat Comments and a local file system.
  *
  * @package Stillat\Meerkat\Core\Storage\Drivers\Local
  * @since 2.0.0
@@ -190,7 +192,19 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      */
     private $commentPipeline = null;
 
+    /**
+     * The IdentityManagerContract implementation instance.
+     *
+     * @var IdentityManagerContract
+     */
     private $identityManager = null;
+
+    /**
+     * The CommentChangeSetStorageManagerContract implementation instance.
+     *
+     * @var CommentChangeSetStorageManagerContract
+     */
+    private $changeSetManager = null;
 
     public function __construct(
         Configuration $config,
@@ -199,13 +213,15 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         CommentAuthorRetriever $authorRetriever,
         CommentFactoryContract $commentFactory,
         CommentMutationPipelineContract $commentPipeline,
-        IdentityManagerContract $identityManager)
+        IdentityManagerContract $identityManager,
+        CommentChangeSetStorageManagerContract $changeSetManager)
     {
         $this->commentShadowIndex = new ShadowIndex($config);
         $this->commentStructureResolver = new LocalCommentStructureResolver();
         $this->authorRetriever = $authorRetriever;
         $this->commentPipeline = $commentPipeline;
         $this->identityManager = $identityManager;
+        $this->changeSetManager = $changeSetManager;
         $this->config = $config;
         $this->paths = new Paths($this->config);
 
@@ -419,6 +435,11 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             $comment->setDataAttribute(CommentContract::KEY_CHILDREN, $children);
             $comment->setDataAttribute(CommentContract::KEY_IS_REPLY, $hasAncestor);
             $comment->setReplies($children);
+
+            $comment->setDataAttribute(
+                CommentContract::INTERNAL_HISTORY_REVISION_COUNT,
+                $this->changeSetManager->getRevisionCount($comment)
+            );
         }
 
         $this->commentShadowIndex->buildProtoTypeIndex($threadId, $commentPrototypes);
@@ -636,47 +657,28 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
 
         $originalId = $comment->getId();
 
-        // General creating pipeline.
-        $pipelineResult = $this->commentPipeline->creating($comment, null);
-
-        if ($pipelineResult !== null && $pipelineResult instanceof CommentContract) {
-            $pipelineResult->setDataAttribute(CommentContract::KEY_ID, $originalId);
-
-            $comment = $pipelineResult;
-        }
+        $comment = $this->runMutablePipeline($originalId, $comment, CommentMutationPipelineContract::MUTATION_CREATING);
 
         // Spam/ham pipeline.
         if ($comment->hasDataAttribute(CommentContract::KEY_SPAM)) {
-            $pipelineResult = null;
-
-            if ($comment->isSpam()) {
-                $pipelineResult = $this->commentPipeline->markingAsSpam($comment, null);
-            } else {
-                $pipelineResult = $this->commentPipeline->markingAsHam($comment, null);
-            }
-
-            if ($pipelineResult !== null && $pipelineResult instanceof CommentContract) {
-                $pipelineResult->setDataAttribute(CommentContract::KEY_ID, $originalId);
-
-                $comment = $pipelineResult;
-            }
+            $comment = $this->runConditionalMutablePipeline(
+                $originalId,
+                $comment,
+                $comment->isSpam(),
+                CommentMutationPipelineContract::METHOD_MARKING_AS_SPAM,
+                CommentMutationPipelineContract::METHOD_MARKING_AS_HAM
+            );
         }
 
         // Approving/un-approving pipeline.
         if ($comment->hasDataAttribute(CommentContract::KEY_PUBLISHED)) {
-            $pipelineResult = null;
-
-            if ($comment->published()) {
-                $pipelineResult = $this->commentPipeline->approving($comment, null);
-            } else {
-                $pipelineResult = $this->commentPipeline->unapproving($comment, null);
-            }
-
-            if ($pipelineResult !== null && $pipelineResult instanceof Comment) {
-                $pipelineResult->setDataAttribute(CommentContract::KEY_ID, $originalId);
-
-                $comment = $pipelineResult;
-            }
+            $comment = $this->runConditionalMutablePipeline(
+                $originalId,
+                $comment,
+                $comment->published(),
+                CommentMutationPipelineContract::METHOD_APPROVING,
+                CommentMutationPipelineContract::METHOD_UNAPPROVING
+            );
         }
 
         $didCommentSave = $this->persistComment($comment);
@@ -730,47 +732,35 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
 
         $originalId = $comment->getId();
 
-        // General updating pipeline.
-        $pipelineResult = $this->commentPipeline->updating($comment, null);
-
-        if ($pipelineResult !== null && $pipelineResult instanceof CommentContract) {
-            $pipelineResult->setDataAttribute(CommentContract::KEY_ID, $originalId);
-
-            $comment = $pipelineResult;
-        }
+        $comment = $this->runMutablePipeline($originalId, $comment, CommentMutationPipelineContract::METHOD_UPDATING);
 
         // Marking as spam/ham.
         if ($changeSet->wasAttributeMutated(CommentContract::KEY_SPAM)) {
-            $pipelineResult = null;
-
-            if ($comment->isSpam()) {
-                $pipelineResult = $this->commentPipeline->markingAsSpam($comment, null);
-            } else {
-                $pipelineResult = $this->commentPipeline->markingAsHam($comment, null);
-            }
-
-            if ($pipelineResult !== null && $pipelineResult instanceof CommentContract) {
-                $pipelineResult->setDataAttribute(CommentContract::KEY_ID, $originalId);
-
-                $comment = $pipelineResult;
-            }
+            $comment = $this->runConditionalMutablePipeline(
+                $originalId,
+                $comment,
+                $comment->isSpam(),
+                CommentMutationPipelineContract::METHOD_MARKING_AS_SPAM,
+                CommentMutationPipelineContract::METHOD_MARKING_AS_HAM
+            );
         }
 
         // Approving pipeline.
         if ($changeSet->wasAttributeMutated(CommentContract::KEY_PUBLISHED)) {
-            $pipelineResult = null;
+            $comment = $this->runConditionalMutablePipeline(
+                $originalId,
+                $comment,
+                $comment->published(),
+                CommentMutationPipelineContract::METHOD_APPROVING,
+                CommentMutationPipelineContract::METHOD_UNAPPROVING
+            );
+        }
 
-            if ($comment->published()) {
-                $pipelineResult = $this->commentPipeline->approving($comment, null);
-            } else {
-                $pipelineResult = $this->commentPipeline->unapproving($comment, null);
-            }
+        // Get the final change set before saving changes.
+        $finalChangeSet = null;
 
-            if ($pipelineResult !== null && $pipelineResult instanceof CommentContract) {
-                $pipelineResult->setDataAttribute(CommentContract::KEY_ID, $originalId);
-
-                $comment = $pipelineResult;
-            }
+        if ($this->config->trackChanges) {
+            $this->getMutationChangeSet($comment);
         }
 
         $didCommentSave = $this->persistComment($comment);
@@ -778,7 +768,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         if ($didCommentSave === true) {
             $this->commentPipeline->updated($comment, false);
 
-            if ($changeSet->wasAttributeMutated(CommentContract::KEY_SPAM)) {
+            if ($comment->hasDataAttribute(CommentContract::KEY_SPAM)) {
                 if ($comment->isSpam()) {
                     $this->commentPipeline->markedAsSpam($comment, null);
                 } else {
@@ -786,12 +776,16 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
                 }
             }
 
-            if ($changeSet->wasAttributeMutated(CommentContract::KEY_PUBLISHED)) {
+            if ($comment->hasDataAttribute(CommentContract::KEY_PUBLISHED)) {
                 if ($comment->published()) {
                     $this->commentPipeline->approved($comment, null);
                 } else {
                     $this->commentPipeline->unapproved($comment, null);
                 }
+            }
+
+            if ($this->config->trackChanges === true && $finalChangeSet !== null) {
+                $this->changeSetManager->addChangeSet($comment, $finalChangeSet);
             }
         }
 
@@ -808,7 +802,10 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     {
         $persistedComment = $this->findById($comment->getId());
         $persistedStorable = $this->cleanCommentStorableData($persistedComment->getStorableAttributes());
+        $persistedStorable[LocalCommentChangeSetStorageManager::KEY_SPECIAL_CONTENT] = $persistedComment->getRawContent();
+
         $currentStorable = $this->cleanCommentStorableData($comment->getStorableAttributes());
+        $currentStorable[LocalCommentChangeSetStorageManager::KEY_SPECIAL_CONTENT] = $comment->getRawContent();
 
         $changeSet = AttributeDiff::analyze($persistedStorable, $currentStorable);
 
@@ -892,6 +889,85 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     }
 
     /**
+     * Runs the requested mutation on the comment.
+     *
+     * @param string $originalId The original string identifier.
+     * @param CommentContract $comment The comment to run mutations against.
+     * @param string $mutation The mutation to run.
+     * @return mixed
+     */
+    private function runMutablePipeline($originalId, $comment, $mutation)
+    {
+        /** @var CommentContract|null $pipelineResult */
+        $pipelineResult = null;
+
+        if (method_exists($this->commentPipeline, $mutation)) {
+            $this->commentPipeline->$mutation($comment, function ($result) use (&$pipelineResult) {
+                $pipelineResult = $this->mergeFromPipelineResults($pipelineResult, $result);
+            });
+        }
+
+        return $this->reassignFromPipeline($originalId, $comment, $pipelineResult);
+    }
+
+    /**
+     * Attempts to merge a new result into an existing pipeline result.
+     *
+     * @param CommentContract|null $currentPipelineResult The current pipeline result.
+     * @param CommentContract|null $result The result to merge.
+     * @return CommentContract|null
+     */
+    private function mergeFromPipelineResults($currentPipelineResult, $result)
+    {
+        if (CommentValidator::check($result)) {
+            if ($currentPipelineResult === null) {
+                $currentPipelineResult = $result;
+            } else {
+                $currentPipelineResult->mergeAttributes($result->getStorableAttributes());
+            }
+        }
+
+        return $currentPipelineResult;
+    }
+
+    /**
+     * Reassigns the result's identifier.
+     * @param string $originalId The comment identifier.
+     * @param CommentContract $comment The comment to reassign to.
+     * @param CommentContract|null $pipelineResult The aggregate pipeline result.
+     * @return CommentContract
+     */
+    private function reassignFromPipeline($originalId, $comment, $pipelineResult)
+    {
+        if (CommentValidator::check($pipelineResult)) {
+            $pipelineResult->setDataAttribute(CommentContract::KEY_ID, $originalId);
+
+            return $pipelineResult;
+        }
+
+        return $comment;
+    }
+
+    /**
+     * Runs a conditional mutation on the comment.
+     *
+     * @param string $originalId The original string identifier.
+     * @param CommentContract $comment The comment to run mutations against.
+     * @param bool $valueCheck The condition's value.
+     * @param string $trueMutation The mutation to run if the check value is true.
+     * @param string $falseMutation The mutation to run if the check value is false.
+     * @return CommentContract
+     */
+    private function runConditionalMutablePipeline($originalId, $comment, $valueCheck, $trueMutation, $falseMutation)
+    {
+        if ($valueCheck) {
+            return $this->runMutablePipeline($originalId, $comment, $trueMutation);
+        }
+
+        return $this->runMutablePipeline($originalId, $comment, $falseMutation);
+    }
+
+    /**
      * Attempts to persist the comment data to disk.
      *
      * @param CommentContract $comment The comment to save.
@@ -911,7 +987,13 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             mkdir($directoryName, Paths::DIRECTORY_PERMISSIONS, true);
         }
 
-        return file_put_contents($storagePath, $contentToSave);
+        $result = file_put_contents($storagePath, $contentToSave);
+
+        if ($result === false) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

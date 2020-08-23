@@ -71,4 +71,11 @@ interface DataObjectContract
      */
     public function getDataAttribute($key, $default = null);
 
+    /**
+     * Merges the attributes into the current data object.
+     *
+     * @param array $attributes The attributes to merge.
+     */
+    public function mergeAttributes($attributes);
+
 }

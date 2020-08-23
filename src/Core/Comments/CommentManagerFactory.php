@@ -7,7 +7,7 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentManagerContract;
 /**
  * Class CommentManagerFactory
  *
- * Allows Meerkat Core internals to reference a global implementation
+ * Allows Meerkat Core internals to reference a global implementation.
  *
  * @package Stillat\Meerkat\Core\Comments
  * @since 2.0.0

@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat\Providers;
 
+use Statamic\Statamic;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorFactoryContract;
 use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
 use Stillat\Meerkat\Core\Contracts\Permissions\PermissionsManagerContract;

@@ -6,6 +6,7 @@ use Exception;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\DataObjectContract;
 use Stillat\Meerkat\Core\Contracts\SpamGuardContract;
+use Stillat\Meerkat\Core\Contracts\SpamGuardPipelineContract;
 use Stillat\Meerkat\Core\GuardConfiguration;
 
 /**
@@ -43,9 +44,27 @@ class SpamService
      */
     protected $errors = [];
 
-    public function __construct(GuardConfiguration $config)
+    /**
+     * The SpamGuardPipelineContract implementation instance.
+     *
+     * @var SpamGuardPipelineContract
+     */
+    protected $guardPipeline = null;
+
+    public function __construct(GuardConfiguration $config, SpamGuardPipelineContract $pipeline)
     {
         $this->config = $config;
+        $this->guardPipeline = $pipeline;
+
+        $this->emitStartingEvent();
+    }
+
+    /**
+     * Emits the starting event event to allow addons to register custom guards, if desired.
+     */
+    private function emitStartingEvent()
+    {
+        $this->guardPipeline->guardStarting($this, null);
     }
 
     /**

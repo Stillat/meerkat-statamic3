@@ -299,7 +299,6 @@ class FormHandler
         }
 
         return $thread->attachNewComment($this->commentFactory->makeComment($data));
-
     }
 
     /**

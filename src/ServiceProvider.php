@@ -10,11 +10,13 @@ use Stillat\Meerkat\Console\Commands\StatisticsCommand;
 use Stillat\Meerkat\Console\Commands\ValidateCommand;
 use Stillat\Meerkat\Core\Configuration as GlobalConfiguration;
 use Stillat\Meerkat\Core\ConfigurationFactories;
+use Stillat\Meerkat\Core\Contracts\Http\HttpClientContract;
 use Stillat\Meerkat\Core\Contracts\Logging\ErrorCodeRepositoryContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\YAMLParserContract;
 use Stillat\Meerkat\Core\FormattingConfiguration;
 use Stillat\Meerkat\Core\GuardConfiguration;
+use Stillat\Meerkat\Core\Http\Client;
 use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
 use Stillat\Meerkat\Core\Parsing\MarkdownParserFactory;
 use Stillat\Meerkat\Parsing\MarkdownParser;
@@ -23,12 +25,13 @@ use Stillat\Meerkat\Providers\AddonServiceProvider;
 use Stillat\Meerkat\Providers\ControlPanelServiceProvider;
 use Stillat\Meerkat\Providers\DataServiceProvider;
 use Stillat\Meerkat\Providers\IdentityServiceProvider;
+use Stillat\Meerkat\Providers\SpamServiceProvider;
 use Stillat\Meerkat\Providers\TagsServiceProvider;
 use Stillat\Meerkat\Providers\ThreadServiceProvider;
 use Stillat\Meerkat\Support\Facades\Configuration;
 
 /**
- * Class Servicerovider
+ * Class ServiceProvider
  *
  * Bootstraps the core Meerkat services, configuration, and utilities.
  *
@@ -55,6 +58,7 @@ class ServiceProvider extends AddonServiceProvider
     protected $providers = [
         /** Start: Meerkat Core Dependency Providers */
         IdentityServiceProvider::class,
+        SpamServiceProvider::class,
         ThreadServiceProvider::class,
         DataServiceProvider::class,
         /** End: Meerkat Core Dependency Providers */
@@ -181,6 +185,8 @@ class ServiceProvider extends AddonServiceProvider
         $this->app->singleton(MarkdownParserContract::class, function ($app) {
             return $app->make(MarkdownParser::class);
         });
+
+        $this->app->bind(HttpClientContract::class, Client::class);
 
         Statamic::booted(function () {
             MarkdownParserFactory::$instance = app(MarkdownParserContract::class);

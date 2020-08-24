@@ -19,6 +19,9 @@ use Stillat\Meerkat\PathProvider;
 use Stillat\Meerkat\Tags\Responses\CollectionRenderer;
 use Stillat\Meerkat\Tags\Testing\OutputThreadDebugInformation;
 
+// TODO: Apply query from params.
+// TODO: Ensure that trashed comments are correctly filtered.
+// TODO: Ensure that trashed threads are correctly ignored.
 class Meerkat extends Tags
 {
     use GetsHiddenContext;

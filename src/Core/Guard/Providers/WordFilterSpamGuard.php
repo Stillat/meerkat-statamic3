@@ -68,7 +68,7 @@ class WordFilterSpamGuard implements SpamGuardContract
 
         $emailAddress = $data->getDataAttribute(AuthorContract::KEY_EMAIL_ADDRESS);
         $name = $data->getDataAttribute(AuthorContract::KEY_NAME);
-        $content = $data->getDataAttribute(CommentContract::KEY_COMMENT);
+        $content = $data->getDataAttribute(CommentContract::KEY_LEGACY_COMMENT);
         $contentComment = $data->getDataAttribute(CommentContract::KEY_CONTENT);
 
         foreach ($this->guardConfig->bannedWords as $word) {

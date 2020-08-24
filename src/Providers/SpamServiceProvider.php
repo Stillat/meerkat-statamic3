@@ -3,8 +3,10 @@
 namespace Stillat\Meerkat\Providers;
 
 use Exception;
+use Illuminate\Support\Facades\Event;
 use Statamic\Statamic;
 use Stillat\Meerkat\Concerns\UsesConfig;
+use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\SpamGuardContract;
 use Stillat\Meerkat\Core\Contracts\SpamGuardPipelineContract;
 use Stillat\Meerkat\Core\Errors;
@@ -13,6 +15,7 @@ use Stillat\Meerkat\Core\GuardConfiguration;
 use Stillat\Meerkat\Core\Logging\ErrorLog;
 use Stillat\Meerkat\Core\Logging\ErrorLogContext;
 use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
+use Stillat\Meerkat\Guard\FormHandler;
 use Stillat\Meerkat\Guard\GuardPipeline;
 
 class SpamServiceProvider extends AddonServiceProvider
@@ -30,6 +33,19 @@ class SpamServiceProvider extends AddonServiceProvider
             $pipeline = app(SpamGuardPipelineContract::class);
 
             return new SpamService($guardConfig, $pipeline);
+        });
+
+        Event::listen(['Meerkat.comments.created', 'Meerkat.comments.updated'], function (CommentContract $comment) {
+            /** @var FormHandler $handler */
+            $handler = app(FormHandler::class);
+
+            $handler->checkForSpam($comment);
+        });
+
+
+        Event::listen('Meerkat.comments.created', function () {
+            /** @var FormHandler $guardHandler */
+            $guardHandler = app(FormHandler::class);
         });
 
         Statamic::booted(function () {

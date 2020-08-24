@@ -20,7 +20,7 @@ abstract class EventPipeline implements MutationPipelineContract
 
     public function delayMutate($request, $object, $callback)
     {
-        $runSync = $this->getConfig('internals.delayMutationSync', false);
+        $runSync = $this->getConfig('internals.delayMutationSync', true);
 
         if ($runSync === false) {
             app()->terminating(function () use ($request, &$object, $callback) {

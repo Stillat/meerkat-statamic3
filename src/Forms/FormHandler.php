@@ -266,7 +266,7 @@ class FormHandler
 
     public function store($data)
     {
-        $newCommentId = time();
+        $newCommentId = strval(time());
         $data = [CommentContract::KEY_ID => $newCommentId] + $data;
 
         $threadId = $this->getThreadId();

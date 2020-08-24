@@ -30,6 +30,7 @@ class MeerkatForm extends MeerkatTag
 
     const KEY_MEERKAT_FORM = '_meerkat_form';
     const KEY_PARAM_ERROR_REDIRECT = '_error_redirect';
+    const KEY_PARAM_BLUEPRINT = 'blueprint';
     const KEY_MEERKAT_CONTEXT = '_meerkat_context';
     const KEY_DATA_FIELDS = 'fields';
     const KEY_FORM_CONFIG_VALIDATE = 'validate';
@@ -65,7 +66,7 @@ class MeerkatForm extends MeerkatTag
 
     public function render()
     {
-        $bluePrint = $this->getParameterValue('blueprint', Addon::CODE_ADDON_NAME);
+        $bluePrint = $this->getParameterValue(self::KEY_PARAM_BLUEPRINT, Addon::CODE_ADDON_NAME);
         $this->blueprintName = $bluePrint;
         $sessionHandle = self::getFormSessionHandle($bluePrint);
 

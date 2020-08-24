@@ -36,6 +36,14 @@ class SpamServiceProvider extends AddonServiceProvider
 
                         if ($instance instanceof SpamGuardContract) {
                             $spamService->registerGuard($instance);
+                        } else {
+                            $message = $guard . ' cannot be registered; it is not an instance of '
+                                . SpamGuardContract::class;
+
+                            LocalErrorCodeRepository::log(ErrorLog::warning(
+                                Errors::GUARD_INCORRECT_TYPE,
+                                $message
+                            ));
                         }
                     } catch (Exception $e) {
                         $errorContext = new ErrorLogContext();
@@ -44,6 +52,11 @@ class SpamServiceProvider extends AddonServiceProvider
 
                         LocalErrorCodeRepository::log(ErrorLog::make(Errors::GUARD_CREATION_FAILED, $errorContext));
                     }
+                } else {
+                    LocalErrorCodeRepository::log(ErrorLog::warning(
+                        Errors::GUARD_MISSING_TYPE,
+                        $guard . ' class could not be located.'
+                    ));
                 }
             }
         });

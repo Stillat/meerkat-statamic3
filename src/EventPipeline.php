@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat;
 
 use Stillat\Meerkat\Concerns\EmitsEvents;
+use Stillat\Meerkat\Concerns\UsesConfig;
 use Stillat\Meerkat\Core\Contracts\MutationPipelineContract;
 
 /**
@@ -15,13 +16,19 @@ use Stillat\Meerkat\Core\Contracts\MutationPipelineContract;
  */
 abstract class EventPipeline implements MutationPipelineContract
 {
-    use EmitsEvents;
+    use EmitsEvents, UsesConfig;
 
     public function delayMutate($request, $object, $callback)
     {
-        app()->terminating(function () use ($request, &$object, $callback) {
+        $runSync = $this->getConfig('internals.delayMutationSync', false);
+
+        if ($runSync === false) {
+            app()->terminating(function () use ($request, &$object, $callback) {
+                $this->mutate($request, $object, $callback);
+            });
+        } else {
             $this->mutate($request, $object, $callback);
-        });
+        }
     }
 
     /**

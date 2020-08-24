@@ -29,7 +29,7 @@ class SpamServiceProvider extends AddonServiceProvider
             $guardConfig = app(GuardConfiguration::class);
             $pipeline = app(SpamGuardPipelineContract::class);
 
-            return new SpamService($guardConfig);
+            return new SpamService($guardConfig, $pipeline);
         });
 
         Statamic::booted(function () {

@@ -2,11 +2,16 @@
 
 namespace Stillat\Meerkat\Providers;
 
+use Exception;
 use Statamic\Statamic;
 use Stillat\Meerkat\Concerns\UsesConfig;
 use Stillat\Meerkat\Core\Contracts\SpamGuardContract;
+use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Guard\SpamService;
 use Stillat\Meerkat\Core\GuardConfiguration;
+use Stillat\Meerkat\Core\Logging\ErrorLog;
+use Stillat\Meerkat\Core\Logging\ErrorLogContext;
+use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
 
 class SpamServiceProvider extends AddonServiceProvider
 {
@@ -15,7 +20,7 @@ class SpamServiceProvider extends AddonServiceProvider
     public function register()
     {
         $this->app->singleton(SpamService::class, function ($app) {
-            $guardConfig  = app(GuardConfiguration::class);
+            $guardConfig = app(GuardConfiguration::class);
 
             return new SpamService($guardConfig);
         });
@@ -26,10 +31,18 @@ class SpamServiceProvider extends AddonServiceProvider
 
             foreach ($this->getConfig('publishing.guards') as $guard) {
                 if (class_exists($guard)) {
-                    $instance = app()->make($guard);
+                    try {
+                        $instance = app()->make($guard);
 
-                    if ($instance instanceof SpamGuardContract) {
-                        $spamService->registerGuard($instance);
+                        if ($instance instanceof SpamGuardContract) {
+                            $spamService->registerGuard($instance);
+                        }
+                    } catch (Exception $e) {
+                        $errorContext = new ErrorLogContext();
+                        $errorContext->msg = $e->getMessage();
+                        $errorContext->details = $e->getTraceAsString();
+
+                        LocalErrorCodeRepository::log(ErrorLog::make(Errors::GUARD_CREATION_FAILED, $errorContext));
                     }
                 }
             }

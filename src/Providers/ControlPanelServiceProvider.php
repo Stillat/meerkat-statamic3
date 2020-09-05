@@ -61,6 +61,7 @@ class ControlPanelServiceProvider extends AddonServiceProvider
 
         $this->navigation->create();
 
+        Statamic::script('meerkat', Addon::VERSION . '/meerkatExtend');
         Statamic::script('meerkat', Addon::VERSION . '/meerkat');
         Statamic::script('meerkat', Addon::VERSION . '/bootstrap');
     }

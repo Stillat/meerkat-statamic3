@@ -144,7 +144,7 @@ class StatamicIdentityManager implements IdentityManagerContract, PermissionsMan
 
         if ($author instanceof User) {
             // TODO: Should be an array passed in here.
-            $identity = $this->authorFactory->makeAuthor($author);
+            $identity = $this->authorFactory->makeAuthor($author->toArray());
 
             if ($identity !== null) {
                 return $identity->getId();

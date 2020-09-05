@@ -61,6 +61,7 @@ class RequestHelpers
 
 
             if (Str::startsWith($referrer, '/' . $statamicCpRoute . '/')) {
+
                 return true;
             }
         }

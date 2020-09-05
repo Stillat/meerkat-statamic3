@@ -20,6 +20,7 @@ use Stillat\Meerkat\Core\Support\TypeConversions;
 use Stillat\Meerkat\Tags\MeerkatTag;
 use Stillat\Meerkat\Tags\Output\RecursiveThreadRenderer;
 
+// TODO: Provide extra meta data, such as `comments_enabled` in Antlers contexts.
 class CollectionRenderer extends MeerkatTag
 {
     const PARAM_UNAPPROVED = 'include_unapproved';
@@ -35,8 +36,8 @@ class CollectionRenderer extends MeerkatTag
     const RETURN_HAS_RESULTS = 'has_results';
     const RETURN_NO_RESULTS = 'no_results';
     const RETURN_ITEMS_COUNT = 'items_count';
-
     const DEFAULT_COLLECTION_NAME = 'comments';
+
     public $tagContext = '';
     protected $filterManager = null;
     protected $threadManager = null;

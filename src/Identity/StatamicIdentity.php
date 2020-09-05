@@ -2,7 +2,6 @@
 
 namespace Stillat\Meerkat\Identity;
 
-use Stillat\Meerkat\Core\Authoring\Author;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\DataObject;
 use Stillat\Meerkat\Core\Permissions\PermissionsSet;
@@ -32,28 +31,24 @@ class StatamicIdentity implements AuthorContract
      * @var null|string
      */
     protected $userId = null;
-
-    /**
-     * Indicates if the identity is transient.
-     *
-     * @var bool
-     */
-    private $isTransient = true;
-
     /**
      * The identity's display name, if available.
      *
      * @var string
      */
     protected $displayName = '';
-
     /**
      * The identity's email address, if available.
      *
      * @var string
      */
     protected $emailAddress = '';
-
+    /**
+     * Indicates if the identity is transient.
+     *
+     * @var bool
+     */
+    private $isTransient = true;
     /**
      * The identity's permission set.
      *
@@ -62,23 +57,56 @@ class StatamicIdentity implements AuthorContract
     private $permissionSet = null;
 
     /**
-     * Returns a value indicating if the identity is transient.
+     * Sets the user's system string identifier.
      *
-     * @return bool
+     * @param string $userId The user's string identifier.
      */
-    public function getIsTransient()
+    public function setId($userId)
     {
-        return $this->isTransient;
+        $this->userId = $userId;
     }
 
     /**
-     * Sets whether or not the identity is transient.
+     * Sets the author context's permission set.
      *
-     * @param bool $isTransient
+     * @param PermissionsSet $permissionSet
      */
-    public function setIsTransient($isTransient)
+    public function setPermissionsSet($permissionSet)
     {
-        $this->isTransient = $isTransient;
+        $this->permissionSet = $permissionSet;
+    }
+
+    /**
+     * Gets the host system's user object, if available.
+     *
+     * @return mixed
+     */
+    public function getHostUser()
+    {
+        // TODO: Implement.
+        return null;
+    }
+
+    /**
+     * Converts the author data into an array.
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        // TODO: Implement.
+        $hostUserArray = [];
+
+        return [
+            AuthorContract::KEY_USER_AGENT => $this->getDataAttribute(AuthorContract::KEY_USER_AGENT, ''),
+            AuthorContract::KEY_USER_ID => $this->getId(),
+            AuthorContract::KEY_USER_IP => $this->getDataAttribute(AuthorContract::KEY_USER_IP, ''),
+            AuthorContract::KEY_NAME => $this->getDisplayName(),
+            AuthorContract::KEY_EMAIL_ADDRESS => $this->getEmailAddress(),
+            AuthorContract::KEY_HAS_USER => $this->getIsTransient() === false,
+            AuthorContract::KEY_USER => $hostUserArray,
+            AuthorContract::KEY_PERMISSIONS => $this->getPermissionSet()->toArray()
+        ];
     }
 
     /**
@@ -89,16 +117,6 @@ class StatamicIdentity implements AuthorContract
     public function getId()
     {
         return $this->userId;
-    }
-
-    /**
-     * Sets the user's system string identifier.
-     *
-     * @param string $userId The user's string identifier.
-     */
-    public function setId($userId)
-    {
-        $this->userId = $userId;
     }
 
     /**
@@ -142,6 +160,25 @@ class StatamicIdentity implements AuthorContract
         $this->emailAddress = $emailAddress;
     }
 
+    /**
+     * Returns a value indicating if the identity is transient.
+     *
+     * @return bool
+     */
+    public function getIsTransient()
+    {
+        return $this->isTransient;
+    }
+
+    /**
+     * Sets whether or not the identity is transient.
+     *
+     * @param bool $isTransient
+     */
+    public function setIsTransient($isTransient)
+    {
+        $this->isTransient = $isTransient;
+    }
 
     /**
      * Gets the author context's permission set.
@@ -151,49 +188,6 @@ class StatamicIdentity implements AuthorContract
     public function getPermissionSet()
     {
         return $this->permissionSet;
-    }
-
-    /**
-     * Sets the author context's permission set.
-     *
-     * @param PermissionsSet $permissionSet
-     * @return mixed
-     */
-    public function setPermissionsSet($permissionSet)
-    {
-        $this->permissionSet = $permissionSet;
-    }
-
-    /**
-     * Gets the host system's user object, if available.
-     *
-     * @return mixed
-     */
-    public function getHostUser()
-    {
-        // TODO: Implement.
-        return null;
-    }
-
-    /**
-     * Converts the author data into an array.
-     *
-     * @return array
-     */
-    public function toArray()
-    {
-        // TODO: Implement.
-        $hostUserArray = [];
-
-        return [
-            AuthorContract::KEY_USER_AGENT => $this->getDataAttribute(AuthorContract::KEY_USER_AGENT, ''),
-            AuthorContract::KEY_USER_IP => $this->getDataAttribute(AuthorContract::KEY_USER_IP, ''),
-            AuthorContract::KEY_NAME => $this->getDisplayName(),
-            AuthorContract::KEY_EMAIL_ADDRESS => $this->getEmailAddress(),
-            AuthorContract::KEY_HAS_USER => $this->getIsTransient() === false,
-            AuthorContract::KEY_USER => $hostUserArray,
-            AuthorContract::KEY_PERMISSIONS => $this->getPermissionSet()->toArray()
-        ];
     }
 
 }

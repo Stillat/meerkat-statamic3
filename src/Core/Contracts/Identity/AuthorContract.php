@@ -43,9 +43,12 @@ interface AuthorContract extends DataObjectContract, Serializable
     const KEY_EMAIL_ADDRESS = 'email';
     const KEY_NAME = 'name';
     const AUTHENTICATED_USER_ID = 'authenticated_user';
+    const KEY_USER_ID = 'id';
     const KEY_USER = 'user';
     const KEY_HAS_USER = 'has_user';
     const KEY_PERMISSIONS = 'permissions';
+
+    const KEY_INITIALS = 'initials';
 
     /**
      * Returns a value indicating if the author context is

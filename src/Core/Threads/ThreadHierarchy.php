@@ -191,6 +191,26 @@ class ThreadHierarchy
     }
 
     /**
+     * Sets the descendent mapping table.
+     *
+     * @param array $mapping The mapping.
+     */
+    public function setDescendentMapping($mapping)
+    {
+        $this->descendentMapping = $mapping;
+    }
+
+    /**
+     * Gets the descendent mapping table.
+     *
+     * @return array
+     */
+    public function getDescendentMapping()
+    {
+        return $this->descendentMapping;
+    }
+
+    /**
      * Gets the ancestor mapping table.
      *
      * @return array

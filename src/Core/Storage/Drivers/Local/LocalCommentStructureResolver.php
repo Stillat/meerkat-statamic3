@@ -242,6 +242,7 @@ class LocalCommentStructureResolver implements StructureResolverInterface
         $hierarchy->setCommentDepthMapping($this->depthMapping);
         $hierarchy->setDirectAncestorMapping($this->directAncestorMapping);
         $hierarchy->setDirectDescendentMapping($this->directDescendentMapping);
+        $hierarchy->setDescendentMapping($this->descendentMapping);
         $hierarchy->setAncestorMapping($this->ancestorMapping);
 
         $this->hierarchyCache[$threadPath] = $hierarchy;

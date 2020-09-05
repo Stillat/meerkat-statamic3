@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat\Core\Data\Retrievers;
 
+use Stillat\Meerkat\Core\Authoring\TransientIdGenerator;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 
@@ -15,6 +16,37 @@ use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
  */
 class CommentAuthorRetriever
 {
+
+    /**
+     * Extracts author details from the list of comments.
+     *
+     * @param array $data The CommentContract arrays.
+     * @return array
+     */
+    public static function getAuthorsFromCommentArray($data)
+    {
+        $authorsToReturn = [];
+
+        foreach ($data as $commentArray) {
+            if (array_key_exists(CommentContract::KEY_AUTHOR, $commentArray) === false) {
+                continue;
+            }
+
+            $author = $commentArray[CommentContract::KEY_AUTHOR];
+
+            if (array_key_exists(AuthorContract::KEY_USER_ID, $author)) {
+                if ($author[AuthorContract::KEY_USER_ID] === null) {
+                    $author[AuthorContract::KEY_USER_ID] = TransientIdGenerator::getId($author);
+                }
+            }
+
+            if (array_key_exists($author[AuthorContract::KEY_USER_ID], $authorsToReturn) === false) {
+                $authorsToReturn[$author[AuthorContract::KEY_USER_ID]] = $author;
+            }
+        }
+
+        return array_values($authorsToReturn);
+    }
 
     /**
      * Gets a collection of unique authors in the dataset.

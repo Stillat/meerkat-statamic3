@@ -309,6 +309,7 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
         parent::register();
 
         foreach ($this->providers as $provider) {
+            /** @var ServiceProvider $providerInstance */
             $providerInstance = app($provider);
 
             if ($providerInstance !== null) {

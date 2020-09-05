@@ -3,7 +3,5 @@
 @section('wrapper_class', 'max-w-full')
 
 @section('content')
-    <div class="flex items-center mb-3">
-        <h1 class="flex-1">Comments</h1>
-    </div>
+    <div data-meerkat-app="comment-thread"></div>
 @stop

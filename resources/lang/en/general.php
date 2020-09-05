@@ -2,6 +2,6 @@
 
 return [
 
-    'meerkat' => 'Meerkat'
+    'meerkat' => 'Meerkat',
 
 ];

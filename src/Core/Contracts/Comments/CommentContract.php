@@ -44,6 +44,8 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     const KEY_PUBLISHED = 'published';
     const KEY_SPAM = 'spam';
 
+    const KEY_HAS_CHECKED_FOR_SPAM = 'has_checked_for_spam';
+
     const KEY_HAS_REPLIES = 'has_replies';
 
     const KEY_NAME = 'name';
@@ -271,6 +273,13 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
      * @return string
      */
     public function getParentId();
+
+    /**
+     * Tests if the comment is a parent comment.
+     *
+     * @return bool
+     */
+    public function isParent();
 
     /**
      * Gets the date the comment was created.

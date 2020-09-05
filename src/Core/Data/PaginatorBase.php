@@ -113,11 +113,16 @@ abstract class PaginatorBase implements PaginatorContract
 
         $limit = (int)$limit;
         $totalResults = count($collection);
+        $itemsCount = $totalResults - $offset;
+        $lastPage = (int)ceil($itemsCount / $limit);
+
+        if ($currentPage > $lastPage) {
+            $currentPage = $lastPage;
+        }
+
         $currentOffset = (($currentPage - 1) * $limit) + $offset;
 
         $displayItems = array_slice($collection, $currentOffset, $limit, true);
-        $itemsCount = $totalResults - $offset;
-        $lastPage = (int)ceil($itemsCount / $limit);
 
         if ($currentPage > $lastPage) {
             $currentPage = $lastPage;

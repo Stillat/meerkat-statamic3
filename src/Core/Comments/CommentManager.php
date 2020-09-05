@@ -4,8 +4,16 @@ namespace Stillat\Meerkat\Core\Comments;
 
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentManagerContract;
+use Stillat\Meerkat\Core\Contracts\Data\DataSetContract;
+use Stillat\Meerkat\Core\Contracts\Data\GroupedDataSetContract;
+use Stillat\Meerkat\Core\Contracts\Data\PagedDataSetContract;
+use Stillat\Meerkat\Core\Contracts\Data\PagedGroupedDataSetContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Data\DataQuery;
+use Stillat\Meerkat\Core\Exceptions\DataQueryException;
+use Stillat\Meerkat\Core\Exceptions\FilterException;
+use Stillat\Meerkat\Core\Exceptions\InconsistentCompositionException;
+use Stillat\Meerkat\Core\Http\Responses\CommentResponseGenerator;
 use Stillat\Meerkat\Core\Threads\ThreadManagerFactory;
 
 /**
@@ -71,10 +79,30 @@ class CommentManager implements CommentManagerContract
     }
 
     /**
+     * Attempts to query all comments.
+     *
+     * @param DataQuery $query The query to apply to all comments.
+     * @return GroupedDataSetContract|PagedDataSetContract|PagedGroupedDataSetContract|DataSetContract
+     * @throws DataQueryException
+     * @throws FilterException
+     * @throws InconsistentCompositionException
+     */
+    public function queryAll(DataQuery $query)
+    {
+        return $query->getCollection(
+            $this->getAll(false),
+            CommentResponseGenerator::KEY_API_COMMENT_COLLECTION
+        );
+    }
+
+    /**
      * Attempts to retrieve all comments.
      *
      * @param bool $withTrashed Indicates if soft-deleted comments should included.
      * @return CommentContract[]
+     * @throws FilterException
+     * @throws DataQueryException
+     * @throws InconsistentCompositionException
      */
     public function getAll($withTrashed = false)
     {

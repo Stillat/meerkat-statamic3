@@ -58,6 +58,22 @@ class Configuration extends ConfigurationContainer
     public $indexDirectory = '';
 
     /**
+     * Indicates if Meerkat Core should run in debug mode.
+     *
+     * @var bool
+     */
+    public $debugMode = false;
+
+    /**
+     * Indicates if Meerkat Core should trace third-party interactions with Meerkat Core.
+     *
+     * Requires Debug Mode.
+     *
+     * @var bool
+     */
+    public $debugTracing = false;
+
+    /**
      * The directory separator character to use when constructing storage paths.
      *
      * @var string

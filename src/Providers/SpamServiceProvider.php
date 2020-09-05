@@ -35,6 +35,7 @@ class SpamServiceProvider extends AddonServiceProvider
             return new SpamService($guardConfig, $pipeline);
         });
 
+        // TODO: Deprecated. Use Core Handlers.
         Event::listen(['Meerkat.comments.created', 'Meerkat.comments.updated'], function (CommentContract $comment) {
             /** @var FormHandler $handler */
             $handler = app(FormHandler::class);

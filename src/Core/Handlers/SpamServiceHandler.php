@@ -1,24 +1,13 @@
 <?php
 
-namespace Stillat\Meerkat\Guard;
+namespace Stillat\Meerkat\Core\Handlers;
 
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Guard\SpamService;
 use Stillat\Meerkat\Core\GuardConfiguration;
 
-/**
- * Class FormHandler
- *
- * Executed after a comment is saved or updated.
- *
- * @package Stillat\Meerkat\Guard
- * @since 2.0.0
- * // TODO
- */
-
-// TODO: Deprecated
-class FormHandler
+class SpamServiceHandler extends BaseHandler
 {
 
     /**
@@ -42,19 +31,14 @@ class FormHandler
      */
     protected $storageManager = null;
 
-    public function __construct(GuardConfiguration $config, SpamService $service, CommentStorageManagerContract $commentManager)
+    public function __construct(GuardConfiguration $config, SpamService $spamService, CommentStorageManagerContract $storageManager)
     {
         $this->config = $config;
-        $this->spamService = $service;
-        $this->storageManager = $commentManager;
+        $this->spamService = $spamService;
+        $this->storageManager = $storageManager;
     }
 
-    /**
-     * Checks the provided comment is spam or not.
-     *
-     * @param CommentContract $comment The comment to test.
-     */
-    public function checkForSpam(CommentContract $comment)
+    public function handle(CommentContract $comment)
     {
         $isSpam = $this->spamService->isSpam($comment);
 

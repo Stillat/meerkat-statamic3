@@ -2,7 +2,13 @@
 
 namespace Stillat\Meerkat\Core\Contracts\Comments;
 
+use Stillat\Meerkat\Core\Contracts\Data\DataSetContract;
+use Stillat\Meerkat\Core\Contracts\Data\GroupedDataSetContract;
+use Stillat\Meerkat\Core\Contracts\Data\PagedDataSetContract;
+use Stillat\Meerkat\Core\Contracts\Data\PagedGroupedDataSetContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
+use Stillat\Meerkat\Core\Data\DataQuery;
+use Stillat\Meerkat\Core\Exceptions\FilterException;
 
 /**
  * Interface CommentManagerContract
@@ -29,6 +35,15 @@ interface CommentManagerContract
      * @return CommentContract[]
      */
     public function getAll($withTrashed = false);
+
+    /**
+     * Attempts to query all comments.
+     *
+     * @param DataQuery $query The query to apply to all comments.
+     * @return GroupedDataSetContract|PagedDataSetContract|PagedGroupedDataSetContract|DataSetContract
+     * @throws FilterException
+     */
+    public function queryAll(DataQuery $query);
 
     /**
      * Configures the provided comment to be a reply to the specified parent.

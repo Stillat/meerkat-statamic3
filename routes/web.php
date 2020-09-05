@@ -1,5 +1,6 @@
 <?php
 
+// /!/ Endpoints are just there for backwards compatibility.
 
 Route::post('/!/Meerkat/delete', function () {
 
@@ -15,5 +16,5 @@ Route::get('/!/Meerkat/test', function () {
     return 'testing Legacy Route Structure.';
 });
 
-
+include_once 'api.php';
 include_once 'emit.php';

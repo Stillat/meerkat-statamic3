@@ -442,6 +442,16 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     }
 
     /**
+     * Tests if the comment is a parent comment.
+     *
+     * @return bool
+     */
+    public function isParent()
+    {
+        return $this->getDataAttribute(CommentContract::KEY_IS_PARENT, false);
+    }
+
+    /**
      * Gets the identifier for the parent comment, if available.
      *
      * @return string

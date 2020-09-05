@@ -22,10 +22,6 @@ return [
 
     ],
 
-    'can_reply_to_comments' => [
-
-    ],
-
     'can_edit_comments' => [
 
     ],

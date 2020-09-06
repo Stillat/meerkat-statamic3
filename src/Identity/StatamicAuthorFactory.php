@@ -41,6 +41,20 @@ class StatamicAuthorFactory implements AuthorFactoryContract
     public static $identityCache = [];
 
     /**
+     * A cache of previously located Statamic users.
+     *
+     * @var array
+     */
+    public static $userCache = [];
+
+    /**
+     * A cached instance of the author factory to provide static factory methods.
+     *
+     * @var StatamicAuthorFactory|null
+     */
+    protected static $instanceCache = null;
+
+    /**
      * The Statamic UserProvider instance.
      *
      * @var UserProvider
@@ -58,6 +72,20 @@ class StatamicAuthorFactory implements AuthorFactoryContract
     {
         $this->statamicUserProvider = $userProvider;
         $this->permissionsManager = $permissionsManager;
+    }
+
+    /**
+     * Returns a shared instance of StatamicAuthorFactory.
+     *
+     * @return StatamicAuthorFactory
+     */
+    public static function getInstance()
+    {
+        if (self::$instanceCache === null) {
+            self::$instanceCache = app(StatamicAuthorFactory::class);
+        }
+
+        return self::$instanceCache;
     }
 
     /**
@@ -175,6 +203,25 @@ class StatamicAuthorFactory implements AuthorFactoryContract
         self::$identityCache[$protoUserIdentifier] = $identity;
 
         return $identity;
+    }
+
+    /**
+     * Attempts to locate a Statamic user with the provided  identifier.
+     *
+     * @param string $userId The user identifier.
+     * @return User|null
+     */
+    public function getStatamicIdentity($userId)
+    {
+        if (self::$userCache !== null && is_array(self::$userCache)) {
+            if (array_key_exists($userId, self::$userCache)) {
+                return self::$userCache[$userId];
+            }
+        }
+
+        self::$userCache[$userId] = $this->statamicUserProvider->retrieveById($userId);
+
+        return self::$userCache[$userId];
     }
 
 }

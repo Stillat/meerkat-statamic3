@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat\Identity;
 
+use Statamic\Contracts\Auth\User;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\DataObject;
 use Stillat\Meerkat\Core\Permissions\PermissionsSet;
@@ -88,26 +89,12 @@ class StatamicIdentity implements AuthorContract
     }
 
     /**
-     * Gets the host system's user object, if available.
-     *
-     * @return mixed
-     */
-    public function getHostUser()
-    {
-        // TODO: Implement.
-        return null;
-    }
-
-    /**
      * Converts the author data into an array.
      *
      * @return array
      */
     public function toArray()
     {
-        // TODO: Implement.
-        $hostUserArray = [];
-
         return [
             AuthorContract::KEY_USER_AGENT => $this->getDataAttribute(AuthorContract::KEY_USER_AGENT, ''),
             AuthorContract::KEY_USER_ID => $this->getId(),
@@ -116,9 +103,48 @@ class StatamicIdentity implements AuthorContract
             AuthorContract::KEY_NAME => $this->getDisplayName(),
             AuthorContract::KEY_EMAIL_ADDRESS => $this->getEmailAddress(),
             AuthorContract::KEY_HAS_USER => $this->getIsTransient() === false,
-            AuthorContract::KEY_USER => $hostUserArray,
             AuthorContract::KEY_PERMISSIONS => $this->getPermissionSet()->toArray()
         ];
+    }
+
+    /**
+     * Returns a value indicating if the identity is transient.
+     *
+     * @return bool
+     */
+    public function getIsTransient()
+    {
+        return $this->isTransient;
+    }
+
+    /**
+     * Sets whether or not the identity is transient.
+     *
+     * @param bool $isTransient
+     */
+    public function setIsTransient($isTransient)
+    {
+        $this->isTransient = $isTransient;
+    }
+
+    /**
+     * Gets the host system's user object, if available.
+     *
+     * @return mixed
+     */
+    public function getHostUser()
+    {
+        if ($this->getIsTransient()) {
+            return null;
+        }
+
+        $userId = $this->getId();
+
+        if ($userId === null || mb_strlen($userId) === 0) {
+            return null;
+        }
+
+        return StatamicAuthorFactory::getInstance()->getStatamicIdentity($userId);
     }
 
     /**
@@ -189,26 +215,6 @@ class StatamicIdentity implements AuthorContract
     public function setEmailAddress($emailAddress)
     {
         $this->emailAddress = $emailAddress;
-    }
-
-    /**
-     * Returns a value indicating if the identity is transient.
-     *
-     * @return bool
-     */
-    public function getIsTransient()
-    {
-        return $this->isTransient;
-    }
-
-    /**
-     * Sets whether or not the identity is transient.
-     *
-     * @param bool $isTransient
-     */
-    public function setIsTransient($isTransient)
-    {
-        $this->isTransient = $isTransient;
     }
 
     /**

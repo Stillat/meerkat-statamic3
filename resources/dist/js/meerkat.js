@@ -6520,7 +6520,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports) {
 
 // Module
-var code = "<div class=\"flex items-center\">\r\n    <div class=\"w-10 h-10\" style=\"margin-right:0.5em;\" :title=\"author.name\">\r\n        <component :is=\"avatarDriver\" v-bind=\"getAuthor()\"></component>\r\n    </div>\r\n    <div class=\"text-sm\">\r\n        <p class=\"text-gray-900 leading-none\">{{ author.name }}</p>\r\n        <p class=\"text-gray-600\" v-if=\"author.hasEmailAddress()\"><a :href=\"'mailto:' + author.email\">{{ author.email }}</a></p>\r\n    </div>\r\n</div>";
+var code = "<div class=\"flex items-center\">\r\n    <div class=\"w-10 h-10\" style=\"margin-right:0.5em;\" :title=\"author.name\">\r\n        <component :is=\"avatarDriver\" v-bind=\"getAuthor()\"></component>\r\n    </div>\r\n    <div class=\"text-sm\">\r\n        <p class=\"text-gray-900 leading-none\">{{ author.name }}</p>\r\n        <p class=\"text-gray-600\" v-if=\"author.hasEmailAddress()\"><a :href=\"'mailto:' + author.email\">{{ author.email }}</a></p>\r\n        <p class=\"text-gray-600\" v-if=\"author.hasWebAddress()\"><a :href=\"author.webAddress\" target=\"_blank\">{{ author.webAddress }}</a></p>\r\n\r\n    </div>\r\n</div>";
 // Exports
 module.exports = code;
 
@@ -6538,6 +6538,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _authorDisplay_html__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./authorDisplay.html */ "./src/App/Components/AuthorDisplay/authorDisplay.html");
 /* harmony import */ var _authorDisplay_html__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_authorDisplay_html__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _Data_Comments_author__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../Data/Comments/author */ "./src/Data/Comments/author.js");
+__webpack_require__(/*! ./authorDisplay.less */ "./src/App/Components/AuthorDisplay/authorDisplay.less");
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -6563,6 +6565,17 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./src/App/Components/AuthorDisplay/authorDisplay.less":
+/*!*************************************************************!*\
+  !*** ./src/App/Components/AuthorDisplay/authorDisplay.less ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+
 /***/ "./src/App/Components/DataTable/commentTable.html":
 /*!********************************************************!*\
   !*** ./src/App/Components/DataTable/commentTable.html ***!
@@ -6571,7 +6584,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports) {
 
 // Module
-var code = "<div class=\"card p-0 relative\">\r\n    <div class=\"data-table-header\">\r\n        <table class=\"data-table\" :class=\"{ 'opacity-50': loading }\">\r\n            <thead>\r\n            <tr>\r\n                <th>Author</th>\r\n                <th>Comment</th>\r\n            </tr>\r\n            </thead>\r\n            <tbody>\r\n            <tr v-for=\"(comment, i) in comments.comments\">\r\n                <td>\r\n                    <author-display :author=\"getAuthor(comment)\" :avatar-driver=\"avatarDriver\"></author-display>\r\n                </td>\r\n                <td>\r\n                    {{ comment.authorId }}\r\n                </td>\r\n            </tr>\r\n            </tbody>\r\n        </table>\r\n    </div>\r\n</div>";
+var code = "<div class=\"card p-0 relative\">\r\n    <div class=\"data-table-header\">\r\n        <table class=\"data-table\" :class=\"{ 'opacity-50': loading }\">\r\n            <thead>\r\n            <tr>\r\n                <th class=\"w-xs max-w-xs\">Author</th>\r\n                <th>Comment</th>\r\n            </tr>\r\n            </thead>\r\n            <tbody>\r\n            <tr v-for=\"(comment, i) in comments.comments\">\r\n                <td>\r\n                    <author-display :author=\"comment.getAuthor()\" :avatar-driver=\"avatarDriver\"></author-display>\r\n                </td>\r\n                <td>\r\n                    {{ comment.authorId }} - {{ comment.id }}\r\n                </td>\r\n            </tr>\r\n            </tbody>\r\n        </table>\r\n    </div>\r\n</div>";
 // Exports
 module.exports = code;
 
@@ -6591,8 +6604,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Http_Responses_commentResponse__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../Http/Responses/commentResponse */ "./src/Http/Responses/commentResponse.js");
 /* harmony import */ var _Config_environment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../Config/environment */ "./src/Config/environment.js");
 /* harmony import */ var _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../Extend/Avatars/avatarDriverRegistry */ "./src/Extend/Avatars/avatarDriverRegistry.js");
-/* harmony import */ var _Data_Comments_author__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../Data/Comments/author */ "./src/Data/Comments/author.js");
-/* harmony import */ var _AuthorDisplay_authorDisplay__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../AuthorDisplay/authorDisplay */ "./src/App/Components/AuthorDisplay/authorDisplay.js");
+/* harmony import */ var _AuthorDisplay_authorDisplay__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../AuthorDisplay/authorDisplay */ "./src/App/Components/AuthorDisplay/authorDisplay.js");
+__webpack_require__(/*! ./commentTable.less */ "./src/App/Components/DataTable/commentTable.less");
 
 
 
@@ -6602,7 +6615,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   template: _commentTable_html__WEBPACK_IMPORTED_MODULE_0___default.a,
   components: {
-    'author-display': _AuthorDisplay_authorDisplay__WEBPACK_IMPORTED_MODULE_5__["default"]
+    'author-display': _AuthorDisplay_authorDisplay__WEBPACK_IMPORTED_MODULE_4__["default"]
   },
   props: {
     loading: {
@@ -6619,12 +6632,7 @@ __webpack_require__.r(__webpack_exports__);
       avatarDriver: null
     };
   },
-  methods: {
-    // <component :is="avatarDriver" v-bind="getAuthor(comment)"></component>
-    getAuthor: function getAuthor(comment) {
-      return this.comments.getAuthor(comment.authorId);
-    }
-  },
+  methods: {},
   created: function created() {
     if (_Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_3__["default"].hasDriver(_Config_environment__WEBPACK_IMPORTED_MODULE_2__["default"].Settings.avatarDriver)) {
       this.avatarDriver = _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_3__["default"].getDriverName(_Config_environment__WEBPACK_IMPORTED_MODULE_2__["default"].Settings.avatarDriver);
@@ -6633,6 +6641,17 @@ __webpack_require__.r(__webpack_exports__);
     }
   }
 });
+
+/***/ }),
+
+/***/ "./src/App/Components/DataTable/commentTable.less":
+/*!********************************************************!*\
+  !*** ./src/App/Components/DataTable/commentTable.less ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
 
 /***/ }),
 
@@ -7044,10 +7063,21 @@ var Bootstrapper = /*#__PURE__*/function () {
 
   _createClass(Bootstrapper, null, [{
     key: "liftExtensibilityDrivers",
+
+    /**
+     * Registers extensibility drivers from the global window state.
+     */
     value: function liftExtensibilityDrivers() {
       if (typeof window[Bootstrapper.ExtensibilityInstance] !== 'undefined') {
+        /**
+         * We will locate any existing extensibility objects stored in the
+         * temporary `meerkatExtend` environment. We do not want to keep
+         * that environment around, so we will destroy it afterwards.
+         */
         var extendInstance = window[Bootstrapper.ExtensibilityInstance]['Extend'],
-            existingDrivers = extendInstance.Avatars.getDrivers();
+            existingDrivers = extendInstance.Avatars.getDrivers(),
+            existingDisplayNames = extendInstance.Avatars.getDisplayNames();
+        _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_6__["default"].setDisplayNames(existingDisplayNames);
         _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_6__["default"].setDrivers(existingDrivers);
         delete window[Bootstrapper.ExtensibilityInstance];
         _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_6__["default"].registerDriversWithRunTime();
@@ -7339,6 +7369,7 @@ var Author = /*#__PURE__*/function () {
     this.name = '';
     this.userAgent = '';
     this.userIp = '';
+    this.webAddress = '';
   }
   /**
    * Tests if the author contains an email address value.
@@ -7351,6 +7382,17 @@ var Author = /*#__PURE__*/function () {
     key: "hasEmailAddress",
     value: function hasEmailAddress() {
       return _Types_string__WEBPACK_IMPORTED_MODULE_2__["default"].hasValue(this.email);
+    }
+    /**
+     * Tests if the author contains a web address value.
+     *
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "hasWebAddress",
+    value: function hasWebAddress() {
+      return _Types_string__WEBPACK_IMPORTED_MODULE_2__["default"].hasValue(this.webAddress);
     }
     /**
      * Converts an API object into an Author instance.
@@ -7370,6 +7412,7 @@ var Author = /*#__PURE__*/function () {
       author.name = _Types_type__WEBPACK_IMPORTED_MODULE_3__["default"].withDefault(apiObject[Author.ApiName], '');
       author.userAgent = _Types_type__WEBPACK_IMPORTED_MODULE_3__["default"].withDefault(apiObject[Author.ApiUserAgent], '');
       author.userIp = _Types_type__WEBPACK_IMPORTED_MODULE_3__["default"].withDefault(apiObject[Author.ApiUserIp], '');
+      author.webAddress = _Types_type__WEBPACK_IMPORTED_MODULE_3__["default"].withDefault(apiObject[Author.ApiWebAddress], '');
       return author;
     }
   }]);
@@ -7379,6 +7422,7 @@ var Author = /*#__PURE__*/function () {
 
 Author.ApiId = 'id';
 Author.ApiInitials = 'initials';
+Author.ApiWebAddress = 'url';
 Author.ApiEmail = 'email';
 Author.ApiHasUser = 'has_user';
 Author.ApiName = 'name';
@@ -7401,6 +7445,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _Types_common__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../Types/common */ "./src/Types/common.js");
 /* harmony import */ var _Concerns_canBeSelected__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Concerns/canBeSelected */ "./src/Data/Concerns/canBeSelected.js");
+/* harmony import */ var _author__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./author */ "./src/Data/Comments/author.js");
+/* harmony import */ var _Http_Responses_commentResponse__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../Http/Responses/commentResponse */ "./src/Http/Responses/commentResponse.js");
+/* harmony import */ var _threadContext__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./threadContext */ "./src/Data/Comments/threadContext.js");
 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -7408,6 +7455,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+
 
 
 
@@ -7420,11 +7470,14 @@ var Comment = /*#__PURE__*/function () {
     _classCallCheck(this, Comment);
 
     Object(_Concerns_canBeSelected__WEBPACK_IMPORTED_MODULE_2__["canBeSelected"])(this);
-    this._internalCollection = null;
+    /** {CommentResponse} */
+
+    this._internalCommentResponse = null;
     this.isEditing = false;
     this.isNew = true;
     this.id = null;
     this.authorId = null;
+    this.parentAuthorId = null;
     this.contextId = null;
     this.internalContextId = null;
     this.internalRoot = null;
@@ -7448,14 +7501,104 @@ var Comment = /*#__PURE__*/function () {
     this.isSpam = null;
   }
   /**
-   * Converts an API response object to a new Comment instance.
+   * Tests if the comment has an author.
    *
-   * @param {Object} apiObject The API response object.
-   * @returns {Comment}
+   * @returns {boolean}
    */
 
 
   _createClass(Comment, [{
+    key: "hasAuthor",
+    value: function hasAuthor() {
+      return _Types_common__WEBPACK_IMPORTED_MODULE_1__["String"].hasValue(this.authorId);
+    }
+    /**
+     * Tests if the comment has a parent author.
+     *
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "hasParentAuthor",
+    value: function hasParentAuthor() {
+      return _Types_common__WEBPACK_IMPORTED_MODULE_1__["String"].hasValue(this.parentAuthorId);
+    }
+    /**
+     * Tests if the comment has a thread context available.
+     *
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "hasThreadContext",
+    value: function hasThreadContext() {
+      return _Types_common__WEBPACK_IMPORTED_MODULE_1__["String"].hasValue(this.contextId);
+    }
+    /**
+     * Attempts to retrieve the comment's author.
+     *
+     * @returns {null|Author}
+     */
+
+  }, {
+    key: "getAuthor",
+    value: function getAuthor() {
+      if (!_Types_common__WEBPACK_IMPORTED_MODULE_1__["Type"].hasValue(this._internalCommentResponse)) {
+        return null;
+      }
+
+      if (this.hasAuthor()) {
+        return this._internalCommentResponse.getResponseAuthor(this.authorId);
+      }
+
+      return null;
+    }
+    /**
+     * Attempts to retrieve the comment's parent author, if available.
+     *
+     * @returns {null|Author}
+     */
+
+  }, {
+    key: "getParentAuthor",
+    value: function getParentAuthor() {
+      if (!_Types_common__WEBPACK_IMPORTED_MODULE_1__["Type"].hasValue(this._internalCommentResponse)) {
+        return null;
+      }
+
+      if (this.hasParentAuthor()) {
+        return this._internalCommentResponse.getResponseAuthor(this.parentAuthorId);
+      }
+
+      return null;
+    }
+    /**
+     * Attempts to retrieve the comment's thread context, if available.
+     *
+     * @returns {ThreadContext|null}
+     */
+
+  }, {
+    key: "getThreadContext",
+    value: function getThreadContext() {
+      if (!_Types_common__WEBPACK_IMPORTED_MODULE_1__["Type"].hasValue(this._internalCommentResponse)) {
+        return null;
+      }
+
+      if (this.hasThreadContext()) {
+        return this._internalCommentResponse.getResponseThread(this.contextId);
+      }
+
+      return null;
+    }
+    /**
+     * Converts an API response object to a new Comment instance.
+     *
+     * @param {Object} apiObject The API response object.
+     * @returns {Comment}
+     */
+
+  }, {
     key: "save",
     value: function save() {}
   }, {
@@ -7475,6 +7618,7 @@ var Comment = /*#__PURE__*/function () {
       }
 
       comment.authorId = _Types_common__WEBPACK_IMPORTED_MODULE_1__["Type"].withDefault(apiObject[Comment.ApiAuthor], null);
+      comment.parentAuthorId = _Types_common__WEBPACK_IMPORTED_MODULE_1__["Type"].withDefault(apiObject[Comment.ApiParentAuthor], null);
       comment.contextId = _Types_common__WEBPACK_IMPORTED_MODULE_1__["Type"].withDefault(apiObject[Comment.ApiContext], null);
       comment.internalContextId = _Types_common__WEBPACK_IMPORTED_MODULE_1__["Type"].withDefault(apiObject[Comment.ApiInternalContextId], null);
       comment.internalRoot = _Types_common__WEBPACK_IMPORTED_MODULE_1__["Type"].withDefault(apiObject[Comment.ApiInternalRoot], _Types_common__WEBPACK_IMPORTED_MODULE_1__["Convert"].toInt(comment.id));
@@ -7511,6 +7655,7 @@ var Comment = /*#__PURE__*/function () {
 
 Comment.ApiAncestors = 'ancestors';
 Comment.ApiAuthor = 'author';
+Comment.ApiParentAuthor = 'internal_parent_author';
 Comment.ApiChildren = 'children';
 Comment.ApiCommentDate = 'comment_date';
 Comment.ApiCommentDateFormatted = 'comment_date_formatted';
@@ -7829,7 +7974,7 @@ function enforceCollectionType(instance, type) {
   instance.push = function (val) {
     if (typeof val.constructor !== 'undefined') {
       if (val.constructor.name === this._typeEnforced) {
-        if (_Types_type__WEBPACK_IMPORTED_MODULE_2__["default"].hasValue(val, '_internalCollection')) {
+        if (_Types_type__WEBPACK_IMPORTED_MODULE_2__["default"].hasValue(val['_internalCollection'])) {
           val._internalCollection = this;
         }
 
@@ -8058,14 +8203,16 @@ var AvatarDriverRegistry = /*#__PURE__*/function () {
      * Registers a new avatar driver.
      *
      * @param {String} driverName The driver name.
+     * @param {String} displayName A user-friendly name for the driver.
      * @param {Object} driverComponent The driver component.
      */
 
   }, {
     key: "registerDriver",
-    value: function registerDriver(driverName, driverComponent) {
+    value: function registerDriver(driverName, displayName, driverComponent) {
       var newDriverName = AvatarDriverRegistry.getDriverName(driverName);
       AvatarDriverRegistry.Drivers[newDriverName] = driverComponent;
+      AvatarDriverRegistry.DisplayNames[newDriverName] = displayName;
     }
     /**
      * Sets the Avatar driver mapping.
@@ -8077,6 +8224,28 @@ var AvatarDriverRegistry = /*#__PURE__*/function () {
     key: "setDrivers",
     value: function setDrivers(drivers) {
       AvatarDriverRegistry.Drivers = drivers;
+    }
+    /**
+     * Sets the Avatar driver display name mapping.
+     *
+     * @param {Object} displayNames The display names.
+     */
+
+  }, {
+    key: "setDisplayNames",
+    value: function setDisplayNames(displayNames) {
+      AvatarDriverRegistry.DisplayNames = displayNames;
+    }
+    /**
+     * Gets the Avatar driver display name mapping.
+     *
+     * @returns {Object}
+     */
+
+  }, {
+    key: "getDisplayNames",
+    value: function getDisplayNames() {
+      return AvatarDriverRegistry.DisplayNames;
     }
     /**
      * Gets the avatar driver mapping.
@@ -8107,6 +8276,7 @@ var AvatarDriverRegistry = /*#__PURE__*/function () {
 }();
 
 AvatarDriverRegistry.DefaultDriverName = 'initials';
+AvatarDriverRegistry.DisplayNames = {};
 AvatarDriverRegistry.Drivers = {};
 /* harmony default export */ __webpack_exports__["default"] = (AvatarDriverRegistry);
 
@@ -8276,18 +8446,39 @@ var CommentResponse = /*#__PURE__*/function (_PagedResponse) {
 
 
   _createClass(CommentResponse, [{
-    key: "getAuthor",
-    value: function getAuthor(authorId) {
+    key: "getResponseAuthor",
+
+    /**
+     * Attempts to locate an author with the provided identifier.
+     *
+     * @param {string} authorId The author's identifier.
+     * @returns {Author|null}
+     */
+    value: function getResponseAuthor(authorId) {
       return _Types_type__WEBPACK_IMPORTED_MODULE_20__["default"].withDefault(this._authorMapping[authorId], null);
     }
+    /**
+     * Attempts to locate a comment with the provided identifier.
+     *
+     * @param {string} commentId The comment's identifier.
+     * @returns {Comment|null}
+     */
+
   }, {
-    key: "getComment",
-    value: function getComment(commentId) {
+    key: "getResponseComment",
+    value: function getResponseComment(commentId) {
       return _Types_type__WEBPACK_IMPORTED_MODULE_20__["default"].withDefault(this._commentMapping[commentId], null);
     }
+    /**
+     * Attempts to locate a thread with the provided identifier.
+     *
+     * @param {string} threadId The thread's identifier..
+     * @returns {ThreadContext|null}
+     */
+
   }, {
-    key: "getThread",
-    value: function getThread(threadId) {
+    key: "getResponseThread",
+    value: function getResponseThread(threadId) {
       return _Types_type__WEBPACK_IMPORTED_MODULE_20__["default"].withDefault(this._threadMapping[threadId], null);
     }
   }], [{
@@ -8309,6 +8500,7 @@ var CommentResponse = /*#__PURE__*/function (_PagedResponse) {
 
       for (var _i2 = 0; _i2 < result.comments.length; _i2 += 1) {
         var newComment = _Data_Comments_comment__WEBPACK_IMPORTED_MODULE_15__["default"].fromApiObject(result.comments[_i2]);
+        newComment._internalCommentResponse = response;
         response._commentMapping[newComment.id] = newComment;
         response.comments.push(newComment);
       }

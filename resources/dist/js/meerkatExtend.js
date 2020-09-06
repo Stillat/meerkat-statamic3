@@ -2889,14 +2889,16 @@ var AvatarDriverRegistry = /*#__PURE__*/function () {
      * Registers a new avatar driver.
      *
      * @param {String} driverName The driver name.
+     * @param {String} displayName A user-friendly name for the driver.
      * @param {Object} driverComponent The driver component.
      */
 
   }, {
     key: "registerDriver",
-    value: function registerDriver(driverName, driverComponent) {
+    value: function registerDriver(driverName, displayName, driverComponent) {
       var newDriverName = AvatarDriverRegistry.getDriverName(driverName);
       AvatarDriverRegistry.Drivers[newDriverName] = driverComponent;
+      AvatarDriverRegistry.DisplayNames[newDriverName] = displayName;
     }
     /**
      * Sets the Avatar driver mapping.
@@ -2908,6 +2910,28 @@ var AvatarDriverRegistry = /*#__PURE__*/function () {
     key: "setDrivers",
     value: function setDrivers(drivers) {
       AvatarDriverRegistry.Drivers = drivers;
+    }
+    /**
+     * Sets the Avatar driver display name mapping.
+     *
+     * @param {Object} displayNames The display names.
+     */
+
+  }, {
+    key: "setDisplayNames",
+    value: function setDisplayNames(displayNames) {
+      AvatarDriverRegistry.DisplayNames = displayNames;
+    }
+    /**
+     * Gets the Avatar driver display name mapping.
+     *
+     * @returns {Object}
+     */
+
+  }, {
+    key: "getDisplayNames",
+    value: function getDisplayNames() {
+      return AvatarDriverRegistry.DisplayNames;
     }
     /**
      * Gets the avatar driver mapping.
@@ -2938,6 +2962,7 @@ var AvatarDriverRegistry = /*#__PURE__*/function () {
 }();
 
 AvatarDriverRegistry.DefaultDriverName = 'initials';
+AvatarDriverRegistry.DisplayNames = {};
 AvatarDriverRegistry.Drivers = {};
 /* harmony default export */ __webpack_exports__["default"] = (AvatarDriverRegistry);
 

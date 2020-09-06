@@ -25929,9 +25929,9 @@ module.exports = function(module) {
 
 /***/ }),
 
-/***/ "./src/Extend/Avatars/Drivers/gravatarDriver.js":
+/***/ "./src/Extend/Avatars/Drivers/Gravatar/index.js":
 /*!******************************************************!*\
-  !*** ./src/Extend/Avatars/Drivers/gravatarDriver.js ***!
+  !*** ./src/Extend/Avatars/Drivers/Gravatar/index.js ***!
   \******************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -25940,7 +25940,7 @@ module.exports = function(module) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.string.trim */ "./node_modules/core-js/modules/es.string.trim.js");
 /* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _imageBasedDriver_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./imageBasedDriver.html */ "./src/Extend/Avatars/Drivers/imageBasedDriver.html");
+/* harmony import */ var _imageBasedDriver_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../imageBasedDriver.html */ "./src/Extend/Avatars/Drivers/imageBasedDriver.html");
 /* harmony import */ var _imageBasedDriver_html__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_imageBasedDriver_html__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var crypto_js_md5__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! crypto-js/md5 */ "./node_modules/crypto-js/md5.js");
 /* harmony import */ var crypto_js_md5__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(crypto_js_md5__WEBPACK_IMPORTED_MODULE_2__);
@@ -25975,9 +25975,9 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./src/Extend/Avatars/Drivers/identiconDriver.js":
+/***/ "./src/Extend/Avatars/Drivers/Identicon/index.js":
 /*!*******************************************************!*\
-  !*** ./src/Extend/Avatars/Drivers/identiconDriver.js ***!
+  !*** ./src/Extend/Avatars/Drivers/Identicon/index.js ***!
   \*******************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -25986,7 +25986,7 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.string.trim */ "./node_modules/core-js/modules/es.string.trim.js");
 /* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _imageBasedDriver_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./imageBasedDriver.html */ "./src/Extend/Avatars/Drivers/imageBasedDriver.html");
+/* harmony import */ var _imageBasedDriver_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../imageBasedDriver.html */ "./src/Extend/Avatars/Drivers/imageBasedDriver.html");
 /* harmony import */ var _imageBasedDriver_html__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_imageBasedDriver_html__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var crypto_js_md5__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! crypto-js/md5 */ "./node_modules/crypto-js/md5.js");
 /* harmony import */ var crypto_js_md5__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(crypto_js_md5__WEBPACK_IMPORTED_MODULE_2__);
@@ -26021,64 +26021,9 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./src/Extend/Avatars/Drivers/imageBasedDriver.html":
-/*!**********************************************************!*\
-  !*** ./src/Extend/Avatars/Drivers/imageBasedDriver.html ***!
-  \**********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-// Module
-var code = "<div class=\"w-full h-full text-center\" style=\"user-select: none\">\r\n    <img :src=\"getAvatarUrl()\" v-bind:class=\"{'rounded-full' : isRounded}\"/>\r\n</div>";
-// Exports
-module.exports = code;
-
-/***/ }),
-
-/***/ "./src/Extend/Avatars/Drivers/index.js":
-/*!*********************************************!*\
-  !*** ./src/Extend/Avatars/Drivers/index.js ***!
-  \*********************************************/
-/*! no exports provided */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _simpleDriver__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./simpleDriver */ "./src/Extend/Avatars/Drivers/simpleDriver.js");
-/* harmony import */ var _initialsDriver__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./initialsDriver */ "./src/Extend/Avatars/Drivers/initialsDriver.js");
-/* harmony import */ var _gravatarDriver__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./gravatarDriver */ "./src/Extend/Avatars/Drivers/gravatarDriver.js");
-/* harmony import */ var _identiconDriver__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./identiconDriver */ "./src/Extend/Avatars/Drivers/identiconDriver.js");
-/* harmony import */ var _jdenticonDriver__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./jdenticonDriver */ "./src/Extend/Avatars/Drivers/jdenticonDriver.js");
-
-
-
-
-
-window.meerkatExtend.Extend.Avatars.registerDriver('initials', _initialsDriver__WEBPACK_IMPORTED_MODULE_1__["default"]);
-window.meerkatExtend.Extend.Avatars.registerDriver('simple', _simpleDriver__WEBPACK_IMPORTED_MODULE_0__["default"]);
-window.meerkatExtend.Extend.Avatars.registerDriver('gravatar', _gravatarDriver__WEBPACK_IMPORTED_MODULE_2__["default"]);
-window.meerkatExtend.Extend.Avatars.registerDriver('identicon', _identiconDriver__WEBPACK_IMPORTED_MODULE_3__["default"]);
-window.meerkatExtend.Extend.Avatars.registerDriver('jdenticon', _jdenticonDriver__WEBPACK_IMPORTED_MODULE_4__["default"]);
-
-/***/ }),
-
-/***/ "./src/Extend/Avatars/Drivers/initialsDriver.html":
-/*!********************************************************!*\
-  !*** ./src/Extend/Avatars/Drivers/initialsDriver.html ***!
-  \********************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-// Module
-var code = "<div class=\"w-full h-full text-center\" v-bind:class=\"{'rounded-full' : isRounded}\" style=\"padding-top:0.7em;user-select: none\"\r\n     :style=\"{ backgroundColor: backgroundColor, color: fontColor }\">\r\n    <span>{{ author.initials }}</span>\r\n</div>";
-// Exports
-module.exports = code;
-
-/***/ }),
-
-/***/ "./src/Extend/Avatars/Drivers/initialsDriver.js":
+/***/ "./src/Extend/Avatars/Drivers/Initials/index.js":
 /*!******************************************************!*\
-  !*** ./src/Extend/Avatars/Drivers/initialsDriver.js ***!
+  !*** ./src/Extend/Avatars/Drivers/Initials/index.js ***!
   \******************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -26087,8 +26032,8 @@ module.exports = code;
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.string.trim */ "./node_modules/core-js/modules/es.string.trim.js");
 /* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _initialsDriver_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./initialsDriver.html */ "./src/Extend/Avatars/Drivers/initialsDriver.html");
-/* harmony import */ var _initialsDriver_html__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_initialsDriver_html__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./template.html */ "./src/Extend/Avatars/Drivers/Initials/template.html");
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_template_html__WEBPACK_IMPORTED_MODULE_1__);
 
 
 var avatarColors = {
@@ -26130,7 +26075,7 @@ var avatarColors = {
   '0': ['#f3a683', '#000000']
 };
 /* harmony default export */ __webpack_exports__["default"] = ({
-  template: _initialsDriver_html__WEBPACK_IMPORTED_MODULE_1___default.a,
+  template: _template_html__WEBPACK_IMPORTED_MODULE_1___default.a,
   props: {
     author: {
       type: Object,
@@ -26180,9 +26125,23 @@ var avatarColors = {
 
 /***/ }),
 
-/***/ "./src/Extend/Avatars/Drivers/jdenticonDriver.js":
+/***/ "./src/Extend/Avatars/Drivers/Initials/template.html":
+/*!***********************************************************!*\
+  !*** ./src/Extend/Avatars/Drivers/Initials/template.html ***!
+  \***********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// Module
+var code = "<div class=\"w-full h-full text-center\" v-bind:class=\"{'rounded-full' : isRounded}\" style=\"padding-top:0.7em;user-select: none\"\r\n     :style=\"{ backgroundColor: backgroundColor, color: fontColor }\">\r\n    <span>{{ author.initials }}</span>\r\n</div>";
+// Exports
+module.exports = code;
+
+/***/ }),
+
+/***/ "./src/Extend/Avatars/Drivers/Jdenticon/index.js":
 /*!*******************************************************!*\
-  !*** ./src/Extend/Avatars/Drivers/jdenticonDriver.js ***!
+  !*** ./src/Extend/Avatars/Drivers/Jdenticon/index.js ***!
   \*******************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -26191,7 +26150,7 @@ var avatarColors = {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.string.trim */ "./node_modules/core-js/modules/es.string.trim.js");
 /* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _imageBasedDriver_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./imageBasedDriver.html */ "./src/Extend/Avatars/Drivers/imageBasedDriver.html");
+/* harmony import */ var _imageBasedDriver_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../imageBasedDriver.html */ "./src/Extend/Avatars/Drivers/imageBasedDriver.html");
 /* harmony import */ var _imageBasedDriver_html__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_imageBasedDriver_html__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var crypto_js_md5__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! crypto-js/md5 */ "./node_modules/crypto-js/md5.js");
 /* harmony import */ var crypto_js_md5__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(crypto_js_md5__WEBPACK_IMPORTED_MODULE_2__);
@@ -26226,34 +26185,20 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./src/Extend/Avatars/Drivers/simpleDriver.html":
-/*!******************************************************!*\
-  !*** ./src/Extend/Avatars/Drivers/simpleDriver.html ***!
-  \******************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-// Module
-var code = "<div class=\"w-full h-full text-center\" v-bind:class=\"{'rounded-full' : isRounded}\"\r\n     style=\"padding-top:0.7em;user-select: none; background-color: rgb(142,142,147); color: #ffffff;\">\r\n    <span>{{ author.initials }}</span>\r\n</div>";
-// Exports
-module.exports = code;
-
-/***/ }),
-
-/***/ "./src/Extend/Avatars/Drivers/simpleDriver.js":
+/***/ "./src/Extend/Avatars/Drivers/Simple/index.js":
 /*!****************************************************!*\
-  !*** ./src/Extend/Avatars/Drivers/simpleDriver.js ***!
+  !*** ./src/Extend/Avatars/Drivers/Simple/index.js ***!
   \****************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _simpleDriver_html__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./simpleDriver.html */ "./src/Extend/Avatars/Drivers/simpleDriver.html");
-/* harmony import */ var _simpleDriver_html__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_simpleDriver_html__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./template.html */ "./src/Extend/Avatars/Drivers/Simple/template.html");
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_template_html__WEBPACK_IMPORTED_MODULE_0__);
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  template: _simpleDriver_html__WEBPACK_IMPORTED_MODULE_0___default.a,
+  template: _template_html__WEBPACK_IMPORTED_MODULE_0___default.a,
   props: {
     author: {
       type: Object,
@@ -26265,6 +26210,64 @@ __webpack_require__.r(__webpack_exports__);
     }
   }
 });
+
+/***/ }),
+
+/***/ "./src/Extend/Avatars/Drivers/Simple/template.html":
+/*!*********************************************************!*\
+  !*** ./src/Extend/Avatars/Drivers/Simple/template.html ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// Module
+var code = "<div class=\"w-full h-full text-center\" v-bind:class=\"{'rounded-full' : isRounded}\"\r\n     style=\"padding-top:0.7em;user-select: none; background-color: rgb(142,142,147); color: #ffffff;\">\r\n    <span>{{ author.initials }}</span>\r\n</div>";
+// Exports
+module.exports = code;
+
+/***/ }),
+
+/***/ "./src/Extend/Avatars/Drivers/imageBasedDriver.html":
+/*!**********************************************************!*\
+  !*** ./src/Extend/Avatars/Drivers/imageBasedDriver.html ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// Module
+var code = "<div class=\"w-full h-full text-center\" style=\"user-select: none\">\r\n    <img :src=\"getAvatarUrl()\" v-bind:class=\"{'rounded-full' : isRounded}\"/>\r\n</div>";
+// Exports
+module.exports = code;
+
+/***/ }),
+
+/***/ "./src/Extend/Avatars/Drivers/index.js":
+/*!*********************************************!*\
+  !*** ./src/Extend/Avatars/Drivers/index.js ***!
+  \*********************************************/
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Simple__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Simple */ "./src/Extend/Avatars/Drivers/Simple/index.js");
+/* harmony import */ var _Initials__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Initials */ "./src/Extend/Avatars/Drivers/Initials/index.js");
+/* harmony import */ var _Gravatar__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Gravatar */ "./src/Extend/Avatars/Drivers/Gravatar/index.js");
+/* harmony import */ var _Identicon__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Identicon */ "./src/Extend/Avatars/Drivers/Identicon/index.js");
+/* harmony import */ var _Jdenticon__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Jdenticon */ "./src/Extend/Avatars/Drivers/Jdenticon/index.js");
+
+
+
+
+
+
+(function () {
+  window.meerkatExtend.Extend.Avatars.registerDriver('initials', 'Initials', _Initials__WEBPACK_IMPORTED_MODULE_1__["default"]);
+  window.meerkatExtend.Extend.Avatars.registerDriver('simple', 'Simple Initials', _Simple__WEBPACK_IMPORTED_MODULE_0__["default"]);
+  window.meerkatExtend.Extend.Avatars.registerDriver('gravatar', 'Gravatar', _Gravatar__WEBPACK_IMPORTED_MODULE_2__["default"]);
+  window.meerkatExtend.Extend.Avatars.registerDriver('identicon', 'Identicon (using DiceBear)', _Identicon__WEBPACK_IMPORTED_MODULE_3__["default"]);
+  window.meerkatExtend.Extend.Avatars.registerDriver('jdenticon', 'Jdenticon (using DiceBear)', _Jdenticon__WEBPACK_IMPORTED_MODULE_4__["default"]);
+})();
 
 /***/ }),
 

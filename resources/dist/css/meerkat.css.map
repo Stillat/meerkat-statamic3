@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack://meerkat/src/App/Components/DataTable/commentTable.less","webpack://meerkat/src/App/Components/AuthorDisplay/authorDisplay.less"],"names":[],"mappings":";AAAA;EACE;AACF;;ACFA;EACE;AACF","file":"../css/meerkat.css","sourcesContent":[".test {\n  font-color: red;\n}\n",".anotherTest {\n  color: green;\n}\n"],"sourceRoot":""}

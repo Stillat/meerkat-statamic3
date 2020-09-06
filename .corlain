@@ -10,7 +10,7 @@
     {
       "name": "stillat/meerkat-core-ui",
       "source": "@local:stillat/meerkat-core-ui",
-      "output": "./resources/dist/js/",
+      "output": "./resources/dist/",
       "map": []
     }
   ]

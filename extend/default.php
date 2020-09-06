@@ -1,8 +1,9 @@
 <?php
 
 use Statamic\Statamic;
-use Illuminate\Support\Facades\Event;
+use Stillat\Meerkat\Addon;
+use Stillat\Meerkat\Support\Facades\Meerkat;
 
-Event::listen('Meerkat.registering.controlPanel', function () {
-    Statamic::script('meerkat', \Stillat\Meerkat\Addon::VERSION.'/meerkatAvatars');
+Meerkat::onRegisteringControlPanel(function () {
+    Statamic::script('meerkat', Addon::VERSION . '/meerkatAvatars');
 });

@@ -3426,6 +3426,29 @@ module.exports = {
 
 /***/ }),
 
+/***/ "./node_modules/core-js/internals/string-trim-forced.js":
+/*!**************************************************************!*\
+  !*** ./node_modules/core-js/internals/string-trim-forced.js ***!
+  \**************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-js/internals/fails.js");
+var whitespaces = __webpack_require__(/*! ../internals/whitespaces */ "./node_modules/core-js/internals/whitespaces.js");
+
+var non = '\u200B\u0085\u180E';
+
+// check that a method works with the correct list
+// of whitespaces and has a correct name
+module.exports = function (METHOD_NAME) {
+  return fails(function () {
+    return !!whitespaces[METHOD_NAME]() || non[METHOD_NAME]() != non || whitespaces[METHOD_NAME].name !== METHOD_NAME;
+  });
+};
+
+
+/***/ }),
+
 /***/ "./node_modules/core-js/internals/string-trim.js":
 /*!*******************************************************!*\
   !*** ./node_modules/core-js/internals/string-trim.js ***!
@@ -5348,6 +5371,30 @@ $({ target: 'String', proto: true, forced: !MDN_POLYFILL_BUG && !CORRECT_IS_REGE
 
 /***/ }),
 
+/***/ "./node_modules/core-js/modules/es.string.trim.js":
+/*!********************************************************!*\
+  !*** ./node_modules/core-js/modules/es.string.trim.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(/*! ../internals/export */ "./node_modules/core-js/internals/export.js");
+var $trim = __webpack_require__(/*! ../internals/string-trim */ "./node_modules/core-js/internals/string-trim.js").trim;
+var forcedStringTrimMethod = __webpack_require__(/*! ../internals/string-trim-forced */ "./node_modules/core-js/internals/string-trim-forced.js");
+
+// `String.prototype.trim` method
+// https://tc39.github.io/ecma262/#sec-string.prototype.trim
+$({ target: 'String', proto: true, forced: forcedStringTrimMethod('trim') }, {
+  trim: function trim() {
+    return $trim(this);
+  }
+});
+
+
+/***/ }),
+
 /***/ "./node_modules/core-js/modules/es.symbol.description.js":
 /*!***************************************************************!*\
   !*** ./node_modules/core-js/modules/es.symbol.description.js ***!
@@ -6465,6 +6512,57 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./src/App/Components/AuthorDisplay/authorDisplay.html":
+/*!*************************************************************!*\
+  !*** ./src/App/Components/AuthorDisplay/authorDisplay.html ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// Module
+var code = "<div class=\"flex items-center\">\r\n    <div class=\"w-10 h-10\" style=\"margin-right:0.5em;\" :title=\"author.name\">\r\n        <component :is=\"avatarDriver\" v-bind=\"getAuthor()\"></component>\r\n    </div>\r\n    <div class=\"text-sm\">\r\n        <p class=\"text-gray-900 leading-none\">{{ author.name }}</p>\r\n        <p class=\"text-gray-600\" v-if=\"author.hasEmailAddress()\"><a :href=\"'mailto:' + author.email\">{{ author.email }}</a></p>\r\n    </div>\r\n</div>";
+// Exports
+module.exports = code;
+
+/***/ }),
+
+/***/ "./src/App/Components/AuthorDisplay/authorDisplay.js":
+/*!***********************************************************!*\
+  !*** ./src/App/Components/AuthorDisplay/authorDisplay.js ***!
+  \***********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _authorDisplay_html__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./authorDisplay.html */ "./src/App/Components/AuthorDisplay/authorDisplay.html");
+/* harmony import */ var _authorDisplay_html__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_authorDisplay_html__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _Data_Comments_author__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../Data/Comments/author */ "./src/Data/Comments/author.js");
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  template: _authorDisplay_html__WEBPACK_IMPORTED_MODULE_0___default.a,
+  props: {
+    author: {
+      type: _Data_Comments_author__WEBPACK_IMPORTED_MODULE_1__["default"],
+      "default": null
+    },
+    avatarDriver: {
+      type: String,
+      "default": null
+    }
+  },
+  methods: {
+    getAuthor: function getAuthor() {
+      return {
+        author: this.author
+      };
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./src/App/Components/DataTable/commentTable.html":
 /*!********************************************************!*\
   !*** ./src/App/Components/DataTable/commentTable.html ***!
@@ -6473,7 +6571,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports) {
 
 // Module
-var code = "<div class=\"card p-0 relative\">\r\n    <div class=\"data-table-header\">\r\n        <table class=\"data-table\" :class=\"{ 'opacity-50': loading }\">\r\n            <thead>\r\n            <tr>\r\n                <th>Author</th>\r\n                <th>Comment</th>\r\n            </tr>\r\n            </thead>\r\n            <tbody>\r\n            <tr v-for=\"(comment, i) in comments.comments\">\r\n                <td>\r\n                    <component :is=\"avatarDriver\" v-bind=\"getAuthor(comment)\"></component>\r\n                </td>\r\n                <td>\r\n                    {{ comment.authorId }}\r\n                </td>\r\n            </tr>\r\n            </tbody>\r\n        </table>\r\n    </div>\r\n</div>";
+var code = "<div class=\"card p-0 relative\">\r\n    <div class=\"data-table-header\">\r\n        <table class=\"data-table\" :class=\"{ 'opacity-50': loading }\">\r\n            <thead>\r\n            <tr>\r\n                <th>Author</th>\r\n                <th>Comment</th>\r\n            </tr>\r\n            </thead>\r\n            <tbody>\r\n            <tr v-for=\"(comment, i) in comments.comments\">\r\n                <td>\r\n                    <author-display :author=\"getAuthor(comment)\" :avatar-driver=\"avatarDriver\"></author-display>\r\n                </td>\r\n                <td>\r\n                    {{ comment.authorId }}\r\n                </td>\r\n            </tr>\r\n            </tbody>\r\n        </table>\r\n    </div>\r\n</div>";
 // Exports
 module.exports = code;
 
@@ -6494,6 +6592,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Config_environment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../Config/environment */ "./src/Config/environment.js");
 /* harmony import */ var _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../Extend/Avatars/avatarDriverRegistry */ "./src/Extend/Avatars/avatarDriverRegistry.js");
 /* harmony import */ var _Data_Comments_author__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../Data/Comments/author */ "./src/Data/Comments/author.js");
+/* harmony import */ var _AuthorDisplay_authorDisplay__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../AuthorDisplay/authorDisplay */ "./src/App/Components/AuthorDisplay/authorDisplay.js");
+
 
 
 
@@ -6501,6 +6601,9 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   template: _commentTable_html__WEBPACK_IMPORTED_MODULE_0___default.a,
+  components: {
+    'author-display': _AuthorDisplay_authorDisplay__WEBPACK_IMPORTED_MODULE_5__["default"]
+  },
   props: {
     loading: {
       type: Boolean,
@@ -6517,10 +6620,9 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
+    // <component :is="avatarDriver" v-bind="getAuthor(comment)"></component>
     getAuthor: function getAuthor(comment) {
-      return {
-        author: this.comments.getAuthor(comment.authorId)
-      };
+      return this.comments.getAuthor(comment.authorId);
     }
   },
   created: function created() {
@@ -7212,6 +7314,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_function_name__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_function_name__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.object.define-property */ "./node_modules/core-js/modules/es.object.define-property.js");
 /* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _Types_string__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../Types/string */ "./src/Types/string.js");
+/* harmony import */ var _Types_type__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../Types/type */ "./src/Types/type.js");
 
 
 
@@ -7220,6 +7324,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+
 
 var Author = /*#__PURE__*/function () {
   function Author() {
@@ -7234,24 +7341,35 @@ var Author = /*#__PURE__*/function () {
     this.userIp = '';
   }
   /**
-   * Converts an API object into an Author instance.
+   * Tests if the author contains an email address value.
    *
-   * @param {Object} apiObject The result from the API.
-   * @returns {Author}
+   * @returns {boolean}
    */
 
 
-  _createClass(Author, null, [{
+  _createClass(Author, [{
+    key: "hasEmailAddress",
+    value: function hasEmailAddress() {
+      return _Types_string__WEBPACK_IMPORTED_MODULE_2__["default"].hasValue(this.email);
+    }
+    /**
+     * Converts an API object into an Author instance.
+     *
+     * @param {Object} apiObject The result from the API.
+     * @returns {Author}
+     */
+
+  }], [{
     key: "fromApiObject",
     value: function fromApiObject(apiObject) {
       var author = new Author();
-      author.id = apiObject.id;
-      author.initials = apiObject.initials;
-      author.email = apiObject.email;
-      author.hasUser = apiObject.has_user;
-      author.name = apiObject.name;
-      author.userAgent = apiObject.user_agent;
-      author.userIp = apiObject.user_ip;
+      author.id = _Types_type__WEBPACK_IMPORTED_MODULE_3__["default"].withDefault(apiObject[Author.ApiId], null);
+      author.initials = _Types_type__WEBPACK_IMPORTED_MODULE_3__["default"].withDefault(apiObject[Author.ApiInitials], '');
+      author.email = _Types_type__WEBPACK_IMPORTED_MODULE_3__["default"].withDefault(apiObject[Author.ApiEmail], '');
+      author.hasUser = _Types_type__WEBPACK_IMPORTED_MODULE_3__["default"].withDefault(apiObject[Author.ApiHasUser], false);
+      author.name = _Types_type__WEBPACK_IMPORTED_MODULE_3__["default"].withDefault(apiObject[Author.ApiName], '');
+      author.userAgent = _Types_type__WEBPACK_IMPORTED_MODULE_3__["default"].withDefault(apiObject[Author.ApiUserAgent], '');
+      author.userIp = _Types_type__WEBPACK_IMPORTED_MODULE_3__["default"].withDefault(apiObject[Author.ApiUserIp], '');
       return author;
     }
   }]);
@@ -7259,6 +7377,13 @@ var Author = /*#__PURE__*/function () {
   return Author;
 }();
 
+Author.ApiId = 'id';
+Author.ApiInitials = 'initials';
+Author.ApiEmail = 'email';
+Author.ApiHasUser = 'has_user';
+Author.ApiName = 'name';
+Author.ApiUserAgent = 'user_agent';
+Author.ApiUserIp = 'user_ip';
 /* harmony default export */ __webpack_exports__["default"] = (Author);
 
 /***/ }),
@@ -9791,6 +9916,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var core_js_modules_es_string_starts_with__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.string.starts-with */ "./node_modules/core-js/modules/es.string.starts-with.js");
 /* harmony import */ var core_js_modules_es_string_starts_with__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_starts_with__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.string.trim */ "./node_modules/core-js/modules/es.string.trim.js");
+/* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _type__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./type */ "./src/Types/type.js");
+
 
 
 
@@ -9803,14 +9932,29 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
+
+
 var String = /*#__PURE__*/function () {
   function String() {
     _classCallCheck(this, String);
   }
 
   _createClass(String, null, [{
-    key: "finish",
+    key: "hasValue",
 
+    /**
+     * Tests if the value has a string value.
+     *
+     * @param {string|null} value The value to test.
+     * @returns {boolean}
+     */
+    value: function hasValue(value) {
+      if (_type__WEBPACK_IMPORTED_MODULE_6__["default"].hasValue(value) === false) {
+        return false;
+      }
+
+      return value.trim().length !== 0;
+    }
     /**
      * Ensures the value ends with the suffix.
      *
@@ -9818,6 +9962,9 @@ var String = /*#__PURE__*/function () {
      * @param {string} suffix
      * @returns {string}
      */
+
+  }, {
+    key: "finish",
     value: function finish(value, suffix) {
       if (String.endsWith(value, suffix)) {
         return value;

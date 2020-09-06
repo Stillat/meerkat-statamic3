@@ -31,30 +31,41 @@ class StatamicIdentity implements AuthorContract
      * @var null|string
      */
     protected $userId = null;
+
     /**
      * The identity's display name, if available.
      *
      * @var string
      */
     protected $displayName = '';
+
     /**
      * The identity's email address, if available.
      *
      * @var string
      */
     protected $emailAddress = '';
+
     /**
      * Indicates if the identity is transient.
      *
      * @var bool
      */
     private $isTransient = true;
+
     /**
      * The identity's permission set.
      *
      * @var PermissionsSet|null
      */
     private $permissionSet = null;
+
+    /**
+     * The identity's web address, if any.
+     *
+     * @var string
+     */
+    private $webAddress = '';
 
     /**
      * Sets the user's system string identifier.
@@ -101,6 +112,7 @@ class StatamicIdentity implements AuthorContract
             AuthorContract::KEY_USER_AGENT => $this->getDataAttribute(AuthorContract::KEY_USER_AGENT, ''),
             AuthorContract::KEY_USER_ID => $this->getId(),
             AuthorContract::KEY_USER_IP => $this->getDataAttribute(AuthorContract::KEY_USER_IP, ''),
+            AuthorContract::KEY_AUTHOR_URL => $this->getWebAddress(),
             AuthorContract::KEY_NAME => $this->getDisplayName(),
             AuthorContract::KEY_EMAIL_ADDRESS => $this->getEmailAddress(),
             AuthorContract::KEY_HAS_USER => $this->getIsTransient() === false,
@@ -117,6 +129,26 @@ class StatamicIdentity implements AuthorContract
     public function getId()
     {
         return $this->userId;
+    }
+
+    /**
+     * Gets the identity's web address, if available.
+     *
+     * @return mixed
+     */
+    public function getWebAddress()
+    {
+        return $this->webAddress;
+    }
+
+    /**
+     * Sets the identity's web address.
+     *
+     * @param string $webAddress The web address.
+     */
+    public function setWebAddress($webAddress)
+    {
+        $this->webAddress = $webAddress;
     }
 
     /**
@@ -153,7 +185,6 @@ class StatamicIdentity implements AuthorContract
      * Sets the identity's email address.
      *
      * @param string $emailAddress The identity's email address.
-     * @return mixed
      */
     public function setEmailAddress($emailAddress)
     {

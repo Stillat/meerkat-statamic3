@@ -95,14 +95,18 @@ class StatamicAuthorFactory implements AuthorFactoryContract
         // it was left by an authenticated user at some point, let's locate
         // that user; if they exist, create the Author from that user.
         if (array_key_exists(AuthorContract::AUTHENTICATED_USER_ID, $protoAuthor)) {
+            /** @var User $potentialStatamicUser */
             $potentialStatamicUser = $this->statamicUserProvider->retrieveById($protoAuthor[AuthorContract::AUTHENTICATED_USER_ID]);
 
             if ($potentialStatamicUser !== null) {
-                // TODO: Refactor to appropriate type.
                 $identity = $this->makeAuthorFromStatamicUser($potentialStatamicUser);
 
                 foreach ($protoAuthor as $key => $value) {
                     $identity->setDataAttribute($key, $value);
+
+                    if ($key === AuthorContract::KEY_AUTHOR_URL) {
+                        $identity->setWebAddress($value);
+                    }
                 }
 
                 $identity->setPermissionsSet($this->permissionsManager->getPermissions($identity));
@@ -122,6 +126,12 @@ class StatamicAuthorFactory implements AuthorFactoryContract
 
         if (array_key_exists(AuthorContract::KEY_EMAIL_ADDRESS, $protoAuthor)) {
             $transientIdentity->setEmailAddress($protoAuthor[AuthorContract::KEY_EMAIL_ADDRESS]);
+        }
+
+        if (array_key_exists(AuthorContract::KEY_AUTHOR_URL, $protoAuthor)) {
+            if ($protoAuthor[AuthorContract::KEY_AUTHOR_URL] !== null) {
+                $transientIdentity->setWebAddress($protoAuthor[AuthorContract::KEY_AUTHOR_URL]);
+            }
         }
 
         // Iterate all properties and set them on the identity context.

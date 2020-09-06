@@ -141,10 +141,6 @@ class BaseCollectionConverter
             $commentAuthor = $comment->getAuthor();
             $parentAuthor = $comment->getParentAuthor();
 
-            if ($commentAuthor->getIsTransient() === false) {
-                $commentAuthor->getHostUser();
-            }
-
             if ($commentAuthor === null) {
                 $commentAuthor = [];
             } else {

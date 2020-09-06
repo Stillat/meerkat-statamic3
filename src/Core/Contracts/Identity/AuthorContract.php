@@ -47,6 +47,7 @@ interface AuthorContract extends DataObjectContract, Serializable
     const KEY_USER = 'user';
     const KEY_HAS_USER = 'has_user';
     const KEY_PERMISSIONS = 'permissions';
+    const KEY_AUTHOR_URL = 'url';
 
     const KEY_INITIALS = 'initials';
 
@@ -104,6 +105,20 @@ interface AuthorContract extends DataObjectContract, Serializable
      * @return mixed
      */
     public function getEmailAddress();
+
+    /**
+     * Gets the identity's web address, if available.
+     *
+     * @return mixed
+     */
+    public function getWebAddress();
+
+    /**
+     * Sets the identity's web address.
+     *
+     * @param string $webAddress The web address.
+     */
+    public function setWebAddress($webAddress);
 
     /**
      * Sets the identity's email address.

@@ -139,11 +139,25 @@ class BaseCollectionConverter
             }
 
             $commentAuthor = $comment->getAuthor();
+            $parentAuthor = $comment->getParentAuthor();
+
+            if ($commentAuthor->getIsTransient() === false) {
+                $commentAuthor->getHostUser();
+            }
 
             if ($commentAuthor === null) {
                 $commentAuthor = [];
             } else {
                 $commentAuthor = $this->sanitationManager->sanitizeArrayValues($commentAuthor->toArray());
+            }
+
+
+            if ($parentAuthor !== null) {
+                $parentCommentAuthor = $this->sanitationManager->sanitizeArrayValues($parentAuthor->toArray());
+
+                $commentArray[CommentContract::INTERNAL_PARENT_AUTHOR] = $parentCommentAuthor;
+            } else {
+                $commentArray[CommentContract::INTERNAL_PARENT_AUTHOR] = null;
             }
 
             $commentArray[CommentContract::KEY_AUTHOR] = $commentAuthor;

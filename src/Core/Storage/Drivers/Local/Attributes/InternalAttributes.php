@@ -60,7 +60,8 @@ class InternalAttributes
                 CommentContract::INTERNAL_ABSOLUTE_ROOT,
                 CommentContract::INTERNAL_HISTORY_REVISION_COUNT,
                 CommentContract::INTERNAL_CONTEXT_ID,
-                CommentContract::KEY_AUTHOR
+                CommentContract::KEY_AUTHOR,
+                CommentContract::INTERNAL_PARENT_AUTHOR
             ];
         }
 

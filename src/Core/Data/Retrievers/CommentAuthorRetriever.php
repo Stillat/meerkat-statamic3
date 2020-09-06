@@ -29,23 +29,54 @@ class CommentAuthorRetriever
 
         foreach ($data as $commentArray) {
             if (array_key_exists(CommentContract::KEY_AUTHOR, $commentArray) === false) {
-                continue;
-            }
-
-            $author = $commentArray[CommentContract::KEY_AUTHOR];
-
-            if (array_key_exists(AuthorContract::KEY_USER_ID, $author)) {
-                if ($author[AuthorContract::KEY_USER_ID] === null) {
-                    $author[AuthorContract::KEY_USER_ID] = TransientIdGenerator::getId($author);
+                if (array_key_exists(CommentContract::INTERNAL_PARENT_AUTHOR, $commentArray) === false ||
+                    $commentArray[CommentContract::INTERNAL_PARENT_AUTHOR] === null) {
+                    continue;
                 }
             }
 
-            if (array_key_exists($author[AuthorContract::KEY_USER_ID], $authorsToReturn) === false) {
-                $authorsToReturn[$author[AuthorContract::KEY_USER_ID]] = $author;
+            // Process the parent author details, if available.
+            if (array_key_exists(CommentContract::INTERNAL_PARENT_AUTHOR, $commentArray)
+                && $commentArray[CommentContract::INTERNAL_PARENT_AUTHOR] !== null) {
+                $parentAuthorDetails = $commentArray[CommentContract::INTERNAL_PARENT_AUTHOR];
+                $parentAuthorDetails = CommentAuthorRetriever::getAuthorFromArray($parentAuthorDetails);
+                $parentAuthorId = $parentAuthorDetails[AuthorContract::KEY_USER_ID];
+
+                if (array_key_exists($parentAuthorId, $authorsToReturn) === false) {
+                    $authorsToReturn[$parentAuthorId] = $parentAuthorDetails;
+                }
+            }
+
+            // Process the primary author details.
+            if (array_key_exists(CommentContract::KEY_AUTHOR, $commentArray)) {
+                $primaryAuthorDetails = $commentArray[CommentContract::KEY_AUTHOR];
+                $primaryAuthorDetails = CommentAuthorRetriever::getAuthorFromArray($primaryAuthorDetails);
+                $primaryAuthorId = $primaryAuthorDetails[AuthorContract::KEY_USER_ID];
+
+                if (array_key_exists($primaryAuthorId, $authorsToReturn) === false) {
+                    $authorsToReturn[$primaryAuthorId] = $primaryAuthorDetails;
+                }
             }
         }
 
         return array_values($authorsToReturn);
+    }
+
+    /**
+     * Processes the author prototype and returns the result.
+     *
+     * @param array $author The author prototype.
+     * @return array
+     */
+    protected static function getAuthorFromArray($author)
+    {
+        if (array_key_exists(AuthorContract::KEY_USER_ID, $author)) {
+            if ($author[AuthorContract::KEY_USER_ID] === null) {
+                $author[AuthorContract::KEY_USER_ID] = TransientIdGenerator::getId($author);
+            }
+        }
+
+        return $author;
     }
 
     /**

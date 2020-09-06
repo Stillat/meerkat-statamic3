@@ -87,13 +87,15 @@ class CommentAuthorRetriever
         $userAgent = $comment->getDataAttribute(AuthorContract::KEY_USER_AGENT);
         $name = $comment->getDataAttribute(AuthorContract::KEY_NAME);
         $userId = $comment->getDataAttribute(AuthorContract::AUTHENTICATED_USER_ID);
+        $webUrl = $comment->getDataAttribute(AuthorContract::KEY_AUTHOR_URL);
 
         return [
             AuthorContract::KEY_EMAIL_ADDRESS => $emailAddress,
             AuthorContract::KEY_USER_AGENT => $userAgent,
             AuthorContract::KEY_USER_IP => $userIp,
             AuthorContract::KEY_NAME => $name,
-            AuthorContract::AUTHENTICATED_USER_ID => $userId
+            AuthorContract::AUTHENTICATED_USER_ID => $userId,
+            AuthorContract::KEY_AUTHOR_URL => $webUrl
         ];
     }
 
@@ -106,11 +108,6 @@ class CommentAuthorRetriever
     public function getCommentAuthor(CommentContract $comment)
     {
         $emailAddress = $comment->getDataAttribute(AuthorContract::KEY_EMAIL_ADDRESS, null);
-
-        $doBreak = false;
-        if ($comment->getContent() === 'Testing of authenticated user.') {
-            $doBreak = true;
-        }
 
         if ($emailAddress !== null && mb_strlen(trim($emailAddress)) > 0) {
             $authorKey = trim($emailAddress);

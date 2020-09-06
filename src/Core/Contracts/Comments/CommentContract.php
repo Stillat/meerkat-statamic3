@@ -55,6 +55,7 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     const KEY_REFERRER = 'referer';
     const KEY_PAGE_URL = 'page_url';
 
+    const INTERNAL_PARENT_AUTHOR = 'internal_parent_author';
     const INTERNAL_ABSOLUTE_ROOT = 'internal_root';
     const INTERNAL_CONTENT_TRUNCATED = 'internal_content_truncated';
     const INTERNAL_CONTEXT = 'context';
@@ -309,6 +310,21 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
      * @return AuthorContract
      */
     public function getAuthor();
+
+    /**
+     * Sets the comment's parent author context, if available.
+     *
+     * @param  AuthorContract $author The author of the parent comment.
+     * @return CommentContract
+     */
+    public function setParentAuthor($author);
+
+    /**
+     * Gets the comment's parent author instance, if available.
+     *
+     * @return AuthorContract|null
+     */
+    public function getParentAuthor();
 
     /**
      * Gets the comment's participants.

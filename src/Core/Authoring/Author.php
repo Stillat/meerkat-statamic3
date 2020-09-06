@@ -44,6 +44,13 @@ abstract class Author implements AuthorContract
     protected $authorDisplayName = '';
 
     /**
+     * The author's web address, if available.
+     *
+     * @var string
+     */
+    protected $authorWebAddress = '';
+
+    /**
      * Returns a value indicating if the author context is
      * persistent within the host system, or isolated
      * to the entity it is attached to. A transient
@@ -107,6 +114,26 @@ abstract class Author implements AuthorContract
     public function setDisplayName($displayName)
     {
         $this->authorDisplayName = $displayName;
+    }
+
+    /**
+     * Gets the identity's web address, if available.
+     *
+     * @return mixed
+     */
+    public function getWebAddress()
+    {
+        return $this->authorWebAddress;
+    }
+
+    /**
+     * Sets the identity's web address.
+     *
+     * @param string $webAddress The web address.
+     */
+    public function setWebAddress($webAddress)
+    {
+        $this->authorWebAddress = $webAddress;
     }
 
 }

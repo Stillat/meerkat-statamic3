@@ -431,7 +431,15 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
                 $commentParent = $hierarchy->getParent($commentId);
 
                 if (array_key_exists($commentParent, $commentPrototypes)) {
-                    $comment->setDataAttribute(CommentContract::KEY_PARENT, $commentPrototypes[$commentParent]);
+                    /** @var CommentContract $parentPrototype */
+                    $parentPrototype = $commentPrototypes[$commentParent];
+                    $parentAuthor = $parentPrototype->getAuthor();
+
+                    if ($parentAuthor !== null) {
+                        $comment->setParentAuthor($parentAuthor);
+                    }
+
+                    $comment->setDataAttribute(CommentContract::KEY_PARENT, $parentPrototype);
                 }
             }
 

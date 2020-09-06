@@ -56,6 +56,13 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     protected $commentAuthor = null;
 
     /**
+     * The comment's parent author instance, if available.
+     *
+     * @var AuthorContract
+     */
+    protected $parentAuthor = null;
+
+    /**
      * Indicates if the always has comments override has been set.
      *
      * @var boolean
@@ -207,6 +214,27 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     public function setAuthorRetriever(CommentAuthorRetriever &$retriever)
     {
         $this->authorManager = $retriever;
+    }
+
+    /**
+     * Gets the comment's parent author instance, if available.
+     *
+     * @return AuthorContract|null
+     */
+    public function getParentAuthor()
+    {
+        return $this->parentAuthor;
+    }
+
+    /**
+     * Sets the comment's parent author context, if available.
+     *
+     * @param AuthorContract $author The author of the parent comment.
+     * @return CommentContract
+     */
+    public function setParentAuthor($author)
+    {
+        $this->parentAuthor = $author;
     }
 
     /**
@@ -742,6 +770,7 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
             AuthorContract::KEY_EMAIL_ADDRESS,
             AuthorContract::KEY_USER_IP,
             AuthorContract::KEY_USER_AGENT,
+            AuthorContract::KEY_AUTHOR_URL,
             CommentContract::KEY_COMMENT_DATE_FORMATTED,
             CommentContract::KEY_CONTENT,
             CommentContract::KEY_USER_AGENT,

@@ -56,7 +56,7 @@ class CommentResponseGenerator
     /**
      * The empty RuntimeContext instance to use in queries.
      *
-     * @var Runti   meContext
+     * @var RuntimeContext
      */
     protected $runtimeContext = null;
 
@@ -112,7 +112,8 @@ class CommentResponseGenerator
             CommentContract::KEY_USER_AGENT,
             CommentContract::KEY_REFERRER,
             CommentContract::KEY_PAGE_URL,
-            CommentContract::KEY_NAME
+            CommentContract::KEY_NAME,
+            AuthorContract::KEY_AUTHOR_URL
         ];
 
         $responseAuthors = CommentAuthorRetriever::getAuthorsFromCommentArray($commentResults);
@@ -175,23 +176,10 @@ class CommentResponseGenerator
                 }
             }
 
-            if (array_key_exists(CommentContract::KEY_AUTHOR, $comment)) {
-                if (array_key_exists(AuthorContract::KEY_HAS_USER, $comment[CommentContract::KEY_AUTHOR])) {
-                    if ($comment[CommentContract::KEY_AUTHOR][AuthorContract::KEY_HAS_USER] === true) {
-                        if (array_key_exists(AuthorContract::KEY_USER_ID, $comment[CommentContract::KEY_AUTHOR])) {
-                            $comment[CommentContract::KEY_AUTHOR] = $comment[CommentContract::KEY_AUTHOR][AuthorContract::KEY_USER_ID];
-                        } else {
-                            $comment[CommentContract::KEY_AUTHOR] = null;
-                        }
-                    } else {
-                        $comment[CommentContract::KEY_AUTHOR] = TransientIdGenerator::getId($comment[CommentContract::KEY_AUTHOR]);
-                    }
-                } else {
-                    $comment[CommentContract::KEY_AUTHOR] = null;
-                }
-            } else {
-                $comment[CommentContract::KEY_AUTHOR] = null;
-            }
+            // Process the primary author.
+            $comment[CommentContract::KEY_AUTHOR] = $this->getAuthorIdentificationInformation(CommentContract::KEY_AUTHOR, $comment);
+            $comment[CommentContract::INTERNAL_PARENT_AUTHOR] = $this->getAuthorIdentificationInformation(CommentContract::INTERNAL_PARENT_AUTHOR, $comment);
+
 
             if (array_key_exists(CommentContract::INTERNAL_CONTEXT, $comment)) {
                 $comment[CommentContract::INTERNAL_CONTEXT] = $comment[CommentContract::INTERNAL_CONTEXT_ID];
@@ -214,6 +202,38 @@ class CommentResponseGenerator
             CommentResponseGenerator::KEY_API_THREAD_COLLECTION => array_values($threads),
             CommentResponseGenerator::KEY_API_PAGE_METADATA => $pageMetaData
         ];
+    }
+
+    /**
+     * Attempts to locate the requested author information in the comment.
+     *
+     * @param string $authorKey The author key.
+     * @param array $comment The comment array to analyze.
+     * @return string|null
+     */
+    private function getAuthorIdentificationInformation($authorKey, $comment)
+    {
+        if (array_key_exists($authorKey, $comment)) {
+            if ($comment[$authorKey] === null) {
+                return null;
+            }
+
+            if (array_key_exists(AuthorContract::KEY_HAS_USER, $comment[$authorKey])) {
+                if ($comment[$authorKey][AuthorContract::KEY_HAS_USER] === true) {
+                    if (array_key_exists(AuthorContract::KEY_USER_ID, $comment[$authorKey])) {
+                        return $comment[$authorKey][AuthorContract::KEY_USER_ID];
+                    } else {
+                        return null;
+                    }
+                } else {
+                    return TransientIdGenerator::getId($comment[$authorKey]);
+                }
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
     }
 
 }

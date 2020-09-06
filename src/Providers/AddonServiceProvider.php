@@ -249,39 +249,10 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
      */
     private function publishAddonControlPanelAssets()
     {
-        $resources = PathProvider::getResourcesDirectory('/dist/js');
-        $rootPublicPath = public_path('/vendor/'.Addon::CODE_ADDON_NAME.'/js/');
-        $publicPath = $rootPublicPath.Addon::VERSION;
-        $currentVersions = Paths::getDirectories($rootPublicPath);
-        $didFindCurrentVersion = false;
-        $versionsToCleanUp = [];
-
-        foreach ($currentVersions as $assetPath) {
-            if (Str::endsWith($assetPath, Addon::VERSION)) {
-                $didFindCurrentVersion = true;
-            } else {
-                $versionsToCleanUp[] = $assetPath;
-            }
-        }
-
-        // If the current version is a development version
-        // we will always publish any new asset changes.
-        if (Str::endsWith(Addon::VERSION, '-dev')) {
-            $didFindCurrentVersion = false;
-        }
-
-        if ($didFindCurrentVersion === false) {
-            // First, publish new versions.
-            if (file_exists($publicPath) == false) {
-                mkdir($publicPath, 644, true);
-            }
-
-            Paths::recursivelyCopyDirectory($resources, $publicPath, false);
-        }
-
-        foreach ($versionsToCleanUp as $assetPath) {
-            Paths::recursivelyRemoveDirectory($assetPath);
-        }
+        $this->publishResourceAssets([
+            '/dist/js' => '/js',
+            '/dist/css' => '/css'
+        ]);
     }
 
     /**
@@ -322,6 +293,64 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
                     $providerInstance->register();
                 }
             }
+        }
+    }
+
+    /**
+     * Publishes the specified resources.
+     *
+     * @param array $assets The resource asset mapping.
+     */
+    private function publishResourceAssets($assets)
+    {
+        foreach ($assets as $source => $target) {
+            $resourceSource = PathProvider::getResourcesDirectory($source);
+            $resourceTarget = public_path('/vendor/' . Addon::CODE_ADDON_NAME . $target);
+
+            $resourceTarget = \Illuminate\Support\Str::finish($resourceTarget, '/');
+
+            $this->publishResourceDirectory($resourceSource, $resourceTarget);
+        }
+    }
+
+    /**
+     * Publishes the assets in the source directory to the target directory.
+     *
+     * @param string $sourceDirectory The source directory.
+     * @param string $targetDirectory The target directory.
+     */
+    private function publishResourceDirectory($sourceDirectory, $targetDirectory)
+    {
+        $publicPath = $targetDirectory . Addon::VERSION;
+        $currentVersions = Paths::getDirectories($targetDirectory);
+        $didFindCurrentVersion = false;
+        $versionsToCleanUp = [];
+
+        foreach ($currentVersions as $assetPath) {
+            if (Str::endsWith($assetPath, Addon::VERSION)) {
+                $didFindCurrentVersion = true;
+            } else {
+                $versionsToCleanUp[] = $assetPath;
+            }
+        }
+
+        // If the current version is a development version
+        // we will always publish any new asset changes.
+        if (Str::endsWith(Addon::VERSION, '-dev')) {
+            $didFindCurrentVersion = false;
+        }
+
+        if ($didFindCurrentVersion === false) {
+            // First, publish new versions.
+            if (file_exists($publicPath) == false) {
+                mkdir($publicPath, 644, true);
+            }
+
+            Paths::recursivelyCopyDirectory($sourceDirectory, $publicPath, false);
+        }
+
+        foreach ($versionsToCleanUp as $assetPath) {
+            Paths::recursivelyRemoveDirectory($assetPath);
         }
     }
 

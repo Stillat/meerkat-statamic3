@@ -106,6 +106,7 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
                     }
                 } else {
                     $providerInstance->boot();
+                    dd('asdf');
                 }
             }
         }

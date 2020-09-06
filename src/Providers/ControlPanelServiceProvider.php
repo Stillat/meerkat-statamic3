@@ -4,6 +4,7 @@ namespace Stillat\Meerkat\Providers;
 
 use Statamic\Statamic;
 use Stillat\Meerkat\Addon;
+use Stillat\Meerkat\Concerns\EmitsEvents;
 use Stillat\Meerkat\PathProvider;
 use Stillat\Meerkat\Statamic\ControlPanel\AddonNavIcons;
 use Stillat\Meerkat\Statamic\ControlPanel\Navigation;
@@ -19,8 +20,11 @@ use Stillat\Meerkat\Translation\LanguagePatcher;
  */
 class ControlPanelServiceProvider extends AddonServiceProvider
 {
+    const EVENT_REGISTERING_CONTROL_PANEL = 'registering.controlPanel';
 
     protected $contexts = ['cp'];
+
+    use EmitsEvents;
 
     /**
      * The addon icon installer instance.
@@ -28,14 +32,12 @@ class ControlPanelServiceProvider extends AddonServiceProvider
      * @var AddonNavIcons|null
      */
     protected $addonIconInstaller = null;
-
     /**
      * The Meerkat Navigation helper instance.
      *
      * @var Navigation|null
      */
     protected $navigation = null;
-
     /**
      * The language translation patcher instance.
      *
@@ -45,6 +47,8 @@ class ControlPanelServiceProvider extends AddonServiceProvider
 
     public function __construct(AddonNavIcons $addonIcons, Navigation $navigation)
     {
+        require_once PathProvider::getAddonDirectory('extend/default.php');
+
         parent::__construct(app());
         $this->addonIconInstaller = $addonIcons;
         $this->navigation = $navigation;
@@ -62,6 +66,7 @@ class ControlPanelServiceProvider extends AddonServiceProvider
         $this->navigation->create();
 
         Statamic::script('meerkat', Addon::VERSION . '/meerkatExtend');
+        $this->emitEvent(ControlPanelServiceProvider::EVENT_REGISTERING_CONTROL_PANEL, '');
         Statamic::script('meerkat', Addon::VERSION . '/meerkat');
         Statamic::script('meerkat', Addon::VERSION . '/bootstrap');
     }

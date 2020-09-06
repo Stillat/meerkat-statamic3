@@ -4,7 +4,6 @@
         window.meerkat.Config.Environment.STATAMIC_API_ROOT = window.meerkat.Types.Url.toAbsolute(
             window.Statamic.cp_url('/'), '../'
         );
-        window.meerkat.Config.Environment.CONTEXT_WINDOW = window;
         window.meerkat.Config.Environment.CONTEXT_JQUERY = window.jQuery;
         window.meerkat.Config.Environment.CONTEXT_VUEJS = window.Vue;
 

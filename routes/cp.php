@@ -16,4 +16,3 @@ Route::group(['prefix' => Addon::ROUTE_PREFIX], function () {
    });
 
 });
-

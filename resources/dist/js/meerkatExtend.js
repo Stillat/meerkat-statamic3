@@ -2802,6 +2802,7 @@ var Environment = /*#__PURE__*/function () {
   return Environment;
 }();
 
+Environment.MarkdownHandler = null;
 Environment.Settings = new _settings__WEBPACK_IMPORTED_MODULE_2__["default"]();
 Environment.STATAMIC_API_ROOT = '';
 Environment.STATAMIC_CP_ROOT = '';

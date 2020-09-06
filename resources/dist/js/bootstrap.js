@@ -1,5 +1,6 @@
 (function () {
     $(document).ready(function () {
+        window.meerkat.Config.Environment.MarkdownHandler = window.markdown;
         window.meerkat.Config.Environment.STATAMIC_CP_ROOT = window.Statamic.cp_url('/');
         window.meerkat.Config.Environment.STATAMIC_API_ROOT = window.meerkat.Types.Url.toAbsolute(
             window.Statamic.cp_url('/'), '../'

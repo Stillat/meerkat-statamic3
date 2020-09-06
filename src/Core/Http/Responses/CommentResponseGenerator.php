@@ -30,7 +30,7 @@ class CommentResponseGenerator
 
     const KEY_PARAM_PAGE = 'page';
     const KEY_PARAM_RESULTS_PER_PAGE = 'resultsPerPage';
-    const VALUE_DEFAULT_PER_PAGE = 25;
+    const VALUE_DEFAULT_PER_PAGE = 10;
 
     /**
      * The CommentManagerContract implementation instance.

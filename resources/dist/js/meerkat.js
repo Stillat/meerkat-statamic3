@@ -3911,6 +3911,36 @@ $({ target: 'Array', proto: true, forced: FORCED }, {
 
 /***/ }),
 
+/***/ "./node_modules/core-js/modules/es.array.filter.js":
+/*!*********************************************************!*\
+  !*** ./node_modules/core-js/modules/es.array.filter.js ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(/*! ../internals/export */ "./node_modules/core-js/internals/export.js");
+var $filter = __webpack_require__(/*! ../internals/array-iteration */ "./node_modules/core-js/internals/array-iteration.js").filter;
+var arrayMethodHasSpeciesSupport = __webpack_require__(/*! ../internals/array-method-has-species-support */ "./node_modules/core-js/internals/array-method-has-species-support.js");
+var arrayMethodUsesToLength = __webpack_require__(/*! ../internals/array-method-uses-to-length */ "./node_modules/core-js/internals/array-method-uses-to-length.js");
+
+var HAS_SPECIES_SUPPORT = arrayMethodHasSpeciesSupport('filter');
+// Edge 14- issue
+var USES_TO_LENGTH = arrayMethodUsesToLength('filter');
+
+// `Array.prototype.filter` method
+// https://tc39.github.io/ecma262/#sec-array.prototype.filter
+// with adding support of @@species
+$({ target: 'Array', proto: true, forced: !HAS_SPECIES_SUPPORT || !USES_TO_LENGTH }, {
+  filter: function filter(callbackfn /* , thisArg */) {
+    return $filter(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+  }
+});
+
+
+/***/ }),
+
 /***/ "./node_modules/core-js/modules/es.array.find.js":
 /*!*******************************************************!*\
   !*** ./node_modules/core-js/modules/es.array.find.js ***!
@@ -6408,24 +6438,10 @@ module.exports = g;
 
 /***/ }),
 
-/***/ "./src/App/CommentThread/commentThread.html":
-/*!**************************************************!*\
-  !*** ./src/App/CommentThread/commentThread.html ***!
-  \**************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-// Module
-var code = "<div>\r\n    <div class=\"flex items-center mb-3\">\r\n        <h1 class=\"flex-1\">{{ trans('display.commentHeader') }}</h1>\r\n\r\n        <loader v-if=\"state.loadingData\" :display-inline=\"true\"></loader>\r\n    </div>\r\n\r\n    <div v-if=\"state.loadingInitial === true\" class=\"card loading\">\r\n        <loader :display-text=\"trans('display.loading')\"></loader>\r\n    </div>\r\n\r\n    <comment-table v-if=\"state.loadingInitial === false\" :comments=\"commentData\"\r\n                   :loading=\"state.loadingData\"></comment-table>\r\n\r\n    <paginator v-if=\"commentData !== null\" :page-data=\"commentData.pages\" v-on:page-updated=\"updateQueryWithPage\">\r\n    </paginator>\r\n</div>";
-// Exports
-module.exports = code;
-
-/***/ }),
-
-/***/ "./src/App/CommentThread/commentThread.js":
-/*!************************************************!*\
-  !*** ./src/App/CommentThread/commentThread.js ***!
-  \************************************************/
+/***/ "./src/App/CommentThread/index.js":
+/*!****************************************!*\
+  !*** ./src/App/CommentThread/index.js ***!
+  \****************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -6437,14 +6453,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var core_js_modules_es_string_search__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.string.search */ "./node_modules/core-js/modules/es.string.search.js");
 /* harmony import */ var core_js_modules_es_string_search__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_search__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _commentThread_html__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./commentThread.html */ "./src/App/CommentThread/commentThread.html");
-/* harmony import */ var _commentThread_html__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_commentThread_html__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./template.html */ "./src/App/CommentThread/template.html");
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_template_html__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _Repositories_commentRepository__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../Repositories/commentRepository */ "./src/Repositories/commentRepository.js");
-/* harmony import */ var _Components_Pagination_paginator__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../Components/Pagination/paginator */ "./src/App/Components/Pagination/paginator.js");
+/* harmony import */ var _Components_Pagination__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../Components/Pagination */ "./src/App/Components/Pagination/index.js");
 /* harmony import */ var _Mixins_UsesTranslator__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../Mixins/UsesTranslator */ "./src/App/Mixins/UsesTranslator.js");
-/* harmony import */ var _Components_DataTable_commentTable__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../Components/DataTable/commentTable */ "./src/App/Components/DataTable/commentTable.js");
+/* harmony import */ var _Components_DataTable__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../Components/DataTable */ "./src/App/Components/DataTable/index.js");
 /* harmony import */ var _Data_Comments_searchOptions__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../Data/Comments/searchOptions */ "./src/Data/Comments/searchOptions.js");
-/* harmony import */ var _Components_Loader_loader__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../Components/Loader/loader */ "./src/App/Components/Loader/loader.js");
+/* harmony import */ var _Components_Loader__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../Components/Loader */ "./src/App/Components/Loader/index.js");
 
 
 
@@ -6458,11 +6474,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   mixins: [_Mixins_UsesTranslator__WEBPACK_IMPORTED_MODULE_6__["default"]],
   el: '',
-  template: _commentThread_html__WEBPACK_IMPORTED_MODULE_3___default.a,
+  template: _template_html__WEBPACK_IMPORTED_MODULE_3___default.a,
   components: {
-    'comment-table': _Components_DataTable_commentTable__WEBPACK_IMPORTED_MODULE_7__["default"],
-    'loader': _Components_Loader_loader__WEBPACK_IMPORTED_MODULE_9__["default"],
-    'paginator': _Components_Pagination_paginator__WEBPACK_IMPORTED_MODULE_5__["default"]
+    'comment-table': _Components_DataTable__WEBPACK_IMPORTED_MODULE_7__["default"],
+    'loader': _Components_Loader__WEBPACK_IMPORTED_MODULE_9__["default"],
+    'paginator': _Components_Pagination__WEBPACK_IMPORTED_MODULE_5__["default"]
   },
   data: {
     state: {
@@ -6504,7 +6520,7 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   created: function created() {
-    this.searchOptions.resultsPerPage = 25; // TODO: Set from stored/Statamic state/config.
+    this.searchOptions.resultsPerPage = 10; // TODO: Set from stored/Statamic state/config.
 
     this.loadCommentData();
   }
@@ -6512,38 +6528,38 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./src/App/Components/AuthorDisplay/authorDisplay.html":
-/*!*************************************************************!*\
-  !*** ./src/App/Components/AuthorDisplay/authorDisplay.html ***!
-  \*************************************************************/
+/***/ "./src/App/CommentThread/template.html":
+/*!*********************************************!*\
+  !*** ./src/App/CommentThread/template.html ***!
+  \*********************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
 // Module
-var code = "<div class=\"flex items-center\">\r\n    <div class=\"w-10 h-10\" style=\"margin-right:0.5em;\" :title=\"author.name\">\r\n        <component :is=\"avatarDriver\" v-bind=\"getAuthor()\"></component>\r\n    </div>\r\n    <div class=\"text-sm\">\r\n        <p class=\"text-gray-900 leading-none\">{{ author.name }}</p>\r\n        <p class=\"text-gray-600\" v-if=\"author.hasEmailAddress()\"><a :href=\"'mailto:' + author.email\">{{ author.email }}</a></p>\r\n        <p class=\"text-gray-600\" v-if=\"author.hasWebAddress()\"><a :href=\"author.webAddress\" target=\"_blank\">{{ author.webAddress }}</a></p>\r\n\r\n    </div>\r\n</div>";
+var code = "<div>\r\n    <div class=\"flex items-center mb-3\">\r\n        <h1 class=\"flex-1\">{{ trans('display.commentHeader') }}</h1>\r\n\r\n        <loader v-if=\"state.loadingData\" :display-inline=\"true\"></loader>\r\n    </div>\r\n\r\n    <div v-if=\"state.loadingInitial === true\" class=\"card loading\">\r\n        <loader :display-text=\"trans('display.loading')\"></loader>\r\n    </div>\r\n\r\n    <comment-table v-if=\"state.loadingInitial === false\" :comments=\"commentData\"\r\n                   :loading=\"state.loadingData\"></comment-table>\r\n\r\n    <paginator v-if=\"commentData !== null\" :page-data=\"commentData.pages\" v-on:page-updated=\"updateQueryWithPage\">\r\n    </paginator>\r\n</div>";
 // Exports
 module.exports = code;
 
 /***/ }),
 
-/***/ "./src/App/Components/AuthorDisplay/authorDisplay.js":
-/*!***********************************************************!*\
-  !*** ./src/App/Components/AuthorDisplay/authorDisplay.js ***!
-  \***********************************************************/
+/***/ "./src/App/Components/AuthorDisplay/index.js":
+/*!***************************************************!*\
+  !*** ./src/App/Components/AuthorDisplay/index.js ***!
+  \***************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _authorDisplay_html__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./authorDisplay.html */ "./src/App/Components/AuthorDisplay/authorDisplay.html");
-/* harmony import */ var _authorDisplay_html__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_authorDisplay_html__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./template.html */ "./src/App/Components/AuthorDisplay/template.html");
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_template_html__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _Data_Comments_author__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../Data/Comments/author */ "./src/Data/Comments/author.js");
-__webpack_require__(/*! ./authorDisplay.less */ "./src/App/Components/AuthorDisplay/authorDisplay.less");
+__webpack_require__(/*! ./style.less */ "./src/App/Components/AuthorDisplay/style.less");
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  template: _authorDisplay_html__WEBPACK_IMPORTED_MODULE_0___default.a,
+  template: _template_html__WEBPACK_IMPORTED_MODULE_0___default.a,
   props: {
     author: {
       type: _Data_Comments_author__WEBPACK_IMPORTED_MODULE_1__["default"],
@@ -6565,10 +6581,10 @@ __webpack_require__(/*! ./authorDisplay.less */ "./src/App/Components/AuthorDisp
 
 /***/ }),
 
-/***/ "./src/App/Components/AuthorDisplay/authorDisplay.less":
-/*!*************************************************************!*\
-  !*** ./src/App/Components/AuthorDisplay/authorDisplay.less ***!
-  \*************************************************************/
+/***/ "./src/App/Components/AuthorDisplay/style.less":
+/*!*****************************************************!*\
+  !*** ./src/App/Components/AuthorDisplay/style.less ***!
+  \*****************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6576,36 +6592,152 @@ __webpack_require__(/*! ./authorDisplay.less */ "./src/App/Components/AuthorDisp
 
 /***/ }),
 
-/***/ "./src/App/Components/DataTable/commentTable.html":
+/***/ "./src/App/Components/AuthorDisplay/template.html":
 /*!********************************************************!*\
-  !*** ./src/App/Components/DataTable/commentTable.html ***!
+  !*** ./src/App/Components/AuthorDisplay/template.html ***!
   \********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
 // Module
-var code = "<div class=\"card p-0 relative\">\r\n    <div class=\"data-table-header\">\r\n        <table class=\"data-table\" :class=\"{ 'opacity-50': loading }\">\r\n            <thead>\r\n            <tr>\r\n                <th class=\"w-xs max-w-xs\">Author</th>\r\n                <th>Comment</th>\r\n            </tr>\r\n            </thead>\r\n            <tbody>\r\n            <tr v-for=\"(comment, i) in comments.comments\">\r\n                <td>\r\n                    <author-display :author=\"comment.getAuthor()\" :avatar-driver=\"avatarDriver\"></author-display>\r\n                </td>\r\n                <td>\r\n                    {{ comment.authorId }} - {{ comment.id }}\r\n                </td>\r\n            </tr>\r\n            </tbody>\r\n        </table>\r\n    </div>\r\n</div>";
+var code = "<div class=\"author-display flex items-center\">\r\n    <div class=\"w-10 h-10\" style=\"margin-right:0.5em;\" :title=\"author.name\">\r\n        <component :is=\"avatarDriver\" v-bind=\"getAuthor()\"></component>\r\n    </div>\r\n    <div class=\"text-sm\">\r\n        <p class=\"text-gray-900 leading-none\">{{ author.name }}</p>\r\n        <p class=\"text-gray-600\" v-if=\"author.hasEmailAddress()\"><a :href=\"'mailto:' + author.email\">{{ author.email }}</a></p>\r\n        <p class=\"author-display__web-address\" v-if=\"author.hasWebAddress()\"><a :href=\"author.webAddress\" target=\"_blank\">{{ author.webAddress }}</a></p>\r\n    </div>\r\n</div>";
 // Exports
 module.exports = code;
 
 /***/ }),
 
-/***/ "./src/App/Components/DataTable/commentTable.js":
-/*!******************************************************!*\
-  !*** ./src/App/Components/DataTable/commentTable.js ***!
-  \******************************************************/
+/***/ "./src/App/Components/CommentActions/index.js":
+/*!****************************************************!*\
+  !*** ./src/App/Components/CommentActions/index.js ***!
+  \****************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _commentTable_html__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./commentTable.html */ "./src/App/Components/DataTable/commentTable.html");
-/* harmony import */ var _commentTable_html__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_commentTable_html__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./template.html */ "./src/App/Components/CommentActions/template.html");
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_template_html__WEBPACK_IMPORTED_MODULE_0__);
+__webpack_require__(/*! ./style.less */ "./src/App/Components/CommentActions/style.less");
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  template: _template_html__WEBPACK_IMPORTED_MODULE_0___default.a,
+  props: {
+    comment: {
+      type: Comment,
+      "default": null
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./src/App/Components/CommentActions/style.less":
+/*!******************************************************!*\
+  !*** ./src/App/Components/CommentActions/style.less ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+
+/***/ "./src/App/Components/CommentActions/template.html":
+/*!*********************************************************!*\
+  !*** ./src/App/Components/CommentActions/template.html ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// Module
+var code = "<div class=\"comment-display__actions\">\r\n    <ul class=\"flex\">\r\n        <li class=\"mr-2\">\r\n            <a>\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                         xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\"\r\n                                                                        fill=\"none\" fill-rule=\"evenodd\"> <g\r\n                            id=\"icon-shape\"><polygon id=\"Path-126\" points=\"0 11 2 9 7 14 18 3 20 5 7 18\"></polygon></g></g></svg>\r\n                </span>\r\n                Approve\r\n            </a>\r\n        </li>\r\n        <li class=\"mr-2\">\r\n            <a>\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                         xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n\t\t\t\t\t\t<g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\r\n\t\t\t\t\t\t\t<g id=\"icon-shape\">\r\n\t\t\t\t\t\t\t\t<path d=\"M15,17 L15,14.009763 C15,11.795232 13.2081782,10 10.9976305,10 L8,10 L8,15 L2,9 L8,3 L8,8 L10.9946916,8 C14.3113318,8 17,10.6930342 17,14 L17,17 L15,17 L15,17 Z\"\r\n                                      id=\"Combined-Shape\"></path>\r\n\t\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</svg>\r\n                </span>\r\n                Reply\r\n            </a>\r\n        </li>\r\n        <li class=\"mr-2\">\r\n            <a>\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                         xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n\t\t\t\t\t\t<g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\r\n\t\t\t\t\t\t\t<g id=\"icon-shape\">\r\n\t\t\t\t\t\t\t\t<path d=\"M12.2928932,3.70710678 L0,16 L0,20 L4,20 L16.2928932,7.70710678 L12.2928932,3.70710678 Z M13.7071068,2.29289322 L16,0 L20,4 L17.7071068,6.29289322 L13.7071068,2.29289322 Z\"\r\n                                      id=\"Combined-Shape\"></path>\r\n\t\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</svg>\r\n                </span>\r\n                Edit\r\n            </a>\r\n        </li>\r\n        <li class=\"mr-2\">\r\n            <a>\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                         xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n\t\t\t\t\t\t<g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\r\n\t\t\t\t\t\t\t<g id=\"icon-shape\">\r\n\t\t\t\t\t\t\t\t<path d=\"M19,10.9999798 C19,13.2091299 17.4323196,15.8709335 15.5074835,16.940287 L10,20 L4.49251651,16.940287 C2.5636529,15.8686961 1,13.2055487 1,10.9999798 L1,3 C4.3761817,3 7.49184447,1.88458585 9.99858329,0.00216256114 C12.5058076,1.88587336 15.6225461,3.00212826 19,3.00212826 L19,10.9999798 Z M10,12.083735 L7.07502008,14.1191153 L8.1069132,10.708327 L5.26728307,8.55547283 L8.83000801,8.48286996 L10,5.11695271 L11.169992,8.48286996 L14.7327169,8.55547283 L11.8930868,10.708327 L12.9249799,14.1191153 L10,12.083735 Z\"\r\n                                      id=\"Combined-Shape\"></path>\r\n\t\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</svg>\r\n                </span>\r\n                Spam\r\n            </a>\r\n        </li>\r\n        <li class=\"mr-2\">\r\n            <a>\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                         xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n\t\t\t\t\t\t<g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\r\n\t\t\t\t\t\t\t<g id=\"icon-shape\">\r\n\t\t\t\t\t\t\t\t<path d=\"M2,2 L18,2 L18,4 L2,4 L2,2 Z M8,0 L12,0 L14,2 L6,2 L8,0 Z M3,6 L17,6 L16,20 L4,20 L3,6 Z M8,8 L9,8 L9,18 L8,18 L8,8 Z M11,8 L12,8 L12,18 L11,18 L11,8 Z\"\r\n                                      id=\"Combined-Shape\"></path>\r\n\r\n\t\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</svg>\r\n                </span>\r\n                Delete\r\n            </a>\r\n        </li>\r\n    </ul>\r\n</div>";
+// Exports
+module.exports = code;
+
+/***/ }),
+
+/***/ "./src/App/Components/CommentDisplay/index.js":
+/*!****************************************************!*\
+  !*** ./src/App/Components/CommentDisplay/index.js ***!
+  \****************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./template.html */ "./src/App/Components/CommentDisplay/template.html");
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_template_html__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _Data_Comments_comment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../Data/Comments/comment */ "./src/Data/Comments/comment.js");
+/* harmony import */ var _CommentActions__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../CommentActions */ "./src/App/Components/CommentActions/index.js");
+/* harmony import */ var _markdown__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../markdown */ "./src/App/markdown.js");
+__webpack_require__(/*! ./style.less */ "./src/App/Components/CommentDisplay/style.less");
+
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  template: _template_html__WEBPACK_IMPORTED_MODULE_0___default.a,
+  components: {
+    'comment-actions': _CommentActions__WEBPACK_IMPORTED_MODULE_2__["default"]
+  },
+  props: {
+    comment: {
+      type: _Data_Comments_comment__WEBPACK_IMPORTED_MODULE_1__["default"],
+      "default": null
+    }
+  },
+  methods: {
+    parseMarkdown: _markdown__WEBPACK_IMPORTED_MODULE_3__["parseMarkdown"]
+  }
+});
+
+/***/ }),
+
+/***/ "./src/App/Components/CommentDisplay/style.less":
+/*!******************************************************!*\
+  !*** ./src/App/Components/CommentDisplay/style.less ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+
+/***/ "./src/App/Components/CommentDisplay/template.html":
+/*!*********************************************************!*\
+  !*** ./src/App/Components/CommentDisplay/template.html ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// Module
+var code = "<div class=\"comment-display\">\r\n    <div class=\"comment-display__author-reply\" v-if=\"comment.hasParentAuthor()\">\r\n        <p><strong>In reply to:</strong> {{ comment.getParentAuthor().name }}</p>\r\n    </div>\r\n\r\n    <div class=\"comment-display__content\" v-html=\"parseMarkdown(comment.content)\"></div>\r\n\r\n    <comment-actions :comment=\"comment\"></comment-actions>\r\n</div>";
+// Exports
+module.exports = code;
+
+/***/ }),
+
+/***/ "./src/App/Components/DataTable/index.js":
+/*!***********************************************!*\
+  !*** ./src/App/Components/DataTable/index.js ***!
+  \***********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./template.html */ "./src/App/Components/DataTable/template.html");
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_template_html__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _Http_Responses_commentResponse__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../Http/Responses/commentResponse */ "./src/Http/Responses/commentResponse.js");
 /* harmony import */ var _Config_environment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../Config/environment */ "./src/Config/environment.js");
 /* harmony import */ var _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../Extend/Avatars/avatarDriverRegistry */ "./src/Extend/Avatars/avatarDriverRegistry.js");
-/* harmony import */ var _AuthorDisplay_authorDisplay__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../AuthorDisplay/authorDisplay */ "./src/App/Components/AuthorDisplay/authorDisplay.js");
-__webpack_require__(/*! ./commentTable.less */ "./src/App/Components/DataTable/commentTable.less");
+/* harmony import */ var _AuthorDisplay__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../AuthorDisplay */ "./src/App/Components/AuthorDisplay/index.js");
+/* harmony import */ var _CommentDisplay__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../CommentDisplay */ "./src/App/Components/CommentDisplay/index.js");
+__webpack_require__(/*! ./style.less */ "./src/App/Components/DataTable/style.less");
+
 
 
 
@@ -6613,9 +6745,10 @@ __webpack_require__(/*! ./commentTable.less */ "./src/App/Components/DataTable/c
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  template: _commentTable_html__WEBPACK_IMPORTED_MODULE_0___default.a,
+  template: _template_html__WEBPACK_IMPORTED_MODULE_0___default.a,
   components: {
-    'author-display': _AuthorDisplay_authorDisplay__WEBPACK_IMPORTED_MODULE_4__["default"]
+    'author-display': _AuthorDisplay__WEBPACK_IMPORTED_MODULE_4__["default"],
+    'comment-display': _CommentDisplay__WEBPACK_IMPORTED_MODULE_5__["default"]
   },
   props: {
     loading: {
@@ -6644,10 +6777,10 @@ __webpack_require__(/*! ./commentTable.less */ "./src/App/Components/DataTable/c
 
 /***/ }),
 
-/***/ "./src/App/Components/DataTable/commentTable.less":
-/*!********************************************************!*\
-  !*** ./src/App/Components/DataTable/commentTable.less ***!
-  \********************************************************/
+/***/ "./src/App/Components/DataTable/style.less":
+/*!*************************************************!*\
+  !*** ./src/App/Components/DataTable/style.less ***!
+  \*************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -6655,24 +6788,24 @@ __webpack_require__(/*! ./commentTable.less */ "./src/App/Components/DataTable/c
 
 /***/ }),
 
-/***/ "./src/App/Components/Loader/loader.html":
-/*!***********************************************!*\
-  !*** ./src/App/Components/Loader/loader.html ***!
-  \***********************************************/
+/***/ "./src/App/Components/DataTable/template.html":
+/*!****************************************************!*\
+  !*** ./src/App/Components/DataTable/template.html ***!
+  \****************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
 // Module
-var code = "<div :class=\"{\r\n        'flex items-center leading-loose': displayInline\r\n    }\">\r\n    <svg xmlns=\"http://www.w3.org/2000/svg\"\r\n         :width=\"`${computedSize}px`\"\r\n         :height=\"`${computedSize}px`\"\r\n         viewBox=\"0 0 40 40\"\r\n         stroke=\"#737f8c\">\r\n        <g fill=\"none\" fill-rule=\"evenodd\">\r\n            <g transform=\"translate(2 2)\" stroke-width=\"4\">\r\n                <circle stroke-opacity=\".5\" cx=\"18\" cy=\"18\" r=\"18\"/>\r\n                <path d=\"M36 18c0-9.94-8.06-18-18-18\">\r\n                    <animateTransform\r\n                            attributeName=\"transform\"\r\n                            type=\"rotate\"\r\n                            from=\"0 18 18\"\r\n                            to=\"360 18 18\"\r\n                            dur=\"1s\"\r\n                            repeatCount=\"indefinite\"/>\r\n                </path>\r\n            </g>\r\n        </g>\r\n    </svg>\r\n\r\n    <div v-if=\"displayText\" :class=\"{\r\n            'ml-1 text-sm text-grey': displayInline,\r\n            'mt-1': !displayInline\r\n        }\">{{ displayText }}\r\n    </div>\r\n</div>";
+var code = "<div class=\"card p-0 relative\">\r\n    <div class=\"data-table-header\">\r\n        <p>Threads displaying: {{ comments.threads.length }}</p>\r\n        <p>Authors displaying: {{ comments.authors.length }}</p>\r\n        <table class=\"data-table\" :class=\"{ 'opacity-50': loading }\">\r\n            <thead>\r\n            <tr>\r\n                <th class=\"comment-table__author-column\">Author</th>\r\n                <th>Comment</th>\r\n            </tr>\r\n            </thead>\r\n            <tbody>\r\n            <tr v-for=\"(comment, i) in comments.comments\">\r\n                <td class=\"author-display__container\">\r\n                    <author-display :author=\"comment.getAuthor()\" :avatar-driver=\"avatarDriver\"></author-display>\r\n                </td>\r\n                <td>\r\n                    <comment-display :comment=\"comment\"></comment-display>\r\n                </td>\r\n            </tr>\r\n            </tbody>\r\n        </table>\r\n    </div>\r\n</div>";
 // Exports
 module.exports = code;
 
 /***/ }),
 
-/***/ "./src/App/Components/Loader/loader.js":
-/*!*********************************************!*\
-  !*** ./src/App/Components/Loader/loader.js ***!
-  \*********************************************/
+/***/ "./src/App/Components/Loader/index.js":
+/*!********************************************!*\
+  !*** ./src/App/Components/Loader/index.js ***!
+  \********************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -6680,14 +6813,14 @@ module.exports = code;
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_number_constructor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.number.constructor */ "./node_modules/core-js/modules/es.number.constructor.js");
 /* harmony import */ var core_js_modules_es_number_constructor__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_number_constructor__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _loader_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./loader.html */ "./src/App/Components/Loader/loader.html");
-/* harmony import */ var _loader_html__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_loader_html__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./template.html */ "./src/App/Components/Loader/template.html");
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_template_html__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _Types_type__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../Types/type */ "./src/Types/type.js");
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  template: _loader_html__WEBPACK_IMPORTED_MODULE_1___default.a,
+  template: _template_html__WEBPACK_IMPORTED_MODULE_1___default.a,
   props: {
     displayText: {
       type: String,
@@ -6714,24 +6847,24 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./src/App/Components/Pagination/paginator.html":
-/*!******************************************************!*\
-  !*** ./src/App/Components/Pagination/paginator.html ***!
-  \******************************************************/
+/***/ "./src/App/Components/Loader/template.html":
+/*!*************************************************!*\
+  !*** ./src/App/Components/Loader/template.html ***!
+  \*************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
 // Module
-var code = "<div class=\"w-full flex mt-3\">\r\n    <div class=\"flex-1\" v-if=\"!displayInline\"></div>\r\n    <ul v-if=\"hasMultiplePages\" class=\"pagination\" :class=\"{'pagination-inline': displayInline}\">\r\n        <li v-if=\"displayArrows && hasPrevious\"><a v-on:click=\"movePrevious\"><span class=\"text-xs\">&larr;</span></a>\r\n        </li>\r\n        <li v-if=\"displayRange\" v-for=\"(range, i) in visibleRange\" :key=\"i\" :class=\"{'current': range.isSelected}\">\r\n            <span v-if=\"range.isSeparator\">...</span>\r\n            <a v-else v-on:click=\"moveToPage(range.pageNumber)\">{{ range.pageNumber }}</a>\r\n        </li>\r\n        <li v-if=\"displayArrows && hasNext\"><a v-on:click=\"moveNext\"><span class=\"text-xs\">→</span></a>\r\n        </li>\r\n    </ul>\r\n    <div class=\"flex flex-1\">\r\n        <div class=\"flex-1\"></div>\r\n        <div v-if=\"displayPerPage && shouldDisplayPerPageSelection\" class=\"select-input-container ml-3\">\r\n            <select name=\"perPage\" class=\"select-input\" v-model=\"instancePerPage\">\r\n                <option value=\"\" disabled=\"disabled\">{{ trans('display.perPage') }}</option>\r\n                <option v-for=\"option in perPageOptions\" v-bind:value=\"option\">{{ option }}</option>\r\n            </select>\r\n            <div class=\"select-input-toggle\">\r\n                <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\">\r\n                    <path d=\"M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z\"/>\r\n                </svg>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>\r\n";
+var code = "<div :class=\"{\r\n        'flex items-center leading-loose': displayInline\r\n    }\">\r\n    <svg xmlns=\"http://www.w3.org/2000/svg\"\r\n         :width=\"`${computedSize}px`\"\r\n         :height=\"`${computedSize}px`\"\r\n         viewBox=\"0 0 40 40\"\r\n         stroke=\"#737f8c\">\r\n        <g fill=\"none\" fill-rule=\"evenodd\">\r\n            <g transform=\"translate(2 2)\" stroke-width=\"4\">\r\n                <circle stroke-opacity=\".5\" cx=\"18\" cy=\"18\" r=\"18\"/>\r\n                <path d=\"M36 18c0-9.94-8.06-18-18-18\">\r\n                    <animateTransform\r\n                            attributeName=\"transform\"\r\n                            type=\"rotate\"\r\n                            from=\"0 18 18\"\r\n                            to=\"360 18 18\"\r\n                            dur=\"1s\"\r\n                            repeatCount=\"indefinite\"/>\r\n                </path>\r\n            </g>\r\n        </g>\r\n    </svg>\r\n\r\n    <div v-if=\"displayText\" :class=\"{\r\n            'ml-1 text-sm text-grey': displayInline,\r\n            'mt-1': !displayInline\r\n        }\">{{ displayText }}\r\n    </div>\r\n</div>";
 // Exports
 module.exports = code;
 
 /***/ }),
 
-/***/ "./src/App/Components/Pagination/paginator.js":
-/*!****************************************************!*\
-  !*** ./src/App/Components/Pagination/paginator.js ***!
-  \****************************************************/
+/***/ "./src/App/Components/Pagination/index.js":
+/*!************************************************!*\
+  !*** ./src/App/Components/Pagination/index.js ***!
+  \************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -6741,8 +6874,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_array_concat__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_concat__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var core_js_modules_es_number_constructor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.number.constructor */ "./node_modules/core-js/modules/es.number.constructor.js");
 /* harmony import */ var core_js_modules_es_number_constructor__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_number_constructor__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _paginator_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./paginator.html */ "./src/App/Components/Pagination/paginator.html");
-/* harmony import */ var _paginator_html__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_paginator_html__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./template.html */ "./src/App/Components/Pagination/template.html");
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_template_html__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _Types_common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../Types/common */ "./src/Types/common.js");
 /* harmony import */ var _Mixins_UsesTranslator__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../Mixins/UsesTranslator */ "./src/App/Mixins/UsesTranslator.js");
 /* harmony import */ var _Data_Paged_common__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../Data/Paged/common */ "./src/Data/Paged/common.js");
@@ -6758,7 +6891,7 @@ var paginatorRangeSizeOffset = 6;
 var sharedSeparator = [_Data_Paged_common__WEBPACK_IMPORTED_MODULE_5__["RangeItem"].makeSeparator()];
 /* harmony default export */ __webpack_exports__["default"] = ({
   mixins: [_Mixins_UsesTranslator__WEBPACK_IMPORTED_MODULE_4__["default"]],
-  template: _paginator_html__WEBPACK_IMPORTED_MODULE_2___default.a,
+  template: _template_html__WEBPACK_IMPORTED_MODULE_2___default.a,
   props: {
     displayArrows: {
       type: Boolean,
@@ -6782,7 +6915,7 @@ var sharedSeparator = [_Data_Paged_common__WEBPACK_IMPORTED_MODULE_5__["RangeIte
     },
     perPage: {
       type: Number,
-      "default": 25 // TODO: Set from stored/Statamic state/config.
+      "default": 10 // TODO: Set from stored/Statamic state/config.
 
     },
     perPageOptions: {
@@ -6942,7 +7075,7 @@ var sharedSeparator = [_Data_Paged_common__WEBPACK_IMPORTED_MODULE_5__["RangeIte
         return false;
       }
 
-      return this.pageData.totalPages >= this.perPageOptions[0];
+      return this.pageData.totalItems >= this.perPageOptions[0];
     },
     visibleRange: function visibleRange() {
       if (this.pageData === null) {
@@ -7000,6 +7133,20 @@ var sharedSeparator = [_Data_Paged_common__WEBPACK_IMPORTED_MODULE_5__["RangeIte
 
 /***/ }),
 
+/***/ "./src/App/Components/Pagination/template.html":
+/*!*****************************************************!*\
+  !*** ./src/App/Components/Pagination/template.html ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// Module
+var code = "<div class=\"w-full flex mt-3\">\r\n    <div class=\"flex-1\" v-if=\"!displayInline\"></div>\r\n    <ul v-if=\"hasMultiplePages\" class=\"pagination\" :class=\"{'pagination-inline': displayInline}\">\r\n        <li v-if=\"displayArrows && hasPrevious\"><a v-on:click=\"movePrevious\"><span class=\"text-xs\">&larr;</span></a>\r\n        </li>\r\n        <li v-if=\"displayRange\" v-for=\"(range, i) in visibleRange\" :key=\"i\" :class=\"{'current': range.isSelected}\">\r\n            <span v-if=\"range.isSeparator\">...</span>\r\n            <a v-else v-on:click=\"moveToPage(range.pageNumber)\">{{ range.pageNumber }}</a>\r\n        </li>\r\n        <li v-if=\"displayArrows && hasNext\"><a v-on:click=\"moveNext\"><span class=\"text-xs\">→</span></a>\r\n        </li>\r\n    </ul>\r\n    <div class=\"flex flex-1\">\r\n        <div class=\"flex-1\"></div>\r\n        <div v-if=\"displayPerPage && shouldDisplayPerPageSelection\" class=\"select-input-container ml-3\">\r\n            <select name=\"perPage\" class=\"select-input\" v-model=\"instancePerPage\">\r\n                <option value=\"\" disabled=\"disabled\">{{ trans('display.perPage') }}</option>\r\n                <option v-for=\"option in perPageOptions\" v-bind:value=\"option\">{{ option }}</option>\r\n            </select>\r\n            <div class=\"select-input-toggle\">\r\n                <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\">\r\n                    <path d=\"M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z\"/>\r\n                </svg>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>\r\n";
+// Exports
+module.exports = code;
+
+/***/ }),
+
 /***/ "./src/App/Mixins/UsesTranslator.js":
 /*!******************************************!*\
   !*** ./src/App/Mixins/UsesTranslator.js ***!
@@ -7030,14 +7177,18 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.object.define-property */ "./node_modules/core-js/modules/es.object.define-property.js");
-/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _Config_environment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Config/environment */ "./src/Config/environment.js");
-/* harmony import */ var _CommentThread_commentThread__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./CommentThread/commentThread */ "./src/App/CommentThread/commentThread.js");
-/* harmony import */ var _Types_common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./../Types/common */ "./src/Types/common.js");
-/* harmony import */ var _Translation_translator__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../Translation/translator */ "./src/Translation/translator.js");
-/* harmony import */ var _Statamic_statamicTranslator__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../Statamic/statamicTranslator */ "./src/Statamic/statamicTranslator.js");
-/* harmony import */ var _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../Extend/Avatars/avatarDriverRegistry */ "./src/Extend/Avatars/avatarDriverRegistry.js");
+/* harmony import */ var core_js_modules_es_array_filter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.filter */ "./node_modules/core-js/modules/es.array.filter.js");
+/* harmony import */ var core_js_modules_es_array_filter__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_filter__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.object.define-property */ "./node_modules/core-js/modules/es.object.define-property.js");
+/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _Config_environment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Config/environment */ "./src/Config/environment.js");
+/* harmony import */ var _CommentThread__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./CommentThread */ "./src/App/CommentThread/index.js");
+/* harmony import */ var _Types_common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./../Types/common */ "./src/Types/common.js");
+/* harmony import */ var _Translation_translator__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../Translation/translator */ "./src/Translation/translator.js");
+/* harmony import */ var _Statamic_statamicTranslator__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../Statamic/statamicTranslator */ "./src/Statamic/statamicTranslator.js");
+/* harmony import */ var _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../Extend/Avatars/avatarDriverRegistry */ "./src/Extend/Avatars/avatarDriverRegistry.js");
+/* harmony import */ var _markdown__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./markdown */ "./src/App/markdown.js");
+
 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -7045,6 +7196,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
 
 
 
@@ -7077,10 +7229,14 @@ var Bootstrapper = /*#__PURE__*/function () {
         var extendInstance = window[Bootstrapper.ExtensibilityInstance]['Extend'],
             existingDrivers = extendInstance.Avatars.getDrivers(),
             existingDisplayNames = extendInstance.Avatars.getDisplayNames();
-        _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_6__["default"].setDisplayNames(existingDisplayNames);
-        _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_6__["default"].setDrivers(existingDrivers);
+        _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_7__["default"].setDisplayNames(existingDisplayNames);
+        _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_7__["default"].setDrivers(existingDrivers);
         delete window[Bootstrapper.ExtensibilityInstance];
-        _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_6__["default"].registerDriversWithRunTime();
+        _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_7__["default"].registerDriversWithRunTime();
+      }
+
+      if (_Types_common__WEBPACK_IMPORTED_MODULE_4__["Type"].hasValue(_Config_environment__WEBPACK_IMPORTED_MODULE_2__["default"].CONTEXT_VUEJS)) {
+        _Config_environment__WEBPACK_IMPORTED_MODULE_2__["default"].CONTEXT_VUEJS.filter('meerkatMarkdown', _markdown__WEBPACK_IMPORTED_MODULE_8__["parseMarkdown"]);
       }
     }
     /**
@@ -7090,7 +7246,7 @@ var Bootstrapper = /*#__PURE__*/function () {
   }, {
     key: "registerDependencies",
     value: function registerDependencies() {
-      _Translation_translator__WEBPACK_IMPORTED_MODULE_4__["default"].Instance = new _Statamic_statamicTranslator__WEBPACK_IMPORTED_MODULE_5__["default"]();
+      _Translation_translator__WEBPACK_IMPORTED_MODULE_5__["default"].Instance = new _Statamic_statamicTranslator__WEBPACK_IMPORTED_MODULE_6__["default"]();
     }
     /**
      * Analyzes the DOM for any elements containing Meerkat application requests.
@@ -7101,11 +7257,11 @@ var Bootstrapper = /*#__PURE__*/function () {
     value: function bootstrapApplications() {
       Bootstrapper.registerDependencies();
       this.liftExtensibilityDrivers();
-      var appElements = _Config_environment__WEBPACK_IMPORTED_MODULE_1__["default"].$('[data-meerkat-app]');
+      var appElements = _Config_environment__WEBPACK_IMPORTED_MODULE_2__["default"].$('[data-meerkat-app]');
 
       if (appElements.length > 0) {
         for (var i = 0; i < appElements.length; i += 1) {
-          var elementHost = _Config_environment__WEBPACK_IMPORTED_MODULE_1__["default"].$(appElements[i]);
+          var elementHost = _Config_environment__WEBPACK_IMPORTED_MODULE_2__["default"].$(appElements[i]);
           Bootstrapper.runApp(elementHost.data('meerkat-app'), elementHost);
         }
       }
@@ -7115,12 +7271,12 @@ var Bootstrapper = /*#__PURE__*/function () {
     value: function runApp(appName, elementHost) {
       if (typeof Bootstrapper.AppMap[appName] !== 'undefined') {
         var appType = Bootstrapper.AppMap[appName],
-            instanceId = _Types_common__WEBPACK_IMPORTED_MODULE_3__["Guid"].newGuid(),
+            instanceId = _Types_common__WEBPACK_IMPORTED_MODULE_4__["Guid"].newGuid(),
             appId = 'app-' + instanceId;
         elementHost.attr('data-meerkat-application', instanceId);
         elementHost.attr('id', appId);
         appType.el = '#' + appId;
-        Bootstrapper.Instances[instanceId] = new _Config_environment__WEBPACK_IMPORTED_MODULE_1__["default"].CONTEXT_VUEJS(appType);
+        Bootstrapper.Instances[instanceId] = new _Config_environment__WEBPACK_IMPORTED_MODULE_2__["default"].CONTEXT_VUEJS(appType);
       }
     }
   }]);
@@ -7131,7 +7287,7 @@ var Bootstrapper = /*#__PURE__*/function () {
 Bootstrapper.ExtensibilityInstance = 'meerkatExtend';
 Bootstrapper.Instances = {};
 Bootstrapper.AppMap = {
-  'comment-thread': _CommentThread_commentThread__WEBPACK_IMPORTED_MODULE_2__["default"]
+  'comment-thread': _CommentThread__WEBPACK_IMPORTED_MODULE_3__["default"]
 };
 /* harmony default export */ __webpack_exports__["default"] = (Bootstrapper);
 
@@ -7228,6 +7384,37 @@ App.ControlPanelApplication = _controlPanelApplication__WEBPACK_IMPORTED_MODULE_
 
 /***/ }),
 
+/***/ "./src/App/markdown.js":
+/*!*****************************!*\
+  !*** ./src/App/markdown.js ***!
+  \*****************************/
+/*! exports provided: parseMarkdown */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseMarkdown", function() { return parseMarkdown; });
+/* harmony import */ var _Config_environment__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Config/environment */ "./src/Config/environment.js");
+/* harmony import */ var _Types_type__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Types/type */ "./src/Types/type.js");
+
+
+/**
+ * Attempts to parse the provided content as Markdown.
+ *
+ * @param {string} content The content to parse.
+ * @returns {string|*}
+ */
+
+function parseMarkdown(content) {
+  if (_Types_type__WEBPACK_IMPORTED_MODULE_1__["default"].hasValue(_Config_environment__WEBPACK_IMPORTED_MODULE_0__["default"].MarkdownHandler)) {
+    return _Config_environment__WEBPACK_IMPORTED_MODULE_0__["default"].MarkdownHandler(content);
+  }
+
+  return content;
+}
+
+/***/ }),
+
 /***/ "./src/Config/environment.js":
 /*!***********************************!*\
   !*** ./src/Config/environment.js ***!
@@ -7277,6 +7464,7 @@ var Environment = /*#__PURE__*/function () {
   return Environment;
 }();
 
+Environment.MarkdownHandler = null;
 Environment.Settings = new _settings__WEBPACK_IMPORTED_MODULE_2__["default"]();
 Environment.STATAMIC_API_ROOT = '';
 Environment.STATAMIC_CP_ROOT = '';
@@ -7446,8 +7634,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Types_common__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../Types/common */ "./src/Types/common.js");
 /* harmony import */ var _Concerns_canBeSelected__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Concerns/canBeSelected */ "./src/Data/Concerns/canBeSelected.js");
 /* harmony import */ var _author__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./author */ "./src/Data/Comments/author.js");
-/* harmony import */ var _Http_Responses_commentResponse__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../Http/Responses/commentResponse */ "./src/Http/Responses/commentResponse.js");
-/* harmony import */ var _threadContext__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./threadContext */ "./src/Data/Comments/threadContext.js");
+/* harmony import */ var _threadContext__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./threadContext */ "./src/Data/Comments/threadContext.js");
 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -7455,7 +7642,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
 
 
 

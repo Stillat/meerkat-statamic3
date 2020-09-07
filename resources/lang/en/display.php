@@ -2,8 +2,8 @@
 
 return [
 
-    'perPage' => 'Per page',
-    'commentHeader' => 'Comments',
+    'per_page' => 'Per page',
+    'comment_header' => 'Comments',
     'loading' => 'Loading'
 
 ];

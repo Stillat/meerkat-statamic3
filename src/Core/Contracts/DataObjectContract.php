@@ -14,6 +14,13 @@ interface DataObjectContract
 {
 
     /**
+     * Gets a list of all attribute names.
+     *
+     * @return array
+     */
+    public function getDataAttributeNames();
+
+    /**
      * Gets an associative array representing all actionable data held in the data container.
      *
      * @return array

@@ -55,6 +55,7 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     const KEY_REFERRER = 'referer';
     const KEY_PAGE_URL = 'page_url';
 
+    const INTERNAL_HAS_COLLECTED = 'internal_runtime_has_collected';
     const INTERNAL_PARENT_AUTHOR = 'internal_parent_author';
     const INTERNAL_ABSOLUTE_ROOT = 'internal_root';
     const INTERNAL_CONTENT_TRUNCATED = 'internal_content_truncated';

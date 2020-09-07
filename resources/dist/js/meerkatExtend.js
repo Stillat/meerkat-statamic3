@@ -2797,6 +2797,15 @@ var Environment = /*#__PURE__*/function () {
     value: function $(selector) {
       return Environment.CONTEXT_JQUERY.apply(null, arguments);
     }
+    /**
+     * Moves the visible window to the top of the document.
+     */
+
+  }, {
+    key: "scrollTop",
+    value: function scrollTop() {
+      window.scrollTo(0, 0);
+    }
   }]);
 
   return Environment;
@@ -3568,6 +3577,24 @@ var Type = /*#__PURE__*/function () {
       }
 
       return value !== null;
+    }
+    /**
+     * Tests if all the provided value paths are set.
+     *
+     * @param {Array<Object|string|number>} values The paths to test.
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "hasAllValues",
+    value: function hasAllValues(values) {
+      for (var i = 0; i < values.length; i += 1) {
+        if (Type.hasValue(values[i]) === false) {
+          return false;
+        }
+      }
+
+      return true;
     }
     /**
      * Returns the value, or the default if no value set.

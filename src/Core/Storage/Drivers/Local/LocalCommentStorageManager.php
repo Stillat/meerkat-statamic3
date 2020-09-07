@@ -8,6 +8,8 @@ use Stillat\Meerkat\Core\Comments\CleanableCommentAttributes;
 use Stillat\Meerkat\Core\Comments\Comment;
 use Stillat\Meerkat\Core\Comments\CommentRemovalEventArgs;
 use Stillat\Meerkat\Core\Comments\CommentRestoringEventArgs;
+use Stillat\Meerkat\Core\Comments\DynamicCollectedProperties;
+use Stillat\Meerkat\Core\RuntimeStateGuard;
 use Stillat\Meerkat\Core\Comments\TransientCommentAttributes;
 use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
@@ -23,6 +25,8 @@ use Stillat\Meerkat\Core\Data\Mutations\AttributeDiff;
 use Stillat\Meerkat\Core\Data\Mutations\ChangeSet;
 use Stillat\Meerkat\Core\Data\Validators\CommentValidator;
 use Stillat\Meerkat\Core\Errors;
+use Stillat\Meerkat\Core\Exceptions\ConcurrentResourceAccessViolationException;
+use Stillat\Meerkat\Core\Exceptions\MutationException;
 use Stillat\Meerkat\Core\Paths\PathUtilities;
 use Stillat\Meerkat\Core\Storage\Data\CommentAuthorRetriever;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\Attributes\InternalAttributes;
@@ -323,11 +327,13 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      * @param string $threadId The thread's string identifier.
      * @param string[] $commentPaths The comment paths.
      * @return ThreadHierarchy
+     * @throws MutationException
      */
     private function getThreadHierarchy($threadPath, $threadId, $commentPaths)
     {
         $commentPrototypes = [];
         $hierarchy = $this->commentStructureResolver->resolve($threadPath, $commentPaths);
+        $storageLock = RuntimeStateGuard::storageLocks()->lock();
 
         for ($i = 0; $i < count($commentPaths); $i += 1) {
             // First, let's get the "prototype" form of this comment.
@@ -451,11 +457,19 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
                 CommentContract::INTERNAL_HISTORY_REVISION_COUNT,
                 $this->changeSetManager->getRevisionCount($comment)
             );
+
+            // Executes the comment collecting pipeline events. This is an incredibly powerful
+            // tool for third-party developers, but we need to keep an eye on performance.
+            $this->runCollectionHookOnComment($comment);
         }
+
+        $this->runCollectionHookOnAllComments($commentPrototypes);
 
         $this->commentShadowIndex->buildProtoTypeIndex($threadId, $commentPrototypes);
 
         $hierarchy->setComments($commentPrototypes);
+
+        RuntimeStateGuard::storageLocks()->releaseLock($storageLock);
 
         return $hierarchy;
     }
@@ -567,6 +581,166 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     }
 
     /**
+     * Executes the collecting hook on the comment.
+     *
+     * @param CommentContract[] $comment The comment to run the hook on.
+     */
+    private function runCollectionHookOnComment($comment)
+    {
+        if ($comment === null || $comment instanceof CommentContract === false) {
+            return;
+        }
+
+        $preMutationAttributes = $comment->getDataAttributeNames();
+
+        $this->runMutablePipeline($comment->getId(),
+            $comment, CommentMutationPipelineContract::METHOD_COLLECTING);
+
+        $comment->setDataAttribute(CommentContract::INTERNAL_HAS_COLLECTED, true);
+        $postCollectionAttributes = $comment->getDataAttributeNames();
+
+        DynamicCollectedProperties::registerDynamicProperties(
+            $preMutationAttributes, $postCollectionAttributes
+        );
+    }
+
+    /**
+     * Runs the requested mutation on the comment.
+     *
+     * @param string $originalId The original string identifier.
+     * @param CommentContract $comment The comment to run mutations against.
+     * @param string $mutation The mutation to run.
+     * @return mixed
+     */
+    private function runMutablePipeline($originalId, $comment, $mutation)
+    {
+        if (RuntimeStateGuard::mutationLocks()->isLocked()) {
+            return $comment;
+        }
+
+        $lock = RuntimeStateGuard::mutationLocks()->lock();
+
+        /** @var CommentContract|null $pipelineResult */
+        $pipelineResult = null;
+
+        if (method_exists($this->commentPipeline, $mutation)) {
+            $this->commentPipeline->$mutation($comment, function ($result) use (&$pipelineResult) {
+                $pipelineResult = $this->mergeFromPipelineResults($pipelineResult, $result);
+            });
+        }
+
+        RuntimeStateGuard::mutationLocks()->releaseLock($lock);
+
+        return $this->reassignFromPipeline($originalId, $comment, $pipelineResult);
+    }
+
+    /**
+     * Attempts to merge a new result into an existing pipeline result.
+     *
+     * @param CommentContract|null $currentPipelineResult The current pipeline result.
+     * @param CommentContract|null $result The result to merge.
+     * @return CommentContract|null
+     */
+    private function mergeFromPipelineResults($currentPipelineResult, $result)
+    {
+        if (CommentValidator::check($result)) {
+            if ($currentPipelineResult === null) {
+                $currentPipelineResult = $result;
+            } else {
+                $currentPipelineResult->mergeAttributes($result->getStorableAttributes());
+            }
+        }
+
+        return $currentPipelineResult;
+    }
+
+    /**
+     * Reassigns the result's identifier.
+     * @param string $originalId The comment identifier.
+     * @param CommentContract $comment The comment to reassign to.
+     * @param CommentContract|null $pipelineResult The aggregate pipeline result.
+     * @return CommentContract
+     */
+    private function reassignFromPipeline($originalId, $comment, $pipelineResult)
+    {
+        if (CommentValidator::check($pipelineResult)) {
+            $pipelineResult->setDataAttribute(CommentContract::KEY_ID, $originalId);
+
+            return $pipelineResult;
+        }
+
+        return $comment;
+    }
+
+    /**
+     * @param CommentContract[] $comments The comments to mutate.
+     * @return array|null
+     * @throws MutationException
+     */
+    private function runCollectionHookOnAllComments($comments)
+    {
+        if ($comments === null || is_array($comments) === false || count($comments) === 0) {
+            return $comments;
+        }
+
+        $originalIdMapping = [];
+        $preMutationAttributeMapping = [];
+
+        foreach ($comments as $key => $comment) {
+            $originalIdMapping[$key] = $comment->getId();
+            $preMutationAttributeMapping[$key] = $comment->getDataAttributeNames();
+        }
+
+        $lock = RuntimeStateGuard::mutationLocks()->lock();
+
+        $pipelineResult = $comments;
+        $handlersEncountered = 0;
+
+        $this->commentPipeline->collectingAll($comments, function ($result) use (&$pipelineResult, &$handlersEncountered) {
+            $pipelineResult = $result;
+            $handlersEncountered += 1;
+        });
+
+        RuntimeStateGuard::mutationLocks()->releaseLock($lock);
+
+        if ($handlersEncountered === 0) {
+            unset($originalIdMapping);
+            unset($preMutationAttributeMapping);
+
+            return $comments;
+        }
+
+        if ($pipelineResult !== null && is_array($pipelineResult) && count($pipelineResult) === count($comments)) {
+            $comments = $pipelineResult;
+        }
+
+        // Restore the original identifiers in case they were modified.
+        // We will also track any dynamic properties added. We need
+        // to do this for each comment instance since it possible
+        // that developers have conditionally applied them.
+
+        foreach ($comments as $key => $comment) {
+            if (array_key_exists($key, $originalIdMapping) && array_key_exists($key, $preMutationAttributeMapping)) {
+                $preMutationAttributes = $preMutationAttributeMapping[$key];
+                $comment->setDataAttribute(CommentContract::KEY_ID, $originalIdMapping[$key]);
+                $postMutationAttributes = $comment->getDataAttributeNames();
+
+                $comment->setDataAttribute(CommentContract::INTERNAL_HAS_COLLECTED, true);
+
+                DynamicCollectedProperties::registerDynamicProperties($preMutationAttributes, $postMutationAttributes);
+            } else {
+                throw new MutationException('Collection handlers must not change array keys. Missing: ' . $key);
+            }
+        }
+
+        // Some clean up.
+        unset($preMutationAttributeMapping);
+        unset($originalIdMapping);
+
+        return $comments;
+    }
+
+    /**
      * Tests if the parent identifier is the direct ancestor of the provided comment.
      *
      * @param string $testParent The parent identifier to test.
@@ -653,9 +827,12 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      * @param CommentContract $comment The comment to save.
      * @return bool
      * @throws InvalidArgumentException
+     * @throws ConcurrentResourceAccessViolationException
      */
     public function save(CommentContract $comment)
     {
+        RuntimeStateGuard::storageLocks()->checkConcurrentAccess();
+
         if ($comment === null) {
             return false;
         }
@@ -727,9 +904,12 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      *
      * @param CommentContract $comment The comment to save.
      * @return bool
+     * @throws ConcurrentResourceAccessViolationException
      */
     public function update(CommentContract $comment)
     {
+        RuntimeStateGuard::storageLocks()->checkConcurrentAccess();
+
         if ($comment === null) {
             return false;
         }
@@ -739,6 +919,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         }
 
         PrototypeAttributeValidator::validateAttributes($comment->getDataAttributes());
+
         $changeSet = $this->getMutationChangeSet($comment);
 
         $originalId = $comment->getId();
@@ -812,6 +993,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     public function getMutationChangeSet(CommentContract $comment)
     {
         $persistedComment = $this->findById($comment->getId());
+
         $persistedStorable = $this->cleanCommentStorableData($persistedComment->getStorableAttributes());
         $persistedStorable[LocalCommentChangeSetStorageManager::KEY_SPECIAL_CONTENT] = $persistedComment->getRawContent();
 
@@ -893,70 +1075,16 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             }
         }
 
+        foreach (DynamicCollectedProperties::$generatedAttributes as $attribute) {
+            if (array_key_exists($attribute, $data)) {
+                unset($data[$attribute]);
+            }
+        }
+
         $data = TransientCommentAttributes::filter($data);
         $data = CleanableCommentAttributes::clean($data);
 
         return $data;
-    }
-
-    /**
-     * Runs the requested mutation on the comment.
-     *
-     * @param string $originalId The original string identifier.
-     * @param CommentContract $comment The comment to run mutations against.
-     * @param string $mutation The mutation to run.
-     * @return mixed
-     */
-    private function runMutablePipeline($originalId, $comment, $mutation)
-    {
-        /** @var CommentContract|null $pipelineResult */
-        $pipelineResult = null;
-
-        if (method_exists($this->commentPipeline, $mutation)) {
-            $this->commentPipeline->$mutation($comment, function ($result) use (&$pipelineResult) {
-                $pipelineResult = $this->mergeFromPipelineResults($pipelineResult, $result);
-            });
-        }
-
-        return $this->reassignFromPipeline($originalId, $comment, $pipelineResult);
-    }
-
-    /**
-     * Attempts to merge a new result into an existing pipeline result.
-     *
-     * @param CommentContract|null $currentPipelineResult The current pipeline result.
-     * @param CommentContract|null $result The result to merge.
-     * @return CommentContract|null
-     */
-    private function mergeFromPipelineResults($currentPipelineResult, $result)
-    {
-        if (CommentValidator::check($result)) {
-            if ($currentPipelineResult === null) {
-                $currentPipelineResult = $result;
-            } else {
-                $currentPipelineResult->mergeAttributes($result->getStorableAttributes());
-            }
-        }
-
-        return $currentPipelineResult;
-    }
-
-    /**
-     * Reassigns the result's identifier.
-     * @param string $originalId The comment identifier.
-     * @param CommentContract $comment The comment to reassign to.
-     * @param CommentContract|null $pipelineResult The aggregate pipeline result.
-     * @return CommentContract
-     */
-    private function reassignFromPipeline($originalId, $comment, $pipelineResult)
-    {
-        if (CommentValidator::check($pipelineResult)) {
-            $pipelineResult->setDataAttribute(CommentContract::KEY_ID, $originalId);
-
-            return $pipelineResult;
-        }
-
-        return $comment;
     }
 
     /**
@@ -1502,18 +1630,25 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             $commentRemovalEventArgs->willRemoveOthers = true;
         }
 
-        $lastResult = null;
+        if (RuntimeStateGuard::mutationLocks()->isLocked() === false) {
+            $lastResult = null;
 
-        $this->commentPipeline->removing($commentRemovalEventArgs, function ($result) use (&$lastResult) {
-            if ($result !== null && $result instanceof CommentRemovalEventArgs) {
-                $lastResult = $result;
-            }
-        });
+            $lock = RuntimeStateGuard::mutationLocks()->lock();
 
-        if ($lastResult !== null && $lastResult instanceof CommentRemovalEventArgs) {
-            if ($lastResult->shouldKeep()) {
-                return $this->softDeleteById($commentId);
+            $this->commentPipeline->removing($commentRemovalEventArgs, function ($result) use (&$lastResult) {
+                if ($result !== null && $result instanceof CommentRemovalEventArgs) {
+                    $lastResult = $result;
+                }
+            });
+
+            if ($lastResult !== null && $lastResult instanceof CommentRemovalEventArgs) {
+                if ($lastResult->shouldKeep()) {
+                    RuntimeStateGuard::mutationLocks()->releaseLock($lock);
+                    return $this->softDeleteById($commentId);
+                }
             }
+
+            RuntimeStateGuard::mutationLocks()->releaseLock($lock);
         }
 
         $storageDirectory = dirname($comment->getVirtualPath());
@@ -1554,6 +1689,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      *
      * @param string $commentId The comment's identifier.
      * @return bool
+     * @throws ConcurrentResourceAccessViolationException
      */
     public function restoreById($commentId)
     {
@@ -1572,18 +1708,25 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         $commentRestoreEventArgs->commentId = $commentId;
         $commentRestoreEventArgs->comment = $comment;
 
-        $lastResult = null;
+        if (RuntimeStateGuard::mutationLocks()->isLocked() === false) {
+            $lock = RuntimeStateGuard::mutationLocks()->lock();
 
-        $this->commentPipeline->restoring($commentRestoreEventArgs, function ($result) use (&$lastResult) {
-            if ($result !== null && $result instanceof CommentRestoringEventArgs) {
-                $lastResult = $result;
-            }
-        });
+            $lastResult = null;
 
-        if ($lastResult !== null && $lastResult instanceof CommentRestoringEventArgs) {
-            if ($lastResult->shouldRestore() === false) {
-                return false;
+            $this->commentPipeline->restoring($commentRestoreEventArgs, function ($result) use (&$lastResult) {
+                if ($result !== null && $result instanceof CommentRestoringEventArgs) {
+                    $lastResult = $result;
+                }
+            });
+
+            if ($lastResult !== null && $lastResult instanceof CommentRestoringEventArgs) {
+                if ($lastResult->shouldRestore() === false) {
+                    RuntimeStateGuard::mutationLocks()->releaseLock($lock);
+                    return false;
+                }
             }
+
+            RuntimeStateGuard::mutationLocks()->releaseLock($lock);
         }
 
         $comment->setDataAttribute(CommentContract::KEY_IS_DELETED, false);

@@ -15,6 +15,7 @@ use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Logging\ErrorLog;
 use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
 use Stillat\Meerkat\Core\Paths\PathUtilities;
+use Stillat\Meerkat\Core\RuntimeStateGuard;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\Conversions\ThreadSoftDeleteConverter;
 use Stillat\Meerkat\Core\Storage\Paths;
 use Stillat\Meerkat\Core\Storage\Validators\PathPrivilegeValidator;
@@ -401,7 +402,13 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
 
         $threadContext = $this->contextResolver->findById($contextId);
 
-        $this->threadPipeline->creating($threadContext, null);
+        if (RuntimeStateGuard::threadLocks()->isLocked() === false) {
+            $lock = RuntimeStateGuard::threadLocks()->lock();
+
+            $this->threadPipeline->creating($threadContext, null);
+
+            RuntimeStateGuard::threadLocks()->releaseLock($lock);
+        }
 
         $newMeta = $this->createMetaFromExistingThread($contextId);
 
@@ -620,18 +627,25 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
         $removalEventArgs = new ThreadRemovalEventArgs();
         $removalEventArgs->threadId = $id;
 
-        $lastResult = null;
+        if (RuntimeStateGuard::threadLocks()->isLocked() === false) {
+            $lock = RuntimeStateGuard::threadLocks()->lock();
 
-        $this->threadPipeline->removing($removalEventArgs, function ($result) use (&$lastResult) {
-            if ($result !== null && $result instanceof ThreadRemovalEventArgs) {
-                $lastResult = $result;
-            }
-        });
+            $lastResult = null;
 
-        if ($lastResult !== null && $lastResult instanceof ThreadRemovalEventArgs) {
-            if ($lastResult->shouldKeep()) {
-                return $this->softDeleteById($id);
+            $this->threadPipeline->removing($removalEventArgs, function ($result) use (&$lastResult) {
+                if ($result !== null && $result instanceof ThreadRemovalEventArgs) {
+                    $lastResult = $result;
+                }
+            });
+
+            if ($lastResult !== null && $lastResult instanceof ThreadRemovalEventArgs) {
+                if ($lastResult->shouldKeep()) {
+                    RuntimeStateGuard::threadLocks()->releaseLock($lock);
+                    return $this->softDeleteById($id);
+                }
             }
+
+            RuntimeStateGuard::threadLocks()->releaseLock($lock);
         }
 
         // Danger Zone: This method permanently deletes things.
@@ -776,18 +790,25 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
         $eventArgs->sourceThreadId = $sourceThreadId;
         $eventArgs->targetThreadId = $targetThreadId;
 
-        $lastResult = null;
+        if (RuntimeStateGuard::threadLocks()->isLocked() === false) {
+            $lock = RuntimeStateGuard::threadLocks()->lock();
 
-        $this->threadPipeline->moving($eventArgs, function ($result) use (&$lastResult) {
-            if ($result !== null && $result instanceof ThreadMovingEventArgs) {
-                $lastResult = $result;
-            }
-        });
+            $lastResult = null;
 
-        if ($lastResult !== null && $lastResult instanceof ThreadMovingEventArgs) {
-            if ($lastResult->shouldMove() === false) {
-                return false;
+            $this->threadPipeline->moving($eventArgs, function ($result) use (&$lastResult) {
+                if ($result !== null && $result instanceof ThreadMovingEventArgs) {
+                    $lastResult = $result;
+                }
+            });
+
+            if ($lastResult !== null && $lastResult instanceof ThreadMovingEventArgs) {
+                if ($lastResult->shouldMove() === false) {
+                    RuntimeStateGuard::threadLocks()->releaseLock($lock);
+                    return false;
+                }
             }
+
+            RuntimeStateGuard::threadLocks()->releaseLock($lock);
         }
 
         $sourcePath = $this->determineVirtualPathById($sourceThreadId);
@@ -823,18 +844,25 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
         $eventArgs = new ThreadRestoringEventArgs();
         $eventArgs->threadId = $threadId;
 
-        $lastResult = null;
+        if (RuntimeStateGuard::threadLocks()->isLocked() === false) {
+            $lock = RuntimeStateGuard::threadLocks()->lock();
 
-        $this->threadPipeline->restoring($eventArgs, function ($result) use (&$lastResult) {
-            if ($result !== null && $result instanceof ThreadRestoringEventArgs) {
-                $lastResult = $result;
-            }
-        });
+            $lastResult = null;
 
-        if ($lastResult !== null && $lastResult instanceof ThreadRestoringEventArgs) {
-            if ($lastResult->shouldRestore() === false) {
-                return false;
+            $this->threadPipeline->restoring($eventArgs, function ($result) use (&$lastResult) {
+                if ($result !== null && $result instanceof ThreadRestoringEventArgs) {
+                    $lastResult = $result;
+                }
+            });
+
+            if ($lastResult !== null && $lastResult instanceof ThreadRestoringEventArgs) {
+                if ($lastResult->shouldRestore() === false) {
+                    RuntimeStateGuard::threadLocks()->releaseLock($lock);
+                    return false;
+                }
             }
+
+            RuntimeStateGuard::threadLocks()->releaseLock($lock);
         }
 
         if ($this->existsForContext($threadId, true)) {

@@ -86,7 +86,7 @@ class ThreadHierarchy
     /**
      * A collection of comment prototype objects.
      *
-     * @var array
+     * @var CommentContract[]
      */
     protected $comments = [];
 
@@ -233,7 +233,7 @@ class ThreadHierarchy
     /**
      * Gets the hierarchy's comments.
      *
-     * @return array
+     * @return CommentContract[]
      */
     public function getComments()
     {
@@ -243,7 +243,7 @@ class ThreadHierarchy
     /**
      * Sets the hierarchy's comments.
      *
-     * @param array $comments The comments.
+     * @param CommentContract[] $comments The comments.
      */
     public function setComments($comments)
     {

@@ -33,6 +33,16 @@ trait DataObject
 {
 
     /**
+     * Gets a list of all attribute names.
+     *
+     * @return array
+     */
+    public function getDataAttributeNames()
+    {
+        return array_keys($this->attributes);
+    }
+
+    /**
      * Merges the attributes into the current data object.
      *
      * @param array $attributes The attributes to merge.

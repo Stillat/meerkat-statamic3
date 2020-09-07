@@ -20,6 +20,7 @@ interface CommentMutationPipelineContract extends MutationPipelineContract
      * Identifies a request for when a Comment is manifesting.
      */
     const MUTATION_COLLECTION = 'comments.collecting';
+    const MUTATION_COLLECTION_ALL = 'comments.collectingAll';
 
     /**
      * Identifies a request to remove a comment.
@@ -45,6 +46,8 @@ interface CommentMutationPipelineContract extends MutationPipelineContract
     const MUTATION_UNAPPROVING = 'comments.unapproving';
     const MUTATION_UNAPPROVED = 'comments.unapproved';
 
+    const METHOD_COLLECTING_ALL = 'collectingAll';
+    const METHOD_COLLECTING = 'collecting';
     const METHOD_CREATING = 'creating';
     const METHOD_CREATED = 'created';
     const METHOD_UPDATING = 'updating';
@@ -59,6 +62,9 @@ interface CommentMutationPipelineContract extends MutationPipelineContract
     const METHOD_APPROVED = 'approved';
     const METHOD_UNAPPROVING = 'unapproving';
     const METHOD_UNAPPROVED = 'unapproved';
+
+    public function collecting(CommentContract $comment, $callback);
+    public function collectingAll($comments, $callable);
 
     public function removing(CommentRemovalEventArgs $eventArgs, $callback);
     public function removed($commentId, $callback);

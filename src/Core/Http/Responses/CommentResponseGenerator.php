@@ -113,6 +113,7 @@ class CommentResponseGenerator
             CommentContract::KEY_REFERRER,
             CommentContract::KEY_PAGE_URL,
             CommentContract::KEY_NAME,
+            CommentContract::INTERNAL_HAS_COLLECTED,
             AuthorContract::KEY_AUTHOR_URL
         ];
 

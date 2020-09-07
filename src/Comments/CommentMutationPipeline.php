@@ -11,6 +11,28 @@ use Stillat\Meerkat\EventPipeline;
 class CommentMutationPipeline extends EventPipeline implements CommentMutationPipelineContract
 {
 
+    public function collecting(CommentContract $comment, $callback)
+    {
+        if ($comment->getDataAttribute(CommentContract::INTERNAL_HAS_COLLECTED) === true) {
+            return;
+        }
+
+        $pipelineArgs = [
+            $comment
+        ];
+
+        $this->mutate(CommentMutationPipelineContract::MUTATION_COLLECTION, $pipelineArgs, $callback);
+    }
+
+    public function collectingAll($comments, $callback)
+    {
+        $pipelineArgs = [
+            $comments
+        ];
+
+        $this->mutate(CommentMutationPipelineContract::MUTATION_COLLECTION_ALL, $pipelineArgs, $callback);
+    }
+
     public function creating(CommentContract $comment, $callback)
     {
         $pipelineArgs = [

@@ -23,31 +23,29 @@ use Stillat\Meerkat\Core\Permissions\PermissionsSet;
 class StatamicIdentityManager implements IdentityManagerContract, PermissionsManagerContract
 {
 
-    // TODO: Update class references!
-
     /**
      * The Statamic UserProvider instance.
      *
-     * @var Statamic\Auth\UserProvider
+     * @var UserProvider
      */
     private $statamicUserProvider = null;
 
     /**
-     * @var Statamic\Contracts\Auth\UserRepository
+     * @var UserRepository
      */
     private $statamicUserRepository = null;
 
     /**
      * The AuthorFactory implementation instance.
      *
-     * @var Stillat\Meerkat\Core\Contracts\Identity\AuthorFactoryContract
+     * @var AuthorFactoryContract
      */
     private $authorFactory = null;
 
     /**
      * The Meerkat Core configuration container instance.
      *
-     * @var Stillat\Meerkat\Core\Configuration
+     * @var Configuration
      */
     private $config = null;
 
@@ -211,4 +209,5 @@ class StatamicIdentityManager implements IdentityManagerContract, PermissionsMan
 
         return $this->locateIdentity($identity->getId())->getPermissionSet();
     }
+
 }

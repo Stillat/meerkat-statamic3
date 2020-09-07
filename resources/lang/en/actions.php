@@ -1,8 +1,13 @@
 <?php
 
 return [
-  'action_approve' => 'TEST MEERKAT MADE IT',
-    'test' => 'SHOULD RESOLVE THE ACTIONS.TEST',
-    'test2' => 'SHOULD RESOLVE THE ACTIONS.TEST2',
+
+    'approve' => 'Publish',
+    'unapprove' => 'Unpublish',
+    'reply' => 'Reply',
+    'edit' => 'Edit',
+    'mark_spam' => 'Spam',
+    'mark_ham' => 'Not Spam',
+    'delete' => 'Delete',
 
 ];

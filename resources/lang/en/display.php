@@ -5,6 +5,8 @@ return [
     'per_page' => 'Per page',
     'loading' => 'Loading',
 
+    'nav_comments' => 'Comments',
+
     'header_comments' => 'Comments',
     'header_author' => 'Author',
     'header_comment' => 'Comment',

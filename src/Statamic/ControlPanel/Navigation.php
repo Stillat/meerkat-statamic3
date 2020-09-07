@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat\Statamic\ControlPanel;
 
 use Statamic\Facades\CP\Nav;
+use Stillat\Meerkat\Concerns\UsesTranslations;
 
 /**
  * Class Navigation
@@ -14,6 +15,7 @@ use Statamic\Facades\CP\Nav;
  */
 class Navigation
 {
+    use UsesTranslations;
 
     /**
      * Creates the addon's navigation menu.
@@ -22,9 +24,9 @@ class Navigation
     {
         Nav::extend(function ($nav) {
 
-            $nav->create('Comments')
+            $nav->create($this->trans('display.nav_comments'))
                 ->section('Content')
-                ->icon('addons/meerkat/chat-bubble-dots')
+                ->icon('addons/meerkat/meerkat-nav')
                 ->route('cp.meerkat.dashboard');
 
         });

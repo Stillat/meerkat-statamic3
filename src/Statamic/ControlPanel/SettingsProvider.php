@@ -60,7 +60,7 @@ class SettingsProvider
         $settings = join(';', $settingAssignments);
 
         $javaScriptStub = str_replace('/*settings*/', $settings, $javaScriptStub);
-        $javaScriptStub = str_replace('/*usercontext*/', $jsonPermissionSet, $javaScriptStub);
+        $javaScriptStub = str_replace('/*usercontext*/', 'window.meerkat.Config.Environment.UserContext = '.$jsonPermissionSet.';', $javaScriptStub);
 
         return $javaScriptStub;
     }

@@ -3,9 +3,9 @@
 return [
 
     'per_page' => 'Per page',
-    'comment_header' => 'Comments',
     'loading' => 'Loading',
 
+    'header_comments' => 'Comments',
     'header_author' => 'Author',
     'header_comment' => 'Comment',
 

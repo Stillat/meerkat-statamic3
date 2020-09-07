@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat\Statamic\ControlPanel;
 
 use Stillat\Meerkat\Concerns\UsesConfig;
+use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
 use Stillat\Meerkat\PathProvider;
 
@@ -27,9 +28,17 @@ class SettingsProvider
      */
     protected $sanitationManager = null;
 
-    public function __construct(SanitationManagerContract $sanitationManager)
+    /**
+     * The IdentityManagerContract implementation instance.
+     *
+     * @var IdentityManagerContract
+     */
+    protected $identityManager = null;
+
+    public function __construct(SanitationManagerContract $sanitationManager, IdentityManagerContract $identityManager)
     {
         $this->sanitationManager = $sanitationManager;
+        $this->identityManager = $identityManager;
     }
 
     /**
@@ -39,6 +48,8 @@ class SettingsProvider
      */
     public function emitStatements()
     {
+        $jsonPermissionSet = json_encode($this->identityManager->getIdentityContext()->getPermissionSet());
+
         $javaScriptStub = file_get_contents(PathProvider::getStub('settings.js'));
         $settingAssignments = [];
 
@@ -49,6 +60,7 @@ class SettingsProvider
         $settings = join(';', $settingAssignments);
 
         $javaScriptStub = str_replace('/*settings*/', $settings, $javaScriptStub);
+        $javaScriptStub = str_replace('/*usercontext*/', $jsonPermissionSet, $javaScriptStub);
 
         return $javaScriptStub;
     }

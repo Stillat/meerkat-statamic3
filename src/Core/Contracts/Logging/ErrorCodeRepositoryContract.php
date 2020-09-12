@@ -46,4 +46,12 @@ interface ErrorCodeRepositoryContract
      */
     public function getLogs();
 
+    /**
+     * Returns the logs for the provided action.
+     *
+     * @param string|null $actionId The action identifier.
+     * @return ErrorLog[]
+     */
+    public function getActionLogs($actionId);
+
 }

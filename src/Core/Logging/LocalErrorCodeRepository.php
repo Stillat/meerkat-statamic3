@@ -146,6 +146,21 @@ class LocalErrorCodeRepository implements ErrorCodeRepositoryContract
     }
 
     /**
+     * Returns the logs for the provided action.
+     *
+     * @param string|null $actionId The action identifier.
+     * @return ErrorLog[]
+     */
+    public function getActionLogs($actionId)
+    {
+        $logs = $this->getLogs();
+
+        return array_values(array_filter($logs, function (ErrorLog $log) use ($actionId) {
+            return $log->action === $actionId;
+        }));
+    }
+
+    /**
      * Returns a collection of error logs.
      *
      * @return ErrorLog[]

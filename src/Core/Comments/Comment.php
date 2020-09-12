@@ -13,7 +13,11 @@ use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Data\Mutations\ChangeSetCollection;
 use Stillat\Meerkat\Core\Data\Retrievers\PathThreadIdRetriever;
 use Stillat\Meerkat\Core\DataObject;
+use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Exceptions\InconsistentCompositionException;
+use Stillat\Meerkat\Core\Logging\ErrorLog;
+use Stillat\Meerkat\Core\Logging\ErrorLogContext;
+use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
 use Stillat\Meerkat\Core\Parsing\UsesMarkdownParser;
 use Stillat\Meerkat\Core\Parsing\UsesYAMLParser;
 use Stillat\Meerkat\Core\Storage\Data\CommentAuthorRetriever;
@@ -364,6 +368,17 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
      */
     public function publish()
     {
+        /*try {
+            throw new \Exception('test...');
+        } catch (\Exception $e) {
+            $context = new ErrorLogContext();
+            $context->msg = $e->getMessage();
+            $context->details = $e->getTraceAsString();
+
+            LocalErrorCodeRepository::log(ErrorLog::make(Errors::COMMENT_PUBLISH_FAILURE, $context));
+
+            throw $e;
+        }*/
         $this->setDataAttribute(CommentContract::KEY_PUBLISHED, true);
 
         return $this->save();

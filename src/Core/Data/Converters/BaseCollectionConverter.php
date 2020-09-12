@@ -112,14 +112,13 @@ class BaseCollectionConverter
             $commentArray = $comment->toArray();
             $commentArray[$datasetName] = [];
 
-            // TODO: Provide "collecting hook" here?
-
-            if (MarkdownParserFactory::hasInstance()) {
+            // TODO: Re-evaluate - may remove auto markdown processing from this step entirely and leave it up to presenters.
+            /*if (MarkdownParserFactory::hasInstance()) {
                 $parsedContent = trim(MarkdownParserFactory::$instance->parse($comment->getRawContent()));
 
                 $comment->setDataAttribute(CommentContract::KEY_CONTENT, $parsedContent);
                 $comment->setDataAttribute(CommentContract::KEY_COMMENT_MARKDOWN, $parsedContent);
-            }
+            }*/
 
             if (ContextResolverFactory::hasInstance()) {
                 $threadId = $comment->getThreadId();

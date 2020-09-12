@@ -20,6 +20,7 @@ class SettingsProvider
     use UsesConfig;
 
     const JS_NAME_AVATAR_DRIVER = 'avatarDriver';
+    const JS_NAME_TELEMETRY_ENABLED = 'telemetryEnabled';
 
     /**
      * The SanitationManagerContract implementation instance.
@@ -78,7 +79,8 @@ class SettingsProvider
 
 
         return [
-            SettingsProvider::JS_NAME_AVATAR_DRIVER => $avatarDriver
+            SettingsProvider::JS_NAME_AVATAR_DRIVER => $avatarDriver,
+            SettingsProvider::JS_NAME_TELEMETRY_ENABLED => $this->getConfig('telemetry.enabled')
         ];
     }
 

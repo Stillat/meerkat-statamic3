@@ -21,11 +21,11 @@ class ErrorLog implements Serializable
     const KEY_CONTEXT = 'ctx';
     const KEY_DATE = 'date';
     const KEY_TYPE = 'type';
-
+    const KEY_ACTION = 'action';
     const TYPE_ERROR = 0;
     const TYPE_WARNING = 1;
     const TYPE_MESSAGE = 3;
-
+    public static $currentActionId = null;
     /**
      * The log's instance identifier.
      *
@@ -60,6 +60,13 @@ class ErrorLog implements Serializable
      * @var int
      */
     public $type = self::TYPE_ERROR;
+
+    /**
+     * The action identifier, if available.
+     *
+     * @var string|null
+     */
+    public $action = null;
 
     /**
      * Creates a new warning instance of ErrorLog.
@@ -105,6 +112,7 @@ class ErrorLog implements Serializable
         $errorLog->context = $context;
         $errorLog->errorCode = $errorCode;
         $errorLog->dateTimeUtc = time();
+        $errorLog->action = ErrorLog::$currentActionId;
 
         return $errorLog;
     }
@@ -147,7 +155,8 @@ class ErrorLog implements Serializable
             self::KEY_ERROR_CODE => $this->errorCode,
             self::KEY_CONTEXT => $this->context,
             self::KEY_DATE => $this->dateTimeUtc,
-            self::KEY_TYPE => $this->type
+            self::KEY_TYPE => $this->type,
+            self::KEY_ACTION => $this->action
         ];
     }
 
@@ -162,9 +171,10 @@ class ErrorLog implements Serializable
 
         $this->instanceId = $arrayFormat[self::KEY_ID];
         $this->errorCode = $arrayFormat[self::KEY_ERROR_CODE];
-        $this->context = $arrayFormat[self::KEY_CONTEXT];
+        $this->context = ErrorLogContext::fromString($arrayFormat[self::KEY_CONTEXT]);
         $this->dateTimeUtc = $arrayFormat[self::KEY_DATE];
         $this->type = $arrayFormat[self::KEY_TYPE];
+        $this->action = $arrayFormat[self::KEY_ACTION];
     }
 
 }

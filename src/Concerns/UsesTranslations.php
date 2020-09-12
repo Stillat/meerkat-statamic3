@@ -31,6 +31,13 @@ trait UsesTranslations
         return trans($namespacedKey, $replace, $locale);
     }
 
+    protected function translateErrorCode($errorCode, $result)
+    {
+        $errorKey = $this->trans('codes.'.$errorCode);
+
+        return $this->trans($errorKey, $result);
+    }
+
     /**
      * Translate the given message based on a count.
      *

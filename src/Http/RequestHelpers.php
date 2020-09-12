@@ -4,6 +4,7 @@ namespace Stillat\Meerkat\Http;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Stillat\Meerkat\Core\Logging\ErrorLog;
 
 /**
  * Class RequestHelpers
@@ -15,6 +16,21 @@ use Illuminate\Support\Str;
  */
 class RequestHelpers
 {
+    const API_ACTION_ID = 'actionId';
+
+    /**
+     * Sets the error logger's action identifier if present in the request.
+     *
+     * @param $request Request The request context.
+     */
+    public static function setActionFromRequest($request)
+    {
+        if ($request == null) {
+            return;
+        }
+
+        ErrorLog::$currentActionId = $request->get(self::API_ACTION_ID, null);
+    }
 
     /**
      * Determines if the current request is accessing the Statamic Control Panel.

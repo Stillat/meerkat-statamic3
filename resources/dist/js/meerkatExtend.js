@@ -2766,6 +2766,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _Types_jQuery__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Types/jQuery */ "./src/Types/jQuery.js");
 /* harmony import */ var _settings__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./settings */ "./src/Config/settings.js");
+/* harmony import */ var _Types_type__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../Types/type */ "./src/Types/type.js");
+/* harmony import */ var _Data_defaultPermissionSet__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../Data/defaultPermissionSet */ "./src/Data/defaultPermissionSet.js");
 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -2773,6 +2775,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
 
 
 
@@ -2795,7 +2799,7 @@ var Environment = /*#__PURE__*/function () {
   }, {
     key: "$",
     value: function $(selector) {
-      return Environment.CONTEXT_JQUERY.apply(null, arguments);
+      return Environment.ContextJquery.apply(null, arguments);
     }
     /**
      * Moves the visible window to the top of the document.
@@ -2806,6 +2810,29 @@ var Environment = /*#__PURE__*/function () {
     value: function scrollTop() {
       window.scrollTo(0, 0);
     }
+    /**
+     * Returns the current user's permission set.
+     *
+     * @returns {Object|string|number}
+     */
+
+  }, {
+    key: "getPermissions",
+    value: function getPermissions() {
+      return _Types_type__WEBPACK_IMPORTED_MODULE_3__["default"].withDefault(Environment.UserContext, _Data_defaultPermissionSet__WEBPACK_IMPORTED_MODULE_4__["default"]);
+    }
+    /**
+     * Tests if telemetry has been enabled.
+     *
+     * @returns {Boolean}
+     */
+
+  }, {
+    key: "isTelemetryEnabled",
+    value: function isTelemetryEnabled() {
+      var curValue = _Types_type__WEBPACK_IMPORTED_MODULE_3__["default"].withDefault(Environment.Settings['telemetryEnabled'], '1');
+      return curValue === '1';
+    }
   }]);
 
   return Environment;
@@ -2813,10 +2840,13 @@ var Environment = /*#__PURE__*/function () {
 
 Environment.MarkdownHandler = null;
 Environment.Settings = new _settings__WEBPACK_IMPORTED_MODULE_2__["default"]();
-Environment.STATAMIC_API_ROOT = '';
-Environment.STATAMIC_CP_ROOT = '';
-Environment.CONTEXT_JQUERY = null;
-Environment.CONTEXT_VUEJS = null;
+Environment.UserContext = null;
+Environment.ApiCsrfToken = '';
+Environment.StatamicApiRoot = '';
+Environment.StatamicCpRoot = '';
+Environment.ContextJquery = null;
+Environment.ContextVueJs = null;
+Environment.ContextComponentRegister = null;
 /* harmony default export */ __webpack_exports__["default"] = (Environment);
 
 /***/ }),
@@ -2839,6 +2869,28 @@ var Settings = function Settings() {
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (Settings);
+
+/***/ }),
+
+/***/ "./src/Data/defaultPermissionSet.js":
+/*!******************************************!*\
+  !*** ./src/Data/defaultPermissionSet.js ***!
+  \******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  canApproveComments: false,
+  canEditComments: false,
+  canRemoveComments: false,
+  canReplyToComments: false,
+  canReportAsHam: false,
+  canReportAsSpam: false,
+  canUnApproveComments: false,
+  canViewComments: false
+});
 
 /***/ }),
 
@@ -2880,7 +2932,7 @@ var AvatarDriverRegistry = /*#__PURE__*/function () {
     value: function registerDriversWithRunTime() {
       for (var driver in AvatarDriverRegistry.Drivers) {
         var driverComponent = AvatarDriverRegistry.Drivers[driver];
-        _Config_environment__WEBPACK_IMPORTED_MODULE_2__["default"].CONTEXT_VUEJS.component(driver, driverComponent);
+        _Config_environment__WEBPACK_IMPORTED_MODULE_2__["default"].ContextVueJs.component(driver, driverComponent);
       }
     }
     /**
@@ -3561,6 +3613,19 @@ var Type = /*#__PURE__*/function () {
       }
 
       return type.prototype.constructor.name;
+    }
+    /**
+     * Tests if the provided value is of the specified type.
+     *
+     * @param {Object|string} value The value to test.
+     * @param {Object|string} type The type to guarantee.
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "isTypeOf",
+    value: function isTypeOf(value, type) {
+      return Type.typeOf(value) === Type.typeOf(type);
     }
     /**
      * Tests if the provided value has a value set.

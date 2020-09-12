@@ -7,8 +7,15 @@ Route::group(['prefix' => Addon::getApiPrefix()], function () {
 
     Route::get('/', 'Api\IndexController@index');
 
+    Route::group(['prefix' => 'telemetry'], function () {
+        Route::get('/', 'Api\TelemetryController@index');
+        Route::get('report', 'Api\TelemetryController@getReport');
+        Route::post('submit', 'Api\TelemetryController@submitReport');
+    });
+
     Route::group(['prefix' => 'comments'], function () {
         Route::get('/', 'Api\CommentsController@search');
+        Route::post('/publish', 'Api\CommentsController@publishComment');
     });
 
 });

@@ -2,6 +2,8 @@
 
 namespace Stillat\Meerkat\Core\Logging;
 
+use Exception;
+
 /**
  * Class ErrorLogContext
  *
@@ -12,6 +14,9 @@ namespace Stillat\Meerkat\Core\Logging;
  */
 class ErrorLogContext
 {
+
+    const KEY_MSG = 'msg';
+    const KEY_DETAILS = 'details';
 
     /**
      * The message generated at the time of the error.
@@ -26,5 +31,27 @@ class ErrorLogContext
      * @var string
      */
     public $details = '';
+
+    public static function fromString($value)
+    {
+        $contextToReturn = new ErrorLogContext();
+        $contextToReturn->msg = $value;
+
+        try {
+            $decoded = (array)json_decode($value);
+
+            if (array_key_exists(self::KEY_MSG, $decoded)) {
+                $contextToReturn->msg = $decoded[self::KEY_MSG];
+            }
+
+            if (array_key_exists(self::KEY_DETAILS, $decoded)) {
+                $contextToReturn->details = $decoded[self::KEY_DETAILS];
+            }
+        } catch (Exception $e) {
+
+        }
+
+        return $contextToReturn;
+    }
 
 }

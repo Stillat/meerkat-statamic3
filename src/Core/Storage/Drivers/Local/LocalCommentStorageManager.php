@@ -952,7 +952,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         $finalChangeSet = null;
 
         if ($this->config->trackChanges) {
-            $this->getMutationChangeSet($comment);
+            $finalChangeSet = $this->getMutationChangeSet($comment);
         }
 
         $didCommentSave = $this->persistComment($comment);

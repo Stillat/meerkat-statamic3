@@ -24,6 +24,15 @@ class CommentsController extends CpController
 
     public function publishComment(MessageGeneralCommentResponseGenerator $resultGenerator)
     {
+        if ($this->request->ajax()) {
+            return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_APPROVE);
+        } else {
+            abort(403, 'Unauthorized', [
+                'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_APPROVE
+            ]);
+            exit;
+        }
+
         RequestHelpers::setActionFromRequest($this->request);
 
         $commentId = $this->request->get('comment', null);

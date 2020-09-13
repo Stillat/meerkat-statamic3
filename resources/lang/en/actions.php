@@ -2,18 +2,11 @@
 
 return [
 
+    'ok' => 'Got it',
     'cancel' => 'Cancel',
     'confirm' => 'Confirm',
     'try_again' => 'Try Again',
     'submit_error_try_again' => 'Submit and Try Again',
-
-    'error_message' => 'Something unexpected happened.',
-    'error_general' => 'An error was encountered while performing the action. Would you like to try again?',
-
-    'process_repeated_failure' => 'This action has failed numerous times. Would you like to try again?',
-    'process_long_process' => 'This action is taking longer than usual.',
-    'process_taking_too_long' => 'This is taking longer than usual. Just a moment...',
-    'process_abandon' => 'Would you like to cancel this action or try again? Even if canceled, this action may still complete in the background.',
 
     'approve' => 'Publish',
     'approve_confirm_title' => 'Publish Comment',

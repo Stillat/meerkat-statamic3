@@ -32839,7 +32839,7 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/StatefulConfirmati
 /***/ (function(module, exports) {
 
 // Module
-var code = "<modal name=\"confirmation-modal\" :pivotY=\"0.1\" :overflow=\"false\">\r\n    <div class=\"meerkat__stateful-confirmation-modal confirmation-modal flex flex-col h-full\" :id=\"modalId\">\r\n        <div class=\"text-lg font-medium p-2 pb-0\">\r\n            {{ titleMessage }}\r\n        </div>\r\n        <div class=\"flex-1 px-2 py-3 text-grey\">\r\n            <div v-if=\"actionState.isErrorState === false\">\r\n                <p v-if=\"actionState.isProcessing === false\">{{ actionState.message }}</p>\r\n                <p v-if=\"actionState.isProcessing === true && actionState.promptAbandon === false\">\r\n                    <meerkat-loader :display-inline=\"true\" :color=\"progressColor\"></meerkat-loader>\r\n                    {{ progressMessage }}\r\n                </p>\r\n\r\n                <p v-if=\"actionState.promptAbandon === true\" class=\"meerkat__modal-prompt\">\r\n                    <span><meerkat-loader :display-inline=\"true\" :color=\"progressColor\"></meerkat-loader>{{ trans('actions.process_long_process') }}</span><br><br>\r\n                    <span>{{ actionState.abandonMessage }}</span>\r\n                </p>\r\n            </div>\r\n\r\n            <div v-if=\"actionState.isErrorState === true\">\r\n                <div v-if=\"actionState.numberOfErrorsEncountered <= this.actionState.failedRequestCutoff || this.actionState.useTelemetry === false\">\r\n                    <p v-if=\"actionState.wasClientError === false\">{{ errorMessage }}</p>\r\n\r\n                    <div v-if=\"actionState.wasClientError === true\">\r\n                        <p>{{ this.actionState.clientErrorMessage }}</p>\r\n\r\n                        <textarea class=\"meerkat__stack-trace\" v-if=\"this.actionState.lastClientError !== null\"\r\n                                  readonly>{{ this.actionState.lastClientError.getMessage() }}</textarea>\r\n                    </div>\r\n                </div>\r\n                <div v-else>\r\n                    <p>{{ this.actionState.repeatedFailureMessage }}</p>\r\n\r\n                    <p v-if=\"actionState.isLoadingLog\">\r\n                        <meerkat-loader :display-inline=\"true\"></meerkat-loader>{{ trans('errors.loading_error_log') }}\r\n                    </p>\r\n                    <p v-if=\"actionState.isLoadingLog === false && actionState.serverErrorReport === null\">{{ trans('errors.no_error_details') }}</p>\r\n\r\n                    <div v-if=\"actionState.isLoadingLog === false && actionState.serverErrorReport !== null\">\r\n                        <p style=\"margin-top:10px;\"><strong>{{ trans('errors.submit_error_report_request') }}</strong></p>\r\n                        <textarea class=\"meerkat__stack-trace\" readonly>{{ this.actionState.serverErrorReport.report }}</textarea>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n        <div class=\"p-2 bg-grey-20 border-t flex items-center justify-end text-sm\"\r\n             v-if=\"actionState.isErrorState === true\">\r\n            <button class=\"text-grey hover:text-grey-90\" @click=\"actionState._abandon()\">{{ actionState.cancelText }}\r\n            </button>\r\n            <button class=\"ml-2\" :class=\"buttonClass\" @click=\"actionState._tryAgain()\" v-if=\"actionState.isLoadingLog === false && actionState.serverErrorReport === null\">{{ actionState.tryAgain }}\r\n            </button>\r\n            <button class=\"ml-2\" :class=\"buttonClass\" @click=\"actionState._submitAndTryAgain()\" v-if=\"actionState.isLoadingLog === false && actionState.serverErrorReport !== null\">{{ trans('actions.submit_error_try_again') }}\r\n            </button>\r\n\r\n        </div>\r\n\r\n        <div class=\"p-2 bg-grey-20 border-t flex items-center justify-end text-sm\"\r\n             v-if=\"actionState.isErrorState === false && actionState.isProcessing === false\">\r\n            <button class=\"text-grey hover:text-grey-90\" @click=\"actionState._cancel()\">{{ actionState.cancelText }}\r\n            </button>\r\n            <button class=\"ml-2\" :class=\"buttonClass\" @click=\"actionState._confirm()\">{{ actionState.confirmText }}\r\n            </button>\r\n        </div>\r\n\r\n        <div class=\"p-2 bg-grey-20 border-t flex items-center justify-end text-sm\"\r\n             v-if=\"actionState.isErrorState === false && actionState.promptAbandon === true\">\r\n            <button class=\"text-grey hover:text-grey-90\" @click=\"actionState._abandon()\">{{ actionState.cancelText }}\r\n            </button>\r\n            <button class=\"ml-2\" :class=\"buttonClass\" @click=\"actionState._tryAgain()\">{{ actionState.tryAgain }}\r\n            </button>\r\n        </div>\r\n    </div>\r\n</modal>";
+var code = "<modal name=\"confirmation-modal\" :pivotY=\"0.1\" :overflow=\"false\">\r\n    <div class=\"meerkat__stateful-confirmation-modal confirmation-modal flex flex-col h-full\" :id=\"modalId\">\r\n        <div class=\"text-lg font-medium p-2 pb-0\">\r\n            {{ titleMessage }}\r\n        </div>\r\n        <div class=\"flex-1 px-2 py-3 text-grey\">\r\n            <div v-if=\"actionState.doesNotHavePrivileges === true\">\r\n                <p>{{ actionState.unauthorizedMessage }}</p>\r\n                <p v-if=\"actionState.missingPermission !== null\" style=\"margin-top:10px;\"><strong>EC-{{ actionState.missingPermission }}</strong>: {{ transErrorCode(actionState.missingPermission) }}</p>\r\n            </div>\r\n            <div v-if=\"actionState.isErrorState === false && actionState.doesNotHavePrivileges === false\">\r\n                <p v-if=\"actionState.isProcessing === false\">{{ actionState.message }}</p>\r\n                <p v-if=\"actionState.isProcessing === true && actionState.promptAbandon === false\">\r\n                    <meerkat-loader :display-inline=\"true\" :color=\"progressColor\"></meerkat-loader>\r\n                    {{ progressMessage }}\r\n                </p>\r\n\r\n                <p v-if=\"actionState.promptAbandon === true\" class=\"meerkat__modal-prompt\">\r\n                    <span><meerkat-loader :display-inline=\"true\" :color=\"progressColor\"></meerkat-loader>{{ trans('errors.process_long_process') }}</span><br><br>\r\n                    <span>{{ actionState.abandonMessage }}</span>\r\n                </p>\r\n            </div>\r\n\r\n            <div v-if=\"actionState.isErrorState === true\">\r\n                <div v-if=\"actionState.numberOfErrorsEncountered <= this.actionState.failedRequestCutoff || this.actionState.useTelemetry === false\">\r\n                    <p v-if=\"actionState.wasClientError === false\">{{ errorMessage }}</p>\r\n\r\n                    <div v-if=\"actionState.wasClientError === true\">\r\n                        <p>{{ this.actionState.clientErrorMessage }}</p>\r\n\r\n                        <textarea class=\"meerkat__stack-trace\" v-if=\"this.actionState.lastClientError !== null\"\r\n                                  readonly>{{ this.actionState.lastClientError.getMessage() }}</textarea>\r\n                    </div>\r\n                </div>\r\n                <div v-else>\r\n                    <p>{{ this.actionState.repeatedFailureMessage }}</p>\r\n\r\n                    <p v-if=\"actionState.isLoadingLog\">\r\n                        <meerkat-loader :display-inline=\"true\"></meerkat-loader>{{ trans('errors.loading_error_log') }}\r\n                    </p>\r\n                    <p v-if=\"actionState.isLoadingLog === false && actionState.serverErrorReport === null\">{{ trans('errors.no_error_details') }}</p>\r\n\r\n                    <div v-if=\"actionState.isLoadingLog === false && actionState.serverErrorReport !== null\">\r\n                        <p style=\"margin-top:10px;\"><strong>{{ trans('errors.submit_error_report_request') }}</strong></p>\r\n                        <textarea class=\"meerkat__stack-trace\" readonly>{{ this.actionState.serverErrorReport.report }}</textarea>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n        <div class=\"p-2 bg-grey-20 border-t flex items-center justify-end text-sm\"\r\n             v-if=\"actionState.isErrorState === true && actionState.doesNotHavePrivileges === false\">\r\n            <button class=\"text-grey hover:text-grey-90\" @click=\"actionState._abandon()\">{{ actionState.cancelText }}</button>\r\n            <button class=\"ml-2\" :class=\"buttonClass\" @click=\"actionState._tryAgain()\" v-if=\"actionState.isLoadingLog === false && actionState.serverErrorReport === null\">{{ actionState.tryAgain }}</button>\r\n            <button class=\"ml-2\" :class=\"buttonClass\" @click=\"actionState._submitAndTryAgain()\" v-if=\"actionState.isLoadingLog === false && actionState.serverErrorReport !== null\">{{ trans('actions.submit_error_try_again') }}</button>\r\n        </div>\r\n\r\n        <div class=\"p-2 bg-grey-20 border-t flex items-center justify-end text-sm\"\r\n             v-if=\"actionState.isErrorState === false && actionState.isProcessing === false && actionState.doesNotHavePrivileges === false\">\r\n            <button class=\"text-grey hover:text-grey-90\" @click=\"actionState._cancel()\">{{ actionState.cancelText }}</button>\r\n            <button class=\"ml-2\" :class=\"buttonClass\" @click=\"actionState._confirm()\">{{ actionState.confirmText }}</button>\r\n        </div>\r\n\r\n        <div class=\"p-2 bg-grey-20 border-t flex items-center justify-end text-sm\"\r\n             v-if=\"actionState.isErrorState === false && actionState.promptAbandon === true && actionState.doesNotHavePrivileges === false\">\r\n            <button class=\"text-grey hover:text-grey-90\" @click=\"actionState._abandon()\">{{ actionState.cancelText }}</button>\r\n            <button class=\"ml-2\" :class=\"buttonClass\" @click=\"actionState._tryAgain()\">{{ actionState.tryAgain }}</button>\r\n        </div>\r\n\r\n        <div class=\"p-2 bg-grey-20 border-t flex items-center justify-end text-sm\"\r\n             v-if=\"actionState.doesNotHavePrivileges === true\">\r\n            <button class=\"btn-primary\" @click=\"actionState._cancel()\">{{ trans('actions.ok') }}</button>\r\n        </div>\r\n    </div>\r\n</modal>";
 // Exports
 module.exports = code;
 
@@ -32892,6 +32892,11 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     trans: function trans(val) {
       return _Translation_translator__WEBPACK_IMPORTED_MODULE_0__["default"].Instance.translate(val);
+    },
+    transErrorCode: function transErrorCode(code) {
+      var _Translator$Instance;
+
+      return (_Translator$Instance = _Translation_translator__WEBPACK_IMPORTED_MODULE_0__["default"].Instance) === null || _Translator$Instance === void 0 ? void 0 : _Translator$Instance.errorCode(code);
     }
   }
 });
@@ -33015,12 +33020,13 @@ var ActionState = /*#__PURE__*/function (_EventEmitter) {
     _this.message = 'Please override this message: message';
     _this.successMessage = 'Please override this message: successMessage';
     _this.progressMessage = 'Please override this message: progressMessage';
-    _this.tooLongMessage = Object(_trans__WEBPACK_IMPORTED_MODULE_17__["default"])('actions.process_taking_too_long');
-    _this.errorMessage = Object(_trans__WEBPACK_IMPORTED_MODULE_17__["default"])('actions.error_general');
-    _this.abandonMessage = Object(_trans__WEBPACK_IMPORTED_MODULE_17__["default"])('actions.process_abandon');
+    _this.tooLongMessage = Object(_trans__WEBPACK_IMPORTED_MODULE_17__["default"])('errors.process_taking_too_long');
+    _this.errorMessage = Object(_trans__WEBPACK_IMPORTED_MODULE_17__["default"])('errors.general');
+    _this.abandonMessage = Object(_trans__WEBPACK_IMPORTED_MODULE_17__["default"])('errors.process_abandon');
     _this.abandonedMessage = 'Please override this message: abandonedMessage';
     _this.clientErrorMessage = Object(_trans__WEBPACK_IMPORTED_MODULE_17__["default"])('errors.client_side_error');
-    _this.repeatedFailureMessage = Object(_trans__WEBPACK_IMPORTED_MODULE_17__["default"])('actions.process_repeated_failure');
+    _this.repeatedFailureMessage = Object(_trans__WEBPACK_IMPORTED_MODULE_17__["default"])('errors.process_repeated_failure');
+    _this.unauthorizedMessage = Object(_trans__WEBPACK_IMPORTED_MODULE_17__["default"])('errors.permissions');
     _this.tryAgain = Object(_trans__WEBPACK_IMPORTED_MODULE_17__["default"])('actions.try_again');
     _this.cancelText = Object(_trans__WEBPACK_IMPORTED_MODULE_17__["default"])('actions.cancel');
     _this.confirmText = Object(_trans__WEBPACK_IMPORTED_MODULE_17__["default"])('actions.confirm');
@@ -33030,6 +33036,7 @@ var ActionState = /*#__PURE__*/function (_EventEmitter) {
     _this.numberOfErrorsEncountered = 0;
     _this.isDestructive = false;
     _this.isProcessing = false;
+    _this.doesNotHavePrivileges = false;
     _this.isErrorState = false;
     _this.wasClientError = false;
     _this.promptAbandon = false;
@@ -33040,6 +33047,7 @@ var ActionState = /*#__PURE__*/function (_EventEmitter) {
     _this.isLoadingLog = false;
     _this.serverErrorReport = null;
     _this.isSendingErrorLog = null;
+    _this.missingPermission = null;
     _this.timeouts = [];
     return _this;
   }
@@ -33054,6 +33062,8 @@ var ActionState = /*#__PURE__*/function (_EventEmitter) {
       this.wasClientError = false;
       this.promptAbandon = false;
       this.numberOfErrorsEncountered = 0;
+      this.missingPermission = null;
+      this.doesNotHavePrivileges = false;
     }
   }, {
     key: "_abandon",
@@ -33066,6 +33076,9 @@ var ActionState = /*#__PURE__*/function (_EventEmitter) {
   }, {
     key: "_cancel",
     value: function _cancel() {
+      this._clearErrorState();
+
+      this.resetProcessingState();
       this.display = false;
       this.emit(ActionState.EventCanceled, this);
     }
@@ -33097,6 +33110,15 @@ var ActionState = /*#__PURE__*/function (_EventEmitter) {
       for (var i = 0; i < this.timeouts.length; i += 1) {
         clearTimeout(this.timeouts[i]);
       }
+    }
+  }, {
+    key: "_notAuthorized",
+    value: function _notAuthorized(permission) {
+      this._clearErrorState();
+
+      this.resetProcessingState();
+      this.doesNotHavePrivileges = true;
+      this.missingPermission = _Types_type__WEBPACK_IMPORTED_MODULE_19__["default"].withDefault(permission, null);
     }
   }, {
     key: "_complete",
@@ -33175,11 +33197,16 @@ var ActionState = /*#__PURE__*/function (_EventEmitter) {
           }
         }.bind(this))["catch"](function (err) {
           if (_Types_type__WEBPACK_IMPORTED_MODULE_19__["default"].isTypeOf(err, _Http_Responses_errorResponse__WEBPACK_IMPORTED_MODULE_20__["default"])) {
-            this.wasClientError = true;
-            this.lastClientError = err;
+            if (err.authorized === false) {
+              this._notAuthorized(err.permission);
+            } else {
+              this.wasClientError = true;
+              this.lastClientError = err;
+              this.errorEncountered();
+            }
+          } else {
+            this.errorEncountered();
           }
-
-          this.errorEncountered();
         }.bind(this));
       }
     }
@@ -33207,6 +33234,12 @@ var ActionState = /*#__PURE__*/function (_EventEmitter) {
       this.on(ActionState.EventComplete, callback);
       return this;
     }
+  }, {
+    key: "onUnauthorized",
+    value: function onUnauthorized(callback) {
+      this.on(ActionState.EventUnauthorized, callback);
+      return this;
+    }
   }]);
 
   return ActionState;
@@ -33218,6 +33251,7 @@ ActionState.EventCanceled = 'canceled';
 ActionState.EventAbandoned = 'abandoned';
 ActionState.EventConfirmed = 'confirmed';
 ActionState.EventComplete = 'complete';
+ActionState.EventUnauthorized = 'unauthorized';
 /* harmony default export */ __webpack_exports__["default"] = (ActionState);
 
 /***/ }),
@@ -35028,6 +35062,8 @@ var BaseResponse = /*#__PURE__*/function () {
     this.errorCode = null;
     this.msg = '';
     this.error = null;
+    this.authorized = true;
+    this.permission = null;
   }
 
   _createClass(BaseResponse, null, [{
@@ -35351,6 +35387,12 @@ var ErrorResponse = /*#__PURE__*/function (_BaseResponse) {
       var response = new ErrorResponse();
       response.success = false;
       response.error = err;
+
+      if (err.response.status === 403) {
+        response.authorized = false;
+        response.permission = err.response.headers.get('meerkat-permission');
+      }
+
       return response;
     }
   }]);
@@ -36571,6 +36613,12 @@ var Translator = /*#__PURE__*/function () {
     key: "translate",
     value: function translate(val) {
       throw new Error('Translator instance not supplied.');
+    }
+  }, {
+    key: "errorCode",
+    value: function errorCode(_errorCode) {
+      var targetKey = this.translate('codes.' + _errorCode);
+      return this.translate(targetKey);
     }
   }]);
 

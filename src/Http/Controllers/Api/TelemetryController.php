@@ -7,12 +7,17 @@ use Illuminate\Http\Request;
 use Statamic\Http\Controllers\API\ApiController;
 use Stillat\Meerkat\Concerns\UsesConfig;
 use Stillat\Meerkat\Core\Contracts\Logging\ErrorCodeRepositoryContract;
+use Stillat\Meerkat\Core\Errors;
+use Stillat\Meerkat\Core\Http\Responses\Responses;
 use Stillat\Meerkat\Core\Logging\Telemetry;
 use Stillat\Meerkat\Logging\ErrorLogPresenter;
 
 class TelemetryController extends ApiController
 {
     use UsesConfig;
+
+    const KEY_ACTION = 'action';
+    const KEY_REPORT = 'report';
 
     /**
      * The Telemetry instance.
@@ -39,17 +44,13 @@ class TelemetryController extends ApiController
     public function submitReport(ErrorLogPresenter $presenter)
     {
         if ($this->getConfig('telemetry.enabled', true) === false) {
-            return [
-                'success' => false,
-            ];
+            return Responses::recoverableFailure(Errors::TELEMETRY_DISABLED);
         }
 
-        $actionId = $this->request->input('action', null);
+        $actionId = $this->request->input(self::KEY_ACTION, null);
 
         if ($actionId === null) {
-            return [
-                'success' => false,
-            ];
+            return Responses::recoverableFailure(Errors::TELEMETRY_MISSING_ACTION);
         }
 
         try {
@@ -59,30 +60,22 @@ class TelemetryController extends ApiController
                 $report = $presenter->present($logs[0]);
 
                 $this->telemetry->sendReport($report);
-                return [
-                    'success' => true
-                ];
-            }
 
+                return Responses::generalSuccess();
+            }
         } catch (Exception $e) {
-            dd($e);
-            // TODO: CHECK FOR debug and retrhow.
+            return Responses::fromErrorCode(Errors::TELEMETRY_OPERATION_FAILURE, false);
         }
 
-        return [
-            'success' => false
-        ];
+        return Responses::generalSuccess();
     }
 
     public function getReport(ErrorLogPresenter $presenter)
     {
-        $actionId = $this->request->input('action', null);
+        $actionId = $this->request->input(self::KEY_ACTION, null);
 
         if ($actionId === null) {
-            return [
-                'success' => false,
-                'report' => null
-            ];
+            return Responses::failureWithData([self::KEY_REPORT => null]);
         }
 
         try {
@@ -91,26 +84,16 @@ class TelemetryController extends ApiController
             if (is_array($logs) && count($logs) > 0) {
                 $report = $presenter->present($logs[0]);
 
-                return [
-                    'success' => true,
-                    'report' => $report
-                ];
+                return Responses::successWithData([
+                    self::KEY_REPORT => $report
+                ]);
             }
 
         } catch (Exception $e) {
-            dd($e);
-            // TODO: CHECK FOR debug and retrhow.
+            return Responses::fromErrorCode(Errors::TELEMETRY_OPERATION_FAILURE, false);
         }
 
-        return [
-            'success' => false,
-            'report' => null
-        ];
-    }
-
-    public function index()
-    {
-        $this->telemetry->sendReport('Hello, testing from inside Meerkat');
+        return Responses::nonFatalFailure();
     }
 
 }

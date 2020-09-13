@@ -7,6 +7,7 @@ use Statamic\Http\Controllers\CP\CpController;
 use Stillat\Meerkat\Core\Comments\Comment;
 use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Exceptions\CommentNotFoundException;
+use Stillat\Meerkat\Core\Exceptions\FilterException;
 use Stillat\Meerkat\Core\Http\Responses\CommentResponseGenerator;
 use Stillat\Meerkat\Core\Http\Responses\Responses;
 use Stillat\Meerkat\Http\MessageGeneralCommentResponseGenerator;
@@ -17,9 +18,15 @@ class CommentsController extends CpController
 
     public function search(CommentResponseGenerator $resultGenerator)
     {
-        $resultGenerator->updateFromParameters($this->request->all());
+        try {
+            $resultGenerator->updateFromParameters($this->request->all());
 
-        return $resultGenerator->getApiResponse();
+            return Responses::successWithData($resultGenerator->getApiResponse());
+        } catch (FilterException $filterException) {
+            return Responses::fromErrorCode(Errors::COMMENT_DATA_FILTER_FAILURE, false);
+        } catch (Exception $e) {
+            return Responses::generalFailure();
+        }
     }
 
     public function publishComment(MessageGeneralCommentResponseGenerator $resultGenerator)
@@ -53,7 +60,7 @@ class CommentsController extends CpController
         } catch (CommentNotFoundException $notFound) {
             return $resultGenerator->notFound($commentId);
         } catch (Exception $e) {
-            return Responses::fromErrorCode(Errors::GENERAL_EXCEPTION, false);
+            return Responses::generalFailure();
         }
         dd($this->request->all());
     }

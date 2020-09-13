@@ -2,6 +2,8 @@
 
 namespace Stillat\Meerkat\Core\Http\Responses;
 
+use Stillat\Meerkat\Core\Errors;
+
 class Responses
 {
 
@@ -9,6 +11,11 @@ class Responses
     const KEY_ERROR_CODE = 'error_code';
     const KEY_MESSAGE = 'msg';
     const KEY_RECOVERABLE = 'is_recoverable';
+
+    public static function generalFailure()
+    {
+        return self::fromErrorCode(Errors::GENERAL_EXCEPTION, false);
+    }
 
     /**
      * Creates a general error response.
@@ -22,6 +29,39 @@ class Responses
             self::KEY_SUCCESS => false,
             self::KEY_ERROR_CODE => $errorCode,
             self::KEY_RECOVERABLE => $isRecoverable
+        ];
+    }
+
+    public static function recoverableFailure($errorCode)
+    {
+        return self::fromErrorCode($errorCode, true);
+    }
+
+    public static function successWithData($data)
+    {
+        return array_merge(self::generalSuccess(), $data);
+    }
+
+    public static function generalSuccess()
+    {
+        return [
+            self::KEY_SUCCESS => true,
+            self::KEY_ERROR_CODE => null,
+            self::KEY_RECOVERABLE => true
+        ];
+    }
+
+    public static function failureWithData($data)
+    {
+        return array_merge(self::nonFatalFailure(), $data);
+    }
+
+    public static function nonFatalFailure()
+    {
+        return [
+            self::KEY_SUCCESS => false,
+            self::KEY_ERROR_CODE => null,
+            self::KEY_RECOVERABLE => true
         ];
     }
 

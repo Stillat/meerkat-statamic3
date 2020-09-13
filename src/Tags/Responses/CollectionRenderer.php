@@ -31,6 +31,13 @@ class CollectionRenderer extends MeerkatTag
     const PARAM_SINCE = 'since';
     const PARAM_UNTIL = 'until';
     const PARAM_COLLECTION_ALIAS = 'as';
+    const PARAM_AUTO_MARKDOWN = 'auto_markdown';
+
+    const PARAM_PAGINATE = 'paginate';
+    const PARAM_OFFSET = 'offset';
+    const PARAM_PAGEBY = 'pageby';
+    const PARAM_DEFAULT_PAGEBY = 'page';
+    const PARAM_LIMIT = 'limit';
 
     const RETURN_TOTAL_RESULTS = 'total_results';
     const RETURN_HAS_RESULTS = 'has_results';
@@ -48,6 +55,7 @@ class CollectionRenderer extends MeerkatTag
     protected $pageBy = 'page';
     protected $query = null;
     private $threadId = null;
+    private $autoMarkdown = false;
 
     public function __construct(
         ThreadManagerContract $threadManager,
@@ -90,7 +98,7 @@ class CollectionRenderer extends MeerkatTag
         $runtimeContext = $this->getRuntimeContext();
         $runtimeContext->templateTagContext = $this->tagContext;
 
-        $this->query->withContext($runtimeContext);
+        $this->query->withContext($runtimeContext)->withMarkdown($this->autoMarkdown);
 
         $flatList = $this->getParameterValue(CollectionRenderer::PARAM_FLAT, false);
 
@@ -145,10 +153,11 @@ class CollectionRenderer extends MeerkatTag
      */
     private function parseParameters()
     {
-        $this->paginated = $this->getParameterValue('paginate', false);
-        $this->pageOffset = $this->getParameterValue('offset', 0);
-        $this->pageBy = $this->getParameterValue('pageby', 'page');
-        $this->pageLimit = $this->getParameterValue('limit', null);
+        $this->paginated = $this->getParameterValue(self::PARAM_PAGINATE, false);
+        $this->pageOffset = $this->getParameterValue(self::PARAM_OFFSET, 0);
+        $this->pageBy = $this->getParameterValue(self::PARAM_PAGEBY, self::PARAM_DEFAULT_PAGEBY);
+        $this->pageLimit = $this->getParameterValue(self::PARAM_LIMIT, null);
+        $this->autoMarkdown = $this->getParameterValue(self::PARAM_AUTO_MARKDOWN, true);
     }
 
     /**
@@ -340,6 +349,16 @@ class CollectionRenderer extends MeerkatTag
      */
     private function renderPaginatedGroupedDataset($dataset)
     {
+        if ($this->autoMarkdown) {
+            $dataset->mutate(function ($comment) {
+                if (is_array($comment) && array_key_exists(CommentContract::KEY_COMMENT_MARKDOWN, $comment)) {
+                    $comment[CommentContract::KEY_CONTENT] = $comment[CommentContract::KEY_COMMENT_MARKDOWN];
+                }
+
+                return $comment;
+            });
+        }
+
         $totalResults = $dataset->count();
         $hasResults = $totalResults > 0;
 
@@ -366,6 +385,16 @@ class CollectionRenderer extends MeerkatTag
      */
     private function renderGroupedComments($dataset)
     {
+        if ($this->autoMarkdown) {
+            $dataset->mutate(function ($comment) {
+               if (is_array($comment) && array_key_exists(CommentContract::KEY_COMMENT_MARKDOWN, $comment)) {
+                   $comment[CommentContract::KEY_CONTENT] = $comment[CommentContract::KEY_COMMENT_MARKDOWN];
+               }
+
+               return $comment;
+            });
+        }
+
         $totalItems = $dataset->count();
         $hasResults = $totalItems > 0;
         $groupData = $dataset->getData();
@@ -396,8 +425,18 @@ class CollectionRenderer extends MeerkatTag
         $totalResults = $dataset->count();
         $hasResults = $totalResults > 0;
 
+        $displayItems = $dataset->getDisplayItems();
+
+        if ($this->autoMarkdown) {
+            foreach ($displayItems as &$comment) {
+                if (array_key_exists(CommentContract::KEY_COMMENT_MARKDOWN, $comment)) {
+                    $comment[CommentContract::KEY_CONTENT] = $comment[CommentContract::KEY_COMMENT_MARKDOWN];
+                }
+            }
+        }
+
         return [
-            $collectionName => $dataset->getDisplayItems(),
+            $collectionName => $displayItems,
             PagedDataSet::KEY_PAGINATE => $dataset->getAdditionalMetaData(),
             self::RETURN_TOTAL_RESULTS => $totalResults,
             self::RETURN_HAS_RESULTS => $hasResults,
@@ -415,6 +454,14 @@ class CollectionRenderer extends MeerkatTag
     private function renderListComments($comments, $collectionName, $isFlatList)
     {
         $displayComments = [];
+
+        if ($this->autoMarkdown) {
+            foreach ($comments as &$comment) {
+                if (array_key_exists(CommentContract::KEY_COMMENT_MARKDOWN, $comment)) {
+                    $comment[CommentContract::KEY_CONTENT] = $comment[CommentContract::KEY_COMMENT_MARKDOWN];
+                }
+            }
+        }
 
         if ($isFlatList === false) {
             foreach ($comments as $comment) {

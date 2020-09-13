@@ -69,4 +69,11 @@ interface GroupedDataSetContract extends DataSetContract
      */
     public function getGroupDatasetName();
 
+    /**
+     * Applies the mutation callback to all group items.
+     *
+     * @param callable $callback The function to execute against all group items.
+     */
+    public function mutate($callback);
+
 }

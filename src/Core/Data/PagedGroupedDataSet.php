@@ -7,6 +7,7 @@ use Stillat\Meerkat\Core\Data\Concerns\ContainsGroups;
 use Stillat\Meerkat\Core\Data\Concerns\IteratesDataSets;
 use Stillat\Meerkat\Core\Data\Concerns\ManagesGroupMetaData;
 use Stillat\Meerkat\Core\Data\Helpers\GroupFlattener;
+use Stillat\Meerkat\Core\Data\Helpers\GroupMapper;
 
 /**
  * Class PagedGroupedDataSet
@@ -37,6 +38,19 @@ class PagedGroupedDataSet extends PagedDataSet implements PagedGroupedDataSetCon
         }
 
         return $this->flattenedData;
+    }
+
+    /**
+     * Applies the mutation callback to all group items.
+     *
+     * @param callable $callback The function to execute against all group items.
+     */
+    public function mutate($callback)
+    {
+        $this->displayItems = GroupMapper::mutate($this->displayItems,
+            $this->getCollectiveGroupName(),
+            $this->getGroupName(),
+            $this->getGroupDatasetName(), $callback);
     }
 
 }

@@ -6,6 +6,7 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Data\GroupedDataSetContract;
 use Stillat\Meerkat\Core\Contracts\Data\PagedDataSetContract;
 use Stillat\Meerkat\Core\Contracts\Data\PaginatorContract;
+use Stillat\Meerkat\Core\Parsing\MarkdownParserFactory;
 
 /**
  * Class DataGroupBuilder
@@ -136,12 +137,32 @@ class DataGroupBuilder
      */
     private $getMetaDataBeforePaging = false;
 
+    /**
+     * Indicates if comment content should be processed as Markdown.
+     *
+     * @var bool
+     */
+    private $withMarkdown = false;
+
     public function __construct(PaginatorContract $paginator)
     {
         $this->paginator = $paginator;
         $this->collectionName = self::KEY_GROUP_VALUES;
         $this->individualGroupName = self::KEY_GROUP_NAME;
         $this->collectiveGroupName = self::KEY_GROUPS;
+    }
+
+    /**
+     * Sets whether or not to automatically process comment content as Markdown.
+     *
+     * @param bool $withMarkdown Whether to automatically process comment content as Markdown.
+     * @return $this
+     */
+    public function withMarkdown($withMarkdown)
+    {
+        $this->withMarkdown = $withMarkdown;
+
+        return $this;
     }
 
     /**
@@ -334,7 +355,16 @@ class DataGroupBuilder
                     $this->collectionName => [],
                     self::KEY_TOTAL_COUNT => 0
                 ];
+
                 $this->groupNames[] = $groupValue;
+            }
+
+            // Process automatic Markdown at this stage since we will have to invoke it less if there were filters, ec.
+            if ($this->withMarkdown && MarkdownParserFactory::hasInstance()) {
+                $parsedContent = trim(MarkdownParserFactory::$instance->parse($comment->getRawContent()));
+
+                $comment->setDataAttribute(CommentContract::KEY_CONTENT, $parsedContent);
+                $comment->setDataAttribute(CommentContract::KEY_COMMENT_MARKDOWN, $parsedContent);
             }
 
             $this->groups[$groupValue][$this->collectionName][] = $comment;

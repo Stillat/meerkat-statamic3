@@ -735,7 +735,11 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     {
         $data = $this->getDataAttributes();
 
-        $data[CommentContract::KEY_CONTENT] = $data[CommentContract::INTERNAL_CONTENT_RAW];
+        if ($this->hasDataAttribute(CommentContract::KEY_COMMENT_MARKDOWN)) {
+            $data[CommentContract::KEY_CONTENT] = $data[CommentContract::KEY_COMMENT_MARKDOWN];
+        } else {
+            $data[CommentContract::KEY_CONTENT] = $data[CommentContract::INTERNAL_CONTENT_RAW];
+        }
 
         return $data;
     }

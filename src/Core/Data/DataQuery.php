@@ -16,6 +16,7 @@ use Stillat\Meerkat\Core\Data\Converters\PagedGroupedCollectionConverter;
 use Stillat\Meerkat\Core\Data\Filters\FilterRunner;
 use Stillat\Meerkat\Core\Data\Retrievers\CommentIdRetriever;
 use Stillat\Meerkat\Core\Exceptions\FilterException;
+use Stillat\Meerkat\Core\Parsing\MarkdownParserFactory;
 use Stillat\Meerkat\Core\Search\Engine;
 use Stillat\Meerkat\Core\Search\Providers\BitapSearchProvider;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\Attributes\InternalAttributes;
@@ -198,6 +199,13 @@ class DataQuery
      * @var DataSetCollectionConverter
      */
     private $basicDataSetConverter = null;
+
+    /**
+     * Indicates if content should be parsed as Markdown automatically.
+     *
+     * @var bool
+     */
+    private $returnWithMarkdown = false;
 
     /**
      * Optional search terms.
@@ -496,6 +504,19 @@ class DataQuery
     }
 
     /**
+     * Sets whether or not to automatically process comment content as Markdown.
+     *
+     * @param bool $useMarkdown Whether to automatically process content as Markdown.
+     * @return $this
+     */
+    public function withMarkdown($useMarkdown)
+    {
+        $this->returnWithMarkdown = $useMarkdown;
+
+        return $this;
+    }
+
+    /**
      * Retrieves the results and converts the internal dataset into its array form.
      *
      * @param CommentContract[] $sourceComments The comments to analyze.
@@ -614,6 +635,8 @@ class DataQuery
             $dataGroup->setCallback($this->groupCallback);
             $dataGroup->setProperty($this->groupBy);
 
+            $dataGroup->withMarkdown($this->returnWithMarkdown);
+
             return $dataGroup->setCollectionName($this->groupCollectionName)
                 ->doKeepEmptyGroups($this->groupKeepEmptyResults)
                 ->setIndividualGroupName($this->groupName)->setCollectiveGroupName($this->groupCollectiveName)
@@ -634,6 +657,18 @@ class DataQuery
 
         // Create a non-paged/non-grouped dataset.
         $dataSet = new DataSet();
+
+        // Process automatic Markdown at this stage since we will have to invoke it less if there were filters, ec.
+        if ($this->returnWithMarkdown && MarkdownParserFactory::hasInstance()) {
+            /** @var CommentContract $comment */
+            foreach ($data as &$comment) {
+                $parsedContent = trim(MarkdownParserFactory::$instance->parse($comment->getRawContent()));
+
+                $comment->setDataAttribute(CommentContract::KEY_CONTENT, $parsedContent);
+                $comment->setDataAttribute(CommentContract::KEY_COMMENT_MARKDOWN, $parsedContent);
+            }
+        }
+
         $dataSet->setData($data);
 
         return $dataSet;

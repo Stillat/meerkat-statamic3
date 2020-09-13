@@ -8,6 +8,7 @@ use Stillat\Meerkat\Core\Data\Concerns\GetsAssociatedDatasetData;
 use Stillat\Meerkat\Core\Data\Concerns\IteratesDataSets;
 use Stillat\Meerkat\Core\Data\Concerns\ManagesGroupMetaData;
 use Stillat\Meerkat\Core\Data\Helpers\GroupFlattener;
+use Stillat\Meerkat\Core\Data\Helpers\GroupMapper;
 
 /**
  * Class GroupedDataSet
@@ -53,6 +54,29 @@ class GroupedDataSet implements GroupedDataSetContract
     }
 
     /**
+     * Applies the mutation callback to all group items.
+     *
+     * @param callable $callback The function to execute against all group items.
+     */
+    public function mutate($callback)
+    {
+        $this->data = GroupMapper::mutate($this->data,
+            $this->getCollectiveGroupName(),
+            $this->getGroupName(),
+            $this->getGroupDatasetName(), $callback);
+    }
+
+    /**
+     * Returns the total number of results in the expanded dataset.
+     *
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->flattenDataset());
+    }
+
+    /**
      * Flattens the dataset into one-dimensional array.
      *
      * @return array
@@ -69,15 +93,5 @@ class GroupedDataSet implements GroupedDataSetContract
         }
 
         return $this->flattenedData;
-    }
-
-    /**
-     * Returns the total number of results in the expanded dataset.
-     *
-     * @return int
-     */
-    public function count()
-    {
-        return count($this->flattenDataset());
     }
 }

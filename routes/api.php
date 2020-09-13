@@ -18,6 +18,8 @@ Route::group(['prefix' => Addon::getApiPrefix()], function () {
         Route::post('/publish', 'Api\CommentsController@publishComment');
         Route::post('/unpublish', 'Api\CommentsController@unPublishComment');
         Route::post('/remove', 'Api\CommentsController@deleteComment');
+        Route::post('/report-spam', 'Api\CommentsController@markAsSpam');
+        Route::post('/report-ham', 'Api\CommentsController@markAsNotSpam');
     });
 
 });

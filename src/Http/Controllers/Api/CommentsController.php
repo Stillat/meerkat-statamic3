@@ -35,6 +35,102 @@ class CommentsController extends CpController
         }
     }
 
+    public function markAsNotSpam(
+        CommentStorageManagerContract $storageManager,
+        PermissionsManagerContract $manager,
+        IdentityManagerContract $identityManager,
+        MessageGeneralCommentResponseGenerator $resultGenerator,
+        CommentResponseGenerator $commentResultGenerator)
+    {
+        $permissions = $manager->getPermissions($identityManager->getIdentityContext());
+
+        if ($permissions->canReportAsSpam === false) {
+            if ($this->request->ajax()) {
+                return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_REPORT_HAM);
+            } else {
+                abort(403, 'Unauthorized', [
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_REPORT_HAM
+                ]);
+                exit;
+            }
+        }
+
+        RequestHelpers::setActionFromRequest($this->request);
+
+        $commentId = $this->request->get(self::PARAM_COMMENT, null);
+
+        if ($commentId === null) {
+            return $resultGenerator->notFound('null');
+        }
+
+        try {
+            $comment = Comment::findOrFail($commentId);
+
+            $result = $storageManager->setIsHam($comment);
+
+            if ($result === true) {
+                $comment = Comment::find($commentId);
+            }
+
+            return Responses::conditionalWithData($result, [
+                self::RESULT_COMMENT => $commentResultGenerator->getApiComment($comment->toArray())
+            ]);
+        } catch (CommentNotFoundException $notFound) {
+            return $resultGenerator->notFound($commentId);
+        } catch (Exception $e) {
+            throw $e;
+            return Responses::generalFailure();
+        }
+    }
+
+    public function markAsSpam(
+        CommentStorageManagerContract $storageManager,
+        PermissionsManagerContract $manager,
+        IdentityManagerContract $identityManager,
+        MessageGeneralCommentResponseGenerator $resultGenerator,
+        CommentResponseGenerator $commentResultGenerator)
+    {
+        $permissions = $manager->getPermissions($identityManager->getIdentityContext());
+
+        if ($permissions->canReportAsSpam === false) {
+            if ($this->request->ajax()) {
+                return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_REPORT_SPAM);
+            } else {
+                abort(403, 'Unauthorized', [
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_REPORT_SPAM
+                ]);
+                exit;
+            }
+        }
+
+        RequestHelpers::setActionFromRequest($this->request);
+
+        $commentId = $this->request->get(self::PARAM_COMMENT, null);
+
+        if ($commentId === null) {
+            return $resultGenerator->notFound('null');
+        }
+
+        try {
+            $comment = Comment::findOrFail($commentId);
+
+            $result = $storageManager->setIsSpam($comment);
+
+            if ($result === true) {
+                $comment = Comment::find($commentId);
+            }
+
+            return Responses::conditionalWithData($result, [
+                self::RESULT_COMMENT => $commentResultGenerator->getApiComment($comment->toArray())
+            ]);
+        } catch (CommentNotFoundException $notFound) {
+            return $resultGenerator->notFound($commentId);
+        } catch (Exception $e) {
+            throw $e;
+            return Responses::generalFailure();
+        }
+    }
+
     public function deleteComment(
         CommentStorageManagerContract $storageManager,
         PermissionsManagerContract $manager,

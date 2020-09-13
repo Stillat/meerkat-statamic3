@@ -1481,7 +1481,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             return false;
         }
 
-        $comment->setDataAttribute(CommentContract::KEY_SPAM, $$isSpam);
+        $comment->setDataAttribute(CommentContract::KEY_SPAM, $isSpam);
 
         return $this->update($comment);
     }

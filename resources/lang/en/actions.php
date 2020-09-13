@@ -26,7 +26,6 @@ return [
     'unapprove_error_encountered' => 'An error was encountered while unpublishing the comment. Would you like to try again?',
     'unapprove_success' => 'The comment was unpublished',
 
-
     'delete' => 'Delete',
     'delete_confirm_title' => 'Delete Comment',
     'delete_confirm_title_active' => 'Deleting Comment',
@@ -46,8 +45,28 @@ return [
     'edit_error_encountered' => 'An error was encountered while updating the comment. Would you like to try again?',
     'edit_success' => 'The comment was updated',
 
-    'reply' => 'Reply',
+    'update_spam' => 'Update Spam',
+    'update_as_spam' => 'Mark as spam',
+    'update_as_ham' => 'Mark as ham',
+
     'mark_spam' => 'Spam',
+    'mark_spam_confirm_title' => 'Mark Comment as Spam',
+    'mark_spam_confirm_title_active' => 'Marking Comment as Spam',
+    'mark_spam_confirm_progress_message' => 'Marking comment as spam. Please wait...',
+    'mark_spam_confirm_message' => 'Are you sure you want to mark this comment as spam?',
+    'mark_spam_confirm_abandoned' => 'The mark as spam action was abandoned',
+    'mark_spam_error_encountered' => 'An error was encountered while marking the comment as spam. Would you like to try again?',
+    'mark_spam_success' => 'The comment was marked as spam',
+
     'mark_ham' => 'Not Spam',
+    'mark_ham_confirm_title' => 'Mark Comment as Not Spam',
+    'mark_ham_confirm_title_active' => 'Marking Comment as Not Spam',
+    'mark_ham_confirm_progress_message' => 'Marking comment as not spam. Please wait...',
+    'mark_ham_confirm_message' => 'Are you sure you want to mark this comment as not spam?',
+    'mark_ham_confirm_abandoned' => 'The mark as not spam action was abandoned',
+    'mark_ham_error_encountered' => 'An error was encountered while marking the comment as not spam. Would you like to try again?',
+    'mark_ham_success' => 'The comment was marked as not spam',
+
+    'reply' => 'Reply',
 
 ];

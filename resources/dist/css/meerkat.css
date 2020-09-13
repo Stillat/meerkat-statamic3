@@ -48,6 +48,15 @@
 .comment-table__author-column {
   width: 18rem;
 }
+.meerkat__comment-row {
+  border-left: 2px solid #ffffff;
+}
+.meerkat__comment-row.meerkat__comment-row--spam {
+  border-left: 2px solid #ff00006e !important;
+}
+.meerkat__comment-row.meerkat__comment-row--pending {
+  border-left: 2px solid #5ce3ff6e !important;
+}
 
 .author-display__container {
   display: flex;

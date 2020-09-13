@@ -36,8 +36,17 @@ return [
     'delete_error_encountered' => 'An error was encountered while deleting the comment. Would you like to try again?',
     'delete_success' => 'The comment was deleted',
 
-    'reply' => 'Reply',
     'edit' => 'Edit',
+    'edit_confirm_button' => 'Update',
+    'edit_confirm_title' => 'Edit Comment',
+    'edit_confirm_title_active' => 'Updating Comment',
+    'edit_confirm_progress_message' => 'Updating comment. Please wait...',
+    'edit_confirm_message' => 'Are you sure you want to update this comment?',
+    'edit_confirm_abandoned' => 'The update action was abandoned',
+    'edit_error_encountered' => 'An error was encountered while updating the comment. Would you like to try again?',
+    'edit_success' => 'The comment was updated',
+
+    'reply' => 'Reply',
     'mark_spam' => 'Spam',
     'mark_ham' => 'Not Spam',
 

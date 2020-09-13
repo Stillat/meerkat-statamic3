@@ -33493,11 +33493,110 @@ var DeleteCommentHandler = /*#__PURE__*/function (_ActionState) {
 
 /***/ }),
 
+/***/ "./src/App/Components/CommentActions/Handlers/editCommentHandler.js":
+/*!**************************************************************************!*\
+  !*** ./src/App/Components/CommentActions/Handlers/editCommentHandler.js ***!
+  \**************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var core_js_modules_es_symbol__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.symbol */ "./node_modules/core-js/modules/es.symbol.js");
+/* harmony import */ var core_js_modules_es_symbol__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.symbol.description */ "./node_modules/core-js/modules/es.symbol.description.js");
+/* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.symbol.iterator */ "./node_modules/core-js/modules/es.symbol.iterator.js");
+/* harmony import */ var core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.date.to-string */ "./node_modules/core-js/modules/es.date.to-string.js");
+/* harmony import */ var core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.object.create */ "./node_modules/core-js/modules/es.object.create.js");
+/* harmony import */ var core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.object.get-prototype-of */ "./node_modules/core-js/modules/es.object.get-prototype-of.js");
+/* harmony import */ var core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.object.set-prototype-of */ "./node_modules/core-js/modules/es.object.set-prototype-of.js");
+/* harmony import */ var core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/es.object.to-string */ "./node_modules/core-js/modules/es.object.to-string.js");
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/es.reflect.construct */ "./node_modules/core-js/modules/es.reflect.construct.js");
+/* harmony import */ var core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! core-js/modules/es.string.iterator */ "./node_modules/core-js/modules/es.string.iterator.js");
+/* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_12__);
+/* harmony import */ var _actionState__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../../actionState */ "./src/App/actionState.js");
+/* harmony import */ var _trans__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../../../trans */ "./src/trans.js");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+
+
+
+var EditCommentHandler = /*#__PURE__*/function (_ActionState) {
+  _inherits(EditCommentHandler, _ActionState);
+
+  var _super = _createSuper(EditCommentHandler);
+
+  function EditCommentHandler() {
+    var _this;
+
+    _classCallCheck(this, EditCommentHandler);
+
+    _this = _super.call(this);
+    _this.interactionComponent = 'meerkat-comment-editor';
+    _this.hasInteraction = true;
+
+    _this.setMessages('edit');
+
+    _this.confirmText = Object(_trans__WEBPACK_IMPORTED_MODULE_14__["default"])('actions.edit_confirm_button');
+    return _this;
+  }
+
+  return EditCommentHandler;
+}(_actionState__WEBPACK_IMPORTED_MODULE_13__["default"]);
+
+/* harmony default export */ __webpack_exports__["default"] = (EditCommentHandler);
+
+/***/ }),
+
 /***/ "./src/App/Components/CommentActions/Handlers/index.js":
 /*!*************************************************************!*\
   !*** ./src/App/Components/CommentActions/Handlers/index.js ***!
   \*************************************************************/
-/*! exports provided: ApproveCommentHandler, UnApproveCommentHandler, DeleteCommentHandler */
+/*! exports provided: ApproveCommentHandler, UnApproveCommentHandler, DeleteCommentHandler, EditCommentHandler */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -33510,6 +33609,10 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony import */ var _deleteCommentHandler__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./deleteCommentHandler */ "./src/App/Components/CommentActions/Handlers/deleteCommentHandler.js");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "DeleteCommentHandler", function() { return _deleteCommentHandler__WEBPACK_IMPORTED_MODULE_2__["default"]; });
+
+/* harmony import */ var _editCommentHandler__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./editCommentHandler */ "./src/App/Components/CommentActions/Handlers/editCommentHandler.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "EditCommentHandler", function() { return _editCommentHandler__WEBPACK_IMPORTED_MODULE_3__["default"]; });
+
 
 
 
@@ -33672,7 +33775,8 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentActions/sty
       handlers: {
         'approve': _Handlers__WEBPACK_IMPORTED_MODULE_3__["ApproveCommentHandler"],
         'unapprove': _Handlers__WEBPACK_IMPORTED_MODULE_3__["UnApproveCommentHandler"],
-        'delete': _Handlers__WEBPACK_IMPORTED_MODULE_3__["DeleteCommentHandler"]
+        'delete': _Handlers__WEBPACK_IMPORTED_MODULE_3__["DeleteCommentHandler"],
+        'edit': _Handlers__WEBPACK_IMPORTED_MODULE_3__["EditCommentHandler"]
       }
     };
   },
@@ -33708,7 +33812,7 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentActions/sty
 /***/ (function(module, exports) {
 
 // Module
-var code = "<div class=\"comment-display__actions\" v-if=\"permissions !== null\">\r\n\r\n    <meerkat-stateful-confirm-dialog\r\n            name=\"meerkatActionConfirm\" v-if=\"currentAction !== null && currentAction.display === true\"\r\n            :action-state=\"currentAction\"></meerkat-stateful-confirm-dialog>\r\n\r\n    <ul class=\"flex\">\r\n        <li class=\"mr-2\" v-if=\"comment.published === false && permissions.canApproveComments === true\">\r\n            <a v-on:click=\"performAction('approve', comment)\">\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                         xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\"\r\n                                                                        fill=\"none\" fill-rule=\"evenodd\"> <g\r\n                            id=\"icon-shape\"><polygon id=\"Path-126\" points=\"0 11 2 9 7 14 18 3 20 5 7 18\"></polygon></g></g></svg>\r\n                </span>\r\n                {{ trans('actions.approve') }}\r\n            </a>\r\n        </li>\r\n\r\n        <li class=\"mr-2\" v-if=\"comment.published === true && permissions.canUnApproveComments === true\">\r\n            <a v-on:click=\"performAction('unapprove', comment)\">\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n\t\t\t\t\t\t<g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\r\n\t\t\t\t\t\t\t<g id=\"icon-shape\">\r\n\t\t\t\t\t\t\t\t<polygon id=\"Combined-Shape\" points=\"10 8.58578644 2.92893219 1.51471863 1.51471863 2.92893219 8.58578644 10 1.51471863 17.0710678 2.92893219 18.4852814 10 11.4142136 17.0710678 18.4852814 18.4852814 17.0710678 11.4142136 10 18.4852814 2.92893219 17.0710678 1.51471863 10 8.58578644\"></polygon>\r\n\t\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</svg>\r\n                </span>\r\n                {{ trans('actions.unapprove') }}\r\n            </a>\r\n        </li>\r\n\r\n        <li class=\"mr-2\" v-if=\"permissions.canReplyToComments === true\">\r\n            <a>\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                         xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n\t\t\t\t\t\t<g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\r\n\t\t\t\t\t\t\t<g id=\"icon-shape\">\r\n\t\t\t\t\t\t\t\t<path d=\"M15,17 L15,14.009763 C15,11.795232 13.2081782,10 10.9976305,10 L8,10 L8,15 L2,9 L8,3 L8,8 L10.9946916,8 C14.3113318,8 17,10.6930342 17,14 L17,17 L15,17 L15,17 Z\"\r\n                                      id=\"Combined-Shape\"></path>\r\n\t\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</svg>\r\n                </span>\r\n                {{ trans('actions.reply') }}\r\n            </a>\r\n        </li>\r\n\r\n        <li class=\"mr-2\" v-if=\"permissions.canEditComments === true\">\r\n            <a>\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                         xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n\t\t\t\t\t\t<g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\r\n\t\t\t\t\t\t\t<g id=\"icon-shape\">\r\n\t\t\t\t\t\t\t\t<path d=\"M12.2928932,3.70710678 L0,16 L0,20 L4,20 L16.2928932,7.70710678 L12.2928932,3.70710678 Z M13.7071068,2.29289322 L16,0 L20,4 L17.7071068,6.29289322 L13.7071068,2.29289322 Z\"\r\n                                      id=\"Combined-Shape\"></path>\r\n\t\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</svg>\r\n                </span>\r\n                {{ trans('actions.edit') }}\r\n            </a>\r\n        </li>\r\n\r\n        <li class=\"mr-2\" v-if=\"permissions.canReportAsSpam === true && (comment.hasBeenCheckedForSpam === false || (comment.isSpam === null || comment.isSpam === false))\">\r\n            <a>\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                         xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n\t\t\t\t\t\t<g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\r\n\t\t\t\t\t\t\t<g id=\"icon-shape\">\r\n\t\t\t\t\t\t\t\t<path d=\"M19,10.9999798 C19,13.2091299 17.4323196,15.8709335 15.5074835,16.940287 L10,20 L4.49251651,16.940287 C2.5636529,15.8686961 1,13.2055487 1,10.9999798 L1,3 C4.3761817,3 7.49184447,1.88458585 9.99858329,0.00216256114 C12.5058076,1.88587336 15.6225461,3.00212826 19,3.00212826 L19,10.9999798 Z M10,12.083735 L7.07502008,14.1191153 L8.1069132,10.708327 L5.26728307,8.55547283 L8.83000801,8.48286996 L10,5.11695271 L11.169992,8.48286996 L14.7327169,8.55547283 L11.8930868,10.708327 L12.9249799,14.1191153 L10,12.083735 Z\"\r\n                                      id=\"Combined-Shape\"></path>\r\n\t\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</svg>\r\n                </span>\r\n                {{ trans('actions.mark_spam') }}\r\n            </a>\r\n        </li>\r\n\r\n        <li class=\"mr-2\" v-if=\"permissions.canReportAsHam === true && (comment.hasBeenCheckedForSpam === true && comment.isSpam === true)\">\r\n            <a>\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                         xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n\t\t\t\t\t\t<g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\r\n\t\t\t\t\t\t\t<g id=\"icon-shape\">\r\n\t\t\t\t\t\t\t\t<path d=\"M19,10.9999798 C19,13.2091299 17.4323196,15.8709335 15.5074835,16.940287 L10,20 L4.49251651,16.940287 C2.5636529,15.8686961 1,13.2055487 1,10.9999798 L1,3 C4.3761817,3 7.49184447,1.88458585 9.99858329,0.00216256114 C12.5058076,1.88587336 15.6225461,3.00212826 19,3.00212826 L19,10.9999798 Z M10,12.083735 L7.07502008,14.1191153 L8.1069132,10.708327 L5.26728307,8.55547283 L8.83000801,8.48286996 L10,5.11695271 L11.169992,8.48286996 L14.7327169,8.55547283 L11.8930868,10.708327 L12.9249799,14.1191153 L10,12.083735 Z\"\r\n                                      id=\"Combined-Shape\"></path>\r\n\t\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</svg>\r\n                </span>\r\n                {{ trans('actions.mark_spam') }}\r\n            </a>\r\n        </li>\r\n\r\n        <li class=\"mr-2\" v-if=\"permissions.canRemoveComments === true\">\r\n            <a v-on:click=\"performAction('delete', comment)\">\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                         xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n\t\t\t\t\t\t<g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\r\n\t\t\t\t\t\t\t<g id=\"icon-shape\">\r\n\t\t\t\t\t\t\t\t<path d=\"M2,2 L18,2 L18,4 L2,4 L2,2 Z M8,0 L12,0 L14,2 L6,2 L8,0 Z M3,6 L17,6 L16,20 L4,20 L3,6 Z M8,8 L9,8 L9,18 L8,18 L8,8 Z M11,8 L12,8 L12,18 L11,18 L11,8 Z\"\r\n                                      id=\"Combined-Shape\"></path>\r\n\r\n\t\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</svg>\r\n                </span>\r\n                {{ trans('actions.delete') }}\r\n            </a>\r\n        </li>\r\n    </ul>\r\n</div>\r\n\r\n";
+var code = "<div class=\"comment-display__actions\" v-if=\"permissions !== null\">\r\n\r\n    <meerkat-stateful-confirm-dialog\r\n            name=\"meerkatActionConfirm\" v-if=\"currentAction !== null && currentAction.display === true\"\r\n            :action-state=\"currentAction\"></meerkat-stateful-confirm-dialog>\r\n\r\n    <ul class=\"flex\">\r\n        <li class=\"mr-2\" v-if=\"comment.published === false && permissions.canApproveComments === true\">\r\n            <a v-on:click=\"performAction('approve', comment)\">\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                         xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\"\r\n                                                                        fill=\"none\" fill-rule=\"evenodd\"> <g\r\n                            id=\"icon-shape\"><polygon id=\"Path-126\" points=\"0 11 2 9 7 14 18 3 20 5 7 18\"></polygon></g></g></svg>\r\n                </span>\r\n                {{ trans('actions.approve') }}\r\n            </a>\r\n        </li>\r\n\r\n        <li class=\"mr-2\" v-if=\"comment.published === true && permissions.canUnApproveComments === true\">\r\n            <a v-on:click=\"performAction('unapprove', comment)\">\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n\t\t\t\t\t\t<g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\r\n\t\t\t\t\t\t\t<g id=\"icon-shape\">\r\n\t\t\t\t\t\t\t\t<polygon id=\"Combined-Shape\" points=\"10 8.58578644 2.92893219 1.51471863 1.51471863 2.92893219 8.58578644 10 1.51471863 17.0710678 2.92893219 18.4852814 10 11.4142136 17.0710678 18.4852814 18.4852814 17.0710678 11.4142136 10 18.4852814 2.92893219 17.0710678 1.51471863 10 8.58578644\"></polygon>\r\n\t\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</svg>\r\n                </span>\r\n                {{ trans('actions.unapprove') }}\r\n            </a>\r\n        </li>\r\n\r\n        <li class=\"mr-2\" v-if=\"permissions.canReplyToComments === true\">\r\n            <a>\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                         xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n\t\t\t\t\t\t<g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\r\n\t\t\t\t\t\t\t<g id=\"icon-shape\">\r\n\t\t\t\t\t\t\t\t<path d=\"M15,17 L15,14.009763 C15,11.795232 13.2081782,10 10.9976305,10 L8,10 L8,15 L2,9 L8,3 L8,8 L10.9946916,8 C14.3113318,8 17,10.6930342 17,14 L17,17 L15,17 L15,17 Z\"\r\n                                      id=\"Combined-Shape\"></path>\r\n\t\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</svg>\r\n                </span>\r\n                {{ trans('actions.reply') }}\r\n            </a>\r\n        </li>\r\n\r\n        <li class=\"mr-2\" v-if=\"permissions.canEditComments === true\">\r\n            <a v-on:click=\"performAction('edit', comment)\">\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                         xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n\t\t\t\t\t\t<g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\r\n\t\t\t\t\t\t\t<g id=\"icon-shape\">\r\n\t\t\t\t\t\t\t\t<path d=\"M12.2928932,3.70710678 L0,16 L0,20 L4,20 L16.2928932,7.70710678 L12.2928932,3.70710678 Z M13.7071068,2.29289322 L16,0 L20,4 L17.7071068,6.29289322 L13.7071068,2.29289322 Z\"\r\n                                      id=\"Combined-Shape\"></path>\r\n\t\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</svg>\r\n                </span>\r\n                {{ trans('actions.edit') }}\r\n            </a>\r\n        </li>\r\n\r\n        <li class=\"mr-2\" v-if=\"permissions.canReportAsSpam === true && (comment.hasBeenCheckedForSpam === false || (comment.isSpam === null || comment.isSpam === false))\">\r\n            <a>\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                         xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n\t\t\t\t\t\t<g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\r\n\t\t\t\t\t\t\t<g id=\"icon-shape\">\r\n\t\t\t\t\t\t\t\t<path d=\"M19,10.9999798 C19,13.2091299 17.4323196,15.8709335 15.5074835,16.940287 L10,20 L4.49251651,16.940287 C2.5636529,15.8686961 1,13.2055487 1,10.9999798 L1,3 C4.3761817,3 7.49184447,1.88458585 9.99858329,0.00216256114 C12.5058076,1.88587336 15.6225461,3.00212826 19,3.00212826 L19,10.9999798 Z M10,12.083735 L7.07502008,14.1191153 L8.1069132,10.708327 L5.26728307,8.55547283 L8.83000801,8.48286996 L10,5.11695271 L11.169992,8.48286996 L14.7327169,8.55547283 L11.8930868,10.708327 L12.9249799,14.1191153 L10,12.083735 Z\"\r\n                                      id=\"Combined-Shape\"></path>\r\n\t\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</svg>\r\n                </span>\r\n                {{ trans('actions.mark_spam') }}\r\n            </a>\r\n        </li>\r\n\r\n        <li class=\"mr-2\" v-if=\"permissions.canReportAsHam === true && (comment.hasBeenCheckedForSpam === true && comment.isSpam === true)\">\r\n            <a>\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                         xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n\t\t\t\t\t\t<g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\r\n\t\t\t\t\t\t\t<g id=\"icon-shape\">\r\n\t\t\t\t\t\t\t\t<path d=\"M19,10.9999798 C19,13.2091299 17.4323196,15.8709335 15.5074835,16.940287 L10,20 L4.49251651,16.940287 C2.5636529,15.8686961 1,13.2055487 1,10.9999798 L1,3 C4.3761817,3 7.49184447,1.88458585 9.99858329,0.00216256114 C12.5058076,1.88587336 15.6225461,3.00212826 19,3.00212826 L19,10.9999798 Z M10,12.083735 L7.07502008,14.1191153 L8.1069132,10.708327 L5.26728307,8.55547283 L8.83000801,8.48286996 L10,5.11695271 L11.169992,8.48286996 L14.7327169,8.55547283 L11.8930868,10.708327 L12.9249799,14.1191153 L10,12.083735 Z\"\r\n                                      id=\"Combined-Shape\"></path>\r\n\t\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</svg>\r\n                </span>\r\n                {{ trans('actions.mark_spam') }}\r\n            </a>\r\n        </li>\r\n\r\n        <li class=\"mr-2\" v-if=\"permissions.canRemoveComments === true\">\r\n            <a v-on:click=\"performAction('delete', comment)\">\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                         xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n\t\t\t\t\t\t<g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\r\n\t\t\t\t\t\t\t<g id=\"icon-shape\">\r\n\t\t\t\t\t\t\t\t<path d=\"M2,2 L18,2 L18,4 L2,4 L2,2 Z M8,0 L12,0 L14,2 L6,2 L8,0 Z M3,6 L17,6 L16,20 L4,20 L3,6 Z M8,8 L9,8 L9,18 L8,18 L8,8 Z M11,8 L12,8 L12,18 L11,18 L11,8 Z\"\r\n                                      id=\"Combined-Shape\"></path>\r\n\r\n\t\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</svg>\r\n                </span>\r\n                {{ trans('actions.delete') }}\r\n            </a>\r\n        </li>\r\n    </ul>\r\n</div>\r\n\r\n";
 // Exports
 module.exports = code;
 
@@ -33785,6 +33889,38 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentDisplay/sty
 
 // Module
 var code = "<div class=\"comment-display\">\r\n    <reply-author v-if=\"comment.hasParentAuthor()\" :author=\"comment.getParentAuthor()\" :avatar-driver=\"avatarDriver\"></reply-author>\r\n\r\n    <div class=\"comment-display__content\" v-html=\"parseMarkdown(comment.content)\"></div>\r\n\r\n    <comment-actions :comment=\"comment\" :permissions=\"permissions\"></comment-actions>\r\n</div>";
+// Exports
+module.exports = code;
+
+/***/ }),
+
+/***/ "./src/App/Components/CommentEditor/index.js":
+/*!***************************************************!*\
+  !*** ./src/App/Components/CommentEditor/index.js ***!
+  \***************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./template.html */ "./src/App/Components/CommentEditor/template.html");
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_template_html__WEBPACK_IMPORTED_MODULE_0__);
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  template: _template_html__WEBPACK_IMPORTED_MODULE_0___default.a
+});
+
+/***/ }),
+
+/***/ "./src/App/Components/CommentEditor/template.html":
+/*!********************************************************!*\
+  !*** ./src/App/Components/CommentEditor/template.html ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// Module
+var code = "<div>\r\n    <p>I am comment editor!</p>\r\n</div>";
 // Exports
 module.exports = code;
 
@@ -34363,6 +34499,12 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/StatefulConfirmati
         nonPortalModalParent.removeClass('meerkat__modal--error-state');
         n();
       });
+    },
+    getInteractionProperties: function getInteractionProperties() {
+      return {
+        state: this.actionState,
+        comment: this.actionState.comment
+      };
     }
   },
   computed: {
@@ -34425,7 +34567,7 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/StatefulConfirmati
 /***/ (function(module, exports) {
 
 // Module
-var code = "<modal name=\"confirmation-modal\" :pivotY=\"0.1\" :overflow=\"false\">\r\n    <div class=\"meerkat__stateful-confirmation-modal confirmation-modal flex flex-col h-full\" :id=\"modalId\">\r\n        <div class=\"text-lg font-medium p-2 pb-0\">\r\n            {{ titleMessage }}\r\n        </div>\r\n        <div class=\"flex-1 px-2 py-3 text-grey\">\r\n            <div v-if=\"actionState.doesNotHavePrivileges === true\">\r\n                <p>{{ actionState.unauthorizedMessage }}</p>\r\n                <p v-if=\"actionState.missingPermission !== null\" style=\"margin-top:10px;\"><strong>EC-{{ actionState.missingPermission }}</strong>: {{ transErrorCode(actionState.missingPermission) }}</p>\r\n            </div>\r\n            <div v-if=\"actionState.isErrorState === false && actionState.doesNotHavePrivileges === false\">\r\n                <p v-if=\"actionState.isProcessing === false\">{{ actionState.message }}</p>\r\n                <p v-if=\"actionState.isProcessing === true && actionState.promptAbandon === false\">\r\n                    <meerkat-loader :display-inline=\"true\" :color=\"progressColor\"></meerkat-loader>\r\n                    {{ progressMessage }}\r\n                </p>\r\n\r\n                <p v-if=\"actionState.promptAbandon === true\" class=\"meerkat__modal-prompt\">\r\n                    <span><meerkat-loader :display-inline=\"true\" :color=\"progressColor\"></meerkat-loader>{{ trans('errors.process_long_process') }}</span><br><br>\r\n                    <span>{{ actionState.abandonMessage }}</span>\r\n                </p>\r\n            </div>\r\n\r\n            <div v-if=\"actionState.isErrorState === true\">\r\n                <div v-if=\"actionState.numberOfErrorsEncountered <= this.actionState.failedRequestCutoff || this.actionState.useTelemetry === false\">\r\n                    <p v-if=\"actionState.wasClientError === false\">{{ errorMessage }}</p>\r\n\r\n                    <div v-if=\"actionState.wasClientError === true\">\r\n                        <p>{{ this.actionState.clientErrorMessage }}</p>\r\n\r\n                        <textarea class=\"meerkat__stack-trace\" v-if=\"this.actionState.lastClientError !== null\"\r\n                                  readonly>{{ this.actionState.lastClientError.getMessage() }}</textarea>\r\n                    </div>\r\n                </div>\r\n                <div v-else>\r\n                    <p>{{ this.actionState.repeatedFailureMessage }}</p>\r\n\r\n                    <p v-if=\"actionState.isLoadingLog\">\r\n                        <meerkat-loader :display-inline=\"true\"></meerkat-loader>{{ trans('errors.loading_error_log') }}\r\n                    </p>\r\n                    <p v-if=\"actionState.isLoadingLog === false && actionState.serverErrorReport === null\">{{ trans('errors.no_error_details') }}</p>\r\n\r\n                    <div v-if=\"actionState.isLoadingLog === false && actionState.serverErrorReport !== null\">\r\n                        <p style=\"margin-top:10px;\"><strong>{{ trans('errors.submit_error_report_request') }}</strong></p>\r\n                        <textarea class=\"meerkat__stack-trace\" readonly>{{ this.actionState.serverErrorReport.report }}</textarea>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n        <div class=\"p-2 bg-grey-20 border-t flex items-center justify-end text-sm\"\r\n             v-if=\"actionState.isErrorState === true && actionState.doesNotHavePrivileges === false\">\r\n            <button class=\"text-grey hover:text-grey-90\" @click=\"actionState._abandon()\">{{ actionState.cancelText }}</button>\r\n            <button class=\"ml-2\" :class=\"buttonClass\" @click=\"actionState._tryAgain()\" v-if=\"actionState.isLoadingLog === false && actionState.serverErrorReport === null\">{{ actionState.tryAgain }}</button>\r\n            <button class=\"ml-2\" :class=\"buttonClass\" @click=\"actionState._submitAndTryAgain()\" v-if=\"actionState.isLoadingLog === false && actionState.serverErrorReport !== null\">{{ trans('actions.submit_error_try_again') }}</button>\r\n        </div>\r\n\r\n        <div class=\"p-2 bg-grey-20 border-t flex items-center justify-end text-sm\"\r\n             v-if=\"actionState.isErrorState === false && actionState.isProcessing === false && actionState.doesNotHavePrivileges === false\">\r\n            <button class=\"text-grey hover:text-grey-90\" @click=\"actionState._cancel()\">{{ actionState.cancelText }}</button>\r\n            <button class=\"ml-2\" :class=\"buttonClass\" @click=\"actionState._confirm()\">{{ actionState.confirmText }}</button>\r\n        </div>\r\n\r\n        <div class=\"p-2 bg-grey-20 border-t flex items-center justify-end text-sm\"\r\n             v-if=\"actionState.isErrorState === false && actionState.promptAbandon === true && actionState.doesNotHavePrivileges === false\">\r\n            <button class=\"text-grey hover:text-grey-90\" @click=\"actionState._abandon()\">{{ actionState.cancelText }}</button>\r\n            <button class=\"ml-2\" :class=\"buttonClass\" @click=\"actionState._tryAgain()\">{{ actionState.tryAgain }}</button>\r\n        </div>\r\n\r\n        <div class=\"p-2 bg-grey-20 border-t flex items-center justify-end text-sm\"\r\n             v-if=\"actionState.doesNotHavePrivileges === true\">\r\n            <button class=\"btn-primary\" @click=\"actionState._cancel()\">{{ trans('actions.ok') }}</button>\r\n        </div>\r\n    </div>\r\n</modal>";
+var code = "<modal name=\"confirmation-modal\" :pivotY=\"0.1\" :overflow=\"false\">\r\n    <div class=\"meerkat__stateful-confirmation-modal confirmation-modal flex flex-col h-full\" :id=\"modalId\">\r\n        <div class=\"text-lg font-medium p-2 pb-0\">\r\n            {{ titleMessage }}\r\n        </div>\r\n        <div class=\"flex-1 px-2 py-3 text-grey\">\r\n            <div v-if=\"actionState.doesNotHavePrivileges === true\">\r\n                <p>{{ actionState.unauthorizedMessage }}</p>\r\n                <p v-if=\"actionState.missingPermission !== null\" style=\"margin-top:10px;\"><strong>EC-{{ actionState.missingPermission }}</strong>: {{ transErrorCode(actionState.missingPermission) }}</p>\r\n            </div>\r\n\r\n            <component v-if=\"actionState.hasInteraction\" :is=\"actionState.interactionComponent\" v-bind=\"getInteractionProperties()\"></component>\r\n\r\n            <div v-if=\"actionState.isErrorState === false && actionState.doesNotHavePrivileges === false\">\r\n                <p v-if=\"actionState.hasInteraction === false && actionState.isProcessing === false\">{{ actionState.message }}</p>\r\n                <p v-if=\"actionState.isProcessing === true && actionState.promptAbandon === false\">\r\n                    <meerkat-loader :display-inline=\"true\" :color=\"progressColor\"></meerkat-loader>\r\n                    {{ progressMessage }}\r\n                </p>\r\n\r\n                <p v-if=\"actionState.promptAbandon === true\" class=\"meerkat__modal-prompt\">\r\n                    <span><meerkat-loader :display-inline=\"true\" :color=\"progressColor\"></meerkat-loader>{{ trans('errors.process_long_process') }}</span><br><br>\r\n                    <span>{{ actionState.abandonMessage }}</span>\r\n                </p>\r\n            </div>\r\n\r\n            <div v-if=\"actionState.isErrorState === true\">\r\n                <div v-if=\"actionState.numberOfErrorsEncountered <= this.actionState.failedRequestCutoff || this.actionState.useTelemetry === false\">\r\n                    <p v-if=\"actionState.wasClientError === false\">{{ errorMessage }}</p>\r\n\r\n                    <div v-if=\"actionState.wasClientError === true\">\r\n                        <p>{{ this.actionState.clientErrorMessage }}</p>\r\n\r\n                        <textarea class=\"meerkat__stack-trace\" v-if=\"this.actionState.lastClientError !== null\"\r\n                                  readonly>{{ this.actionState.lastClientError.getMessage() }}</textarea>\r\n                    </div>\r\n                </div>\r\n                <div v-else>\r\n                    <p>{{ this.actionState.repeatedFailureMessage }}</p>\r\n\r\n                    <p v-if=\"actionState.isLoadingLog\">\r\n                        <meerkat-loader :display-inline=\"true\"></meerkat-loader>{{ trans('errors.loading_error_log') }}\r\n                    </p>\r\n                    <p v-if=\"actionState.isLoadingLog === false && actionState.serverErrorReport === null\">{{ trans('errors.no_error_details') }}</p>\r\n\r\n                    <div v-if=\"actionState.isLoadingLog === false && actionState.serverErrorReport !== null\">\r\n                        <p style=\"margin-top:10px;\"><strong>{{ trans('errors.submit_error_report_request') }}</strong></p>\r\n                        <textarea class=\"meerkat__stack-trace\" readonly>{{ this.actionState.serverErrorReport.report }}</textarea>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n        <div class=\"p-2 bg-grey-20 border-t flex items-center justify-end text-sm\"\r\n             v-if=\"actionState.isErrorState === true && actionState.doesNotHavePrivileges === false\">\r\n            <button class=\"text-grey hover:text-grey-90\" @click=\"actionState._abandon()\">{{ actionState.cancelText }}</button>\r\n            <button class=\"ml-2\" :class=\"buttonClass\" @click=\"actionState._tryAgain()\" v-if=\"actionState.isLoadingLog === false && actionState.serverErrorReport === null\">{{ actionState.tryAgain }}</button>\r\n            <button class=\"ml-2\" :class=\"buttonClass\" @click=\"actionState._submitAndTryAgain()\" v-if=\"actionState.isLoadingLog === false && actionState.serverErrorReport !== null\">{{ trans('actions.submit_error_try_again') }}</button>\r\n        </div>\r\n\r\n        <div class=\"p-2 bg-grey-20 border-t flex items-center justify-end text-sm\"\r\n             v-if=\"actionState.isErrorState === false && actionState.isProcessing === false && actionState.doesNotHavePrivileges === false\">\r\n            <button class=\"text-grey hover:text-grey-90\" @click=\"actionState._cancel()\">{{ actionState.cancelText }}</button>\r\n            <button class=\"ml-2\" :class=\"buttonClass\" @click=\"actionState._confirm()\">{{ actionState.confirmText }}</button>\r\n        </div>\r\n\r\n        <div class=\"p-2 bg-grey-20 border-t flex items-center justify-end text-sm\"\r\n             v-if=\"actionState.isErrorState === false && actionState.promptAbandon === true && actionState.doesNotHavePrivileges === false\">\r\n            <button class=\"text-grey hover:text-grey-90\" @click=\"actionState._abandon()\">{{ actionState.cancelText }}</button>\r\n            <button class=\"ml-2\" :class=\"buttonClass\" @click=\"actionState._tryAgain()\">{{ actionState.tryAgain }}</button>\r\n        </div>\r\n\r\n        <div class=\"p-2 bg-grey-20 border-t flex items-center justify-end text-sm\"\r\n             v-if=\"actionState.doesNotHavePrivileges === true\">\r\n            <button class=\"btn-primary\" @click=\"actionState._cancel()\">{{ trans('actions.ok') }}</button>\r\n        </div>\r\n    </div>\r\n</modal>";
 // Exports
 module.exports = code;
 
@@ -34619,6 +34761,8 @@ var ActionState = /*#__PURE__*/function (_EventEmitter) {
     _this.hasResponse = false;
     _this.response = null;
     _this.lastClientError = null;
+    _this.hasInteraction = false;
+    _this.interactionComponent = '';
     _this.numberOfErrorsEncountered = 0;
     _this.isDestructive = false;
     _this.isProcessing = false;
@@ -35142,11 +35286,13 @@ function parseMarkdown(content) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "registerVueComponents", function() { return registerVueComponents; });
-/* harmony import */ var _App_Components_StatefulConfirmationDialog__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../App/Components/StatefulConfirmationDialog */ "./src/App/Components/StatefulConfirmationDialog/index.js");
-/* harmony import */ var _App_Components_Loader__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../App/Components/Loader */ "./src/App/Components/Loader/index.js");
-/* harmony import */ var _App_CommentThread__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../App/CommentThread */ "./src/App/CommentThread/index.js");
-/* harmony import */ var _Config_environment__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../Config/environment */ "./src/Config/environment.js");
-/* harmony import */ var _Types_type__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../Types/type */ "./src/Types/type.js");
+/* harmony import */ var _App_Components_CommentEditor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../App/Components/CommentEditor */ "./src/App/Components/CommentEditor/index.js");
+/* harmony import */ var _App_Components_StatefulConfirmationDialog__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../App/Components/StatefulConfirmationDialog */ "./src/App/Components/StatefulConfirmationDialog/index.js");
+/* harmony import */ var _App_Components_Loader__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../App/Components/Loader */ "./src/App/Components/Loader/index.js");
+/* harmony import */ var _App_CommentThread__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../App/CommentThread */ "./src/App/CommentThread/index.js");
+/* harmony import */ var _Config_environment__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../Config/environment */ "./src/Config/environment.js");
+/* harmony import */ var _Types_type__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../Types/type */ "./src/Types/type.js");
+
 
 
 
@@ -35155,13 +35301,14 @@ __webpack_require__.r(__webpack_exports__);
 function registerVueComponents(vue) {
   var registerCallback = vue.component;
 
-  if (_Types_type__WEBPACK_IMPORTED_MODULE_4__["default"].hasValue(_Config_environment__WEBPACK_IMPORTED_MODULE_3__["default"].ContextComponentRegister)) {
-    registerCallback = _Config_environment__WEBPACK_IMPORTED_MODULE_3__["default"].ContextComponentRegister;
+  if (_Types_type__WEBPACK_IMPORTED_MODULE_5__["default"].hasValue(_Config_environment__WEBPACK_IMPORTED_MODULE_4__["default"].ContextComponentRegister)) {
+    registerCallback = _Config_environment__WEBPACK_IMPORTED_MODULE_4__["default"].ContextComponentRegister;
   }
 
-  registerCallback('meerkat-comment-thread', _App_CommentThread__WEBPACK_IMPORTED_MODULE_2__["default"]);
-  registerCallback('meerkat-loader', _App_Components_Loader__WEBPACK_IMPORTED_MODULE_1__["default"]);
-  registerCallback('meerkat-stateful-confirm-dialog', _App_Components_StatefulConfirmationDialog__WEBPACK_IMPORTED_MODULE_0__["default"]);
+  registerCallback('meerkat-comment-editor', _App_Components_CommentEditor__WEBPACK_IMPORTED_MODULE_0__["default"]);
+  registerCallback('meerkat-comment-thread', _App_CommentThread__WEBPACK_IMPORTED_MODULE_3__["default"]);
+  registerCallback('meerkat-loader', _App_Components_Loader__WEBPACK_IMPORTED_MODULE_2__["default"]);
+  registerCallback('meerkat-stateful-confirm-dialog', _App_Components_StatefulConfirmationDialog__WEBPACK_IMPORTED_MODULE_1__["default"]);
 }
 
 /***/ }),

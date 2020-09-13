@@ -109,8 +109,10 @@ class CommentResponseGenerator
                     $childrenIds = [];
 
                     foreach ($comment[CommentResponseGenerator::KEY_API_COMMENT_COLLECTION] as $childComment) {
-                        if (array_key_exists(CommentContract::KEY_ID, $childComment)) {
-                            $childrenIds[] = $childComment[CommentContract::KEY_ID];
+                        if (is_array($childComment)) {
+                            if (array_key_exists(CommentContract::KEY_ID, $childComment)) {
+                                $childrenIds[] = $childComment[CommentContract::KEY_ID];
+                            }
                         }
                     }
 

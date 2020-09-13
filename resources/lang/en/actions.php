@@ -17,8 +17,15 @@ return [
     'approve_error_encountered' => 'An error was encountered while publishing the comment. Would you like to try again?',
     'approve_success' => 'The comment was approved',
 
+
     'unapprove' => 'Unpublish',
-    'unapprove_confirm' => 'Are you sure you want to unpublish this comment?',
+    'unapprove_confirm_title' => 'Unpublish Comment',
+    'unapprove_confirm_title_active' => 'Unpublishing Comment',
+    'unapprove_confirm_progress_message' => 'Unpublishing comment. Please wait...',
+    'unapprove_confirm_message' => 'Are you sure you want to unpublish this comment?',
+    'unapprove_confirm_abandoned' => 'The unpublish action was abandoned',
+    'unapprove_error_encountered' => 'An error was encountered while unpublishing the comment. Would you like to try again?',
+    'unapprove_success' => 'The comment was unpublished',
 
     'reply' => 'Reply',
     'edit' => 'Edit',

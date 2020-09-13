@@ -33,6 +33,52 @@ class CommentsController extends CpController
         }
     }
 
+    public function unPublishComment(
+        PermissionsManagerContract $manager,
+        IdentityManagerContract $identityManager,
+        MessageGeneralCommentResponseGenerator $resultGenerator,
+        CommentResponseGenerator $commentResultGenerator)
+    {
+        $permissions = $manager->getPermissions($identityManager->getIdentityContext());
+
+        if ($permissions->canUnApproveComments === false) {
+            if ($this->request->ajax()) {
+                return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_APPROVE);
+            } else {
+                abort(403, 'Unauthorized', [
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_APPROVE
+                ]);
+                exit;
+            }
+        }
+
+        RequestHelpers::setActionFromRequest($this->request);
+
+        $commentId = $this->request->get(self::PARAM_COMMENT, null);
+
+        if ($commentId === null) {
+            return $resultGenerator->notFound('null');
+        }
+
+        try {
+            $comment = Comment::findOrFail($commentId);
+
+            $result = $comment->unpublish();
+
+            if ($result === true) {
+                $comment = Comment::find($commentId);
+            }
+
+            return Responses::conditionalWithData($result, [
+                self::RESULT_COMMENT => $commentResultGenerator->getApiComment($comment->toArray())
+            ]);
+        } catch (CommentNotFoundException $notFound) {
+            return $resultGenerator->notFound($commentId);
+        } catch (Exception $e) {
+            return Responses::generalFailure();
+        }
+    }
+
     public function publishComment(
         PermissionsManagerContract $manager,
         IdentityManagerContract $identityManager,

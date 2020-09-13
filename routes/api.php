@@ -16,6 +16,7 @@ Route::group(['prefix' => Addon::getApiPrefix()], function () {
     Route::group(['prefix' => 'comments'], function () {
         Route::get('/', 'Api\CommentsController@search');
         Route::post('/publish', 'Api\CommentsController@publishComment');
+        Route::post('/unpublish', 'Api\CommentsController@unPublishComment');
     });
 
 });

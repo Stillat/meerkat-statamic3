@@ -35960,6 +35960,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _threadContext__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./threadContext */ "./src/Data/Comments/threadContext.js");
 /* harmony import */ var _Http_Responses_baseResponse__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../Http/Responses/baseResponse */ "./src/Http/Responses/baseResponse.js");
 /* harmony import */ var _Http_Responses_errorResponse__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../Http/Responses/errorResponse */ "./src/Http/Responses/errorResponse.js");
+/* harmony import */ var _Http_Responses_commentMutationResponse__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../Http/Responses/commentMutationResponse */ "./src/Http/Responses/commentMutationResponse.js");
+/* harmony import */ var _Http_Responses_commentRemovedResponse__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../Http/Responses/commentRemovedResponse */ "./src/Http/Responses/commentRemovedResponse.js");
 
 
 
@@ -35970,6 +35972,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
 
 
 
@@ -36166,7 +36170,6 @@ var Comment = /*#__PURE__*/function () {
   }, {
     key: "markAsSpam",
     value: function markAsSpam() {
-      console.log('clicked marked as spam');
       return new Promise(function (resolve, reject) {
         this._internalCommentResponse._originator.markAsSpam(this.id).then(function (result) {
           if (result.success) {
@@ -37224,12 +37227,17 @@ var BaseResponse = /*#__PURE__*/function () {
     key: "fromApiResponse",
     value: function fromApiResponse(apiResponse, err) {
       var response = new BaseResponse();
-      response.success = _Types_type__WEBPACK_IMPORTED_MODULE_1__["default"].withDefault(apiResponse[BaseResponse.ApiSuccess], false);
-      response.isRecoverable = _Types_type__WEBPACK_IMPORTED_MODULE_1__["default"].withDefault(apiResponse[BaseResponse.ApiIsRecoverable], true);
-      response.errorCode = _Types_type__WEBPACK_IMPORTED_MODULE_1__["default"].withDefault(apiResponse[BaseResponse.ApiErrorCode], null);
-      response.msg = _Types_string__WEBPACK_IMPORTED_MODULE_2__["default"].withDefault(apiResponse[BaseResponse.ApiMessage], '');
-      response.error = _Types_type__WEBPACK_IMPORTED_MODULE_1__["default"].withDefault(err, null);
+      BaseResponse.applyResponseToObject(apiResponse, err, response);
       return response;
+    }
+  }, {
+    key: "applyResponseToObject",
+    value: function applyResponseToObject(apiResponse, err, object) {
+      object.success = _Types_type__WEBPACK_IMPORTED_MODULE_1__["default"].withDefault(apiResponse[BaseResponse.ApiSuccess], false);
+      object.isRecoverable = _Types_type__WEBPACK_IMPORTED_MODULE_1__["default"].withDefault(apiResponse[BaseResponse.ApiIsRecoverable], true);
+      object.errorCode = _Types_type__WEBPACK_IMPORTED_MODULE_1__["default"].withDefault(apiResponse[BaseResponse.ApiErrorCode], null);
+      object.msg = _Types_string__WEBPACK_IMPORTED_MODULE_2__["default"].withDefault(apiResponse[BaseResponse.ApiMessage], '');
+      object.error = _Types_type__WEBPACK_IMPORTED_MODULE_1__["default"].withDefault(err, null);
     }
   }]);
 
@@ -37241,6 +37249,230 @@ BaseResponse.ApiIsRecoverable = 'is_recoverable';
 BaseResponse.ApiMessage = 'msg';
 BaseResponse.ApiErrorCode = 'error_code';
 /* harmony default export */ __webpack_exports__["default"] = (BaseResponse);
+
+/***/ }),
+
+/***/ "./src/Http/Responses/commentMutationResponse.js":
+/*!*******************************************************!*\
+  !*** ./src/Http/Responses/commentMutationResponse.js ***!
+  \*******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var core_js_modules_es_symbol__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.symbol */ "./node_modules/core-js/modules/es.symbol.js");
+/* harmony import */ var core_js_modules_es_symbol__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.symbol.description */ "./node_modules/core-js/modules/es.symbol.description.js");
+/* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.symbol.iterator */ "./node_modules/core-js/modules/es.symbol.iterator.js");
+/* harmony import */ var core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.date.to-string */ "./node_modules/core-js/modules/es.date.to-string.js");
+/* harmony import */ var core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.object.create */ "./node_modules/core-js/modules/es.object.create.js");
+/* harmony import */ var core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.object.define-property */ "./node_modules/core-js/modules/es.object.define-property.js");
+/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.object.get-prototype-of */ "./node_modules/core-js/modules/es.object.get-prototype-of.js");
+/* harmony import */ var core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/es.object.set-prototype-of */ "./node_modules/core-js/modules/es.object.set-prototype-of.js");
+/* harmony import */ var core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/es.object.to-string */ "./node_modules/core-js/modules/es.object.to-string.js");
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! core-js/modules/es.reflect.construct */ "./node_modules/core-js/modules/es.reflect.construct.js");
+/* harmony import */ var core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! core-js/modules/es.string.iterator */ "./node_modules/core-js/modules/es.string.iterator.js");
+/* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_12__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13__);
+/* harmony import */ var _baseResponse__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./baseResponse */ "./src/Http/Responses/baseResponse.js");
+/* harmony import */ var _Types_type__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../Types/type */ "./src/Types/type.js");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+
+
+
+var CommentMutationResponse = /*#__PURE__*/function (_BaseResponse) {
+  _inherits(CommentMutationResponse, _BaseResponse);
+
+  var _super = _createSuper(CommentMutationResponse);
+
+  function CommentMutationResponse() {
+    var _this;
+
+    _classCallCheck(this, CommentMutationResponse);
+
+    _this = _super.call(this);
+    _this.comment = null;
+    return _this;
+  }
+
+  _createClass(CommentMutationResponse, null, [{
+    key: "fromApiResponse",
+    value: function fromApiResponse(apiResponse, err) {
+      var response = new CommentMutationResponse();
+      _baseResponse__WEBPACK_IMPORTED_MODULE_14__["default"].applyResponseToObject(apiResponse, err, response);
+      response.comment = _Types_type__WEBPACK_IMPORTED_MODULE_15__["default"].withDefault(apiResponse[CommentMutationResponse.ApiComment], null);
+      return response;
+    }
+  }]);
+
+  return CommentMutationResponse;
+}(_baseResponse__WEBPACK_IMPORTED_MODULE_14__["default"]);
+
+CommentMutationResponse.ApiComment = 'comment';
+/* harmony default export */ __webpack_exports__["default"] = (CommentMutationResponse);
+
+/***/ }),
+
+/***/ "./src/Http/Responses/commentRemovedResponse.js":
+/*!******************************************************!*\
+  !*** ./src/Http/Responses/commentRemovedResponse.js ***!
+  \******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var core_js_modules_es_symbol__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.symbol */ "./node_modules/core-js/modules/es.symbol.js");
+/* harmony import */ var core_js_modules_es_symbol__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.symbol.description */ "./node_modules/core-js/modules/es.symbol.description.js");
+/* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.symbol.iterator */ "./node_modules/core-js/modules/es.symbol.iterator.js");
+/* harmony import */ var core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.date.to-string */ "./node_modules/core-js/modules/es.date.to-string.js");
+/* harmony import */ var core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.object.create */ "./node_modules/core-js/modules/es.object.create.js");
+/* harmony import */ var core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.object.define-property */ "./node_modules/core-js/modules/es.object.define-property.js");
+/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.object.get-prototype-of */ "./node_modules/core-js/modules/es.object.get-prototype-of.js");
+/* harmony import */ var core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/es.object.set-prototype-of */ "./node_modules/core-js/modules/es.object.set-prototype-of.js");
+/* harmony import */ var core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/es.object.to-string */ "./node_modules/core-js/modules/es.object.to-string.js");
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! core-js/modules/es.reflect.construct */ "./node_modules/core-js/modules/es.reflect.construct.js");
+/* harmony import */ var core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! core-js/modules/es.string.iterator */ "./node_modules/core-js/modules/es.string.iterator.js");
+/* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_12__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13__);
+/* harmony import */ var _baseResponse__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./baseResponse */ "./src/Http/Responses/baseResponse.js");
+/* harmony import */ var _Types_type__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../Types/type */ "./src/Types/type.js");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+
+
+
+var CommentRemovedResponse = /*#__PURE__*/function (_BaseResponse) {
+  _inherits(CommentRemovedResponse, _BaseResponse);
+
+  var _super = _createSuper(CommentRemovedResponse);
+
+  function CommentRemovedResponse() {
+    var _this;
+
+    _classCallCheck(this, CommentRemovedResponse);
+
+    _this = _super.call(this);
+    _this.removedComments = [];
+    return _this;
+  }
+
+  _createClass(CommentRemovedResponse, null, [{
+    key: "fromApiResponse",
+    value: function fromApiResponse(apiResponse, err) {
+      var response = new CommentRemovedResponse();
+      _baseResponse__WEBPACK_IMPORTED_MODULE_14__["default"].applyResponseToObject(apiResponse, err, response);
+      response.removedComments = _Types_type__WEBPACK_IMPORTED_MODULE_15__["default"].withDefault(apiResponse[CommentRemovedResponse.ApiComments], []);
+      return response;
+    }
+  }]);
+
+  return CommentRemovedResponse;
+}(_baseResponse__WEBPACK_IMPORTED_MODULE_14__["default"]);
+
+CommentRemovedResponse.ApiComments = 'removed_comments';
+/* harmony default export */ __webpack_exports__["default"] = (CommentRemovedResponse);
 
 /***/ }),
 
@@ -37541,6 +37773,8 @@ var ErrorResponse = /*#__PURE__*/function (_BaseResponse) {
       var response = new ErrorResponse();
       response.success = false;
       response.error = err;
+      console.log('ERROR');
+      console.log(err);
 
       if (err.response.status === 403) {
         response.authorized = false;
@@ -38024,9 +38258,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Http_Responses_errorResponse__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../Http/Responses/errorResponse */ "./src/Http/Responses/errorResponse.js");
 /* harmony import */ var _Data_Comments_searchOptions__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../Data/Comments/searchOptions */ "./src/Data/Comments/searchOptions.js");
 /* harmony import */ var _Data_Concerns_canPoolHttpRequests__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../Data/Concerns/canPoolHttpRequests */ "./src/Data/Concerns/canPoolHttpRequests.js");
-/* harmony import */ var _Data_Concerns_canBeStringOrHash__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../Data/Concerns/canBeStringOrHash */ "./src/Data/Concerns/canBeStringOrHash.js");
-/* harmony import */ var _Http_Responses_baseResponse__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../Http/Responses/baseResponse */ "./src/Http/Responses/baseResponse.js");
-/* harmony import */ var _App_actionState__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../App/actionState */ "./src/App/actionState.js");
+/* harmony import */ var _Http_Responses_commentMutationResponse__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../Http/Responses/commentMutationResponse */ "./src/Http/Responses/commentMutationResponse.js");
+/* harmony import */ var _Http_Responses_commentRemovedResponse__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../Http/Responses/commentRemovedResponse */ "./src/Http/Responses/commentRemovedResponse.js");
+/* harmony import */ var _Data_Concerns_canBeStringOrHash__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../Data/Concerns/canBeStringOrHash */ "./src/Data/Concerns/canBeStringOrHash.js");
+/* harmony import */ var _Http_Responses_baseResponse__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../Http/Responses/baseResponse */ "./src/Http/Responses/baseResponse.js");
+/* harmony import */ var _App_actionState__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../App/actionState */ "./src/App/actionState.js");
 
 
 
@@ -38037,6 +38273,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
 
 
 
@@ -38081,13 +38319,13 @@ var CommentRepository = /*#__PURE__*/function () {
     value: function publish(commentId) {
       var request = {
         comment: commentId,
-        actionId: _App_actionState__WEBPACK_IMPORTED_MODULE_12__["default"].CurrentActionId
+        actionId: _App_actionState__WEBPACK_IMPORTED_MODULE_14__["default"].CurrentActionId
       },
-          requestHash = Object(_Data_Concerns_canBeStringOrHash__WEBPACK_IMPORTED_MODULE_10__["hash"])(request);
+          requestHash = Object(_Data_Concerns_canBeStringOrHash__WEBPACK_IMPORTED_MODULE_12__["hash"])(request);
       return new Promise(function (resolve, reject) {
         var requestState = this.shouldProcessRequest(requestHash, 500);
         this.client.post(_Http_endpoints__WEBPACK_IMPORTED_MODULE_4__["default"].url(_Http_endpoints__WEBPACK_IMPORTED_MODULE_4__["default"].CommentsApprove), request, requestState).then(function (result) {
-          resolve(_Http_Responses_baseResponse__WEBPACK_IMPORTED_MODULE_11__["default"].fromApiResponse(result));
+          resolve(_Http_Responses_commentMutationResponse__WEBPACK_IMPORTED_MODULE_10__["default"].fromApiResponse(result));
           this.releasePending(requestHash);
         }.bind(this))["catch"](function (err) {
           reject(_Http_Responses_errorResponse__WEBPACK_IMPORTED_MODULE_7__["default"].fromError(err));
@@ -38103,13 +38341,13 @@ var CommentRepository = /*#__PURE__*/function () {
     value: function unpublish(commentId) {
       var request = {
         comment: commentId,
-        actionId: _App_actionState__WEBPACK_IMPORTED_MODULE_12__["default"].CurrentActionId
+        actionId: _App_actionState__WEBPACK_IMPORTED_MODULE_14__["default"].CurrentActionId
       },
-          requestHash = Object(_Data_Concerns_canBeStringOrHash__WEBPACK_IMPORTED_MODULE_10__["hash"])(request);
+          requestHash = Object(_Data_Concerns_canBeStringOrHash__WEBPACK_IMPORTED_MODULE_12__["hash"])(request);
       return new Promise(function (resolve, reject) {
         var requestState = this.shouldProcessRequest(requestHash, 500);
         this.client.post(_Http_endpoints__WEBPACK_IMPORTED_MODULE_4__["default"].url(_Http_endpoints__WEBPACK_IMPORTED_MODULE_4__["default"].CommentsUnapprove), request, requestState).then(function (result) {
-          resolve(_Http_Responses_baseResponse__WEBPACK_IMPORTED_MODULE_11__["default"].fromApiResponse(result));
+          resolve(_Http_Responses_commentMutationResponse__WEBPACK_IMPORTED_MODULE_10__["default"].fromApiResponse(result));
           this.releasePending(requestHash);
         }.bind(this))["catch"](function (err) {
           reject(_Http_Responses_errorResponse__WEBPACK_IMPORTED_MODULE_7__["default"].fromError(err));
@@ -38122,13 +38360,13 @@ var CommentRepository = /*#__PURE__*/function () {
     value: function _delete(commentId) {
       var request = {
         comment: commentId,
-        actionId: _App_actionState__WEBPACK_IMPORTED_MODULE_12__["default"].CurrentActionId
+        actionId: _App_actionState__WEBPACK_IMPORTED_MODULE_14__["default"].CurrentActionId
       },
-          requestHash = Object(_Data_Concerns_canBeStringOrHash__WEBPACK_IMPORTED_MODULE_10__["hash"])(request);
+          requestHash = Object(_Data_Concerns_canBeStringOrHash__WEBPACK_IMPORTED_MODULE_12__["hash"])(request);
       return new Promise(function (resolve, reject) {
         var requestState = this.shouldProcessRequest(requestHash, 500);
         this.client.post(_Http_endpoints__WEBPACK_IMPORTED_MODULE_4__["default"].url(_Http_endpoints__WEBPACK_IMPORTED_MODULE_4__["default"].CommentsRemove), request, requestState).then(function (result) {
-          resolve(_Http_Responses_baseResponse__WEBPACK_IMPORTED_MODULE_11__["default"].fromApiResponse(result));
+          resolve(_Http_Responses_commentRemovedResponse__WEBPACK_IMPORTED_MODULE_11__["default"].fromApiResponse(result));
           this.releasePending(requestHash);
         }.bind(this))["catch"](function (err) {
           reject(_Http_Responses_errorResponse__WEBPACK_IMPORTED_MODULE_7__["default"].fromError(err));
@@ -38147,13 +38385,13 @@ var CommentRepository = /*#__PURE__*/function () {
     value: function markAsSpam(commentId) {
       var request = {
         comment: commentId,
-        actionId: _App_actionState__WEBPACK_IMPORTED_MODULE_12__["default"].CurrentActionId
+        actionId: _App_actionState__WEBPACK_IMPORTED_MODULE_14__["default"].CurrentActionId
       },
-          requestHash = Object(_Data_Concerns_canBeStringOrHash__WEBPACK_IMPORTED_MODULE_10__["hash"])(request);
+          requestHash = Object(_Data_Concerns_canBeStringOrHash__WEBPACK_IMPORTED_MODULE_12__["hash"])(request);
       return new Promise(function (resolve, reject) {
         var requestState = this.shouldProcessRequest(requestHash, 500);
         this.client.post(_Http_endpoints__WEBPACK_IMPORTED_MODULE_4__["default"].url(_Http_endpoints__WEBPACK_IMPORTED_MODULE_4__["default"].CommentMarkSpam), request, requestState).then(function (result) {
-          resolve(_Http_Responses_baseResponse__WEBPACK_IMPORTED_MODULE_11__["default"].fromApiResponse(result));
+          resolve(_Http_Responses_commentMutationResponse__WEBPACK_IMPORTED_MODULE_10__["default"].fromApiResponse(result));
           this.releasePending(requestHash);
         }.bind(this))["catch"](function (err) {
           reject(_Http_Responses_errorResponse__WEBPACK_IMPORTED_MODULE_7__["default"].fromError(err));
@@ -38169,13 +38407,13 @@ var CommentRepository = /*#__PURE__*/function () {
     value: function markAsNotSpam(commentId) {
       var request = {
         comment: commentId,
-        actionId: _App_actionState__WEBPACK_IMPORTED_MODULE_12__["default"].CurrentActionId
+        actionId: _App_actionState__WEBPACK_IMPORTED_MODULE_14__["default"].CurrentActionId
       },
-          requestHash = Object(_Data_Concerns_canBeStringOrHash__WEBPACK_IMPORTED_MODULE_10__["hash"])(request);
+          requestHash = Object(_Data_Concerns_canBeStringOrHash__WEBPACK_IMPORTED_MODULE_12__["hash"])(request);
       return new Promise(function (resolve, reject) {
         var requestState = this.shouldProcessRequest(requestHash, 500);
         this.client.post(_Http_endpoints__WEBPACK_IMPORTED_MODULE_4__["default"].url(_Http_endpoints__WEBPACK_IMPORTED_MODULE_4__["default"].CommentMarkHam), request, requestState).then(function (result) {
-          resolve(_Http_Responses_baseResponse__WEBPACK_IMPORTED_MODULE_11__["default"].fromApiResponse(result));
+          resolve(_Http_Responses_commentMutationResponse__WEBPACK_IMPORTED_MODULE_10__["default"].fromApiResponse(result));
           this.releasePending(requestHash);
         }.bind(this))["catch"](function (err) {
           reject(_Http_Responses_errorResponse__WEBPACK_IMPORTED_MODULE_7__["default"].fromError(err));

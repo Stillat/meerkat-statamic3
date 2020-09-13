@@ -31,6 +31,7 @@ class CommentsController extends CpController
         } catch (FilterException $filterException) {
             return Responses::fromErrorCode(Errors::COMMENT_DATA_FILTER_FAILURE, false);
         } catch (Exception $e) {
+            throw $e;
             return Responses::generalFailure();
         }
     }

@@ -200,15 +200,18 @@ class BaseCollectionConverter
                     $parentProperties = $objParent->toArray();
                 }
 
-                foreach ($parentProperties as $property => $value) {
-                    if ($property === $datasetName || $property === CommentContract::KEY_CHILDREN) {
-                        continue;
+                if (is_array($parentProperties)) {
+                    foreach ($parentProperties as $property => $value) {
+                        if ($property === $datasetName || $property === CommentContract::KEY_CHILDREN) {
+                            continue;
+                        }
+
+                        $commentParent[$property] = $value;
                     }
 
-                    $commentParent[$property] = $value;
-                }
+                    $comment[CommentContract::KEY_PARENT] = $commentParent;
 
-                $comment[CommentContract::KEY_PARENT] = $commentParent;
+                }
             }
         }
 

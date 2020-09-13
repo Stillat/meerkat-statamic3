@@ -33309,8 +33309,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13__);
 /* harmony import */ var _actionState__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../../actionState */ "./src/App/actionState.js");
-/* harmony import */ var _trans__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../../../trans */ "./src/trans.js");
-/* harmony import */ var _Data_Comments_comment__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../../../Data/Comments/comment */ "./src/Data/Comments/comment.js");
+/* harmony import */ var _Data_Comments_comment__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../../../Data/Comments/comment */ "./src/Data/Comments/comment.js");
 
 
 
@@ -33351,7 +33350,6 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 
 
-
 var ApproveCommentHandler = /*#__PURE__*/function (_ActionState) {
   _inherits(ApproveCommentHandler, _ActionState);
 
@@ -33364,13 +33362,9 @@ var ApproveCommentHandler = /*#__PURE__*/function (_ActionState) {
 
     _this = _super.call(this);
     _this.comment = comment;
-    _this.title = Object(_trans__WEBPACK_IMPORTED_MODULE_15__["default"])('actions.approve_confirm_title');
-    _this.activeTitle = Object(_trans__WEBPACK_IMPORTED_MODULE_15__["default"])('actions.approve_confirm_title_active');
-    _this.message = Object(_trans__WEBPACK_IMPORTED_MODULE_15__["default"])('actions.approve_confirm_message');
-    _this.progressMessage = Object(_trans__WEBPACK_IMPORTED_MODULE_15__["default"])('actions.approve_confirm_progress_message');
-    _this.abandonedMessage = Object(_trans__WEBPACK_IMPORTED_MODULE_15__["default"])('actions.approve_confirm_abandoned');
-    _this.errorMessage = Object(_trans__WEBPACK_IMPORTED_MODULE_15__["default"])('actions.approve_error_encountered');
-    _this.successMessage = Object(_trans__WEBPACK_IMPORTED_MODULE_15__["default"])('actions.approve_success');
+
+    _this.setMessages('approve');
+
     return _this;
   }
 
@@ -33427,7 +33421,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13__);
 /* harmony import */ var _actionState__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../../actionState */ "./src/App/actionState.js");
 /* harmony import */ var _Data_Comments_comment__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../../../Data/Comments/comment */ "./src/Data/Comments/comment.js");
-/* harmony import */ var _trans__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../../../trans */ "./src/trans.js");
 
 
 
@@ -33468,7 +33461,6 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 
 
-
 var DeleteCommentHandler = /*#__PURE__*/function (_ActionState) {
   _inherits(DeleteCommentHandler, _ActionState);
 
@@ -33480,14 +33472,10 @@ var DeleteCommentHandler = /*#__PURE__*/function (_ActionState) {
     _classCallCheck(this, DeleteCommentHandler);
 
     _this = _super.call(this);
-    _this.title = Object(_trans__WEBPACK_IMPORTED_MODULE_16__["default"])('actions.delete_confirm_title');
-    _this.activeTitle = Object(_trans__WEBPACK_IMPORTED_MODULE_16__["default"])('actions.delete_confirm_title_active');
-    _this.message = Object(_trans__WEBPACK_IMPORTED_MODULE_16__["default"])('actions.delete_confirm_message');
-    _this.progressMessage = Object(_trans__WEBPACK_IMPORTED_MODULE_16__["default"])('actions.delete_confirm_progress_message');
-    _this.abandonedMessage = Object(_trans__WEBPACK_IMPORTED_MODULE_16__["default"])('actions.delete_confirm_abandoned');
-    _this.errorMessage = Object(_trans__WEBPACK_IMPORTED_MODULE_16__["default"])('actions.delete_error_encountered');
-    _this.successMessage = Object(_trans__WEBPACK_IMPORTED_MODULE_16__["default"])('actions.delete_success');
     _this.comment = comment;
+
+    _this.setMessages('delete');
+
     return _this;
   }
 
@@ -33568,7 +33556,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13__);
 /* harmony import */ var _actionState__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../../actionState */ "./src/App/actionState.js");
-/* harmony import */ var _trans__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../../../trans */ "./src/trans.js");
 
 
 
@@ -33608,7 +33595,6 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 
 
-
 var UnApproveCommentHandler = /*#__PURE__*/function (_ActionState) {
   _inherits(UnApproveCommentHandler, _ActionState);
 
@@ -33620,14 +33606,10 @@ var UnApproveCommentHandler = /*#__PURE__*/function (_ActionState) {
     _classCallCheck(this, UnApproveCommentHandler);
 
     _this = _super.call(this);
-    _this.title = Object(_trans__WEBPACK_IMPORTED_MODULE_15__["default"])('actions.unapprove_confirm_title');
-    _this.activeTitle = Object(_trans__WEBPACK_IMPORTED_MODULE_15__["default"])('actions.unapprove_confirm_title_active');
-    _this.message = Object(_trans__WEBPACK_IMPORTED_MODULE_15__["default"])('actions.unapprove_confirm_message');
-    _this.progressMessage = Object(_trans__WEBPACK_IMPORTED_MODULE_15__["default"])('actions.unapprove_confirm_progress_message');
-    _this.abandonedMessage = Object(_trans__WEBPACK_IMPORTED_MODULE_15__["default"])('actions.unapprove_confirm_abandoned');
-    _this.errorMessage = Object(_trans__WEBPACK_IMPORTED_MODULE_15__["default"])('actions.unapprove_error_encountered');
-    _this.successMessage = Object(_trans__WEBPACK_IMPORTED_MODULE_15__["default"])('actions.unapprove_success');
     _this.comment = comment;
+
+    _this.setMessages('unapprove');
+
     return _this;
   }
 
@@ -34655,8 +34637,25 @@ var ActionState = /*#__PURE__*/function (_EventEmitter) {
     _this.timeouts = [];
     return _this;
   }
+  /**
+   * Updates all messages with the provided action scope.
+   *
+   * @param {string} messageScope The action translation prefix.
+   */
+
 
   _createClass(ActionState, [{
+    key: "setMessages",
+    value: function setMessages(messageScope) {
+      this.title = Object(_trans__WEBPACK_IMPORTED_MODULE_17__["default"])('actions.' + messageScope + '_confirm_title');
+      this.activeTitle = Object(_trans__WEBPACK_IMPORTED_MODULE_17__["default"])('actions.' + messageScope + '_confirm_title_active');
+      this.message = Object(_trans__WEBPACK_IMPORTED_MODULE_17__["default"])('actions.' + messageScope + '_confirm_message');
+      this.progressMessage = Object(_trans__WEBPACK_IMPORTED_MODULE_17__["default"])('actions.' + messageScope + '_confirm_progress_message');
+      this.abandonedMessage = Object(_trans__WEBPACK_IMPORTED_MODULE_17__["default"])('actions.' + messageScope + '_confirm_abandoned');
+      this.errorMessage = Object(_trans__WEBPACK_IMPORTED_MODULE_17__["default"])('actions.' + messageScope + '_error_encountered');
+      this.successMessage = Object(_trans__WEBPACK_IMPORTED_MODULE_17__["default"])('actions.' + messageScope + '_success');
+    }
+  }, {
     key: "_clearErrorState",
     value: function _clearErrorState() {
       this.isLoadingLog = false;

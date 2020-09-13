@@ -32,14 +32,15 @@ class Responses
         ];
     }
 
-    public static function recoverableFailure($errorCode)
+    public static function conditionalWithData($success, $data)
     {
-        return self::fromErrorCode($errorCode, true);
-    }
+        $baseData = self::generalSuccess();
 
-    public static function successWithData($data)
-    {
-        return array_merge(self::generalSuccess(), $data);
+        if ($success === false) {
+            $baseData = self::nonFatalFailure();
+        }
+
+        return array_merge($baseData, $data);
     }
 
     public static function generalSuccess()
@@ -51,11 +52,6 @@ class Responses
         ];
     }
 
-    public static function failureWithData($data)
-    {
-        return array_merge(self::nonFatalFailure(), $data);
-    }
-
     public static function nonFatalFailure()
     {
         return [
@@ -63,6 +59,21 @@ class Responses
             self::KEY_ERROR_CODE => null,
             self::KEY_RECOVERABLE => true
         ];
+    }
+
+    public static function recoverableFailure($errorCode)
+    {
+        return self::fromErrorCode($errorCode, true);
+    }
+
+    public static function successWithData($data)
+    {
+        return array_merge(self::generalSuccess(), $data);
+    }
+
+    public static function failureWithData($data)
+    {
+        return array_merge(self::nonFatalFailure(), $data);
     }
 
 }

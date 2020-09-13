@@ -5,6 +5,8 @@ namespace Stillat\Meerkat\Http\Controllers\Api;
 use Exception;
 use Statamic\Http\Controllers\CP\CpController;
 use Stillat\Meerkat\Core\Comments\Comment;
+use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
+use Stillat\Meerkat\Core\Contracts\Permissions\PermissionsManagerContract;
 use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Exceptions\CommentNotFoundException;
 use Stillat\Meerkat\Core\Exceptions\FilterException;
@@ -15,6 +17,8 @@ use Stillat\Meerkat\Http\RequestHelpers;
 
 class CommentsController extends CpController
 {
+    const PARAM_COMMENT = 'comment';
+    const RESULT_COMMENT = 'comment';
 
     public function search(CommentResponseGenerator $resultGenerator)
     {
@@ -29,20 +33,28 @@ class CommentsController extends CpController
         }
     }
 
-    public function publishComment(MessageGeneralCommentResponseGenerator $resultGenerator)
+    public function publishComment(
+        PermissionsManagerContract $manager,
+        IdentityManagerContract $identityManager,
+        MessageGeneralCommentResponseGenerator $resultGenerator,
+        CommentResponseGenerator $commentResultGenerator)
     {
-        if ($this->request->ajax()) {
-            return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_APPROVE);
-        } else {
-            abort(403, 'Unauthorized', [
-                'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_APPROVE
-            ]);
-            exit;
+        $permissions = $manager->getPermissions($identityManager->getIdentityContext());
+
+        if ($permissions->canApproveComments === false) {
+            if ($this->request->ajax()) {
+                return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_APPROVE);
+            } else {
+                abort(403, 'Unauthorized', [
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_APPROVE
+                ]);
+                exit;
+            }
         }
 
         RequestHelpers::setActionFromRequest($this->request);
 
-        $commentId = $this->request->get('comment', null);
+        $commentId = $this->request->get(self::PARAM_COMMENT, null);
 
         if ($commentId === null) {
             return $resultGenerator->notFound('null');
@@ -53,16 +65,18 @@ class CommentsController extends CpController
 
             $result = $comment->publish();
 
-            // TODO: SOME CLEAN UP
-            return [
-                'success' => $result
-            ];
+            if ($result === true) {
+                $comment = Comment::find($commentId);
+            }
+
+            return Responses::conditionalWithData($result, [
+                self::RESULT_COMMENT => $commentResultGenerator->getApiComment($comment->toArray())
+            ]);
         } catch (CommentNotFoundException $notFound) {
             return $resultGenerator->notFound($commentId);
         } catch (Exception $e) {
             return Responses::generalFailure();
         }
-        dd($this->request->all());
     }
 
 }

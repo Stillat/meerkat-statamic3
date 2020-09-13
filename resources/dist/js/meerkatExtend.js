@@ -2841,6 +2841,7 @@ var Environment = /*#__PURE__*/function () {
 Environment.MarkdownHandler = null;
 Environment.Settings = new _settings__WEBPACK_IMPORTED_MODULE_2__["default"]();
 Environment.UserContext = null;
+Environment.Preferences = null;
 Environment.ApiCsrfToken = '';
 Environment.StatamicApiRoot = '';
 Environment.StatamicCpRoot = '';

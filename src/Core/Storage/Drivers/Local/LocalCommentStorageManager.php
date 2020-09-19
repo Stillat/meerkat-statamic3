@@ -7,6 +7,7 @@ use InvalidArgumentException;
 use Stillat\Meerkat\Core\Comments\CleanableCommentAttributes;
 use Stillat\Meerkat\Core\Comments\Comment;
 use Stillat\Meerkat\Core\Comments\CommentRemovalEventArgs;
+use Stillat\Meerkat\Core\Comments\AffectsCommentsResult;
 use Stillat\Meerkat\Core\Comments\CommentRestoringEventArgs;
 use Stillat\Meerkat\Core\Comments\DynamicCollectedProperties;
 use Stillat\Meerkat\Core\RuntimeStateGuard;
@@ -1610,14 +1611,14 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      * Attempts to remove the requested comment.
      *
      * @param string $commentId The comment's identifier.
-     * @return bool
+     * @return AffectsCommentsResult
      */
     public function removeById($commentId)
     {
         $comment = $this->findById($commentId);
 
         if ($comment === null) {
-            return false;
+            return AffectsCommentsResult::failed();
         }
 
         $descendents = $this->getDescendentsPaths($commentId);
@@ -1644,7 +1645,9 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             if ($lastResult !== null && $lastResult instanceof CommentRemovalEventArgs) {
                 if ($lastResult->shouldKeep()) {
                     RuntimeStateGuard::mutationLocks()->releaseLock($lock);
-                    return $this->softDeleteById($commentId);
+                    $didSoftDelete = $this->softDeleteById($commentId);
+
+                    return AffectsCommentsResult::conditionalWithComments($didSoftDelete, $descendents);
                 }
             }
 
@@ -1657,7 +1660,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
 
         $this->commentPipeline->removed($commentId, null);
 
-        return true;
+        return AffectsCommentsResult::successWithComments($descendents);
     }
 
     /**
@@ -1688,7 +1691,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      * Attempts to restore a soft-deleted comment.
      *
      * @param string $commentId The comment's identifier.
-     * @return bool
+     * @return AffectsCommentsResult
      * @throws ConcurrentResourceAccessViolationException
      */
     public function restoreById($commentId)
@@ -1696,13 +1699,15 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         $comment = $this->findById($commentId);
 
         if ($comment === null) {
-            return false;
+            return AffectsCommentsResult::failed();
         }
 
 
         if ($comment->isDeleted() === false) {
-            return false;
+            return AffectsCommentsResult::failed();
         }
+
+        $descendents = $this->getDescendents($commentId);
 
         $commentRestoreEventArgs = new CommentRestoringEventArgs();
         $commentRestoreEventArgs->commentId = $commentId;
@@ -1722,7 +1727,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             if ($lastResult !== null && $lastResult instanceof CommentRestoringEventArgs) {
                 if ($lastResult->shouldRestore() === false) {
                     RuntimeStateGuard::mutationLocks()->releaseLock($lock);
-                    return false;
+                    return AffectsCommentsResult::failed();
                 }
             }
 
@@ -1736,7 +1741,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             $this->commentPipeline->restored($comment, null);
         }
 
-        return $wasUpdated;
+        return AffectsCommentsResult::conditionalWithComments($wasUpdated, $descendents);
     }
 
 }

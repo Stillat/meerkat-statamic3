@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat\Core\Contracts\Comments;
 
+use Stillat\Meerkat\Core\Comments\AffectsCommentsResult;
 use Stillat\Meerkat\Core\Contracts\Data\DataSetContract;
 use Stillat\Meerkat\Core\Contracts\Data\GroupedDataSetContract;
 use Stillat\Meerkat\Core\Contracts\Data\PagedDataSetContract;
@@ -77,7 +78,7 @@ interface CommentManagerContract
      *
      * @param CommentContract $comment
      *
-     * @return boolean
+     * @return AffectsCommentsResult
      */
     public function remove($comment);
 
@@ -86,7 +87,7 @@ interface CommentManagerContract
      *
      * @param string $id
      *
-     * @return boolean
+     * @return AffectsCommentsResult
      */
     public function removeById($id);
 

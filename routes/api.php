@@ -15,11 +15,12 @@ Route::group(['prefix' => Addon::getApiPrefix()], function () {
 
     Route::group(['prefix' => 'comments'], function () {
         Route::get('/', 'Api\CommentsController@search');
-        Route::post('/publish', 'Api\CommentsController@publishComment');
-        Route::post('/unpublish', 'Api\CommentsController@unPublishComment');
-        Route::post('/remove', 'Api\CommentsController@deleteComment');
-        Route::post('/report-spam', 'Api\CommentsController@markAsSpam');
-        Route::post('/report-ham', 'Api\CommentsController@markAsNotSpam');
+        Route::post('/update', 'Api\UpdateCommentController@updateComment');
+        Route::post('/publish', 'Api\PublishCommentController@publishComment');
+        Route::post('/unpublish', 'Api\UnpublishCommentController@unPublishComment');
+        Route::post('/remove', 'Api\RemoveCommentController@deleteComment');
+        Route::post('/report-spam', 'Api\SpamController@markAsSpam');
+        Route::post('/report-ham', 'Api\NotSpamController@markAsNotSpam');
     });
 
 });

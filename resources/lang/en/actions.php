@@ -8,6 +8,9 @@ return [
     'try_again' => 'Try Again',
     'submit_error_try_again' => 'Submit and Try Again',
 
+    'select_comment' => 'Select this comment',
+    'select_all_comments' => 'Select all visible comments',
+
     'approve' => 'Publish',
     'approve_confirm_title' => 'Publish Comment',
     'approve_confirm_title_active' => 'Publishing Comment',

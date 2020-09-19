@@ -34507,6 +34507,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Types_type__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../../Types/type */ "./src/Types/type.js");
 /* harmony import */ var _actionState__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../actionState */ "./src/App/actionState.js");
 /* harmony import */ var _Mixins_actionHandler__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../Mixins/actionHandler */ "./src/App/Mixins/actionHandler.js");
+/* harmony import */ var _trans__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../../trans */ "./src/trans.js");
+
 
 
 
@@ -34556,7 +34558,8 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style
       handlers: {
         'edit': _Handlers__WEBPACK_IMPORTED_MODULE_1__["EditCommentHandler"],
         'reply': _Handlers__WEBPACK_IMPORTED_MODULE_1__["ReplyCommentHandler"]
-      }
+      },
+      singleSelectTranslation: Object(_trans__WEBPACK_IMPORTED_MODULE_15__["default"])('actions.select_comment')
     };
   },
   computed: {
@@ -34572,7 +34575,8 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style
       return {
         'meerkat__comment-row--focused': comment.state.isEditing || comment.state.isReplying,
         'meerkat__comment-row--pending': comment.published || comment.hasBeenCheckedForSpam === false,
-        'meerkat__comment--row--spam': comment.hasBeenCheckedForSpam && comment.isSpam === true
+        'meerkat__comment--row--spam': comment.hasBeenCheckedForSpam && comment.isSpam === true,
+        'meerkat__comment-row--selected': comment.isSelected
       };
     },
     checkForDismiss: function checkForDismiss() {
@@ -34640,7 +34644,7 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style
 /***/ (function(module, exports) {
 
 // Module
-var code = "<div>\r\n    <meerkat-stateful-confirm-dialog\r\n            name=\"tableMeerkatActionConfirm\" v-if=\"currentAction !== null && currentAction.display === true\"\r\n            :action-state=\"currentAction\" v-on:cancel=\"checkForDismiss\"></meerkat-stateful-confirm-dialog>\r\n\r\n    <div class=\"card p-0 relative\">\r\n        <div class=\"data-table-header\">\r\n            <table class=\"data-table\" v-bind:class=\"tableClasses\">\r\n                <thead>\r\n                <tr>\r\n                    <th class=\"comment-table__author-column\">{{ trans('display.header_author') }}</th>\r\n                    <th>{{ trans('display.header_comment') }}</th>\r\n                </tr>\r\n                </thead>\r\n                <tbody>\r\n                <tr>\r\n                    <td colspan=\"2\">\r\n                        <p>In response to: Some thread.</p>\r\n                    </td>\r\n                </tr>\r\n                <tr v-for=\"(comment, i) in comments.comments\" class=\"meerkat__comment-row\" v-bind:class=\"getCommentClasses(comment)\" v-if=\"comment.isDeleted === false\">\r\n                    <td class=\"author-display__container\">\r\n                        <author-display :author=\"comment.getAuthor()\" :avatar-driver=\"avatarDriver\"></author-display>\r\n                    </td>\r\n                    <td>\r\n                        <comment-display v-if=\"comment.state.isEditing === false\" :comment=\"comment\"\r\n                                         :avatar-driver=\"avatarDriver\" :permissions=\"permissions\"\r\n                                         v-on:action-edit=\"beforeEdit\"\r\n                                         v-on:action-reply=\"beforeReply\"></comment-display>\r\n                        <comment-editor v-if=\"comment.state.isEditing === true\" :comment=\"comment\"\r\n                                        v-on:update-requested=\"performActionNow('edit', comment)\"\r\n                                        v-on:update-canceled=\"disableFocusMode\"></comment-editor>\r\n                        <reply-editor v-if=\"comment.state.isReplying === true\" :comment=\"comment\"\r\n                                        v-on:reply-requested=\"performActionNow('reply', comment)\"\r\n                                        v-on:reply-canceled=\"disableFocusMode\"></reply-editor>\r\n                    </td>\r\n                </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n    </div>\r\n</div>";
+var code = "<div>\r\n    <meerkat-stateful-confirm-dialog\r\n            name=\"tableMeerkatActionConfirm\" v-if=\"currentAction !== null && currentAction.display === true\"\r\n            :action-state=\"currentAction\" v-on:cancel=\"checkForDismiss\"></meerkat-stateful-confirm-dialog>\r\n\r\n    <div class=\"card p-0 relative\">\r\n        <div class=\"data-table-header\">\r\n            <table class=\"data-table\" v-bind:class=\"tableClasses\">\r\n                <thead>\r\n                <tr>\r\n                    <th colspan=\"2\">\r\n                        <label class=\"text-gray-500 font-bold cursor-pointer\" :title=\"singleSelectTranslation\">\r\n                            <input class=\"mr-2 leading-tight cursor-pointer\" type=\"checkbox\" :title=\"trans('actions.select_all_comments')\"\r\n                                   v-model=\"comments.comments.allSelected\"\r\n                                   v-on:click=\"comments.comments.toggleSelections()\">\r\n                        </label>\r\n                    </th>\r\n                </tr>\r\n                <tr>\r\n                    <th class=\"comment-table__author-column\">{{ trans('display.header_author') }}</th>\r\n                    <th>{{ trans('display.header_comment') }}</th>\r\n                </tr>\r\n                </thead>\r\n                <tbody>\r\n                <tr>\r\n                    <td colspan=\"2\">\r\n                        <p>In response to: Some thread.</p>\r\n                    </td>\r\n                </tr>\r\n                <tr v-for=\"(comment, i) in comments.comments\" class=\"meerkat__comment-row\"\r\n                    v-bind:class=\"getCommentClasses(comment)\" v-if=\"comment.isDeleted === false\">\r\n                    <td class=\"author-display__container\">\r\n                        <label class=\"text-gray-500 font-bold cursor-pointer\" :title=\"singleSelectTranslation\">\r\n                            <input class=\"mr-2 leading-tight cursor-pointer\" type=\"checkbox\"\r\n                                   v-model=\"comment.isSelected\">\r\n                        </label>\r\n                        <author-display :author=\"comment.getAuthor()\" :avatar-driver=\"avatarDriver\"></author-display>\r\n                    </td>\r\n                    <td>\r\n                        <comment-display v-if=\"comment.state.isEditing === false\" :comment=\"comment\"\r\n                                         :avatar-driver=\"avatarDriver\" :permissions=\"permissions\"\r\n                                         v-on:action-edit=\"beforeEdit\"\r\n                                         v-on:action-reply=\"beforeReply\"></comment-display>\r\n                        <comment-editor v-if=\"comment.state.isEditing === true\" :comment=\"comment\"\r\n                                        v-on:update-requested=\"performActionNow('edit', comment)\"\r\n                                        v-on:update-canceled=\"disableFocusMode\"></comment-editor>\r\n                        <reply-editor v-if=\"comment.state.isReplying === true\" :comment=\"comment\"\r\n                                      v-on:reply-requested=\"performActionNow('reply', comment)\"\r\n                                      v-on:reply-canceled=\"disableFocusMode\"></reply-editor>\r\n                    </td>\r\n                </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n    </div>\r\n</div>";
 // Exports
 module.exports = code;
 
@@ -37351,12 +37355,24 @@ __webpack_require__.r(__webpack_exports__);
 
 
 function applyCollectionSelectable(instance) {
+  instance.allSelected = false;
+
+  instance.toggleSelections = function () {
+    if (this.allSelected === true) {
+      this.unSelectAll();
+    } else {
+      this.selectAll();
+    }
+  }.bind(instance);
+
   instance.selectAll = function () {
     for (var i = 0; i < this.length; i += 1) {
       if (_Types_type__WEBPACK_IMPORTED_MODULE_2__["default"].hasValue(this[i], 'isSelected')) {
         this[i].isSelected = true;
       }
     }
+
+    this.allSelected = true;
   }.bind(instance);
 
   instance.unSelectAll = function () {
@@ -37365,6 +37381,8 @@ function applyCollectionSelectable(instance) {
         this[i].isSelected = false;
       }
     }
+
+    this.allSelected = false;
   }.bind(instance);
 }
 function applyErrorState(instance) {

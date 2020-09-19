@@ -144,6 +144,13 @@
 .meerkat__comment-row.meerkat__comment-row--pending {
   border-left: 2px solid #5ce3ff6e !important;
 }
+.meerkat__comment-row.meerkat__comment-row--selected {
+  background: #f7f7f7;
+  border: 1px dashed #cbc3c3;
+}
+.meerkat__comment-row.meerkat__comment-row--selected:hover {
+  background-color: #f0f0f0;
+}
 .meerkat__comment-table--focus tr {
   opacity: 0.5;
 }

@@ -34188,22 +34188,34 @@ module.exports = code;
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./template.html */ "./src/App/Components/CommentEditor/template.html");
-/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_template_html__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../Mixins/usesTranslator */ "./src/App/Mixins/usesTranslator.js");
+/* harmony import */ var core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.function.bind */ "./node_modules/core-js/modules/es.function.bind.js");
+/* harmony import */ var core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./template.html */ "./src/App/Components/CommentEditor/template.html");
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_template_html__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../Mixins/usesTranslator */ "./src/App/Mixins/usesTranslator.js");
+
 
 
 
 __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentEditor/style.less");
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  template: _template_html__WEBPACK_IMPORTED_MODULE_0___default.a,
-  mixins: [_Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_1__["default"]],
+  template: _template_html__WEBPACK_IMPORTED_MODULE_1___default.a,
+  mixins: [_Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_2__["default"]],
   props: {
     comment: {
       type: Object,
       "default": null
     }
+  },
+  methods: {
+    cancel: function cancel() {
+      this.$emit('update-canceled', this.comment);
+      this.comment.cancelEditing();
+    }
+  },
+  created: function created() {
+    this.$keys.bind('esc', this.cancel);
   }
 });
 
@@ -34228,7 +34240,7 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentEditor/styl
 /***/ (function(module, exports) {
 
 // Module
-var code = "<div>\r\n    <div class=\"meerkat__temp-markdown-editor--wrapper\">\r\n        <markdown-fieldtype v-model=\"comment.editProperties.content\"></markdown-fieldtype>\r\n    </div>\r\n\r\n    <div class=\"p-2 bg-grey-20 border-t flex items-center text-sm\">\r\n        <button class=\"btn-primary mr-2\" v-on:click=\"$emit('update-requested', comment)\">{{\r\n            trans('actions.edit_confirm_button') }}\r\n        </button>\r\n        <button class=\"text-grey hover:text=grey-90\"\r\n                v-on:click=\"$emit('update-canceled', comment); comment.cancelEditing()\">{{ trans('actions.cancel') }}\r\n        </button>\r\n    </div>\r\n</div>";
+var code = "<div>\r\n    <div class=\"meerkat__temp-markdown-editor--wrapper\">\r\n        <markdown-fieldtype v-model=\"comment.editProperties.content\"></markdown-fieldtype>\r\n    </div>\r\n\r\n    <div class=\"p-2 bg-grey-20 border-t flex items-center text-sm\">\r\n        <button class=\"btn-primary mr-2\" v-on:click=\"$emit('update-requested', comment)\">{{\r\n            trans('actions.edit_confirm_button') }}\r\n        </button>\r\n        <button class=\"text-grey hover:text=grey-90\"\r\n                v-on:click=\"cancel()\">{{ trans('actions.cancel') }}\r\n        </button>\r\n    </div>\r\n</div>";
 // Exports
 module.exports = code;
 
@@ -35049,22 +35061,34 @@ module.exports = code;
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./template.html */ "./src/App/Components/ReplyEditor/template.html");
-/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_template_html__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../Mixins/usesTranslator */ "./src/App/Mixins/usesTranslator.js");
+/* harmony import */ var core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.function.bind */ "./node_modules/core-js/modules/es.function.bind.js");
+/* harmony import */ var core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./template.html */ "./src/App/Components/ReplyEditor/template.html");
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_template_html__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../Mixins/usesTranslator */ "./src/App/Mixins/usesTranslator.js");
+
 
 
 
 __webpack_require__(/*! ./style.less */ "./src/App/Components/ReplyEditor/style.less");
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  template: _template_html__WEBPACK_IMPORTED_MODULE_0___default.a,
-  mixins: [_Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_1__["default"]],
+  template: _template_html__WEBPACK_IMPORTED_MODULE_1___default.a,
+  mixins: [_Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_2__["default"]],
   props: {
     comment: {
       type: Object,
       "default": null
     }
+  },
+  methods: {
+    cancel: function cancel() {
+      this.$emit('reply-canceled', this.comment);
+      this.comment.cancelReply();
+    }
+  },
+  created: function created() {
+    this.$keys.bind('esc', this.cancel);
   }
 });
 
@@ -35089,7 +35113,7 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/ReplyEditor/style.
 /***/ (function(module, exports) {
 
 // Module
-var code = "<div>\r\n    <div class=\"meerkat__temp-markdown-reply-editor--wrapper\">\r\n        <markdown-fieldtype v-model=\"comment.state.reply.content\"></markdown-fieldtype>\r\n    </div>\r\n\r\n    <div class=\"p-2 bg-grey-20 border-t flex items-center text-sm\">\r\n        <button class=\"btn-primary mr-2\" v-on:click=\"$emit('reply-requested', comment)\">{{\r\n            trans('actions.reply_confirm_button') }}\r\n        </button>\r\n        <button class=\"text-grey hover:text=grey-90\"\r\n                v-on:click=\"$emit('reply-canceled', comment); comment.cancelReply()\">{{ trans('actions.cancel') }}\r\n        </button>\r\n    </div>\r\n</div>";
+var code = "<div>\r\n    <div class=\"meerkat__temp-markdown-reply-editor--wrapper\">\r\n        <markdown-fieldtype v-model=\"comment.state.reply.content\"></markdown-fieldtype>\r\n    </div>\r\n\r\n    <div class=\"p-2 bg-grey-20 border-t flex items-center text-sm\">\r\n        <button class=\"btn-primary mr-2\" v-on:click=\"$emit('reply-requested', comment)\">{{\r\n            trans('actions.reply_confirm_button') }}\r\n        </button>\r\n        <button class=\"text-grey hover:text=grey-90\"\r\n                v-on:click=\"cancel()\">{{ trans('actions.cancel') }}\r\n        </button>\r\n    </div>\r\n</div>";
 // Exports
 module.exports = code;
 

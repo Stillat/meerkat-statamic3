@@ -24,9 +24,7 @@ class UnpublishCommentController extends CpController
     public function unPublishMany(
         PermissionsManagerContract $manager,
         IdentityManagerContract $identityManager,
-        CommentStorageManagerContract $storageManager,
-        MessageGeneralCommentResponseGenerator $resultGenerator,
-        CommentResponseGenerator $commentResultGenerator)
+        CommentStorageManagerContract $storageManager)
     {
         $permissions = $manager->getPermissions($identityManager->getIdentityContext());
 

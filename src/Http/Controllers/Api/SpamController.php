@@ -21,9 +21,7 @@ class SpamController extends CpController
     public function markManyAsSpam(
         CommentStorageManagerContract $storageManager,
         PermissionsManagerContract $manager,
-        IdentityManagerContract $identityManager,
-        MessageGeneralCommentResponseGenerator $resultGenerator,
-        CommentResponseGenerator $commentResultGenerator)
+        IdentityManagerContract $identityManager)
     {
         $permissions = $manager->getPermissions($identityManager->getIdentityContext());
 

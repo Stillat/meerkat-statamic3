@@ -21,9 +21,7 @@ class PublishCommentController extends CpController
     public function publishMany(
         PermissionsManagerContract $manager,
         IdentityManagerContract $identityManager,
-        CommentStorageManagerContract $storageManager,
-        MessageGeneralCommentResponseGenerator $resultGenerator,
-        CommentResponseGenerator $commentResultGenerator)
+        CommentStorageManagerContract $storageManager)
     {
         $permissions = $manager->getPermissions($identityManager->getIdentityContext());
 

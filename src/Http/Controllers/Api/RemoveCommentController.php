@@ -21,9 +21,7 @@ class RemoveCommentController extends CpController
     public function deleteMany(
         CommentStorageManagerContract $storageManager,
         PermissionsManagerContract $manager,
-        IdentityManagerContract $identityManager,
-        MessageGeneralCommentResponseGenerator $resultGenerator,
-        CommentResponseGenerator $commentResultGenerator)
+        IdentityManagerContract $identityManager)
     {
         $permissions = $manager->getPermissions($identityManager->getIdentityContext());
 
@@ -63,8 +61,7 @@ class RemoveCommentController extends CpController
         CommentStorageManagerContract $storageManager,
         PermissionsManagerContract $manager,
         IdentityManagerContract $identityManager,
-        MessageGeneralCommentResponseGenerator $resultGenerator,
-        CommentResponseGenerator $commentResultGenerator)
+        MessageGeneralCommentResponseGenerator $resultGenerator)
     {
         $permissions = $manager->getPermissions($identityManager->getIdentityContext());
 

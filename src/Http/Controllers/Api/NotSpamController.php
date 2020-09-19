@@ -21,9 +21,7 @@ class NotSpamController extends CpController
     public function markManyAsNotSpam(
         CommentStorageManagerContract $storageManager,
         PermissionsManagerContract $manager,
-        IdentityManagerContract $identityManager,
-        MessageGeneralCommentResponseGenerator $resultGenerator,
-        CommentResponseGenerator $commentResultGenerator)
+        IdentityManagerContract $identityManager)
     {
         $permissions = $manager->getPermissions($identityManager->getIdentityContext());
 

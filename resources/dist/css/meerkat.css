@@ -1,4 +1,11 @@
 /*! Copyright (C) Stillat, LLC. All Rights Reserved. */
+.meerkat__temp-markdown-editor--wrapper .markdown-buttons > button:nth-last-of-type(-n+2) {
+  display: none !important;
+}
+.meerkat__temp-markdown-editor--wrapper .helpers {
+  display: none !important;
+}
+
 .meerkat__modal-prompt {
   margin-top: 20px;
   font-weight: 600;
@@ -43,19 +50,6 @@
   float: left;
   margin-right: 2px;
   margin-top: 2px;
-}
-
-.comment-table__author-column {
-  width: 18rem;
-}
-.meerkat__comment-row {
-  border-left: 2px solid #ffffff;
-}
-.meerkat__comment-row.meerkat__comment-row--spam {
-  border-left: 2px solid #ff00006e !important;
-}
-.meerkat__comment-row.meerkat__comment-row--pending {
-  border-left: 2px solid #5ce3ff6e !important;
 }
 
 .author-display__container {
@@ -129,6 +123,25 @@
 }
 .comment-display__content {
   color: #2a2a2a;
+}
+
+.comment-table__author-column {
+  width: 18rem;
+}
+.meerkat__comment-row {
+  border-left: 2px solid #ffffff;
+}
+.meerkat__comment-row.meerkat__comment-row--spam {
+  border-left: 2px solid #ff00006e !important;
+}
+.meerkat__comment-row.meerkat__comment-row--pending {
+  border-left: 2px solid #5ce3ff6e !important;
+}
+.meerkat__comment-table--focus tr {
+  opacity: 0.5;
+}
+.meerkat__comment-table--focus tr.meerkat__comment-row--focused {
+  opacity: 1;
 }
 
 

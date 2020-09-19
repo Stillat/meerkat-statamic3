@@ -9512,6 +9512,31 @@ module.exports = function (it) {
 
 /***/ }),
 
+/***/ "./node_modules/core-js/internals/array-for-each.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/core-js/internals/array-for-each.js ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $forEach = __webpack_require__(/*! ../internals/array-iteration */ "./node_modules/core-js/internals/array-iteration.js").forEach;
+var arrayMethodIsStrict = __webpack_require__(/*! ../internals/array-method-is-strict */ "./node_modules/core-js/internals/array-method-is-strict.js");
+var arrayMethodUsesToLength = __webpack_require__(/*! ../internals/array-method-uses-to-length */ "./node_modules/core-js/internals/array-method-uses-to-length.js");
+
+var STRICT_METHOD = arrayMethodIsStrict('forEach');
+var USES_TO_LENGTH = arrayMethodUsesToLength('forEach');
+
+// `Array.prototype.forEach` method implementation
+// https://tc39.github.io/ecma262/#sec-array.prototype.foreach
+module.exports = (!STRICT_METHOD || !USES_TO_LENGTH) ? function forEach(callbackfn /* , thisArg */) {
+  return $forEach(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+} : [].forEach;
+
+
+/***/ }),
+
 /***/ "./node_modules/core-js/internals/array-includes.js":
 /*!**********************************************************!*\
   !*** ./node_modules/core-js/internals/array-includes.js ***!
@@ -11760,6 +11785,70 @@ module.exports = FORCED ? function parseInt(string, radix) {
 
 /***/ }),
 
+/***/ "./node_modules/core-js/internals/object-assign.js":
+/*!*********************************************************!*\
+  !*** ./node_modules/core-js/internals/object-assign.js ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "./node_modules/core-js/internals/descriptors.js");
+var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-js/internals/fails.js");
+var objectKeys = __webpack_require__(/*! ../internals/object-keys */ "./node_modules/core-js/internals/object-keys.js");
+var getOwnPropertySymbolsModule = __webpack_require__(/*! ../internals/object-get-own-property-symbols */ "./node_modules/core-js/internals/object-get-own-property-symbols.js");
+var propertyIsEnumerableModule = __webpack_require__(/*! ../internals/object-property-is-enumerable */ "./node_modules/core-js/internals/object-property-is-enumerable.js");
+var toObject = __webpack_require__(/*! ../internals/to-object */ "./node_modules/core-js/internals/to-object.js");
+var IndexedObject = __webpack_require__(/*! ../internals/indexed-object */ "./node_modules/core-js/internals/indexed-object.js");
+
+var nativeAssign = Object.assign;
+var defineProperty = Object.defineProperty;
+
+// `Object.assign` method
+// https://tc39.github.io/ecma262/#sec-object.assign
+module.exports = !nativeAssign || fails(function () {
+  // should have correct order of operations (Edge bug)
+  if (DESCRIPTORS && nativeAssign({ b: 1 }, nativeAssign(defineProperty({}, 'a', {
+    enumerable: true,
+    get: function () {
+      defineProperty(this, 'b', {
+        value: 3,
+        enumerable: false
+      });
+    }
+  }), { b: 2 })).b !== 1) return true;
+  // should work with symbols and should have deterministic property order (V8 bug)
+  var A = {};
+  var B = {};
+  // eslint-disable-next-line no-undef
+  var symbol = Symbol();
+  var alphabet = 'abcdefghijklmnopqrst';
+  A[symbol] = 7;
+  alphabet.split('').forEach(function (chr) { B[chr] = chr; });
+  return nativeAssign({}, A)[symbol] != 7 || objectKeys(nativeAssign({}, B)).join('') != alphabet;
+}) ? function assign(target, source) { // eslint-disable-line no-unused-vars
+  var T = toObject(target);
+  var argumentsLength = arguments.length;
+  var index = 1;
+  var getOwnPropertySymbols = getOwnPropertySymbolsModule.f;
+  var propertyIsEnumerable = propertyIsEnumerableModule.f;
+  while (argumentsLength > index) {
+    var S = IndexedObject(arguments[index++]);
+    var keys = getOwnPropertySymbols ? objectKeys(S).concat(getOwnPropertySymbols(S)) : objectKeys(S);
+    var length = keys.length;
+    var j = 0;
+    var key;
+    while (length > j) {
+      key = keys[j++];
+      if (!DESCRIPTORS || propertyIsEnumerable.call(S, key)) T[key] = S[key];
+    }
+  } return T;
+} : nativeAssign;
+
+
+/***/ }),
+
 /***/ "./node_modules/core-js/internals/object-create.js":
 /*!*********************************************************!*\
   !*** ./node_modules/core-js/internals/object-create.js ***!
@@ -13273,6 +13362,27 @@ addToUnscopables(FIND);
 
 /***/ }),
 
+/***/ "./node_modules/core-js/modules/es.array.for-each.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/core-js/modules/es.array.for-each.js ***!
+  \***********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(/*! ../internals/export */ "./node_modules/core-js/internals/export.js");
+var forEach = __webpack_require__(/*! ../internals/array-for-each */ "./node_modules/core-js/internals/array-for-each.js");
+
+// `Array.prototype.forEach` method
+// https://tc39.github.io/ecma262/#sec-array.prototype.foreach
+$({ target: 'Array', proto: true, forced: [].forEach != forEach }, {
+  forEach: forEach
+});
+
+
+/***/ }),
+
 /***/ "./node_modules/core-js/modules/es.array.index-of.js":
 /*!***********************************************************!*\
   !*** ./node_modules/core-js/modules/es.array.index-of.js ***!
@@ -13650,6 +13760,25 @@ if (isForced(NUMBER, !NativeNumber(' 0o1') || !NativeNumber('0b1') || NativeNumb
   NumberPrototype.constructor = NumberWrapper;
   redefine(global, NUMBER, NumberWrapper);
 }
+
+
+/***/ }),
+
+/***/ "./node_modules/core-js/modules/es.object.assign.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/core-js/modules/es.object.assign.js ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var $ = __webpack_require__(/*! ../internals/export */ "./node_modules/core-js/internals/export.js");
+var assign = __webpack_require__(/*! ../internals/object-assign */ "./node_modules/core-js/internals/object-assign.js");
+
+// `Object.assign` method
+// https://tc39.github.io/ecma262/#sec-object.assign
+$({ target: 'Object', stat: true, forced: Object.assign !== assign }, {
+  assign: assign
+});
 
 
 /***/ }),
@@ -15179,6 +15308,32 @@ if (!$Symbol[PROTOTYPE][TO_PRIMITIVE]) {
 setToStringTag($Symbol, SYMBOL);
 
 hiddenKeys[HIDDEN] = true;
+
+
+/***/ }),
+
+/***/ "./node_modules/core-js/modules/web.dom-collections.for-each.js":
+/*!**********************************************************************!*\
+  !*** ./node_modules/core-js/modules/web.dom-collections.for-each.js ***!
+  \**********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js/internals/global.js");
+var DOMIterables = __webpack_require__(/*! ../internals/dom-iterables */ "./node_modules/core-js/internals/dom-iterables.js");
+var forEach = __webpack_require__(/*! ../internals/array-for-each */ "./node_modules/core-js/internals/array-for-each.js");
+var createNonEnumerableProperty = __webpack_require__(/*! ../internals/create-non-enumerable-property */ "./node_modules/core-js/internals/create-non-enumerable-property.js");
+
+for (var COLLECTION_NAME in DOMIterables) {
+  var Collection = global[COLLECTION_NAME];
+  var CollectionPrototype = Collection && Collection.prototype;
+  // some Chrome versions have non-configurable methods on DOMTokenList
+  if (CollectionPrototype && CollectionPrototype.forEach !== forEach) try {
+    createNonEnumerableProperty(CollectionPrototype, 'forEach', forEach);
+  } catch (error) {
+    CollectionPrototype.forEach = forEach;
+  }
+}
 
 
 /***/ }),
@@ -33096,7 +33251,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Repositories_commentRepository__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../Repositories/commentRepository */ "./src/Repositories/commentRepository.js");
 /* harmony import */ var _Components_Pagination__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../Components/Pagination */ "./src/App/Components/Pagination/index.js");
 /* harmony import */ var _Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../Mixins/usesTranslator */ "./src/App/Mixins/usesTranslator.js");
-/* harmony import */ var _Components_DataTable__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../Components/DataTable */ "./src/App/Components/DataTable/index.js");
+/* harmony import */ var _Components_CommentTable__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../Components/CommentTable */ "./src/App/Components/CommentTable/index.js");
 /* harmony import */ var _Data_Comments_searchOptions__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../Data/Comments/searchOptions */ "./src/Data/Comments/searchOptions.js");
 /* harmony import */ var _Components_Loader__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../Components/Loader */ "./src/App/Components/Loader/index.js");
 /* harmony import */ var _Config_environment__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../Config/environment */ "./src/Config/environment.js");
@@ -33117,7 +33272,7 @@ __webpack_require__.r(__webpack_exports__);
   mixins: [_Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_8__["default"]],
   template: _template_html__WEBPACK_IMPORTED_MODULE_5___default.a,
   components: {
-    'comment-table': _Components_DataTable__WEBPACK_IMPORTED_MODULE_9__["default"],
+    'comment-table': _Components_CommentTable__WEBPACK_IMPORTED_MODULE_9__["default"],
     'loader': _Components_Loader__WEBPACK_IMPORTED_MODULE_11__["default"],
     'paginator': _Components_Pagination__WEBPACK_IMPORTED_MODULE_7__["default"]
   },
@@ -33201,7 +33356,7 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports) {
 
 // Module
-var code = "<div>\r\n    <div class=\"flex items-center mb-3\">\r\n        <h1 class=\"flex-1\">{{ trans('display.header_comments') }}</h1>\r\n\r\n        <loader v-if=\"state.loadingData\" :display-inline=\"true\"></loader>\r\n    </div>\r\n\r\n    <div v-if=\"state.loadingInitial === true\" class=\"card loading\">\r\n        <loader :display-text=\"trans('display.loading')\"></loader>\r\n    </div>\r\n\r\n    <comment-table v-if=\"state.loadingInitial === false\" :comments=\"commentData\"\r\n                   :loading=\"state.loadingData\"></comment-table>\r\n\r\n    <paginator v-if=\"commentData !== null\" :per-page=\"state.initialPerPage\" :page-data=\"commentData.pages\" v-on:page-updated=\"updateQueryWithPage\" v-on:per-page-updated=\"updateQueryWithPerPage\">\r\n    </paginator>\r\n</div>";
+var code = "<div>\r\n    <div class=\"flex items-center mb-3\">\r\n        <h1 class=\"flex-1\">{{ trans('display.header_comments') }}</h1>\r\n\r\n        <loader v-if=\"state.loadingData\" :display-inline=\"true\"></loader>\r\n    </div>\r\n\r\n    <div v-if=\"state.loadingInitial === true\" class=\"card loading\">\r\n        <loader :display-text=\"trans('display.loading')\"></loader>\r\n    </div>\r\n\r\n    <comment-table v-if=\"state.loadingInitial === false\" :comments=\"commentData\"\r\n                   :loading=\"state.loadingData\"></comment-table>\r\n\r\n    <paginator v-if=\"commentData !== null\" :per-page=\"state.initialPerPage\" :page-data=\"commentData.pages\"\r\n               v-on:page-updated=\"updateQueryWithPage\" v-on:per-page-updated=\"updateQueryWithPerPage\">\r\n    </paginator>\r\n</div>";
 // Exports
 module.exports = code;
 
@@ -33265,7 +33420,7 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/AuthorDisplay/styl
 /***/ (function(module, exports) {
 
 // Module
-var code = "<div class=\"author-display flex items-center\">\r\n    <div class=\"w-10 h-10\" style=\"margin-right:0.5em;\" :title=\"author.name\">\r\n        <component :is=\"avatarDriver\" v-bind=\"getAuthor()\"></component>\r\n    </div>\r\n    <div class=\"text-sm\">\r\n        <p class=\"text-gray-900 leading-none\" :title=\"author.name\">{{ author.name | meerkatTruncate(30) }}</p>\r\n        <p class=\"text-gray-600\" v-if=\"author.hasEmailAddress()\" :title=\"author.email\"><a :href=\"'mailto:' + author.email\">{{ author.email | meerkatTruncate(30) }}</a></p>\r\n        <p class=\"author-display__web-address\" v-if=\"author.hasWebAddress()\" :title=\"author.webAddress\"><a :href=\"author.webAddress\" target=\"_blank\">{{ author.webAddress | meerkatTruncate(30) }}</a></p>\r\n    </div>\r\n</div>";
+var code = "<div class=\"author-display flex items-center\">\r\n    <div class=\"w-10 h-10\" style=\"margin-right:0.5em;\" :title=\"author.name\" v-on:click=\"$emit('author-clicked', author)\">\r\n        <component :is=\"avatarDriver\" v-bind=\"getAuthor()\"></component>\r\n    </div>\r\n    <div class=\"text-sm\">\r\n        <p class=\"text-gray-900 leading-none\" v-on:click=\"$emit('author-clicked', author)\" :title=\"author.name\">{{ author.name | meerkatTruncate(30) }}</p>\r\n        <p class=\"text-gray-600\" v-if=\"author.hasEmailAddress()\" :title=\"author.email\"><a :href=\"'mailto:' + author.email\">{{ author.email | meerkatTruncate(30) }}</a></p>\r\n        <p class=\"author-display__web-address\" v-if=\"author.hasWebAddress()\" :title=\"author.webAddress\"><a :href=\"author.webAddress\" target=\"_blank\">{{ author.webAddress | meerkatTruncate(30) }}</a></p>\r\n    </div>\r\n</div>";
 // Exports
 module.exports = code;
 
@@ -33360,8 +33515,7 @@ var ApproveCommentHandler = /*#__PURE__*/function (_ActionState) {
 
     _classCallCheck(this, ApproveCommentHandler);
 
-    _this = _super.call(this);
-    _this.comment = comment;
+    _this = _super.call(this, comment);
 
     _this.setMessages('approve');
 
@@ -33471,8 +33625,7 @@ var DeleteCommentHandler = /*#__PURE__*/function (_ActionState) {
 
     _classCallCheck(this, DeleteCommentHandler);
 
-    _this = _super.call(this);
-    _this.comment = comment;
+    _this = _super.call(this, comment);
 
     _this.setMessages('delete');
 
@@ -33493,110 +33646,11 @@ var DeleteCommentHandler = /*#__PURE__*/function (_ActionState) {
 
 /***/ }),
 
-/***/ "./src/App/Components/CommentActions/Handlers/editCommentHandler.js":
-/*!**************************************************************************!*\
-  !*** ./src/App/Components/CommentActions/Handlers/editCommentHandler.js ***!
-  \**************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var core_js_modules_es_symbol__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.symbol */ "./node_modules/core-js/modules/es.symbol.js");
-/* harmony import */ var core_js_modules_es_symbol__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.symbol.description */ "./node_modules/core-js/modules/es.symbol.description.js");
-/* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.symbol.iterator */ "./node_modules/core-js/modules/es.symbol.iterator.js");
-/* harmony import */ var core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
-/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.date.to-string */ "./node_modules/core-js/modules/es.date.to-string.js");
-/* harmony import */ var core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.object.create */ "./node_modules/core-js/modules/es.object.create.js");
-/* harmony import */ var core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.object.get-prototype-of */ "./node_modules/core-js/modules/es.object.get-prototype-of.js");
-/* harmony import */ var core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.object.set-prototype-of */ "./node_modules/core-js/modules/es.object.set-prototype-of.js");
-/* harmony import */ var core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/es.object.to-string */ "./node_modules/core-js/modules/es.object.to-string.js");
-/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/es.reflect.construct */ "./node_modules/core-js/modules/es.reflect.construct.js");
-/* harmony import */ var core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! core-js/modules/es.string.iterator */ "./node_modules/core-js/modules/es.string.iterator.js");
-/* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_11__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_12__);
-/* harmony import */ var _actionState__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../../actionState */ "./src/App/actionState.js");
-/* harmony import */ var _trans__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../../../trans */ "./src/trans.js");
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-
-
-
-var EditCommentHandler = /*#__PURE__*/function (_ActionState) {
-  _inherits(EditCommentHandler, _ActionState);
-
-  var _super = _createSuper(EditCommentHandler);
-
-  function EditCommentHandler() {
-    var _this;
-
-    _classCallCheck(this, EditCommentHandler);
-
-    _this = _super.call(this);
-    _this.interactionComponent = 'meerkat-comment-editor';
-    _this.hasInteraction = true;
-
-    _this.setMessages('edit');
-
-    _this.confirmText = Object(_trans__WEBPACK_IMPORTED_MODULE_14__["default"])('actions.edit_confirm_button');
-    return _this;
-  }
-
-  return EditCommentHandler;
-}(_actionState__WEBPACK_IMPORTED_MODULE_13__["default"]);
-
-/* harmony default export */ __webpack_exports__["default"] = (EditCommentHandler);
-
-/***/ }),
-
 /***/ "./src/App/Components/CommentActions/Handlers/index.js":
 /*!*************************************************************!*\
   !*** ./src/App/Components/CommentActions/Handlers/index.js ***!
   \*************************************************************/
-/*! exports provided: ApproveCommentHandler, UnApproveCommentHandler, DeleteCommentHandler, EditCommentHandler, MarkAsSpamHandler, MarkAsNotSpamHandler */
+/*! exports provided: ApproveCommentHandler, UnApproveCommentHandler, DeleteCommentHandler, MarkAsSpamHandler, MarkAsNotSpamHandler */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -33610,15 +33664,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _deleteCommentHandler__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./deleteCommentHandler */ "./src/App/Components/CommentActions/Handlers/deleteCommentHandler.js");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "DeleteCommentHandler", function() { return _deleteCommentHandler__WEBPACK_IMPORTED_MODULE_2__["default"]; });
 
-/* harmony import */ var _editCommentHandler__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./editCommentHandler */ "./src/App/Components/CommentActions/Handlers/editCommentHandler.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "EditCommentHandler", function() { return _editCommentHandler__WEBPACK_IMPORTED_MODULE_3__["default"]; });
+/* harmony import */ var _markAsSpamHandler__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./markAsSpamHandler */ "./src/App/Components/CommentActions/Handlers/markAsSpamHandler.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MarkAsSpamHandler", function() { return _markAsSpamHandler__WEBPACK_IMPORTED_MODULE_3__["default"]; });
 
-/* harmony import */ var _markAsSpamHandler__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./markAsSpamHandler */ "./src/App/Components/CommentActions/Handlers/markAsSpamHandler.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MarkAsSpamHandler", function() { return _markAsSpamHandler__WEBPACK_IMPORTED_MODULE_4__["default"]; });
-
-/* harmony import */ var _markAsNotSpamHandler__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./markAsNotSpamHandler */ "./src/App/Components/CommentActions/Handlers/markAsNotSpamHandler.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MarkAsNotSpamHandler", function() { return _markAsNotSpamHandler__WEBPACK_IMPORTED_MODULE_5__["default"]; });
-
+/* harmony import */ var _markAsNotSpamHandler__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./markAsNotSpamHandler */ "./src/App/Components/CommentActions/Handlers/markAsNotSpamHandler.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MarkAsNotSpamHandler", function() { return _markAsNotSpamHandler__WEBPACK_IMPORTED_MODULE_4__["default"]; });
 
 
 
@@ -33718,8 +33768,7 @@ var MarkAsNotSpamHandler = /*#__PURE__*/function (_ActionState) {
 
     _classCallCheck(this, MarkAsNotSpamHandler);
 
-    _this = _super.call(this);
-    _this.comment = comment;
+    _this = _super.call(this, comment);
 
     _this.setMessages('mark_ham');
 
@@ -33829,8 +33878,7 @@ var MarkAsSpamHandler = /*#__PURE__*/function (_ActionState) {
 
     _classCallCheck(this, MarkAsSpamHandler);
 
-    _this = _super.call(this);
-    _this.comment = comment;
+    _this = _super.call(this, comment);
 
     _this.setMessages('mark_spam');
 
@@ -33889,6 +33937,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
 /* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13__);
 /* harmony import */ var _actionState__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../../actionState */ "./src/App/actionState.js");
+/* harmony import */ var _Data_Comments_comment__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../../../Data/Comments/comment */ "./src/Data/Comments/comment.js");
 
 
 
@@ -33928,6 +33977,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 
 
+
 var UnApproveCommentHandler = /*#__PURE__*/function (_ActionState) {
   _inherits(UnApproveCommentHandler, _ActionState);
 
@@ -33938,8 +33988,7 @@ var UnApproveCommentHandler = /*#__PURE__*/function (_ActionState) {
 
     _classCallCheck(this, UnApproveCommentHandler);
 
-    _this = _super.call(this);
-    _this.comment = comment;
+    _this = _super.call(this, comment);
 
     _this.setMessages('unapprove');
 
@@ -34006,7 +34055,6 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentActions/sty
         'approve': _Handlers__WEBPACK_IMPORTED_MODULE_3__["ApproveCommentHandler"],
         'unapprove': _Handlers__WEBPACK_IMPORTED_MODULE_3__["UnApproveCommentHandler"],
         'delete': _Handlers__WEBPACK_IMPORTED_MODULE_3__["DeleteCommentHandler"],
-        'edit': _Handlers__WEBPACK_IMPORTED_MODULE_3__["EditCommentHandler"],
         'mark-spam': _Handlers__WEBPACK_IMPORTED_MODULE_3__["MarkAsSpamHandler"],
         'mark-ham': _Handlers__WEBPACK_IMPORTED_MODULE_3__["MarkAsNotSpamHandler"]
       }
@@ -34049,7 +34097,7 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentActions/sty
 /***/ (function(module, exports) {
 
 // Module
-var code = "<div class=\"comment-display__actions\" v-if=\"permissions !== null\">\r\n\r\n    <meerkat-stateful-confirm-dialog\r\n            name=\"meerkatActionConfirm\" v-if=\"currentAction !== null && currentAction.display === true\"\r\n            :action-state=\"currentAction\" v-on:cancel=\"checkForDismiss\"></meerkat-stateful-confirm-dialog>\r\n\r\n    <ul class=\"flex\">\r\n        <li class=\"mr-2\" v-if=\"comment.published === false && permissions.canApproveComments === true\">\r\n            <a v-on:click=\"performAction('approve', comment)\">\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                         xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\"\r\n                                                                        fill=\"none\" fill-rule=\"evenodd\"> <g\r\n                            id=\"icon-shape\"><polygon id=\"Path-126\" points=\"0 11 2 9 7 14 18 3 20 5 7 18\"></polygon></g></g></svg>\r\n                </span>\r\n                {{ trans('actions.approve') }}\r\n            </a>\r\n        </li>\r\n\r\n        <li class=\"mr-2\" v-if=\"comment.published === true && permissions.canUnApproveComments === true\">\r\n            <a v-on:click=\"performAction('unapprove', comment)\">\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                         xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n\t\t\t\t\t\t<g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\r\n\t\t\t\t\t\t\t<g id=\"icon-shape\">\r\n\t\t\t\t\t\t\t\t<polygon id=\"Combined-Shape\"\r\n                                         points=\"10 8.58578644 2.92893219 1.51471863 1.51471863 2.92893219 8.58578644 10 1.51471863 17.0710678 2.92893219 18.4852814 10 11.4142136 17.0710678 18.4852814 18.4852814 17.0710678 11.4142136 10 18.4852814 2.92893219 17.0710678 1.51471863 10 8.58578644\"></polygon>\r\n\t\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</svg>\r\n                </span>\r\n                {{ trans('actions.unapprove') }}\r\n            </a>\r\n        </li>\r\n\r\n        <li class=\"mr-2\" v-if=\"permissions.canReplyToComments === true\">\r\n            <a>\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                         xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n\t\t\t\t\t\t<g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\r\n\t\t\t\t\t\t\t<g id=\"icon-shape\">\r\n\t\t\t\t\t\t\t\t<path d=\"M15,17 L15,14.009763 C15,11.795232 13.2081782,10 10.9976305,10 L8,10 L8,15 L2,9 L8,3 L8,8 L10.9946916,8 C14.3113318,8 17,10.6930342 17,14 L17,17 L15,17 L15,17 Z\"\r\n                                      id=\"Combined-Shape\"></path>\r\n\t\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</svg>\r\n                </span>\r\n                {{ trans('actions.reply') }}\r\n            </a>\r\n        </li>\r\n\r\n        <li class=\"mr-2\" v-if=\"permissions.canEditComments === true\">\r\n            <a v-on:click=\"performAction('edit', comment)\">\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                         xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n\t\t\t\t\t\t<g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\r\n\t\t\t\t\t\t\t<g id=\"icon-shape\">\r\n\t\t\t\t\t\t\t\t<path d=\"M12.2928932,3.70710678 L0,16 L0,20 L4,20 L16.2928932,7.70710678 L12.2928932,3.70710678 Z M13.7071068,2.29289322 L16,0 L20,4 L17.7071068,6.29289322 L13.7071068,2.29289322 Z\"\r\n                                      id=\"Combined-Shape\"></path>\r\n\t\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</svg>\r\n                </span>\r\n                {{ trans('actions.edit') }}\r\n            </a>\r\n        </li>\r\n\r\n        <li class=\"mr-2\" v-if=\"comment.hasBeenCheckedForSpam === false && (permissions.canReportAsSpam || permissions.canReportAsHam)\">\r\n            <dropdown-list>\r\n                <template #trigger>\r\n                    <a>\r\n                        <span class=\"action__icon\">\r\n                            <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                                 xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n                                <g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\r\n                                    <g id=\"icon-shape\">\r\n                                        <path d=\"M19,10.9999798 C19,13.2091299 17.4323196,15.8709335 15.5074835,16.940287 L10,20 L4.49251651,16.940287 C2.5636529,15.8686961 1,13.2055487 1,10.9999798 L1,3 C4.3761817,3 7.49184447,1.88458585 9.99858329,0.00216256114 C12.5058076,1.88587336 15.6225461,3.00212826 19,3.00212826 L19,10.9999798 Z M10,12.083735 L7.07502008,14.1191153 L8.1069132,10.708327 L5.26728307,8.55547283 L8.83000801,8.48286996 L10,5.11695271 L11.169992,8.48286996 L14.7327169,8.55547283 L11.8930868,10.708327 L12.9249799,14.1191153 L10,12.083735 Z\"\r\n                                              id=\"Combined-Shape\"></path>\r\n                                    </g>\r\n                                </g>\r\n                                </svg>\r\n                        </span>\r\n\r\n                        {{ trans('actions.update_spam') }}\r\n\r\n                        <button class=\"rotating-dots-button\" :aria-label=\"__('Open Dropdown')\" style=\"display: inline\">\r\n                            <svg class=\"rotating-dots fill-current\" width=\"12\" viewBox=\"0 0 24 24\"><circle cx=\"3\" cy=\"12\" r=\"3\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/><circle cx=\"21\" cy=\"12\" r=\"3\"/></svg>\r\n                        </button>\r\n                    </a>\r\n                </template>\r\n\r\n                <dropdown-item v-if=\"permissions.canReportAsSpam\" :text=\"trans('actions.update_as_spam')\" v-on:click=\"performAction('mark-spam', comment)\"></dropdown-item>\r\n                <dropdown-item v-if=\"permissions.canReportAsHam\" :text=\"trans('actions.update_as_ham')\" v-on:click=\"performAction('mark-ham', comment)\"></dropdown-item>\r\n            </dropdown-list>\r\n        </li>\r\n\r\n        <li class=\"mr-2\"\r\n            v-if=\"permissions.canReportAsSpam === true && (comment.hasBeenCheckedForSpam === true && (comment.isSpam === null || comment.isSpam === false))\">\r\n            <a v-on:click=\"performAction('mark-spam', comment)\">\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                         xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n\t\t\t\t\t\t<g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\r\n\t\t\t\t\t\t\t<g id=\"icon-shape\">\r\n\t\t\t\t\t\t\t\t<path d=\"M19,10.9999798 C19,13.2091299 17.4323196,15.8709335 15.5074835,16.940287 L10,20 L4.49251651,16.940287 C2.5636529,15.8686961 1,13.2055487 1,10.9999798 L1,3 C4.3761817,3 7.49184447,1.88458585 9.99858329,0.00216256114 C12.5058076,1.88587336 15.6225461,3.00212826 19,3.00212826 L19,10.9999798 Z M10,12.083735 L7.07502008,14.1191153 L8.1069132,10.708327 L5.26728307,8.55547283 L8.83000801,8.48286996 L10,5.11695271 L11.169992,8.48286996 L14.7327169,8.55547283 L11.8930868,10.708327 L12.9249799,14.1191153 L10,12.083735 Z\"\r\n                                      id=\"Combined-Shape\"></path>\r\n\t\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</svg>\r\n                </span>\r\n                {{ trans('actions.mark_spam') }}\r\n            </a>\r\n        </li>\r\n\r\n        <li class=\"mr-2\"\r\n            v-if=\"permissions.canReportAsHam === true && (comment.hasBeenCheckedForSpam === true && (comment.isSpam === null || comment.isSpam === true))\">\r\n            <a v-on:click=\"performAction('mark-ham', comment)\">\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                         xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n\t\t\t\t\t\t<g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\r\n\t\t\t\t\t\t\t<g id=\"icon-shape\">\r\n\t\t\t\t\t\t\t\t<path d=\"M19,10.9999798 C19,13.2091299 17.4323196,15.8709335 15.5074835,16.940287 L10,20 L4.49251651,16.940287 C2.5636529,15.8686961 1,13.2055487 1,10.9999798 L1,3 C4.3761817,3 7.49184447,1.88458585 9.99858329,0.00216256114 C12.5058076,1.88587336 15.6225461,3.00212826 19,3.00212826 L19,10.9999798 Z M10,12.083735 L7.07502008,14.1191153 L8.1069132,10.708327 L5.26728307,8.55547283 L8.83000801,8.48286996 L10,5.11695271 L11.169992,8.48286996 L14.7327169,8.55547283 L11.8930868,10.708327 L12.9249799,14.1191153 L10,12.083735 Z\"\r\n                                      id=\"Combined-Shape\"></path>\r\n\t\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</svg>\r\n                </span>\r\n                {{ trans('actions.mark_ham') }}\r\n            </a>\r\n        </li>\r\n\r\n        <li class=\"mr-2\" v-if=\"permissions.canRemoveComments === true\">\r\n            <a v-on:click=\"performAction('delete', comment)\">\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                         xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n\t\t\t\t\t\t<g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\r\n\t\t\t\t\t\t\t<g id=\"icon-shape\">\r\n\t\t\t\t\t\t\t\t<path d=\"M2,2 L18,2 L18,4 L2,4 L2,2 Z M8,0 L12,0 L14,2 L6,2 L8,0 Z M3,6 L17,6 L16,20 L4,20 L3,6 Z M8,8 L9,8 L9,18 L8,18 L8,8 Z M11,8 L12,8 L12,18 L11,18 L11,8 Z\"\r\n                                      id=\"Combined-Shape\"></path>\r\n\r\n\t\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</svg>\r\n                </span>\r\n                {{ trans('actions.delete') }}\r\n            </a>\r\n        </li>\r\n    </ul>\r\n</div>\r\n\r\n";
+var code = "<div class=\"comment-display__actions\" v-if=\"permissions !== null\">\r\n\r\n    <meerkat-stateful-confirm-dialog\r\n            name=\"meerkatActionConfirm\" v-if=\"currentAction !== null && currentAction.display === true\"\r\n            :action-state=\"currentAction\" v-on:cancel=\"checkForDismiss\"></meerkat-stateful-confirm-dialog>\r\n\r\n    <ul class=\"flex\">\r\n        <li class=\"mr-2\" v-if=\"comment.published === false && permissions.canApproveComments === true\">\r\n            <a v-on:click=\"$emit('action-approve', comment); performAction('approve', comment)\">\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                         xmlns:xlink=\"http://www.w3.org/1999/xlink\"> <g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\"\r\n                                                                        fill=\"none\" fill-rule=\"evenodd\"> <g\r\n                            id=\"icon-shape\"><polygon id=\"Path-126\" points=\"0 11 2 9 7 14 18 3 20 5 7 18\"></polygon></g></g></svg>\r\n                </span>\r\n                {{ trans('actions.approve') }}\r\n            </a>\r\n        </li>\r\n\r\n        <li class=\"mr-2\" v-if=\"comment.published === true && permissions.canUnApproveComments === true\">\r\n            <a v-on:click=\"$emit('action-unapprove', comment); performAction('unapprove', comment)\">\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                         xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n\t\t\t\t\t\t<g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\r\n\t\t\t\t\t\t\t<g id=\"icon-shape\">\r\n\t\t\t\t\t\t\t\t<polygon id=\"Combined-Shape\"\r\n                                         points=\"10 8.58578644 2.92893219 1.51471863 1.51471863 2.92893219 8.58578644 10 1.51471863 17.0710678 2.92893219 18.4852814 10 11.4142136 17.0710678 18.4852814 18.4852814 17.0710678 11.4142136 10 18.4852814 2.92893219 17.0710678 1.51471863 10 8.58578644\"></polygon>\r\n\t\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</svg>\r\n                </span>\r\n                {{ trans('actions.unapprove') }}\r\n            </a>\r\n        </li>\r\n\r\n        <li class=\"mr-2\" v-if=\"permissions.canReplyToComments === true\">\r\n            <a v-on:click=\"$emit('action-reply', comment)\">\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                         xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n\t\t\t\t\t\t<g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\r\n\t\t\t\t\t\t\t<g id=\"icon-shape\">\r\n\t\t\t\t\t\t\t\t<path d=\"M15,17 L15,14.009763 C15,11.795232 13.2081782,10 10.9976305,10 L8,10 L8,15 L2,9 L8,3 L8,8 L10.9946916,8 C14.3113318,8 17,10.6930342 17,14 L17,17 L15,17 L15,17 Z\"\r\n                                      id=\"Combined-Shape\"></path>\r\n\t\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</svg>\r\n                </span>\r\n                {{ trans('actions.reply') }}\r\n            </a>\r\n        </li>\r\n\r\n        <li class=\"mr-2\" v-if=\"permissions.canEditComments === true\">\r\n            <a v-on:click=\"$emit('action-edit', comment); comment.startEditing()\">\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                         xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n\t\t\t\t\t\t<g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\r\n\t\t\t\t\t\t\t<g id=\"icon-shape\">\r\n\t\t\t\t\t\t\t\t<path d=\"M12.2928932,3.70710678 L0,16 L0,20 L4,20 L16.2928932,7.70710678 L12.2928932,3.70710678 Z M13.7071068,2.29289322 L16,0 L20,4 L17.7071068,6.29289322 L13.7071068,2.29289322 Z\"\r\n                                      id=\"Combined-Shape\"></path>\r\n\t\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</svg>\r\n                </span>\r\n                {{ trans('actions.edit') }}\r\n            </a>\r\n        </li>\r\n\r\n        <li class=\"mr-2\" v-if=\"comment.hasBeenCheckedForSpam === false && (permissions.canReportAsSpam || permissions.canReportAsHam)\">\r\n            <dropdown-list>\r\n                <template #trigger>\r\n                    <a>\r\n                        <span class=\"action__icon\">\r\n                            <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                                 xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n                                <g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\r\n                                    <g id=\"icon-shape\">\r\n                                        <path d=\"M19,10.9999798 C19,13.2091299 17.4323196,15.8709335 15.5074835,16.940287 L10,20 L4.49251651,16.940287 C2.5636529,15.8686961 1,13.2055487 1,10.9999798 L1,3 C4.3761817,3 7.49184447,1.88458585 9.99858329,0.00216256114 C12.5058076,1.88587336 15.6225461,3.00212826 19,3.00212826 L19,10.9999798 Z M10,12.083735 L7.07502008,14.1191153 L8.1069132,10.708327 L5.26728307,8.55547283 L8.83000801,8.48286996 L10,5.11695271 L11.169992,8.48286996 L14.7327169,8.55547283 L11.8930868,10.708327 L12.9249799,14.1191153 L10,12.083735 Z\"\r\n                                              id=\"Combined-Shape\"></path>\r\n                                    </g>\r\n                                </g>\r\n                                </svg>\r\n                        </span>\r\n\r\n                        {{ trans('actions.update_spam') }}\r\n\r\n                        <button class=\"rotating-dots-button\" :aria-label=\"__('Open Dropdown')\" style=\"display: inline\">\r\n                            <svg class=\"rotating-dots fill-current\" width=\"12\" viewBox=\"0 0 24 24\"><circle cx=\"3\" cy=\"12\" r=\"3\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/><circle cx=\"21\" cy=\"12\" r=\"3\"/></svg>\r\n                        </button>\r\n                    </a>\r\n                </template>\r\n\r\n                <dropdown-item v-if=\"permissions.canReportAsSpam\" :text=\"trans('actions.update_as_spam')\" v-on:click=\"$emit('action-spam', comment); performAction('mark-spam', comment)\"></dropdown-item>\r\n                <dropdown-item v-if=\"permissions.canReportAsHam\" :text=\"trans('actions.update_as_ham')\" v-on:click=\"$emit('action-ham', comment); performAction('mark-ham', comment)\"></dropdown-item>\r\n            </dropdown-list>\r\n        </li>\r\n\r\n        <li class=\"mr-2\"\r\n            v-if=\"permissions.canReportAsSpam === true && (comment.hasBeenCheckedForSpam === true && (comment.isSpam === null || comment.isSpam === false))\">\r\n            <a v-on:click=\"$emit('action-spam', comment); performAction('mark-spam', comment)\">\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                         xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n\t\t\t\t\t\t<g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\r\n\t\t\t\t\t\t\t<g id=\"icon-shape\">\r\n\t\t\t\t\t\t\t\t<path d=\"M19,10.9999798 C19,13.2091299 17.4323196,15.8709335 15.5074835,16.940287 L10,20 L4.49251651,16.940287 C2.5636529,15.8686961 1,13.2055487 1,10.9999798 L1,3 C4.3761817,3 7.49184447,1.88458585 9.99858329,0.00216256114 C12.5058076,1.88587336 15.6225461,3.00212826 19,3.00212826 L19,10.9999798 Z M10,12.083735 L7.07502008,14.1191153 L8.1069132,10.708327 L5.26728307,8.55547283 L8.83000801,8.48286996 L10,5.11695271 L11.169992,8.48286996 L14.7327169,8.55547283 L11.8930868,10.708327 L12.9249799,14.1191153 L10,12.083735 Z\"\r\n                                      id=\"Combined-Shape\"></path>\r\n\t\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</svg>\r\n                </span>\r\n                {{ trans('actions.mark_spam') }}\r\n            </a>\r\n        </li>\r\n\r\n        <li class=\"mr-2\"\r\n            v-if=\"permissions.canReportAsHam === true && (comment.hasBeenCheckedForSpam === true && (comment.isSpam === null || comment.isSpam === true))\">\r\n            <a v-on:click=\"$emit('action-ham', comment); performAction('mark-ham', comment)\">\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                         xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n\t\t\t\t\t\t<g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\r\n\t\t\t\t\t\t\t<g id=\"icon-shape\">\r\n\t\t\t\t\t\t\t\t<path d=\"M19,10.9999798 C19,13.2091299 17.4323196,15.8709335 15.5074835,16.940287 L10,20 L4.49251651,16.940287 C2.5636529,15.8686961 1,13.2055487 1,10.9999798 L1,3 C4.3761817,3 7.49184447,1.88458585 9.99858329,0.00216256114 C12.5058076,1.88587336 15.6225461,3.00212826 19,3.00212826 L19,10.9999798 Z M10,12.083735 L7.07502008,14.1191153 L8.1069132,10.708327 L5.26728307,8.55547283 L8.83000801,8.48286996 L10,5.11695271 L11.169992,8.48286996 L14.7327169,8.55547283 L11.8930868,10.708327 L12.9249799,14.1191153 L10,12.083735 Z\"\r\n                                      id=\"Combined-Shape\"></path>\r\n\t\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</svg>\r\n                </span>\r\n                {{ trans('actions.mark_ham') }}\r\n            </a>\r\n        </li>\r\n\r\n        <li class=\"mr-2\" v-if=\"permissions.canRemoveComments === true\">\r\n            <a v-on:click=\"$emit('action-remove', comment); performAction('delete', comment)\">\r\n                <span class=\"action__icon\">\r\n                    <svg viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\"\r\n                         xmlns:xlink=\"http://www.w3.org/1999/xlink\">\r\n\t\t\t\t\t\t<g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\">\r\n\t\t\t\t\t\t\t<g id=\"icon-shape\">\r\n\t\t\t\t\t\t\t\t<path d=\"M2,2 L18,2 L18,4 L2,4 L2,2 Z M8,0 L12,0 L14,2 L6,2 L8,0 Z M3,6 L17,6 L16,20 L4,20 L3,6 Z M8,8 L9,8 L9,18 L8,18 L8,8 Z M11,8 L12,8 L12,18 L11,18 L11,8 Z\"\r\n                                      id=\"Combined-Shape\"></path>\r\n\r\n\t\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</g>\r\n\t\t\t\t\t\t</svg>\r\n                </span>\r\n                {{ trans('actions.delete') }}\r\n            </a>\r\n        </li>\r\n    </ul>\r\n</div>\r\n\r\n";
 // Exports
 module.exports = code;
 
@@ -34125,7 +34173,7 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentDisplay/sty
 /***/ (function(module, exports) {
 
 // Module
-var code = "<div class=\"comment-display\">\r\n    <reply-author v-if=\"comment.hasParentAuthor()\" :author=\"comment.getParentAuthor()\" :avatar-driver=\"avatarDriver\"></reply-author>\r\n\r\n    <div class=\"comment-display__content\" v-html=\"parseMarkdown(comment.content)\"></div>\r\n\r\n    <comment-actions :comment=\"comment\" :permissions=\"permissions\"></comment-actions>\r\n</div>";
+var code = "<div class=\"comment-display\">\r\n    <reply-author v-if=\"comment.hasParentAuthor()\" :author=\"comment.getParentAuthor()\"\r\n                  :avatar-driver=\"avatarDriver\"></reply-author>\r\n\r\n    <div class=\"comment-display__content\" v-html=\"parseMarkdown(comment.content)\"></div>\r\n\r\n    <comment-actions :comment=\"comment\" :permissions=\"permissions\"\r\n                     v-on:action-approve=\"$emit('action-approve', comment)\"\r\n                     v-on:action-unapprove=\"$emit('action-unapprove', comment)\"\r\n                     v-on:action-reply=\"$emit('action-reply', comment)\"\r\n                     v-on:action-edit=\"$emit('action-edit', comment)\"\r\n                     v-on:action-ham=\"$emit('action-ham', comment)\"\r\n                     v-on:action-spam=\"$emit('action-spam', comment)\"\r\n                     v-on:action-remove=\"$emit('action-remove', comment)\"></comment-actions>\r\n</div>";
 // Exports
 module.exports = code;
 
@@ -34142,10 +34190,34 @@ module.exports = code;
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./template.html */ "./src/App/Components/CommentEditor/template.html");
 /* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_template_html__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../Mixins/usesTranslator */ "./src/App/Mixins/usesTranslator.js");
+
+
+
+__webpack_require__(/*! ./style.less */ "./src/App/Components/CommentEditor/style.less");
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  template: _template_html__WEBPACK_IMPORTED_MODULE_0___default.a
+  template: _template_html__WEBPACK_IMPORTED_MODULE_0___default.a,
+  mixins: [_Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_1__["default"]],
+  props: {
+    comment: {
+      type: Object,
+      "default": null
+    }
+  },
+  created: function created() {}
 });
+
+/***/ }),
+
+/***/ "./src/App/Components/CommentEditor/style.less":
+/*!*****************************************************!*\
+  !*** ./src/App/Components/CommentEditor/style.less ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
 
 /***/ }),
 
@@ -34157,30 +34229,52 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports) {
 
 // Module
-var code = "<div>\r\n    <p>I am comment editor!</p>\r\n</div>";
+var code = "<div>\r\n    <div class=\"meerkat__temp-markdown-editor--wrapper\">\r\n        <markdown-fieldtype v-model=\"comment.editProperties.content\"></markdown-fieldtype>\r\n    </div>\r\n\r\n    <div class=\"p-2 bg-grey-20 border-t flex items-center text-sm\">\r\n        <button class=\"btn-primary mr-2\" v-on:click=\"$emit('update-requested', comment)\">{{\r\n            trans('actions.edit_confirm_button') }}\r\n        </button>\r\n        <button class=\"text-grey hover:text=grey-90\"\r\n                v-on:click=\"$emit('update-canceled', comment); comment.cancelEditing()\">{{ trans('actions.cancel') }}\r\n        </button>\r\n    </div>\r\n</div>";
 // Exports
 module.exports = code;
 
 /***/ }),
 
-/***/ "./src/App/Components/DataTable/index.js":
-/*!***********************************************!*\
-  !*** ./src/App/Components/DataTable/index.js ***!
-  \***********************************************/
+/***/ "./src/App/Components/CommentTable/Handlers/editCommentHandler.js":
+/*!************************************************************************!*\
+  !*** ./src/App/Components/CommentTable/Handlers/editCommentHandler.js ***!
+  \************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./template.html */ "./src/App/Components/DataTable/template.html");
-/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_template_html__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _Http_Responses_commentResponse__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../Http/Responses/commentResponse */ "./src/Http/Responses/commentResponse.js");
-/* harmony import */ var _Config_environment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../Config/environment */ "./src/Config/environment.js");
-/* harmony import */ var _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../Extend/Avatars/avatarDriverRegistry */ "./src/Extend/Avatars/avatarDriverRegistry.js");
-/* harmony import */ var _AuthorDisplay__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../AuthorDisplay */ "./src/App/Components/AuthorDisplay/index.js");
-/* harmony import */ var _CommentDisplay__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../CommentDisplay */ "./src/App/Components/CommentDisplay/index.js");
-/* harmony import */ var _Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../Mixins/usesTranslator */ "./src/App/Mixins/usesTranslator.js");
-__webpack_require__(/*! ./style.less */ "./src/App/Components/DataTable/style.less");
+/* harmony import */ var core_js_modules_es_symbol__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.symbol */ "./node_modules/core-js/modules/es.symbol.js");
+/* harmony import */ var core_js_modules_es_symbol__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.symbol.description */ "./node_modules/core-js/modules/es.symbol.description.js");
+/* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.symbol.iterator */ "./node_modules/core-js/modules/es.symbol.iterator.js");
+/* harmony import */ var core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.date.to-string */ "./node_modules/core-js/modules/es.date.to-string.js");
+/* harmony import */ var core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.object.create */ "./node_modules/core-js/modules/es.object.create.js");
+/* harmony import */ var core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.object.define-property */ "./node_modules/core-js/modules/es.object.define-property.js");
+/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.object.get-prototype-of */ "./node_modules/core-js/modules/es.object.get-prototype-of.js");
+/* harmony import */ var core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/es.object.set-prototype-of */ "./node_modules/core-js/modules/es.object.set-prototype-of.js");
+/* harmony import */ var core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/es.object.to-string */ "./node_modules/core-js/modules/es.object.to-string.js");
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! core-js/modules/es.reflect.construct */ "./node_modules/core-js/modules/es.reflect.construct.js");
+/* harmony import */ var core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! core-js/modules/es.string.iterator */ "./node_modules/core-js/modules/es.string.iterator.js");
+/* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_12__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13__);
+/* harmony import */ var _actionState__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../../actionState */ "./src/App/actionState.js");
+/* harmony import */ var _trans__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../../../trans */ "./src/trans.js");
+/* harmony import */ var _Data_Comments_comment__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../../../Data/Comments/comment */ "./src/Data/Comments/comment.js");
 
 
 
@@ -34188,13 +34282,133 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/DataTable/style.le
 
 
 
+
+
+
+
+
+
+
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+
+
+
+
+var EditCommentHandler = /*#__PURE__*/function (_ActionState) {
+  _inherits(EditCommentHandler, _ActionState);
+
+  var _super = _createSuper(EditCommentHandler);
+
+  function EditCommentHandler(comment) {
+    var _this;
+
+    _classCallCheck(this, EditCommentHandler);
+
+    _this = _super.call(this, comment);
+
+    _this.setMessages('edit');
+
+    _this.confirmText = Object(_trans__WEBPACK_IMPORTED_MODULE_15__["default"])('actions.edit_confirm_button');
+    return _this;
+  }
+
+  _createClass(EditCommentHandler, [{
+    key: "proceedWith",
+    value: function proceedWith() {
+      return this.comment.save();
+    }
+  }]);
+
+  return EditCommentHandler;
+}(_actionState__WEBPACK_IMPORTED_MODULE_14__["default"]);
+
+/* harmony default export */ __webpack_exports__["default"] = (EditCommentHandler);
+
+/***/ }),
+
+/***/ "./src/App/Components/CommentTable/Handlers/index.js":
+/*!***********************************************************!*\
+  !*** ./src/App/Components/CommentTable/Handlers/index.js ***!
+  \***********************************************************/
+/*! exports provided: EditCommentHandler */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _editCommentHandler__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./editCommentHandler */ "./src/App/Components/CommentTable/Handlers/editCommentHandler.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "EditCommentHandler", function() { return _editCommentHandler__WEBPACK_IMPORTED_MODULE_0__["default"]; });
+
+
+
+
+/***/ }),
+
+/***/ "./src/App/Components/CommentTable/index.js":
+/*!**************************************************!*\
+  !*** ./src/App/Components/CommentTable/index.js ***!
+  \**************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Handlers__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Handlers */ "./src/App/Components/CommentTable/Handlers/index.js");
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./template.html */ "./src/App/Components/CommentTable/template.html");
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_template_html__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _Http_Responses_commentResponse__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../Http/Responses/commentResponse */ "./src/Http/Responses/commentResponse.js");
+/* harmony import */ var _Config_environment__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../Config/environment */ "./src/Config/environment.js");
+/* harmony import */ var _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../Extend/Avatars/avatarDriverRegistry */ "./src/Extend/Avatars/avatarDriverRegistry.js");
+/* harmony import */ var _AuthorDisplay__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../AuthorDisplay */ "./src/App/Components/AuthorDisplay/index.js");
+/* harmony import */ var _CommentDisplay__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../CommentDisplay */ "./src/App/Components/CommentDisplay/index.js");
+/* harmony import */ var _CommentEditor__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../CommentEditor */ "./src/App/Components/CommentEditor/index.js");
+/* harmony import */ var _Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../Mixins/usesTranslator */ "./src/App/Mixins/usesTranslator.js");
+/* harmony import */ var _Types_type__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../Types/type */ "./src/Types/type.js");
+/* harmony import */ var _actionState__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../actionState */ "./src/App/actionState.js");
+/* harmony import */ var _Mixins_actionHandler__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../Mixins/actionHandler */ "./src/App/Mixins/actionHandler.js");
+
+
+
+
+
+
+
+
+
+
+
+
+
+__webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style.less");
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  mixins: [_Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_6__["default"]],
-  template: _template_html__WEBPACK_IMPORTED_MODULE_0___default.a,
+  mixins: [_Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_8__["default"], _Mixins_actionHandler__WEBPACK_IMPORTED_MODULE_11__["default"]],
+  template: _template_html__WEBPACK_IMPORTED_MODULE_1___default.a,
   components: {
-    'author-display': _AuthorDisplay__WEBPACK_IMPORTED_MODULE_4__["default"],
-    'comment-display': _CommentDisplay__WEBPACK_IMPORTED_MODULE_5__["default"]
+    'author-display': _AuthorDisplay__WEBPACK_IMPORTED_MODULE_5__["default"],
+    'comment-display': _CommentDisplay__WEBPACK_IMPORTED_MODULE_6__["default"],
+    'comment-editor': _CommentEditor__WEBPACK_IMPORTED_MODULE_7__["default"]
   },
   props: {
     loading: {
@@ -34202,34 +34416,61 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/DataTable/style.le
       "default": false
     },
     comments: {
-      type: _Http_Responses_commentResponse__WEBPACK_IMPORTED_MODULE_1__["default"],
+      type: _Http_Responses_commentResponse__WEBPACK_IMPORTED_MODULE_2__["default"],
       "default": null
     }
   },
   data: function data() {
     return {
+      currentAction: null,
       avatarDriver: null,
-      permissions: null
+      permissions: null,
+      handlers: {
+        'edit': _Handlers__WEBPACK_IMPORTED_MODULE_0__["EditCommentHandler"]
+      }
     };
   },
-  methods: {},
+  methods: {
+    checkForDismiss: function checkForDismiss() {
+      if (this.currentAction !== null && this.currentAction.display === true && this.currentAction.canDismiss()) {
+        this.currentAction.dismiss();
+      }
+    },
+    performAction: function performAction(action, comment) {
+      if (_Types_type__WEBPACK_IMPORTED_MODULE_9__["default"].hasValue(this.handlers[action])) {
+        this.confirm(new this.handlers[action](comment)).onConfirm(function (state) {
+          state.proceed();
+        });
+      }
+    },
+    performActionNow: function performActionNow(action, comment) {
+      if (_Types_type__WEBPACK_IMPORTED_MODULE_9__["default"].hasValue(this.handlers[action])) {
+        this.confirm(new this.handlers[action](comment)).onConfirm(function (state) {
+          state.proceed();
+        }).start();
+      }
+    },
+    beforeEdit: function beforeEdit(comment) {
+      this.comments.comments.draftAllEditing();
+    }
+  },
   created: function created() {
-    this.permissions = _Config_environment__WEBPACK_IMPORTED_MODULE_2__["default"].getPermissions();
+    this.permissions = _Config_environment__WEBPACK_IMPORTED_MODULE_3__["default"].getPermissions();
 
-    if (_Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_3__["default"].hasDriver(_Config_environment__WEBPACK_IMPORTED_MODULE_2__["default"].Settings.avatarDriver)) {
-      this.avatarDriver = _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_3__["default"].getDriverName(_Config_environment__WEBPACK_IMPORTED_MODULE_2__["default"].Settings.avatarDriver);
+    if (_Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_4__["default"].hasDriver(_Config_environment__WEBPACK_IMPORTED_MODULE_3__["default"].Settings.avatarDriver)) {
+      this.avatarDriver = _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_4__["default"].getDriverName(_Config_environment__WEBPACK_IMPORTED_MODULE_3__["default"].Settings.avatarDriver);
     } else {
-      this.avatarDriver = _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_3__["default"].getDriverName(_Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_3__["default"].DefaultDriverName);
+      this.avatarDriver = _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_4__["default"].getDriverName(_Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_4__["default"].DefaultDriverName);
     }
   }
 });
 
 /***/ }),
 
-/***/ "./src/App/Components/DataTable/style.less":
-/*!*************************************************!*\
-  !*** ./src/App/Components/DataTable/style.less ***!
-  \*************************************************/
+/***/ "./src/App/Components/CommentTable/style.less":
+/*!****************************************************!*\
+  !*** ./src/App/Components/CommentTable/style.less ***!
+  \****************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -34237,15 +34478,15 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/DataTable/style.le
 
 /***/ }),
 
-/***/ "./src/App/Components/DataTable/template.html":
-/*!****************************************************!*\
-  !*** ./src/App/Components/DataTable/template.html ***!
-  \****************************************************/
+/***/ "./src/App/Components/CommentTable/template.html":
+/*!*******************************************************!*\
+  !*** ./src/App/Components/CommentTable/template.html ***!
+  \*******************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
 // Module
-var code = "<div class=\"card p-0 relative\">\r\n    <div class=\"data-table-header\">\r\n        <p>Threads displaying: {{ comments.threads.length }}</p>\r\n        <p>Authors displaying: {{ comments.authors.length }}</p>\r\n        <table class=\"data-table\" :class=\"{ 'opacity-50': loading }\">\r\n            <thead>\r\n            <tr>\r\n                <th class=\"comment-table__author-column\">{{ trans('display.header_author') }}</th>\r\n                <th>{{ trans('display.header_comment') }}</th>\r\n            </tr>\r\n            </thead>\r\n            <tbody>\r\n            <tr>\r\n                <td colspan=\"2\">\r\n                    <p>In response to: Some thread.</p>\r\n                </td>\r\n            </tr>\r\n            <tr v-for=\"(comment, i) in comments.comments\" class=\"meerkat__comment-row\"\r\n                v-bind:class=\"{ 'meerkat__comment-row--spam': (comment.hasBeenCheckedForSpam && comment.isSpam === true), 'meerkat__comment-row--pending': (comment.published || comment.hasBeenCheckedForSpam === false) }\"\r\n                v-if=\"comment.isDeleted === false\">\r\n                <td class=\"author-display__container\">\r\n                    <author-display :author=\"comment.getAuthor()\" :avatar-driver=\"avatarDriver\"></author-display>\r\n                </td>\r\n                <td>\r\n                    <comment-display :comment=\"comment\" :avatar-driver=\"avatarDriver\" :permissions=\"permissions\"></comment-display>\r\n                </td>\r\n            </tr>\r\n            </tbody>\r\n        </table>\r\n    </div>\r\n</div>";
+var code = "<div>\r\n    <meerkat-stateful-confirm-dialog\r\n            name=\"tableMeerkatActionConfirm\" v-if=\"currentAction !== null && currentAction.display === true\"\r\n            :action-state=\"currentAction\" v-on:cancel=\"checkForDismiss\"></meerkat-stateful-confirm-dialog>\r\n\r\n    <div class=\"card p-0 relative\">\r\n        <div class=\"data-table-header\">\r\n            <table class=\"data-table\"\r\n                   :class=\"{ 'opacity-50': loading, 'meerkat__comment-table--focus': comments.comments.editCount > 0 }\">\r\n                <thead>\r\n                <tr>\r\n                    <th class=\"comment-table__author-column\">{{ trans('display.header_author') }}</th>\r\n                    <th>{{ trans('display.header_comment') }}</th>\r\n                </tr>\r\n                </thead>\r\n                <tbody>\r\n                <tr>\r\n                    <td colspan=\"2\">\r\n                        <p>In response to: Some thread.</p>\r\n                    </td>\r\n                </tr>\r\n                <tr v-for=\"(comment, i) in comments.comments\" class=\"meerkat__comment-row\"\r\n                    v-bind:class=\"{ 'meerkat__comment-row--focused': comment.state.isEditing, 'meerkat__comment-row--spam': (comment.hasBeenCheckedForSpam && comment.isSpam === true), 'meerkat__comment-row--pending': (comment.published || comment.hasBeenCheckedForSpam === false) }\"\r\n                    v-if=\"comment.isDeleted === false\">\r\n                    <td class=\"author-display__container\">\r\n                        <author-display :author=\"comment.getAuthor()\" :avatar-driver=\"avatarDriver\"></author-display>\r\n                    </td>\r\n                    <td>\r\n                        <comment-display v-if=\"comment.state.isEditing === false\" :comment=\"comment\"\r\n                                         :avatar-driver=\"avatarDriver\" :permissions=\"permissions\"\r\n                                         v-on:action-edit=\"beforeEdit\"></comment-display>\r\n                        <comment-editor v-if=\"comment.state.isEditing === true\" :comment=\"comment\"\r\n                                        v-on:update-requested=\"performActionNow('edit', comment)\"></comment-editor>\r\n                    </td>\r\n                </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n    </div>\r\n</div>";
 // Exports
 module.exports = code;
 
@@ -34675,7 +34916,7 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/ReplyToAuthorDispl
 /***/ (function(module, exports) {
 
 // Module
-var code = "<div class=\"comment-display__author-reply\">\r\n\r\n    <span><strong>{{ trans('display.author_in_reply_to') }}</strong></span>:\r\n    <div class=\"comment-display__author-reply-avatar\">\r\n        <component :is=\"avatarDriver\" v-bind=\"getAuthor()\"></component>\r\n    </div>\r\n    <span :title=\"author.name\">{{ author.name | meerkatTruncate(15) }}</span>\r\n\r\n</div>";
+var code = "<div class=\"comment-display__author-reply\" v-on:click=\"$emit('author-clicked', author)\">\r\n    <span><strong>{{ trans('display.author_in_reply_to') }}</strong></span>:\r\n    <div class=\"comment-display__author-reply-avatar\">\r\n        <component :is=\"avatarDriver\" v-bind=\"getAuthor()\"></component>\r\n    </div>\r\n    <span :title=\"author.name\">{{ author.name | meerkatTruncate(15) }}</span>\r\n</div>";
 // Exports
 module.exports = code;
 
@@ -34741,6 +34982,7 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/StatefulConfirmati
       });
     },
     getInteractionProperties: function getInteractionProperties() {
+      console.log('get interaction?', this, this.actionState, this.actionState.comment);
       return {
         state: this.actionState,
         comment: this.actionState.comment
@@ -34931,6 +35173,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Types_guid__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ../Types/guid */ "./src/Types/guid.js");
 /* harmony import */ var _Repositories_errorsRepository__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ../Repositories/errorsRepository */ "./src/Repositories/errorsRepository.js");
 /* harmony import */ var _Config_environment__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ../Config/environment */ "./src/Config/environment.js");
+/* harmony import */ var _Data_Comments_comment__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ../Data/Comments/comment */ "./src/Data/Comments/comment.js");
 
 
 
@@ -34979,18 +35222,20 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 
 
+
 var ActionState = /*#__PURE__*/function (_EventEmitter) {
   _inherits(ActionState, _EventEmitter);
 
   var _super = _createSuper(ActionState);
 
-  function ActionState() {
+  function ActionState(comment) {
     var _this;
 
     _classCallCheck(this, ActionState);
 
     _this = _super.call(this);
     ActionState.CurrentActionId = _Types_guid__WEBPACK_IMPORTED_MODULE_21__["default"].newGuid();
+    _this.comment = comment;
     _this.useTelemetry = _Config_environment__WEBPACK_IMPORTED_MODULE_23__["default"].isTelemetryEnabled();
     _this.display = false;
     _this.title = 'Please override this title: title';
@@ -35216,6 +35461,13 @@ var ActionState = /*#__PURE__*/function (_EventEmitter) {
           }
         }.bind(this));
       }
+    }
+  }, {
+    key: "start",
+    value: function start() {
+      this._confirm();
+
+      return this;
     }
   }, {
     key: "onConfirm",
@@ -35948,20 +36200,26 @@ Author.ApiUserIp = 'user_ip';
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.function.bind */ "./node_modules/core-js/modules/es.function.bind.js");
 /* harmony import */ var core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.object.define-property */ "./node_modules/core-js/modules/es.object.define-property.js");
-/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.object.to-string */ "./node_modules/core-js/modules/es.object.to-string.js");
-/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_promise__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.promise */ "./node_modules/core-js/modules/es.promise.js");
-/* harmony import */ var core_js_modules_es_promise__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_promise__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _Types_common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../Types/common */ "./src/Types/common.js");
-/* harmony import */ var _Concerns_canBeSelected__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../Concerns/canBeSelected */ "./src/Data/Concerns/canBeSelected.js");
-/* harmony import */ var _author__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./author */ "./src/Data/Comments/author.js");
-/* harmony import */ var _threadContext__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./threadContext */ "./src/Data/Comments/threadContext.js");
-/* harmony import */ var _Http_Responses_baseResponse__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../Http/Responses/baseResponse */ "./src/Http/Responses/baseResponse.js");
-/* harmony import */ var _Http_Responses_errorResponse__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../Http/Responses/errorResponse */ "./src/Http/Responses/errorResponse.js");
-/* harmony import */ var _Http_Responses_commentMutationResponse__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../Http/Responses/commentMutationResponse */ "./src/Http/Responses/commentMutationResponse.js");
-/* harmony import */ var _Http_Responses_commentRemovedResponse__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../Http/Responses/commentRemovedResponse */ "./src/Http/Responses/commentRemovedResponse.js");
+/* harmony import */ var core_js_modules_es_object_assign__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.object.assign */ "./node_modules/core-js/modules/es.object.assign.js");
+/* harmony import */ var core_js_modules_es_object_assign__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_assign__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.object.define-property */ "./node_modules/core-js/modules/es.object.define-property.js");
+/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.object.to-string */ "./node_modules/core-js/modules/es.object.to-string.js");
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_promise__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.promise */ "./node_modules/core-js/modules/es.promise.js");
+/* harmony import */ var core_js_modules_es_promise__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_promise__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_web_timers__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/web.timers */ "./node_modules/core-js/modules/web.timers.js");
+/* harmony import */ var core_js_modules_web_timers__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_timers__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _Types_common__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../Types/common */ "./src/Types/common.js");
+/* harmony import */ var _Concerns_canBeSelected__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../Concerns/canBeSelected */ "./src/Data/Concerns/canBeSelected.js");
+/* harmony import */ var _author__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./author */ "./src/Data/Comments/author.js");
+/* harmony import */ var _threadContext__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./threadContext */ "./src/Data/Comments/threadContext.js");
+/* harmony import */ var _Http_Responses_baseResponse__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../Http/Responses/baseResponse */ "./src/Http/Responses/baseResponse.js");
+/* harmony import */ var _Http_Responses_errorResponse__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../Http/Responses/errorResponse */ "./src/Http/Responses/errorResponse.js");
+/* harmony import */ var _Http_Responses_commentMutationResponse__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../Http/Responses/commentMutationResponse */ "./src/Http/Responses/commentMutationResponse.js");
+/* harmony import */ var _Http_Responses_commentRemovedResponse__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../Http/Responses/commentRemovedResponse */ "./src/Http/Responses/commentRemovedResponse.js");
+
+
 
 
 
@@ -35989,7 +36247,7 @@ var Comment = /*#__PURE__*/function () {
   function Comment() {
     _classCallCheck(this, Comment);
 
-    Object(_Concerns_canBeSelected__WEBPACK_IMPORTED_MODULE_5__["canBeSelected"])(this);
+    Object(_Concerns_canBeSelected__WEBPACK_IMPORTED_MODULE_7__["canBeSelected"])(this);
     /** {CommentResponse} */
 
     this._internalCommentResponse = null;
@@ -36020,18 +36278,54 @@ var Comment = /*#__PURE__*/function () {
     this.isDeleted = false;
     this.hasBeenCheckedForSpam = false;
     this.isSpam = null;
+    this.state = {
+      isEditing: false
+    };
+    this.editProperties = null;
   }
-  /**
-   * Tests if the comment has an author.
-   *
-   * @returns {boolean}
-   */
-
 
   _createClass(Comment, [{
+    key: "startEditing",
+    value: function startEditing() {
+      if (this.editProperties === null) {
+        this.editProperties = Object.assign({}, this);
+      }
+
+      this.state.isEditing = true;
+
+      if (_Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].hasValue(this._internalCommentResponse)) {
+        this._internalCommentResponse.comments.setEditing(this);
+      }
+    }
+  }, {
+    key: "cancelWithDraft",
+    value: function cancelWithDraft() {
+      this.state.isEditing = false;
+
+      if (_Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].hasValue(this._internalCommentResponse)) {
+        this._internalCommentResponse.comments.cancelEditing(this);
+      }
+    }
+  }, {
+    key: "cancelEditing",
+    value: function cancelEditing() {
+      this.state.isEditing = false;
+      this.editProperties = null;
+
+      if (_Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].hasValue(this._internalCommentResponse)) {
+        this._internalCommentResponse.comments.cancelEditing(this);
+      }
+    }
+    /**
+     * Tests if the comment has an author.
+     *
+     * @returns {boolean}
+     */
+
+  }, {
     key: "hasAuthor",
     value: function hasAuthor() {
-      return _Types_common__WEBPACK_IMPORTED_MODULE_4__["String"].hasValue(this.authorId);
+      return _Types_common__WEBPACK_IMPORTED_MODULE_6__["String"].hasValue(this.authorId);
     }
     /**
      * Tests if the comment has a parent author.
@@ -36042,7 +36336,7 @@ var Comment = /*#__PURE__*/function () {
   }, {
     key: "hasParentAuthor",
     value: function hasParentAuthor() {
-      return _Types_common__WEBPACK_IMPORTED_MODULE_4__["String"].hasValue(this.parentAuthorId);
+      return _Types_common__WEBPACK_IMPORTED_MODULE_6__["String"].hasValue(this.parentAuthorId);
     }
     /**
      * Tests if the comment has a thread context available.
@@ -36053,7 +36347,7 @@ var Comment = /*#__PURE__*/function () {
   }, {
     key: "hasThreadContext",
     value: function hasThreadContext() {
-      return _Types_common__WEBPACK_IMPORTED_MODULE_4__["String"].hasValue(this.contextId);
+      return _Types_common__WEBPACK_IMPORTED_MODULE_6__["String"].hasValue(this.contextId);
     }
     /**
      * Attempts to retrieve the comment's author.
@@ -36064,7 +36358,7 @@ var Comment = /*#__PURE__*/function () {
   }, {
     key: "getAuthor",
     value: function getAuthor() {
-      if (!_Types_common__WEBPACK_IMPORTED_MODULE_4__["Type"].hasValue(this._internalCommentResponse)) {
+      if (!_Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].hasValue(this._internalCommentResponse)) {
         return null;
       }
 
@@ -36083,7 +36377,7 @@ var Comment = /*#__PURE__*/function () {
   }, {
     key: "getParentAuthor",
     value: function getParentAuthor() {
-      if (!_Types_common__WEBPACK_IMPORTED_MODULE_4__["Type"].hasValue(this._internalCommentResponse)) {
+      if (!_Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].hasValue(this._internalCommentResponse)) {
         return null;
       }
 
@@ -36102,7 +36396,7 @@ var Comment = /*#__PURE__*/function () {
   }, {
     key: "getThreadContext",
     value: function getThreadContext() {
-      if (!_Types_common__WEBPACK_IMPORTED_MODULE_4__["Type"].hasValue(this._internalCommentResponse)) {
+      if (!_Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].hasValue(this._internalCommentResponse)) {
         return null;
       }
 
@@ -36121,7 +36415,13 @@ var Comment = /*#__PURE__*/function () {
 
   }, {
     key: "save",
-    value: function save() {}
+    value: function save() {
+      return new Promise(function (resolve, reject) {
+        setTimeout(function () {
+          resolve();
+        }, 1000);
+      });
+    }
   }, {
     key: "delete",
     value: function _delete() {
@@ -36203,37 +36503,37 @@ var Comment = /*#__PURE__*/function () {
     key: "fromApiObject",
     value: function fromApiObject(apiObject) {
       var comment = new Comment();
-      comment.id = _Types_common__WEBPACK_IMPORTED_MODULE_4__["Type"].withDefault(apiObject[Comment.ApiId], null);
+      comment.id = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiId], null);
 
       if (comment.id === null) {
         throw new Error('Comment with a NULL id was supplied.');
       }
 
-      comment.authorId = _Types_common__WEBPACK_IMPORTED_MODULE_4__["Type"].withDefault(apiObject[Comment.ApiAuthor], null);
-      comment.parentAuthorId = _Types_common__WEBPACK_IMPORTED_MODULE_4__["Type"].withDefault(apiObject[Comment.ApiParentAuthor], null);
-      comment.contextId = _Types_common__WEBPACK_IMPORTED_MODULE_4__["Type"].withDefault(apiObject[Comment.ApiContext], null);
-      comment.internalContextId = _Types_common__WEBPACK_IMPORTED_MODULE_4__["Type"].withDefault(apiObject[Comment.ApiInternalContextId], null);
-      comment.internalRoot = _Types_common__WEBPACK_IMPORTED_MODULE_4__["Type"].withDefault(apiObject[Comment.ApiInternalRoot], _Types_common__WEBPACK_IMPORTED_MODULE_4__["Convert"].toInt(comment.id));
-      comment.ancestors = _Types_common__WEBPACK_IMPORTED_MODULE_4__["Type"].withDefault(apiObject[Comment.ApiAncestors], []);
-      comment.children = _Types_common__WEBPACK_IMPORTED_MODULE_4__["Type"].withDefault(apiObject[Comment.ApiChildren], []);
-      comment.commentDate = _Types_common__WEBPACK_IMPORTED_MODULE_4__["Type"].withDefault(apiObject[Comment.ApiCommentDate], null);
-      comment.commentDateFormatted = _Types_common__WEBPACK_IMPORTED_MODULE_4__["Type"].withDefault(apiObject[Comment.ApiCommentDateFormatted], null);
-      comment.replies = _Types_common__WEBPACK_IMPORTED_MODULE_4__["Type"].withDefault(apiObject[Comment.ApiComments], []);
-      comment.content = _Types_common__WEBPACK_IMPORTED_MODULE_4__["Type"].withDefault(apiObject[Comment.ApiContent], '');
-      comment.contentRaw = _Types_common__WEBPACK_IMPORTED_MODULE_4__["Type"].withDefault(apiObject[Comment.ApiContentRaw], '');
-      comment.depth = _Types_common__WEBPACK_IMPORTED_MODULE_4__["Type"].withDefault(apiObject[Comment.ApiDepth], 1);
-      comment.descendents = _Types_common__WEBPACK_IMPORTED_MODULE_4__["Type"].withDefault(apiObject[Comment.ApiDescendents], []);
-      comment.hasReplies = _Types_common__WEBPACK_IMPORTED_MODULE_4__["Type"].withDefault(apiObject[Comment.ApiHasReplies], false);
-      comment.internalContentTruncated = _Types_common__WEBPACK_IMPORTED_MODULE_4__["Type"].withDefault(apiObject[Comment.ApiInternalContentTruncated], false);
-      comment.isReply = _Types_common__WEBPACK_IMPORTED_MODULE_4__["Type"].withDefault(apiObject[Comment.ApiIsReply], false);
-      comment.isParent = _Types_common__WEBPACK_IMPORTED_MODULE_4__["Type"].withDefault(apiObject[Comment.ApiIsParent], false);
-      comment.isRoot = _Types_common__WEBPACK_IMPORTED_MODULE_4__["Type"].withDefault(apiObject[Comment.ApiIsRoot], true);
-      comment.published = _Types_common__WEBPACK_IMPORTED_MODULE_4__["Type"].withDefault(apiObject[Comment.ApiPublished], false);
-      comment.revisionCount = _Types_common__WEBPACK_IMPORTED_MODULE_4__["Type"].withDefault(apiObject[Comment.ApiRevisionCount], 0);
-      comment.hasBeenCheckedForSpam = _Types_common__WEBPACK_IMPORTED_MODULE_4__["Type"].withDefault(apiObject[Comment.ApiHasCheckedForSpam], false);
+      comment.authorId = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiAuthor], null);
+      comment.parentAuthorId = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiParentAuthor], null);
+      comment.contextId = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiContext], null);
+      comment.internalContextId = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiInternalContextId], null);
+      comment.internalRoot = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiInternalRoot], _Types_common__WEBPACK_IMPORTED_MODULE_6__["Convert"].toInt(comment.id));
+      comment.ancestors = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiAncestors], []);
+      comment.children = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiChildren], []);
+      comment.commentDate = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiCommentDate], null);
+      comment.commentDateFormatted = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiCommentDateFormatted], null);
+      comment.replies = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiComments], []);
+      comment.content = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiContent], '');
+      comment.contentRaw = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiContentRaw], '');
+      comment.depth = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiDepth], 1);
+      comment.descendents = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiDescendents], []);
+      comment.hasReplies = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiHasReplies], false);
+      comment.internalContentTruncated = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiInternalContentTruncated], false);
+      comment.isReply = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiIsReply], false);
+      comment.isParent = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiIsParent], false);
+      comment.isRoot = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiIsRoot], true);
+      comment.published = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiPublished], false);
+      comment.revisionCount = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiRevisionCount], 0);
+      comment.hasBeenCheckedForSpam = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiHasCheckedForSpam], false);
 
       if (comment.hasBeenCheckedForSpam) {
-        comment.isSpam = _Types_common__WEBPACK_IMPORTED_MODULE_4__["Type"].withDefault(apiObject[Comment.ApiSpam], true);
+        comment.isSpam = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiSpam], true);
       } else {
         comment.isSpam = null;
       }
@@ -36288,35 +36588,41 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.symbol.iterator */ "./node_modules/core-js/modules/es.symbol.iterator.js");
 /* harmony import */ var core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.index-of */ "./node_modules/core-js/modules/es.array.index-of.js");
-/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
-/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.date.to-string */ "./node_modules/core-js/modules/es.date.to-string.js");
-/* harmony import */ var core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.function.bind */ "./node_modules/core-js/modules/es.function.bind.js");
-/* harmony import */ var core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var core_js_modules_es_map__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.map */ "./node_modules/core-js/modules/es.map.js");
-/* harmony import */ var core_js_modules_es_map__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_map__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/es.object.create */ "./node_modules/core-js/modules/es.object.create.js");
-/* harmony import */ var core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/es.object.get-prototype-of */ "./node_modules/core-js/modules/es.object.get-prototype-of.js");
-/* harmony import */ var core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! core-js/modules/es.object.set-prototype-of */ "./node_modules/core-js/modules/es.object.set-prototype-of.js");
-/* harmony import */ var core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! core-js/modules/es.object.to-string */ "./node_modules/core-js/modules/es.object.to-string.js");
-/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_11__);
-/* harmony import */ var core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! core-js/modules/es.reflect.construct */ "./node_modules/core-js/modules/es.reflect.construct.js");
-/* harmony import */ var core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_12__);
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_13__);
-/* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! core-js/modules/es.string.iterator */ "./node_modules/core-js/modules/es.string.iterator.js");
-/* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_14__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_15__);
-/* harmony import */ var _comment__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./comment */ "./src/Data/Comments/comment.js");
-/* harmony import */ var _Types_type__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../../Types/type */ "./src/Types/type.js");
-/* harmony import */ var _Concerns_providesCollectionInteractivity__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../Concerns/providesCollectionInteractivity */ "./src/Data/Concerns/providesCollectionInteractivity.js");
+/* harmony import */ var core_js_modules_es_array_for_each__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.for-each */ "./node_modules/core-js/modules/es.array.for-each.js");
+/* harmony import */ var core_js_modules_es_array_for_each__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_for_each__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.array.index-of */ "./node_modules/core-js/modules/es.array.index-of.js");
+/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.date.to-string */ "./node_modules/core-js/modules/es.date.to-string.js");
+/* harmony import */ var core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.function.bind */ "./node_modules/core-js/modules/es.function.bind.js");
+/* harmony import */ var core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var core_js_modules_es_map__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/es.map */ "./node_modules/core-js/modules/es.map.js");
+/* harmony import */ var core_js_modules_es_map__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_map__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/es.object.create */ "./node_modules/core-js/modules/es.object.create.js");
+/* harmony import */ var core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! core-js/modules/es.object.get-prototype-of */ "./node_modules/core-js/modules/es.object.get-prototype-of.js");
+/* harmony import */ var core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! core-js/modules/es.object.set-prototype-of */ "./node_modules/core-js/modules/es.object.set-prototype-of.js");
+/* harmony import */ var core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! core-js/modules/es.object.to-string */ "./node_modules/core-js/modules/es.object.to-string.js");
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_12__);
+/* harmony import */ var core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! core-js/modules/es.reflect.construct */ "./node_modules/core-js/modules/es.reflect.construct.js");
+/* harmony import */ var core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_13__);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_14__);
+/* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! core-js/modules/es.string.iterator */ "./node_modules/core-js/modules/es.string.iterator.js");
+/* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_15__);
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_16__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_17__);
+/* harmony import */ var _comment__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./comment */ "./src/Data/Comments/comment.js");
+/* harmony import */ var _Types_type__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../../Types/type */ "./src/Types/type.js");
+/* harmony import */ var _Concerns_providesCollectionInteractivity__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ../Concerns/providesCollectionInteractivity */ "./src/Data/Concerns/providesCollectionInteractivity.js");
+
+
 
 
 
@@ -36373,9 +36679,35 @@ var CommentCollection = /*#__PURE__*/function (_Array) {
     _classCallCheck(this, CommentCollection);
 
     _this = _super.call(this);
-    Object(_Concerns_providesCollectionInteractivity__WEBPACK_IMPORTED_MODULE_18__["enforceCollectionType"])(_assertThisInitialized(_this), _Types_type__WEBPACK_IMPORTED_MODULE_17__["default"].typeOf(_comment__WEBPACK_IMPORTED_MODULE_16__["default"]));
-    Object(_Concerns_providesCollectionInteractivity__WEBPACK_IMPORTED_MODULE_18__["applyCollectionSelectable"])(_assertThisInitialized(_this));
-    Object(_Concerns_providesCollectionInteractivity__WEBPACK_IMPORTED_MODULE_18__["applyErrorState"])(_assertThisInitialized(_this));
+    Object(_Concerns_providesCollectionInteractivity__WEBPACK_IMPORTED_MODULE_20__["enforceCollectionType"])(_assertThisInitialized(_this), _Types_type__WEBPACK_IMPORTED_MODULE_19__["default"].typeOf(_comment__WEBPACK_IMPORTED_MODULE_18__["default"]));
+    Object(_Concerns_providesCollectionInteractivity__WEBPACK_IMPORTED_MODULE_20__["applyCollectionSelectable"])(_assertThisInitialized(_this));
+    Object(_Concerns_providesCollectionInteractivity__WEBPACK_IMPORTED_MODULE_20__["applyErrorState"])(_assertThisInitialized(_this));
+    _this.editCount = 0;
+
+    _this.setEditing = function (comment) {
+      this.editCount += 1;
+    }.bind(_assertThisInitialized(_this));
+
+    _this.cancelEditing = function (comment) {
+      this.editCount -= 1;
+    }.bind(_assertThisInitialized(_this));
+
+    _this.cancelAllEditing = function () {
+      this.forEach(function (comment) {
+        if (comment.state.isEditing) {
+          comment.cancelEditing();
+        }
+      });
+    }.bind(_assertThisInitialized(_this));
+
+    _this.draftAllEditing = function () {
+      this.forEach(function (comment) {
+        if (comment.state.isEditing) {
+          comment.cancelWithDraft();
+        }
+      });
+    }.bind(_assertThisInitialized(_this));
+
     return _this;
   }
 

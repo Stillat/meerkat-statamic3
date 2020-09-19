@@ -45,6 +45,16 @@ return [
     'edit_error_encountered' => 'An error was encountered while updating the comment. Would you like to try again?',
     'edit_success' => 'The comment was updated',
 
+    'reply' => 'Reply',
+    'reply_confirm_button' => 'Reply',
+    'reply_confirm_title' => 'Reply to Comment',
+    'reply_confirm_title_active' => 'Submitting Comment',
+    'reply_confirm_progress_message' => 'Submitting comment. Please wait...',
+    'reply_confirm_message' => 'Are you sure you want to reply to this comment?',
+    'reply_confirm_abandoned' => 'The reply action was abandoned',
+    'reply_error_encountered' => 'An error was encountered while submitting the comment. Would you like to try again?',
+    'reply_success' => 'The comment was submitted',
+
     'update_spam' => 'Update Spam',
     'update_as_spam' => 'Mark as spam',
     'update_as_ham' => 'Mark as ham',
@@ -66,7 +76,5 @@ return [
     'mark_ham_confirm_abandoned' => 'The mark as not spam action was abandoned',
     'mark_ham_error_encountered' => 'An error was encountered while marking the comment as not spam. Would you like to try again?',
     'mark_ham_success' => 'The comment was marked as not spam',
-
-    'reply' => 'Reply',
 
 ];

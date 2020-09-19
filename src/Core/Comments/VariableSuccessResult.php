@@ -21,6 +21,15 @@ class VariableSuccessResult
     public $success = false;
 
     /**
+     * Indicates if some of the actions succeeded.
+     *
+     * If all actions succeeded, this will also be true.
+     *
+     * @var bool
+     */
+    public $partialSuccess = false;
+
+    /**
      * A collection of all affected comment identifiers.
      *
      * @var array

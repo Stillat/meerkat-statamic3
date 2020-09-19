@@ -1460,6 +1460,10 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             $result->success = true;
         }
 
+        if (count($result->succeeded) > 0 ) {
+            $result->partialSuccess = true;
+        }
+
         $result->comments = array_unique($result->comments);
 
         return $result;
@@ -1579,6 +1583,10 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
 
         if (count($result->failed) === 0) {
             $result->success = true;
+        }
+
+        if (count($result->succeeded) > 0 ) {
+            $result->partialSuccess = true;
         }
 
         $result->comments = array_unique($result->comments);
@@ -1713,6 +1721,10 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
 
         if (count($result->failed) === 0) {
             $result->success = true;
+        }
+
+        if (count($result->succeeded) > 0 ) {
+            $result->partialSuccess = true;
         }
 
         $result->comments = array_unique($result->comments);
@@ -1899,6 +1911,10 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             $result->success = true;
         }
 
+        if (count($result->succeeded) > 0 ) {
+            $result->partialSuccess = true;
+        }
+
         $result->comments = array_unique($result->comments);
 
         return $result;
@@ -1931,6 +1947,10 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
 
         if (count($result->failed) === 0) {
             $result->success = true;
+        }
+
+        if (count($result->succeeded) > 0 ) {
+            $result->partialSuccess = true;
         }
 
         $result->comments = array_unique($result->comments);

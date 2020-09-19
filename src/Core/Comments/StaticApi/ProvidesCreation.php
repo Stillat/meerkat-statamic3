@@ -26,7 +26,7 @@ trait ProvidesCreation
     {
         if (CommentManagerFactory::hasInstance()) {
             if (array_key_exists(CommentContract::KEY_ID, $data) == false) {
-                $data = [CommentContract::KEY_ID => time()] + $data;
+                $data = [CommentContract::KEY_ID => strval(time())] + $data;
             }
 
             $comment = CommentManagerFactory::$instance->getStorageManager()->makeFromArrayPrototype($data);

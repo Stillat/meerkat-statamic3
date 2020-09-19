@@ -74,6 +74,26 @@ class CommentResponseGenerator
     }
 
     /**
+     * Gets a collection of all properties to remove.
+     *
+     * @return array
+     */
+    private function getPropertiesToRemove()
+    {
+        return [
+            CommentContract::KEY_EMAIL,
+            CommentContract::INTERNAL_PATH,
+            CommentContract::KEY_USER_IP,
+            CommentContract::KEY_USER_AGENT,
+            CommentContract::KEY_REFERRER,
+            CommentContract::KEY_PAGE_URL,
+            CommentContract::KEY_NAME,
+            CommentContract::INTERNAL_HAS_COLLECTED,
+            AuthorContract::KEY_AUTHOR_URL
+        ];
+    }
+
+    /**
      * Updates the internal query state from request parameters.
      *
      * @param array $parameters The query parameters.
@@ -95,80 +115,6 @@ class CommentResponseGenerator
         } else {
             $this->query->limit(CommentResponseGenerator::VALUE_DEFAULT_PER_PAGE);
         }
-    }
-
-    public function getApiComment($comment)
-    {
-        if ($comment[CommentContract::KEY_IS_PARENT] === true) {
-            if (array_key_exists(CommentContract::KEY_CHILDREN, $comment)) {
-                unset($comment[CommentContract::KEY_CHILDREN]);
-            }
-
-            if (array_key_exists(CommentResponseGenerator::KEY_API_COMMENT_COLLECTION, $comment)) {
-                if (is_array($comment[CommentResponseGenerator::KEY_API_COMMENT_COLLECTION])) {
-                    $childrenIds = [];
-
-                    foreach ($comment[CommentResponseGenerator::KEY_API_COMMENT_COLLECTION] as $childComment) {
-                        if (is_array($childComment)) {
-                            if (array_key_exists(CommentContract::KEY_ID, $childComment)) {
-                                $childrenIds[] = $childComment[CommentContract::KEY_ID];
-                            }
-                        }
-                    }
-
-                    $comment[CommentResponseGenerator::KEY_API_COMMENT_COLLECTION] = $childrenIds;
-                } else {
-                    $comment[CommentResponseGenerator::KEY_API_COMMENT_COLLECTION] = [];
-                }
-            }
-        }
-
-        if (array_key_exists(CommentContract::KEY_PARENT, $comment)) {
-            if (array_key_exists(CommentContract::KEY_ID, $comment[CommentContract::KEY_PARENT])) {
-                $comment[CommentContract::KEY_PARENT] = $comment[CommentContract::KEY_PARENT][CommentContract::KEY_ID];
-            } else {
-                unset($comment[CommentContract::KEY_PARENT]);
-            }
-        }
-
-        // Process the primary author.
-        $comment[CommentContract::KEY_AUTHOR] = $this->getAuthorIdentificationInformation(CommentContract::KEY_AUTHOR, $comment);
-        $comment[CommentContract::INTERNAL_PARENT_AUTHOR] = $this->getAuthorIdentificationInformation(CommentContract::INTERNAL_PARENT_AUTHOR, $comment);
-
-
-        if (array_key_exists(CommentContract::INTERNAL_CONTEXT, $comment)) {
-            $comment[CommentContract::INTERNAL_CONTEXT] = $comment[CommentContract::INTERNAL_CONTEXT_ID];
-        }
-
-        foreach ($this->propertiesToRemove as $property) {
-            if (array_key_exists($property, $comment)) {
-                unset($comment[$property]);
-            }
-        }
-
-        $comment[CommentContract::KEY_HAS_CHECKED_FOR_SPAM] = array_key_exists(CommentContract::KEY_SPAM, $comment);
-
-        return $comment;
-    }
-
-    /**
-     * Gets a collection of all properties to remove.
-     *
-     * @return array
-     */
-    private function getPropertiesToRemove()
-    {
-        return [
-            CommentContract::KEY_EMAIL,
-            CommentContract::INTERNAL_PATH,
-            CommentContract::KEY_USER_IP,
-            CommentContract::KEY_USER_AGENT,
-            CommentContract::KEY_REFERRER,
-            CommentContract::KEY_PAGE_URL,
-            CommentContract::KEY_NAME,
-            CommentContract::INTERNAL_HAS_COLLECTED,
-            AuthorContract::KEY_AUTHOR_URL
-        ];
     }
 
     /**
@@ -225,6 +171,69 @@ class CommentResponseGenerator
             CommentResponseGenerator::KEY_API_THREAD_COLLECTION => array_values($threads),
             CommentResponseGenerator::KEY_API_PAGE_METADATA => $pageMetaData
         ];
+    }
+
+    public function getApiComment($comment)
+    {
+        if ($comment[CommentContract::KEY_IS_PARENT] === true) {
+            if (array_key_exists(CommentContract::KEY_CHILDREN, $comment)) {
+                unset($comment[CommentContract::KEY_CHILDREN]);
+            }
+
+            if (array_key_exists(CommentResponseGenerator::KEY_API_COMMENT_COLLECTION, $comment)) {
+                if (is_array($comment[CommentResponseGenerator::KEY_API_COMMENT_COLLECTION])) {
+                    $childrenIds = [];
+
+                    foreach ($comment[CommentResponseGenerator::KEY_API_COMMENT_COLLECTION] as $childComment) {
+                        if (is_array($childComment)) {
+                            if (array_key_exists(CommentContract::KEY_ID, $childComment)) {
+                                $childrenIds[] = $childComment[CommentContract::KEY_ID];
+                            }
+                        }
+                    }
+
+                    $comment[CommentResponseGenerator::KEY_API_COMMENT_COLLECTION] = $childrenIds;
+                } else {
+                    $comment[CommentResponseGenerator::KEY_API_COMMENT_COLLECTION] = [];
+                }
+            }
+        }
+
+
+        if (array_key_exists(CommentContract::KEY_PARENT, $comment) && $comment[CommentContract::KEY_PARENT] !== null) {
+            if ($comment[CommentContract::KEY_PARENT] instanceof CommentContract) {
+                $comment[CommentContract::KEY_PARENT] = $comment[CommentContract::KEY_PARENT]->getId();
+            } elseif (is_array($comment[CommentContract::KEY_PARENT])) {
+                if (array_key_exists(CommentContract::KEY_ID, $comment[CommentContract::KEY_PARENT])) {
+                    $comment[CommentContract::KEY_PARENT] = $comment[CommentContract::KEY_PARENT][CommentContract::KEY_ID];
+                } else {
+                    unset($comment[CommentContract::KEY_PARENT]);
+                }
+            } else {
+                unset($comment[CommentContract::KEY_PARENT]);
+            }
+        } else {
+            unset($comment[CommentContract::KEY_PARENT]);
+        }
+
+        // Process the primary author.
+        $comment[CommentContract::KEY_AUTHOR] = $this->getAuthorIdentificationInformation(CommentContract::KEY_AUTHOR, $comment);
+        $comment[CommentContract::INTERNAL_PARENT_AUTHOR] = $this->getAuthorIdentificationInformation(CommentContract::INTERNAL_PARENT_AUTHOR, $comment);
+
+
+        if (array_key_exists(CommentContract::INTERNAL_CONTEXT, $comment)) {
+            $comment[CommentContract::INTERNAL_CONTEXT] = $comment[CommentContract::INTERNAL_CONTEXT_ID];
+        }
+
+        foreach ($this->propertiesToRemove as $property) {
+            if (array_key_exists($property, $comment)) {
+                unset($comment[$property]);
+            }
+        }
+
+        $comment[CommentContract::KEY_HAS_CHECKED_FOR_SPAM] = array_key_exists(CommentContract::KEY_SPAM, $comment);
+
+        return $comment;
     }
 
     /**

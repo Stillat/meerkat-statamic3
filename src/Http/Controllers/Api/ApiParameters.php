@@ -4,6 +4,7 @@ namespace Stillat\Meerkat\Http\Controllers\Api;
 
 class ApiParameters
 {
+    const PARAM_REPLYING_TO = 'replyingTo';
     const PARAM_COMMENT = 'comment';
     const PARAM_COMMENT_CONTENT = 'content';
     const RESULT_COMMENT = 'comment';

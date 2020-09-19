@@ -156,6 +156,7 @@ class LocalCommentStructureResolver implements StructureResolverInterface
             $structurePath = mb_substr($path, $this->threadPathLength);
             $structurePath = mb_substr($structurePath, 0, -11);
             $structurePath = str_replace($this->replyReplacement, '', $structurePath);
+
             $structureId = mb_substr($structurePath, -10);
             $structureDepth = substr_count($structurePath, Paths::SYM_FORWARD_SEPARATOR);
             $internalReplyPath = mb_substr($path, 0, -10) . LocalCommentStorageManager::PATH_REPLIES_DIRECTORY;
@@ -177,58 +178,68 @@ class LocalCommentStructureResolver implements StructureResolverInterface
 
             if ($structureId != $structurePath) {
                 $ancestorGraph = explode(Paths::SYM_FORWARD_SEPARATOR, $structurePath);
+
+                if (count($ancestorGraph) > 0 && mb_strlen($ancestorGraph[0]) === 36) {
+                    array_shift($ancestorGraph);
+                }
+
                 $descendentGraph = $ancestorGraph;
+
                 array_pop($ancestorGraph);
 
-                $parentCommentId = $ancestorGraph[count($ancestorGraph) - 1];
+                if (count($ancestorGraph) > 0) {
+                    $parentCommentId = $ancestorGraph[count($ancestorGraph) - 1];
 
-                if (array_key_exists($structureId, $this->ancestorMapping) == false) {
-                    $this->ancestorMapping[$structureId] = [];
-                }
-
-                if (array_key_exists($structureId, $this->directAncestorMapping) == false) {
-                    $this->directAncestorMapping[$structureId] = $parentCommentId;
-                }
-
-                if (array_key_exists($parentCommentId, $this->directDescendentMapping) == false) {
-                    $this->directDescendentMapping[$parentCommentId] = [];
-                }
-
-                $this->directDescendentMapping[$parentCommentId][] = $structureId;
-
-                for ($i = 0; $i < count($ancestorGraph); $i += 1) {
-                    $this->ancestorMapping[$structureId][] = $ancestorGraph[$i];
-                }
-
-                $descendentGraphLength = count($descendentGraph);
-                $descendentGraphLengthComparison = $descendentGraphLength - 1;
-
-                for ($i = 0; $i < $descendentGraphLength; $i += 1) {
-                    if ($i === $descendentGraphLengthComparison) {
-                        break;
+                    if (array_key_exists($structureId, $this->ancestorMapping) == false) {
+                        $this->ancestorMapping[$structureId] = [];
                     }
 
-                    if ($i === 0) {
-                        $subDescendentGraph = $descendentGraph;
-                        $graphRoot = array_shift($subDescendentGraph);
+                    if (array_key_exists($structureId, $this->directAncestorMapping) == false) {
+                        $this->directAncestorMapping[$structureId] = $parentCommentId;
+                    }
 
-                        if (array_key_exists($graphRoot, $this->descendentMapping) == false) {
-                            $this->descendentMapping[$graphRoot] = [];
+                    if (array_key_exists($parentCommentId, $this->directDescendentMapping) == false) {
+                        $this->directDescendentMapping[$parentCommentId] = [];
+                    }
+
+                    $this->directDescendentMapping[$parentCommentId][] = $structureId;
+
+                    for ($i = 0; $i < count($ancestorGraph); $i += 1) {
+                        $this->ancestorMapping[$structureId][] = $ancestorGraph[$i];
+                    }
+                }
+
+                if (count($descendentGraph) > 0) {
+                    $descendentGraphLength = count($descendentGraph);
+                    $descendentGraphLengthComparison = $descendentGraphLength - 1;
+
+                    for ($i = 0; $i < $descendentGraphLength; $i += 1) {
+                        if ($i === $descendentGraphLengthComparison) {
+                            break;
                         }
 
-                        for ($j = 0; $j < count($subDescendentGraph); $j += 1) {
-                            $this->descendentMapping[$graphRoot][] = $subDescendentGraph[$j];
-                        }
-                    } else {
-                        $subDescendentGraph = array_slice($descendentGraph, $i);
-                        $graphRoot = array_shift($subDescendentGraph);
+                        if ($i === 0) {
+                            $subDescendentGraph = $descendentGraph;
+                            $graphRoot = array_shift($subDescendentGraph);
 
-                        if (array_key_exists($graphRoot, $this->descendentMapping) == false) {
-                            $this->descendentMapping[$graphRoot] = [];
-                        }
+                            if (array_key_exists($graphRoot, $this->descendentMapping) == false) {
+                                $this->descendentMapping[$graphRoot] = [];
+                            }
 
-                        for ($j = 0; $j < count($subDescendentGraph); $j += 1) {
-                            $this->descendentMapping[$graphRoot][] = $subDescendentGraph[$j];
+                            for ($j = 0; $j < count($subDescendentGraph); $j += 1) {
+                                $this->descendentMapping[$graphRoot][] = $subDescendentGraph[$j];
+                            }
+                        } else {
+                            $subDescendentGraph = array_slice($descendentGraph, $i);
+                            $graphRoot = array_shift($subDescendentGraph);
+
+                            if (array_key_exists($graphRoot, $this->descendentMapping) == false) {
+                                $this->descendentMapping[$graphRoot] = [];
+                            }
+
+                            for ($j = 0; $j < count($subDescendentGraph); $j += 1) {
+                                $this->descendentMapping[$graphRoot][] = $subDescendentGraph[$j];
+                            }
                         }
                     }
                 }

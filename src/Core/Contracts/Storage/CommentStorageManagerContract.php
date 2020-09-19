@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat\Core\Contracts\Storage;
 
 use Stillat\Meerkat\Core\Comments\AffectsCommentsResult;
+use Stillat\Meerkat\Core\Comments\VariableSuccessResult;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Data\Mutations\ChangeSet;
 use Stillat\Meerkat\Core\Storage\Paths;
@@ -101,6 +102,40 @@ interface CommentStorageManagerContract
     public function update(CommentContract $comment);
 
     /**
+     * Attempts to the update the comments' spam status.
+     *
+     * @param CommentContract[] $comments The comments to update.
+     * @param bool $isSpam Whether or not the comments are spam.
+     * @return VariableSuccessResult
+     */
+    public function setSpamStatusForComments($comments, $isSpam);
+
+    /**
+     * Attempts to update the comments' spam status.
+     *
+     * @param array $commentIds The comment identifiers.
+     * @param bool $isSpam Whether or not the comments are spam.
+     * @return VariableSuccessResult
+     */
+    public function setSpamStatusForIds($commentIds, $isSpam);
+
+    /**
+     * Attempts to mark the comments as spam.
+     *
+     * @param array $commentIds The comment identifiers.
+     * @return VariableSuccessResult
+     */
+    public function setIsSpamForIds($commentIds);
+
+    /**
+     * Attempts to mark the comments as not spam.
+     *
+     * @param array $commentIds The comment identifiers.
+     * @return VariableSuccessResult
+     */
+    public function setIsHamForIds($commentIds);
+
+    /**
      * Attempts to update the comment's spam status.
      *
      * @param CommentContract $comment The comment to update.
@@ -149,6 +184,40 @@ interface CommentStorageManagerContract
      * @return bool
      */
     public function setIsHamById($commentId);
+
+    /**
+     * Attempts to update the published/approved status for the provided comments.
+     *
+     * @param CommentContract[] $comments The comments to update.
+     * @param bool $isApproved Whether the comments are "published".
+     * @return VariableSuccessResult
+     */
+    public function setApprovedStatusFor($comments, $isApproved);
+
+    /**
+     * Attempts to update the published/approved status for the provided comment identifiers.
+     *
+     * @param array $commentIds The comment identifiers to update.
+     * @param bool $isApproved Whether the comments are "published".
+     * @return VariableSuccessResult
+     */
+    public function setApprovedStatusForIds($commentIds, $isApproved);
+
+    /**
+     * Attempts to mark the provided comments as approved.
+     *
+     * @param array $commentIds The comments to update.
+     * @return VariableSuccessResult
+     */
+    public function setIsApprovedForIds($commentIds);
+
+    /**
+     * Attempts to mark the provided comments as not approved.
+     *
+     * @param array $commentIds The comments to update.
+     * @return VariableSuccessResult
+     */
+    public function setIsNotApprovedForIds($commentIds);
 
     /**
      * Attempts to update the comment's published/approved status.
@@ -275,6 +344,14 @@ interface CommentStorageManagerContract
     public function removeById($commentId);
 
     /**
+     * Attempts to remove all of the provided comments.
+     *
+     * @param array $commentIds The comments to remove.
+     * @return VariableSuccessResult
+     */
+    public function removeAll($commentIds);
+
+    /**
      * Attempts to soft delete the requested comment.
      *
      * @param string $commentId The comment's identifier.
@@ -283,11 +360,27 @@ interface CommentStorageManagerContract
     public function softDeleteById($commentId);
 
     /**
+     * Attempts to soft delete the provided comments.
+     *
+     * @param array $commentIds The comments to soft delete
+     * @return VariableSuccessResult
+     */
+    public function softDeleteAll($commentIds);
+
+    /**
      * Attempts to restore a soft-deleted comment.
      *
      * @param string $commentId The comment's identifier.
      * @return AffectsCommentsResult
      */
     public function restoreById($commentId);
+
+    /**
+     * Attempts to restore the provided comments.
+     *
+     * @param array $commentIds The comments to restore.
+     * @return VariableSuccessResult
+     */
+    public function restoreAll($commentIds);
 
 }

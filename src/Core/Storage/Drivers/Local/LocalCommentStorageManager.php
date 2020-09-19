@@ -3,15 +3,16 @@
 namespace Stillat\Meerkat\Core\Storage\Drivers\Local;
 
 use DateTime;
+use Exception;
 use InvalidArgumentException;
+use Stillat\Meerkat\Core\Comments\AffectsCommentsResult;
 use Stillat\Meerkat\Core\Comments\CleanableCommentAttributes;
 use Stillat\Meerkat\Core\Comments\Comment;
 use Stillat\Meerkat\Core\Comments\CommentRemovalEventArgs;
-use Stillat\Meerkat\Core\Comments\AffectsCommentsResult;
 use Stillat\Meerkat\Core\Comments\CommentRestoringEventArgs;
 use Stillat\Meerkat\Core\Comments\DynamicCollectedProperties;
-use Stillat\Meerkat\Core\RuntimeStateGuard;
 use Stillat\Meerkat\Core\Comments\TransientCommentAttributes;
+use Stillat\Meerkat\Core\Comments\VariableSuccessResult;
 use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentFactoryContract;
@@ -29,6 +30,7 @@ use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Exceptions\ConcurrentResourceAccessViolationException;
 use Stillat\Meerkat\Core\Exceptions\MutationException;
 use Stillat\Meerkat\Core\Paths\PathUtilities;
+use Stillat\Meerkat\Core\RuntimeStateGuard;
 use Stillat\Meerkat\Core\Storage\Data\CommentAuthorRetriever;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\Attributes\InternalAttributes;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\Attributes\PrototypeAttributes;
@@ -1164,121 +1166,6 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     }
 
     /**
-     * Attempts to locate the comment's child comments.
-     *
-     * @param string $commentId The comment identifier.
-     * @return string[]
-     */
-    public function getDescendents($commentId)
-    {
-        return array_keys($this->getDescendentsPaths($commentId));
-    }
-
-    /**
-     * Attempts to locate the comment's child comments and paths.
-     *
-     * @param string $commentId The comment identifier.
-     * @return string[]
-     */
-    public function getDescendentsPaths($commentId)
-    {
-        if (array_key_exists($commentId, self::$descendentPathCache) === false) {
-            $rootPath = dirname($this->getPathById($commentId));
-            $rootLen = mb_strlen($rootPath) + 1;
-            $commentPath = $this->paths->combine([$rootPath, '*']);
-            $paths = $this->paths->getFilesRecursively($commentPath);
-            $subParts = [];
-
-            $exclude = $this->getExclusionList($commentId);
-
-            $pathMapping = [];
-
-            foreach ($paths as $path) {
-                $subPath = mb_substr($path, $rootLen);
-                $subParts = array_merge($subParts, explode(Paths::SYM_FORWARD_SEPARATOR, $subPath));
-
-
-                if (Str::startsWith($path, $rootPath)) {
-                    $mappedPath = dirname($path);
-                    $mappingParts = explode(Paths::SYM_FORWARD_SEPARATOR, $mappedPath);
-
-                    if (count($mappingParts) > 0) {
-                        $startProcessingPaths = false;
-
-                        for ($i = 0; $i < count($mappingParts); $i++) {
-                            if ($mappingParts[$i] === $commentId) {
-                                $startProcessingPaths = true;
-                                continue;
-                            }
-
-                            if ($startProcessingPaths === false) {
-                                continue;
-                            }
-
-                            if (in_array($mappingParts[$i], $exclude) === false) {
-                                if (array_key_exists($mappingParts[$i], $pathMapping) === false) {
-                                    $subMappingParts = array_slice($mappingParts, 0, $i + 1);
-
-                                    $pathMapping[$mappingParts[$i]] = implode(Paths::SYM_FORWARD_SEPARATOR, $subMappingParts);
-                                }
-                            }
-                        }
-                    }
-                }
-
-            }
-
-            $pathMappingToReturn = [];
-            $cleanedSubparts = $this->cleanRelatedListing($commentId, $subParts);
-
-            foreach ($cleanedSubparts as $subCommentId) {
-                if (array_key_exists($subCommentId, $pathMapping)) {
-                    $pathMappingToReturn[$subCommentId] = $pathMapping[$subCommentId];
-                }
-            }
-
-            self::$descendentPathCache[$commentId] = $pathMappingToReturn;
-        }
-
-        return self::$descendentPathCache[$commentId];
-    }
-
-    /**
-     * Generates an exclusion list with the provided details.
-     *
-     * @param string $commentId The comment identifier to exclude.
-     * @return array
-     */
-    private function getExclusionList($commentId)
-    {
-        return [
-            CommentContract::COMMENT_FILENAME,
-            self::PATH_REPLIES_DIRECTORY,
-            $commentId
-        ];
-    }
-
-    /**
-     * Removes structural information from the list of comment identifiers.
-     *
-     * @param string $commentId The comment identifier.
-     * @param array $listing The list of comment identifiers.
-     * @return array
-     */
-    private function cleanRelatedListing($commentId, $listing)
-    {
-        $exclude = [
-            CommentContract::COMMENT_FILENAME,
-            self::PATH_REPLIES_DIRECTORY,
-            $commentId
-        ];
-
-        return array_values(array_unique(array_filter($listing, function ($part) use (&$exclude) {
-            return in_array($part, $exclude) === false;
-        })));
-    }
-
-    /**
      * Attempts to locate the comment's parent comments.
      *
      * @param string $commentId The comment identifier.
@@ -1353,6 +1240,41 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         }
 
         return self::$ancestorPathCache[$commentId];
+    }
+
+    /**
+     * Generates an exclusion list with the provided details.
+     *
+     * @param string $commentId The comment identifier to exclude.
+     * @return array
+     */
+    private function getExclusionList($commentId)
+    {
+        return [
+            CommentContract::COMMENT_FILENAME,
+            self::PATH_REPLIES_DIRECTORY,
+            $commentId
+        ];
+    }
+
+    /**
+     * Removes structural information from the list of comment identifiers.
+     *
+     * @param string $commentId The comment identifier.
+     * @param array $listing The list of comment identifiers.
+     * @return array
+     */
+    private function cleanRelatedListing($commentId, $listing)
+    {
+        $exclude = [
+            CommentContract::COMMENT_FILENAME,
+            self::PATH_REPLIES_DIRECTORY,
+            $commentId
+        ];
+
+        return array_values(array_unique(array_filter($listing, function ($part) use (&$exclude) {
+            return in_array($part, $exclude) === false;
+        })));
     }
 
     /**
@@ -1473,6 +1395,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      * @param string $commentId The comment's identifier.
      * @param bool $isSpam Whether or not the comment is spam.
      * @return bool
+     * @throws ConcurrentResourceAccessViolationException
      */
     public function setSpamStatusById($commentId, $isSpam)
     {
@@ -1485,6 +1408,83 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         $comment->setDataAttribute(CommentContract::KEY_SPAM, $isSpam);
 
         return $this->update($comment);
+    }
+
+    /**
+     * Attempts to the update the comments' spam status.
+     *
+     * @param CommentContract[] $comments The comments to update.
+     * @param bool $isSpam Whether or not the comments are spam.
+     * @return VariableSuccessResult
+     */
+    public function setSpamStatusForComments($comments, $isSpam)
+    {
+        $commentIds = [];
+
+        foreach ($comments as $comment) {
+            $commentIds[] = $comment->getId();
+        }
+
+        return $this->setSpamStatusForIds($commentIds, $isSpam);
+    }
+
+    /**
+     * Attempts to update the comments' spam status.
+     *
+     * @param array $commentIds The comment identifiers.
+     * @param bool $isSpam Whether or not the comments are spam.
+     * @return VariableSuccessResult
+     */
+    public function setSpamStatusForIds($commentIds, $isSpam)
+    {
+        $result = new VariableSuccessResult();
+
+        foreach ($commentIds as $commentId) {
+            if ($commentId === null) {
+                continue;
+            }
+
+            try {
+                if ($this->setSpamStatusById($commentId, $isSpam) === true) {
+                    $result->success[] = $commentId;
+                    $result->comments[] = $commentId;
+                } else {
+                    $result->failed[$commentId] = false;
+                }
+            } catch (Exception $e) {
+                $result->failed[$commentId] = $e;
+            }
+        }
+
+        if (count($result->failed) === 0) {
+            $result->success = true;
+        }
+
+        $result->comments = array_unique($result->comments);
+
+        return $result;
+    }
+
+    /**
+     * Attempts to mark the comments as spam.
+     *
+     * @param array $commentIds The comment identifiers.
+     * @return VariableSuccessResult
+     */
+    public function setIsSpamForIds($commentIds)
+    {
+        return $this->setSpamStatusForIds($commentIds, true);
+    }
+
+    /**
+     * Attempts to mark the comments as not spam.
+     *
+     * @param array $commentIds The comment identifiers.
+     * @return VariableSuccessResult
+     */
+    public function setIsHamForIds($commentIds)
+    {
+        return $this->setSpamStatusForIds($commentIds, false);
     }
 
     /**
@@ -1532,15 +1532,58 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     }
 
     /**
-     * Attempts to update the comment's published/approved status.
+     * Attempts to update the published/approved status for the provided comments.
      *
-     * @param CommentContract $comment The comment to update.
-     * @param bool $isApproved Whether the comment is "published".
-     * @return bool
+     * @param CommentContract[] $comments The comments to update.
+     * @param bool $isApproved Whether the comments are "published".
+     * @return VariableSuccessResult
      */
-    public function setApprovedStatus(CommentContract $comment, $isApproved)
+    public function setApprovedStatusFor($comments, $isApproved)
     {
-        return $this->setApprovedStatusById($comment->getId(), $isApproved);
+        $commentIds = [];
+
+        foreach ($comments as $comment) {
+            $commentIds[] = $comment->getId();
+        }
+
+        return $this->setApprovedStatusForIds($commentIds, $isApproved);
+    }
+
+    /**
+     * Attempts to update the published/approved status for the provided comment identifiers.
+     *
+     * @param array $commentIds The comment identifiers to update.
+     * @param bool $isApproved Whether the comments are "published".
+     * @return VariableSuccessResult
+     */
+    public function setApprovedStatusForIds($commentIds, $isApproved)
+    {
+        $result = new VariableSuccessResult();
+
+        foreach ($commentIds as $commentId) {
+            if ($commentId === null) {
+                continue;
+            }
+
+            try {
+                if ($this->setApprovedStatusById($commentId, $isApproved) === true) {
+                    $result->success[] = $commentId;
+                    $result->comments[] = $commentId;
+                } else {
+                    $result->failed[$commentId] = false;
+                }
+            } catch (Exception $e) {
+                $result->failed[$commentId] = $e;
+            }
+        }
+
+        if (count($result->failed) === 0) {
+            $result->success = true;
+        }
+
+        $result->comments = array_unique($result->comments);
+
+        return $result;
     }
 
     /**
@@ -1561,6 +1604,40 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         $comment->setDataAttribute(CommentContract::KEY_PUBLISHED, $isApproved);
 
         return $this->update($comment);
+    }
+
+    /**
+     * Attempts to mark the provided comments as approved.
+     *
+     * @param array $commentIds The comments to update.
+     * @return VariableSuccessResult
+     */
+    public function setIsApprovedForIds($commentIds)
+    {
+        return $this->setApprovedStatusForIds($commentIds, true);
+    }
+
+    /**
+     * Attempts to mark the provided comments as not approved.
+     *
+     * @param array $commentIds The comments to update.
+     * @return VariableSuccessResult
+     */
+    public function setIsNotApprovedForIds($commentIds)
+    {
+        return $this->setApprovedStatusForIds($commentIds, false);
+    }
+
+    /**
+     * Attempts to update the comment's published/approved status.
+     *
+     * @param CommentContract $comment The comment to update.
+     * @param bool $isApproved Whether the comment is "published".
+     * @return bool
+     */
+    public function setApprovedStatus(CommentContract $comment, $isApproved)
+    {
+        return $this->setApprovedStatusById($comment->getId(), $isApproved);
     }
 
     /**
@@ -1605,6 +1682,42 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     public function setIsNotApproved(CommentContract $comment)
     {
         return $this->setIsNotApprovedById($comment->getId());
+    }
+
+    /**
+     * Attempts to remove all of the provided comments.
+     *
+     * @param array $commentIds The comments to remove.
+     * @return VariableSuccessResult
+     */
+    public function removeAll($commentIds)
+    {
+        $result = new VariableSuccessResult();
+
+        foreach ($commentIds as $commentId) {
+            try {
+                $removeResult = $this->removeById($commentId);
+
+                if ($result->success === true) {
+                    $result->succeeded[$commentId] = $removeResult;
+
+                    $result->comments[] = $commentId;
+                    $result->comments = array_merge($result->comments, $removeResult->comments);
+                } else {
+                    $result->failed[$commentId] = $removeResult;
+                }
+            } catch (Exception $e) {
+                $result->failed[$commentId] = $e;
+            }
+        }
+
+        if (count($result->failed) === 0) {
+            $result->success = true;
+        }
+
+        $result->comments = array_unique($result->comments);
+
+        return $result;
     }
 
     /**
@@ -1664,10 +1777,80 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     }
 
     /**
+     * Attempts to locate the comment's child comments and paths.
+     *
+     * @param string $commentId The comment identifier.
+     * @return string[]
+     */
+    public function getDescendentsPaths($commentId)
+    {
+        if (array_key_exists($commentId, self::$descendentPathCache) === false) {
+            $rootPath = dirname($this->getPathById($commentId));
+            $rootLen = mb_strlen($rootPath) + 1;
+            $commentPath = $this->paths->combine([$rootPath, '*']);
+            $paths = $this->paths->getFilesRecursively($commentPath);
+            $subParts = [];
+
+            $exclude = $this->getExclusionList($commentId);
+
+            $pathMapping = [];
+
+            foreach ($paths as $path) {
+                $subPath = mb_substr($path, $rootLen);
+                $subParts = array_merge($subParts, explode(Paths::SYM_FORWARD_SEPARATOR, $subPath));
+
+
+                if (Str::startsWith($path, $rootPath)) {
+                    $mappedPath = dirname($path);
+                    $mappingParts = explode(Paths::SYM_FORWARD_SEPARATOR, $mappedPath);
+
+                    if (count($mappingParts) > 0) {
+                        $startProcessingPaths = false;
+
+                        for ($i = 0; $i < count($mappingParts); $i++) {
+                            if ($mappingParts[$i] === $commentId) {
+                                $startProcessingPaths = true;
+                                continue;
+                            }
+
+                            if ($startProcessingPaths === false) {
+                                continue;
+                            }
+
+                            if (in_array($mappingParts[$i], $exclude) === false) {
+                                if (array_key_exists($mappingParts[$i], $pathMapping) === false) {
+                                    $subMappingParts = array_slice($mappingParts, 0, $i + 1);
+
+                                    $pathMapping[$mappingParts[$i]] = implode(Paths::SYM_FORWARD_SEPARATOR, $subMappingParts);
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            $pathMappingToReturn = [];
+            $cleanedSubparts = $this->cleanRelatedListing($commentId, $subParts);
+
+            foreach ($cleanedSubparts as $subCommentId) {
+                if (array_key_exists($subCommentId, $pathMapping)) {
+                    $pathMappingToReturn[$subCommentId] = $pathMapping[$subCommentId];
+                }
+            }
+
+            self::$descendentPathCache[$commentId] = $pathMappingToReturn;
+        }
+
+        return self::$descendentPathCache[$commentId];
+    }
+
+    /**
      * Attempts to soft delete the requested comment.
      *
      * @param string $commentId The comment's identifier.
      * @return bool
+     * @throws ConcurrentResourceAccessViolationException
      */
     public function softDeleteById($commentId)
     {
@@ -1685,6 +1868,74 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         }
 
         return $wasUpdated;
+    }
+
+    /**
+     * Attempts to soft delete the provided comments.
+     *
+     * @param array $commentIds The comments to soft delete
+     * @return VariableSuccessResult
+     */
+    public function softDeleteAll($commentIds)
+    {
+        $result = new VariableSuccessResult();
+
+        foreach ($commentIds as $comment) {
+            try {
+                $deleteResult = $this->softDeleteById($comment);
+
+                if ($deleteResult === true) {
+                    $result->succeeded[$comment] = true;
+                    $result->comments[] = $comment;
+                } else {
+                    $result->failed[$comment] = false;
+                }
+            } catch (Exception $e) {
+                $result->failed[$comment] = $e;
+            }
+        }
+
+        if (count($result->failed) === 0) {
+            $result->success = true;
+        }
+
+        $result->comments = array_unique($result->comments);
+
+        return $result;
+    }
+
+    /**
+     * Attempts to restore the provided comments.
+     *
+     * @param array $commentIds The comments to restore.
+     * @return VariableSuccessResult
+     */
+    public function restoreAll($commentIds)
+    {
+        $result = new VariableSuccessResult();
+
+        foreach ($commentIds as $commentId) {
+            try {
+                $restoreResult = $this->restoreById($commentId);
+
+                if ($restoreResult->success === true) {
+                    $result->succeeded[$commentId] = $restoreResult;
+                    $result->comments[] = $commentId;
+                } else {
+                    $result->failed[$commentId] = $restoreResult;
+                }
+            } catch (Exception $e) {
+                $result->failed[$commentId] = $e;
+            }
+        }
+
+        if (count($result->failed) === 0) {
+            $result->success = true;
+        }
+
+        $result->comments = array_unique($result->comments);
+
+        return $result;
     }
 
     /**
@@ -1742,6 +1993,17 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         }
 
         return AffectsCommentsResult::conditionalWithComments($wasUpdated, $descendents);
+    }
+
+    /**
+     * Attempts to locate the comment's child comments.
+     *
+     * @param string $commentId The comment identifier.
+     * @return string[]
+     */
+    public function getDescendents($commentId)
+    {
+        return array_keys($this->getDescendentsPaths($commentId));
     }
 
 }

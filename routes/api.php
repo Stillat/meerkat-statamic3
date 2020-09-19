@@ -5,23 +5,23 @@ use Stillat\Meerkat\Addon;
 
 Route::group(['prefix' => Addon::getApiPrefix()], function () {
 
-    Route::get('/', 'Api\IndexController@index');
+    Route::get('/', '\Stillat\Meerkat\Http\Controllers\Api\IndexController@index');
 
     Route::group(['prefix' => 'telemetry'], function () {
-        Route::get('/', 'Api\TelemetryController@index');
-        Route::get('report', 'Api\TelemetryController@getReport');
-        Route::post('submit', 'Api\TelemetryController@submitReport');
+        Route::get('/', '\Stillat\Meerkat\Http\Controllers\Api\TelemetryController@index');
+        Route::get('report', '\Stillat\Meerkat\Http\Controllers\Api\TelemetryController@getReport');
+        Route::post('submit', '\Stillat\Meerkat\Http\Controllers\Api\TelemetryController@submitReport');
     });
 
     Route::group(['prefix' => 'comments'], function () {
-        Route::get('/', 'Api\CommentsController@search');
-        Route::post('/update', 'Api\UpdateCommentController@updateComment');
-        Route::post('/reply', 'Api\ReplyCommentController@reply');
-        Route::post('/publish', 'Api\PublishCommentController@publishComment');
-        Route::post('/unpublish', 'Api\UnpublishCommentController@unPublishComment');
-        Route::post('/remove', 'Api\RemoveCommentController@deleteComment');
-        Route::post('/report-spam', 'Api\SpamController@markAsSpam');
-        Route::post('/report-ham', 'Api\NotSpamController@markAsNotSpam');
+        Route::get('/', '\Stillat\Meerkat\Http\Controllers\Api\CommentsController@search');
+        Route::post('/update', '\Stillat\Meerkat\Http\Controllers\Api\UpdateCommentController@updateComment');
+        Route::post('/reply', '\Stillat\Meerkat\Http\Controllers\Api\ReplyCommentController@reply');
+        Route::post('/publish', '\Stillat\Meerkat\Http\Controllers\Api\PublishCommentController@publishComment');
+        Route::post('/unpublish', '\Stillat\Meerkat\Http\Controllers\Api\UnpublishCommentController@unPublishComment');
+        Route::post('/remove', '\Stillat\Meerkat\Http\Controllers\Api\RemoveCommentController@deleteComment');
+        Route::post('/report-spam', '\Stillat\Meerkat\Http\Controllers\Api\SpamController@markAsSpam');
+        Route::post('/report-ham', '\Stillat\Meerkat\Http\Controllers\Api\NotSpamController@markAsNotSpam');
     });
 
 });

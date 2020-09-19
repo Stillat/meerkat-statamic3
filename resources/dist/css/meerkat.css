@@ -45,6 +45,16 @@
   font-family: monospace;
   font-size: 13px;
 }
+.meerkat__bulk-actions {
+  display: inline-block;
+}
+.meerkat__bulk-actions select {
+  padding-top: 4px;
+  margin-top: 1px;
+}
+.meerkat__bulk-actions button {
+  margin-top: -4px;
+}
 
 .meerkat__loader--inline {
   float: left;

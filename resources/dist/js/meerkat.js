@@ -36208,17 +36208,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var core_js_modules_es_promise__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.promise */ "./node_modules/core-js/modules/es.promise.js");
 /* harmony import */ var core_js_modules_es_promise__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_promise__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_web_timers__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/web.timers */ "./node_modules/core-js/modules/web.timers.js");
-/* harmony import */ var core_js_modules_web_timers__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_timers__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _Types_common__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../Types/common */ "./src/Types/common.js");
-/* harmony import */ var _Concerns_canBeSelected__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../Concerns/canBeSelected */ "./src/Data/Concerns/canBeSelected.js");
-/* harmony import */ var _author__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./author */ "./src/Data/Comments/author.js");
-/* harmony import */ var _threadContext__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./threadContext */ "./src/Data/Comments/threadContext.js");
-/* harmony import */ var _Http_Responses_baseResponse__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../Http/Responses/baseResponse */ "./src/Http/Responses/baseResponse.js");
-/* harmony import */ var _Http_Responses_errorResponse__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../Http/Responses/errorResponse */ "./src/Http/Responses/errorResponse.js");
-/* harmony import */ var _Http_Responses_commentMutationResponse__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../Http/Responses/commentMutationResponse */ "./src/Http/Responses/commentMutationResponse.js");
-/* harmony import */ var _Http_Responses_commentRemovedResponse__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../Http/Responses/commentRemovedResponse */ "./src/Http/Responses/commentRemovedResponse.js");
-
+/* harmony import */ var _Types_common__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../Types/common */ "./src/Types/common.js");
+/* harmony import */ var _Concerns_canBeSelected__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../Concerns/canBeSelected */ "./src/Data/Concerns/canBeSelected.js");
+/* harmony import */ var _author__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./author */ "./src/Data/Comments/author.js");
+/* harmony import */ var _threadContext__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./threadContext */ "./src/Data/Comments/threadContext.js");
+/* harmony import */ var _Http_Responses_baseResponse__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../Http/Responses/baseResponse */ "./src/Http/Responses/baseResponse.js");
+/* harmony import */ var _Http_Responses_errorResponse__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../Http/Responses/errorResponse */ "./src/Http/Responses/errorResponse.js");
+/* harmony import */ var _Http_Responses_commentMutationResponse__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../Http/Responses/commentMutationResponse */ "./src/Http/Responses/commentMutationResponse.js");
+/* harmony import */ var _Http_Responses_commentRemovedResponse__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../Http/Responses/commentRemovedResponse */ "./src/Http/Responses/commentRemovedResponse.js");
 
 
 
@@ -36247,7 +36244,7 @@ var Comment = /*#__PURE__*/function () {
   function Comment() {
     _classCallCheck(this, Comment);
 
-    Object(_Concerns_canBeSelected__WEBPACK_IMPORTED_MODULE_7__["canBeSelected"])(this);
+    Object(_Concerns_canBeSelected__WEBPACK_IMPORTED_MODULE_6__["canBeSelected"])(this);
     /** {CommentResponse} */
 
     this._internalCommentResponse = null;
@@ -36293,7 +36290,7 @@ var Comment = /*#__PURE__*/function () {
 
       this.state.isEditing = true;
 
-      if (_Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].hasValue(this._internalCommentResponse)) {
+      if (_Types_common__WEBPACK_IMPORTED_MODULE_5__["Type"].hasValue(this._internalCommentResponse)) {
         this._internalCommentResponse.comments.setEditing(this);
       }
     }
@@ -36302,7 +36299,7 @@ var Comment = /*#__PURE__*/function () {
     value: function cancelWithDraft() {
       this.state.isEditing = false;
 
-      if (_Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].hasValue(this._internalCommentResponse)) {
+      if (_Types_common__WEBPACK_IMPORTED_MODULE_5__["Type"].hasValue(this._internalCommentResponse)) {
         this._internalCommentResponse.comments.cancelEditing(this);
       }
     }
@@ -36312,7 +36309,7 @@ var Comment = /*#__PURE__*/function () {
       this.state.isEditing = false;
       this.editProperties = null;
 
-      if (_Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].hasValue(this._internalCommentResponse)) {
+      if (_Types_common__WEBPACK_IMPORTED_MODULE_5__["Type"].hasValue(this._internalCommentResponse)) {
         this._internalCommentResponse.comments.cancelEditing(this);
       }
     }
@@ -36325,7 +36322,7 @@ var Comment = /*#__PURE__*/function () {
   }, {
     key: "hasAuthor",
     value: function hasAuthor() {
-      return _Types_common__WEBPACK_IMPORTED_MODULE_6__["String"].hasValue(this.authorId);
+      return _Types_common__WEBPACK_IMPORTED_MODULE_5__["String"].hasValue(this.authorId);
     }
     /**
      * Tests if the comment has a parent author.
@@ -36336,7 +36333,7 @@ var Comment = /*#__PURE__*/function () {
   }, {
     key: "hasParentAuthor",
     value: function hasParentAuthor() {
-      return _Types_common__WEBPACK_IMPORTED_MODULE_6__["String"].hasValue(this.parentAuthorId);
+      return _Types_common__WEBPACK_IMPORTED_MODULE_5__["String"].hasValue(this.parentAuthorId);
     }
     /**
      * Tests if the comment has a thread context available.
@@ -36347,7 +36344,7 @@ var Comment = /*#__PURE__*/function () {
   }, {
     key: "hasThreadContext",
     value: function hasThreadContext() {
-      return _Types_common__WEBPACK_IMPORTED_MODULE_6__["String"].hasValue(this.contextId);
+      return _Types_common__WEBPACK_IMPORTED_MODULE_5__["String"].hasValue(this.contextId);
     }
     /**
      * Attempts to retrieve the comment's author.
@@ -36358,7 +36355,7 @@ var Comment = /*#__PURE__*/function () {
   }, {
     key: "getAuthor",
     value: function getAuthor() {
-      if (!_Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].hasValue(this._internalCommentResponse)) {
+      if (!_Types_common__WEBPACK_IMPORTED_MODULE_5__["Type"].hasValue(this._internalCommentResponse)) {
         return null;
       }
 
@@ -36377,7 +36374,7 @@ var Comment = /*#__PURE__*/function () {
   }, {
     key: "getParentAuthor",
     value: function getParentAuthor() {
-      if (!_Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].hasValue(this._internalCommentResponse)) {
+      if (!_Types_common__WEBPACK_IMPORTED_MODULE_5__["Type"].hasValue(this._internalCommentResponse)) {
         return null;
       }
 
@@ -36396,7 +36393,7 @@ var Comment = /*#__PURE__*/function () {
   }, {
     key: "getThreadContext",
     value: function getThreadContext() {
-      if (!_Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].hasValue(this._internalCommentResponse)) {
+      if (!_Types_common__WEBPACK_IMPORTED_MODULE_5__["Type"].hasValue(this._internalCommentResponse)) {
         return null;
       }
 
@@ -36416,11 +36413,27 @@ var Comment = /*#__PURE__*/function () {
   }, {
     key: "save",
     value: function save() {
+      var contentToSave = this.content;
+
+      if (this.state.isEditing && this.editProperties !== null) {
+        contentToSave = this.editProperties.content;
+      }
+
       return new Promise(function (resolve, reject) {
-        setTimeout(function () {
-          resolve();
-        }, 1000);
-      });
+        return this._internalCommentResponse._originator.update(this.id, contentToSave).then(function (result) {
+          if (result.success) {
+            this.content = result.comment.content;
+
+            if (this.state.isEditing) {
+              this.cancelEditing();
+            }
+          }
+
+          resolve(result);
+        }.bind(this))["catch"](function (err) {
+          reject(err);
+        });
+      }.bind(this));
     }
   }, {
     key: "delete",
@@ -36503,37 +36516,37 @@ var Comment = /*#__PURE__*/function () {
     key: "fromApiObject",
     value: function fromApiObject(apiObject) {
       var comment = new Comment();
-      comment.id = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiId], null);
+      comment.id = _Types_common__WEBPACK_IMPORTED_MODULE_5__["Type"].withDefault(apiObject[Comment.ApiId], null);
 
       if (comment.id === null) {
         throw new Error('Comment with a NULL id was supplied.');
       }
 
-      comment.authorId = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiAuthor], null);
-      comment.parentAuthorId = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiParentAuthor], null);
-      comment.contextId = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiContext], null);
-      comment.internalContextId = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiInternalContextId], null);
-      comment.internalRoot = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiInternalRoot], _Types_common__WEBPACK_IMPORTED_MODULE_6__["Convert"].toInt(comment.id));
-      comment.ancestors = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiAncestors], []);
-      comment.children = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiChildren], []);
-      comment.commentDate = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiCommentDate], null);
-      comment.commentDateFormatted = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiCommentDateFormatted], null);
-      comment.replies = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiComments], []);
-      comment.content = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiContent], '');
-      comment.contentRaw = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiContentRaw], '');
-      comment.depth = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiDepth], 1);
-      comment.descendents = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiDescendents], []);
-      comment.hasReplies = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiHasReplies], false);
-      comment.internalContentTruncated = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiInternalContentTruncated], false);
-      comment.isReply = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiIsReply], false);
-      comment.isParent = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiIsParent], false);
-      comment.isRoot = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiIsRoot], true);
-      comment.published = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiPublished], false);
-      comment.revisionCount = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiRevisionCount], 0);
-      comment.hasBeenCheckedForSpam = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiHasCheckedForSpam], false);
+      comment.authorId = _Types_common__WEBPACK_IMPORTED_MODULE_5__["Type"].withDefault(apiObject[Comment.ApiAuthor], null);
+      comment.parentAuthorId = _Types_common__WEBPACK_IMPORTED_MODULE_5__["Type"].withDefault(apiObject[Comment.ApiParentAuthor], null);
+      comment.contextId = _Types_common__WEBPACK_IMPORTED_MODULE_5__["Type"].withDefault(apiObject[Comment.ApiContext], null);
+      comment.internalContextId = _Types_common__WEBPACK_IMPORTED_MODULE_5__["Type"].withDefault(apiObject[Comment.ApiInternalContextId], null);
+      comment.internalRoot = _Types_common__WEBPACK_IMPORTED_MODULE_5__["Type"].withDefault(apiObject[Comment.ApiInternalRoot], _Types_common__WEBPACK_IMPORTED_MODULE_5__["Convert"].toInt(comment.id));
+      comment.ancestors = _Types_common__WEBPACK_IMPORTED_MODULE_5__["Type"].withDefault(apiObject[Comment.ApiAncestors], []);
+      comment.children = _Types_common__WEBPACK_IMPORTED_MODULE_5__["Type"].withDefault(apiObject[Comment.ApiChildren], []);
+      comment.commentDate = _Types_common__WEBPACK_IMPORTED_MODULE_5__["Type"].withDefault(apiObject[Comment.ApiCommentDate], null);
+      comment.commentDateFormatted = _Types_common__WEBPACK_IMPORTED_MODULE_5__["Type"].withDefault(apiObject[Comment.ApiCommentDateFormatted], null);
+      comment.replies = _Types_common__WEBPACK_IMPORTED_MODULE_5__["Type"].withDefault(apiObject[Comment.ApiComments], []);
+      comment.content = _Types_common__WEBPACK_IMPORTED_MODULE_5__["Type"].withDefault(apiObject[Comment.ApiContent], '');
+      comment.contentRaw = _Types_common__WEBPACK_IMPORTED_MODULE_5__["Type"].withDefault(apiObject[Comment.ApiContentRaw], '');
+      comment.depth = _Types_common__WEBPACK_IMPORTED_MODULE_5__["Type"].withDefault(apiObject[Comment.ApiDepth], 1);
+      comment.descendents = _Types_common__WEBPACK_IMPORTED_MODULE_5__["Type"].withDefault(apiObject[Comment.ApiDescendents], []);
+      comment.hasReplies = _Types_common__WEBPACK_IMPORTED_MODULE_5__["Type"].withDefault(apiObject[Comment.ApiHasReplies], false);
+      comment.internalContentTruncated = _Types_common__WEBPACK_IMPORTED_MODULE_5__["Type"].withDefault(apiObject[Comment.ApiInternalContentTruncated], false);
+      comment.isReply = _Types_common__WEBPACK_IMPORTED_MODULE_5__["Type"].withDefault(apiObject[Comment.ApiIsReply], false);
+      comment.isParent = _Types_common__WEBPACK_IMPORTED_MODULE_5__["Type"].withDefault(apiObject[Comment.ApiIsParent], false);
+      comment.isRoot = _Types_common__WEBPACK_IMPORTED_MODULE_5__["Type"].withDefault(apiObject[Comment.ApiIsRoot], true);
+      comment.published = _Types_common__WEBPACK_IMPORTED_MODULE_5__["Type"].withDefault(apiObject[Comment.ApiPublished], false);
+      comment.revisionCount = _Types_common__WEBPACK_IMPORTED_MODULE_5__["Type"].withDefault(apiObject[Comment.ApiRevisionCount], 0);
+      comment.hasBeenCheckedForSpam = _Types_common__WEBPACK_IMPORTED_MODULE_5__["Type"].withDefault(apiObject[Comment.ApiHasCheckedForSpam], false);
 
       if (comment.hasBeenCheckedForSpam) {
-        comment.isSpam = _Types_common__WEBPACK_IMPORTED_MODULE_6__["Type"].withDefault(apiObject[Comment.ApiSpam], true);
+        comment.isSpam = _Types_common__WEBPACK_IMPORTED_MODULE_5__["Type"].withDefault(apiObject[Comment.ApiSpam], true);
       } else {
         comment.isSpam = null;
       }
@@ -38528,6 +38541,7 @@ Endpoints.CommentsUnapprove = 'comments/unpublish';
 Endpoints.CommentsRemove = 'comments/remove';
 Endpoints.CommentMarkSpam = 'comments/report-spam';
 Endpoints.CommentMarkHam = 'comments/report-ham';
+Endpoints.CommentsUpdate = 'comments/update';
 Endpoints.TelemetryViewReport = 'telemetry/report';
 Endpoints.TelemetrySubmitReport = 'telemetry/submit';
 /* harmony default export */ __webpack_exports__["default"] = (Endpoints);
@@ -38711,7 +38725,24 @@ var CommentRepository = /*#__PURE__*/function () {
     value: function unpublishMany(commentIds) {}
   }, {
     key: "update",
-    value: function update(commentId, data) {}
+    value: function update(commentId, newContent) {
+      var request = {
+        comment: commentId,
+        content: newContent,
+        actionId: _App_actionState__WEBPACK_IMPORTED_MODULE_14__["default"].CurrentActionId
+      },
+          requestHash = Object(_Data_Concerns_canBeStringOrHash__WEBPACK_IMPORTED_MODULE_12__["hash"])(request);
+      return new Promise(function (resolve, reject) {
+        var requestState = this.shouldProcessRequest(requestHash, 500);
+        this.client.post(_Http_endpoints__WEBPACK_IMPORTED_MODULE_4__["default"].url(_Http_endpoints__WEBPACK_IMPORTED_MODULE_4__["default"].CommentsUpdate), request, requestState).then(function (result) {
+          resolve(_Http_Responses_commentMutationResponse__WEBPACK_IMPORTED_MODULE_10__["default"].fromApiResponse(result));
+          this.releasePending(requestHash);
+        }.bind(this))["catch"](function (err) {
+          reject(_Http_Responses_errorResponse__WEBPACK_IMPORTED_MODULE_7__["default"].fromError(err));
+          this.releasePending(requestHash);
+        }.bind(this));
+      }.bind(this));
+    }
   }, {
     key: "markAsSpam",
     value: function markAsSpam(commentId) {

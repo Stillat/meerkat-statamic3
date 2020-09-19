@@ -125,6 +125,13 @@
   color: #2a2a2a;
 }
 
+.meerkat__temp-markdown-reply-editor--wrapper .markdown-buttons > button:nth-last-of-type(-n+2) {
+  display: none !important;
+}
+.meerkat__temp-markdown-reply-editor--wrapper .helpers {
+  display: none !important;
+}
+
 .comment-table__author-column {
   width: 18rem;
 }

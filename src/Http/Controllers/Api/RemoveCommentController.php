@@ -18,6 +18,47 @@ use Stillat\Meerkat\Http\RequestHelpers;
 class RemoveCommentController extends CpController
 {
 
+    public function deleteMany(
+        CommentStorageManagerContract $storageManager,
+        PermissionsManagerContract $manager,
+        IdentityManagerContract $identityManager,
+        MessageGeneralCommentResponseGenerator $resultGenerator,
+        CommentResponseGenerator $commentResultGenerator)
+    {
+        $permissions = $manager->getPermissions($identityManager->getIdentityContext());
+
+        if ($permissions->canRemoveComments === false) {
+            if ($this->request->ajax()) {
+                return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_REMOVE);
+            } else {
+                abort(403, 'Unauthorized', [
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_REMOVE
+                ]);
+                exit;
+            }
+        }
+
+        RequestHelpers::setActionFromRequest($this->request);
+
+        $commentIds = $this->request->get(ApiParameters::PARAM_COMMENTS, null);
+
+        if ($commentIds === null || count($commentIds) === 0) {
+            return Responses::conditionalWithData(false, [
+                ApiParameters::RESULT_REMOVED_IDS => []
+            ]);
+        }
+
+        try {
+            $result = $storageManager->removeAll($commentIds);
+
+            return Responses::conditionalWithData($result->success, [
+                ApiParameters::RESULT_REMOVED_IDS => $result->comments
+            ]);
+        } catch (Exception $e) {
+            return Responses::generalFailure();
+        }
+    }
+
     public function deleteComment(
         CommentStorageManagerContract $storageManager,
         PermissionsManagerContract $manager,

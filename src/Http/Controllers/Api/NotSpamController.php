@@ -18,6 +18,47 @@ use Stillat\Meerkat\Http\RequestHelpers;
 class NotSpamController extends CpController
 {
 
+    public function markManyAsNotSpam(
+        CommentStorageManagerContract $storageManager,
+        PermissionsManagerContract $manager,
+        IdentityManagerContract $identityManager,
+        MessageGeneralCommentResponseGenerator $resultGenerator,
+        CommentResponseGenerator $commentResultGenerator)
+    {
+        $permissions = $manager->getPermissions($identityManager->getIdentityContext());
+
+        if ($permissions->canReportAsSpam === false) {
+            if ($this->request->ajax()) {
+                return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_REPORT_HAM);
+            } else {
+                abort(403, 'Unauthorized', [
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_REPORT_HAM
+                ]);
+                exit;
+            }
+        }
+
+        RequestHelpers::setActionFromRequest($this->request);
+
+        $commentIds = $this->request->get(ApiParameters::PARAM_COMMENTS, null);
+
+        if ($commentIds === null || count($commentIds) === 0) {
+            return Responses::conditionalWithData(false, [
+                ApiParameters::RESULT_COMMENTS => []
+            ]);
+        }
+
+        try {
+            $result = $storageManager->setIsHamForIds($commentIds);
+
+            return Responses::conditionalWithData($result->success, [
+                ApiParameters::RESULT_COMMENTS => $result->comments
+            ]);
+        } catch (Exception $e) {
+            return Responses::generalFailure();
+        }
+    }
+
     public function markAsNotSpam(
         CommentStorageManagerContract $storageManager,
         PermissionsManagerContract $manager,

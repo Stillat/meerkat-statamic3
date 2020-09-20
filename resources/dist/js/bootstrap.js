@@ -1,6 +1,5 @@
 (function () {
     window.Statamic.booting(function () {
-        window.meerkat.Config.Environment.ApiCsrfToken = window.Statamic.$config.get('csrfToken');
         window.meerkat.Config.Environment.MarkdownHandler = window.markdown;
         window.meerkat.Config.Environment.StatamicCpRoot = window.Statamic.cp_url('/');
         window.meerkat.Config.Environment.StatamicApiRoot = window.meerkat.Types.Url.toAbsolute(

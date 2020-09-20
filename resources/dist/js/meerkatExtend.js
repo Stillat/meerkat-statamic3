@@ -2833,6 +2833,11 @@ var Environment = /*#__PURE__*/function () {
       var curValue = _Types_type__WEBPACK_IMPORTED_MODULE_3__["default"].withDefault(Environment.Settings['telemetryEnabled'], '1');
       return curValue === '1';
     }
+  }, {
+    key: "getCsrfToken",
+    value: function getCsrfToken() {
+      return window.Statamic.$config.get('csrfToken');
+    }
   }]);
 
   return Environment;
@@ -2842,7 +2847,6 @@ Environment.MarkdownHandler = null;
 Environment.Settings = new _settings__WEBPACK_IMPORTED_MODULE_2__["default"]();
 Environment.UserContext = null;
 Environment.Preferences = null;
-Environment.ApiCsrfToken = '';
 Environment.StatamicApiRoot = '';
 Environment.StatamicCpRoot = '';
 Environment.ContextJquery = null;

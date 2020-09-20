@@ -27,6 +27,15 @@ return [
     'approve_error_encountered' => 'An error was encountered while publishing the comment. Would you like to try again?',
     'approve_success' => 'The comment was approved',
 
+    'bulk_approve' => 'Publish Comments',
+    'bulk_approve_confirm_title' => 'Publish Comments',
+    'bulk_approve_confirm_title_active' => 'Publishing Comments',
+    'bulk_approve_confirm_progress_message' => 'Publishing comments. Please wait...',
+    'bulk_approve_confirm_message' => 'Are you sure you want to publish these comments? These comments may be visible to visitors.',
+    'bulk_approve_confirm_abandoned' => 'The publish action was abandoned',
+    'bulk_approve_error_encountered' => 'An error was encountered while publishing the comments. Would you like to try again?',
+    'bulk_approve_success' => 'The comments were approved',
+
     'unapprove' => 'Unpublish',
     'unapprove_confirm_title' => 'Unpublish Comment',
     'unapprove_confirm_title_active' => 'Unpublishing Comment',
@@ -36,6 +45,15 @@ return [
     'unapprove_error_encountered' => 'An error was encountered while unpublishing the comment. Would you like to try again?',
     'unapprove_success' => 'The comment was unpublished',
 
+    'bulk_unapprove' => 'Unpublish Comments',
+    'bulk_unapprove_confirm_title' => 'Unpublish Comments',
+    'bulk_unapprove_confirm_title_active' => 'Unpublishing Comments',
+    'bulk_unapprove_confirm_progress_message' => 'Unpublishing comments. Please wait...',
+    'bulk_unapprove_confirm_message' => 'Are you sure you want to unpublish these comments?',
+    'bulk_unapprove_confirm_abandoned' => 'The unpublish action was abandoned',
+    'bulk_unapprove_error_encountered' => 'An error was encountered while unpublishing the comments. Would you like to try again?',
+    'bulk_unapprove_success' => 'The comments were unpublished',
+
     'delete' => 'Delete',
     'delete_confirm_title' => 'Delete Comment',
     'delete_confirm_title_active' => 'Deleting Comment',
@@ -44,6 +62,15 @@ return [
     'delete_confirm_abandoned' => 'The delete action was abandoned',
     'delete_error_encountered' => 'An error was encountered while deleting the comment. Would you like to try again?',
     'delete_success' => 'The comment was deleted',
+
+    'bulk_delete' => 'Delete Comments',
+    'bulk_delete_confirm_title' => 'Delete Comments',
+    'bulk_delete_confirm_title_active' => 'Deleting Comments',
+    'bulk_delete_confirm_progress_message' => 'Deleting comments. Please wait...',
+    'bulk_delete_confirm_message' => 'Are you sure you want to delete these comments?',
+    'bulk_delete_confirm_abandoned' => 'The delete action was abandoned',
+    'bulk_delete_error_encountered' => 'An error was encountered while deleting the comments. Would you like to try again?',
+    'bulk_delete_success' => 'The comments were deleted',
 
     'edit' => 'Edit',
     'edit_confirm_button' => 'Update',
@@ -78,6 +105,15 @@ return [
     'mark_spam_error_encountered' => 'An error was encountered while marking the comment as spam. Would you like to try again?',
     'mark_spam_success' => 'The comment was marked as spam',
 
+    'bulk_mark_spam' => 'Spam',
+    'bulk_mark_spam_confirm_title' => 'Mark Comments as Spam',
+    'bulk_mark_spam_confirm_title_active' => 'Marking Comments as Spam',
+    'bulk_mark_spam_confirm_progress_message' => 'Marking comments as spam. Please wait...',
+    'bulk_mark_spam_confirm_message' => 'Are you sure you want to mark these comments as spam?',
+    'bulk_mark_spam_confirm_abandoned' => 'The mark as spam action was abandoned',
+    'bulk_mark_spam_error_encountered' => 'An error was encountered while marking the comments as spam. Would you like to try again?',
+    'bulk_mark_spam_success' => 'The comments were marked as spam',
+
     'mark_ham' => 'Not Spam',
     'mark_ham_confirm_title' => 'Mark Comment as Not Spam',
     'mark_ham_confirm_title_active' => 'Marking Comment as Not Spam',
@@ -86,5 +122,14 @@ return [
     'mark_ham_confirm_abandoned' => 'The mark as not spam action was abandoned',
     'mark_ham_error_encountered' => 'An error was encountered while marking the comment as not spam. Would you like to try again?',
     'mark_ham_success' => 'The comment was marked as not spam',
+
+    'bulk_mark_ham' => 'Not Spam',
+    'bulk_mark_ham_confirm_title' => 'Mark Comments as Not Spam',
+    'bulk_mark_ham_confirm_title_active' => 'Marking Comments as Not Spam',
+    'bulk_mark_ham_confirm_progress_message' => 'Marking comments as not spam. Please wait...',
+    'bulk_mark_ham_confirm_message' => 'Are you sure you want to mark these comments as not spam?',
+    'bulk_mark_ham_confirm_abandoned' => 'The mark as not spam action was abandoned',
+    'bulk_mark_ham_error_encountered' => 'An error was encountered while marking the comments as not spam. Would you like to try again?',
+    'bulk_mark_ham_success' => 'The comments were marked as not spam',
 
 ];

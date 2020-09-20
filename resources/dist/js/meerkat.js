@@ -35087,6 +35087,9 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/ReplyEditor/style.
       this.comment.cancelReply();
     }
   },
+  mounted: function mounted() {
+    this.$refs.markdownEditor.focus();
+  },
   created: function created() {
     this.$keys.bind('esc', this.cancel);
   }
@@ -35113,7 +35116,7 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/ReplyEditor/style.
 /***/ (function(module, exports) {
 
 // Module
-var code = "<div>\r\n    <div class=\"meerkat__temp-markdown-reply-editor--wrapper\">\r\n        <markdown-fieldtype v-model=\"comment.state.reply.content\"></markdown-fieldtype>\r\n    </div>\r\n\r\n    <div class=\"p-2 bg-grey-20 border-t flex items-center text-sm\">\r\n        <button class=\"btn-primary mr-2\" v-on:click=\"$emit('reply-requested', comment)\">{{\r\n            trans('actions.reply_confirm_button') }}\r\n        </button>\r\n        <button class=\"text-grey hover:text=grey-90\"\r\n                v-on:click=\"cancel()\">{{ trans('actions.cancel') }}\r\n        </button>\r\n    </div>\r\n</div>";
+var code = "<div>\r\n    <div class=\"meerkat__temp-markdown-reply-editor--wrapper\">\r\n        <markdown-fieldtype ref=\"markdownEditor\" v-model=\"comment.state.reply.content\"></markdown-fieldtype>\r\n    </div>\r\n\r\n    <div class=\"p-2 bg-grey-20 border-t flex items-center text-sm\">\r\n        <button class=\"btn-primary mr-2\" v-on:click=\"$emit('reply-requested', comment)\">{{\r\n            trans('actions.reply_confirm_button') }}\r\n        </button>\r\n        <button class=\"text-grey hover:text=grey-90\"\r\n                v-on:click=\"cancel()\">{{ trans('actions.cancel') }}\r\n        </button>\r\n    </div>\r\n</div>";
 // Exports
 module.exports = code;
 

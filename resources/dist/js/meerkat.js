@@ -34142,6 +34142,11 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentActions/sty
     };
   },
   methods: {
+    forceDismiss: function forceDismiss() {
+      if (this.currentAction !== null) {
+        this.currentAction.dismiss();
+      }
+    },
     checkForDismiss: function checkForDismiss() {
       if (this.currentAction !== null && this.currentAction.display === true && this.currentAction.canDismiss()) {
         this.currentAction.dismiss();
@@ -34233,6 +34238,9 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentDisplay/sty
     }
   },
   methods: {
+    forceDismiss: function forceDismiss() {
+      this.$refs.actions.forceDismiss();
+    },
     parseMarkdown: _markdown__WEBPACK_IMPORTED_MODULE_4__["parseMarkdown"]
   }
 });
@@ -34258,7 +34266,7 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentDisplay/sty
 /***/ (function(module, exports) {
 
 // Module
-var code = "<div class=\"comment-display\">\r\n    <reply-author v-if=\"comment.hasParentAuthor()\" :author=\"comment.getParentAuthor()\"\r\n                  :avatar-driver=\"avatarDriver\"></reply-author>\r\n\r\n    <div class=\"comment-display__content\" v-html=\"parseMarkdown(comment.content)\"></div>\r\n\r\n    <comment-actions :comment=\"comment\" :permissions=\"permissions\" v-show=\"actionsDisabled === false && comment.isSelected === false && comment.state.isReplying === false\"\r\n                     v-on:action-approve=\"$emit('action-approve', comment)\"\r\n                     v-on:action-unapprove=\"$emit('action-unapprove', comment)\"\r\n                     v-on:action-reply=\"$emit('action-reply', comment)\"\r\n                     v-on:action-edit=\"$emit('action-edit', comment)\"\r\n                     v-on:action-ham=\"$emit('action-ham', comment)\"\r\n                     v-on:action-spam=\"$emit('action-spam', comment)\"\r\n                     v-on:action-remove=\"$emit('action-remove', comment)\"></comment-actions>\r\n</div>";
+var code = "<div class=\"comment-display\">\r\n    <reply-author v-if=\"comment.hasParentAuthor()\" :author=\"comment.getParentAuthor()\"\r\n                  :avatar-driver=\"avatarDriver\"></reply-author>\r\n\r\n    <div class=\"comment-display__content\" v-html=\"parseMarkdown(comment.content)\"></div>\r\n\r\n    <comment-actions ref=\"actions\" :comment=\"comment\" :permissions=\"permissions\" v-show=\"actionsDisabled === false && comment.isSelected === false && comment.state.isReplying === false\"\r\n                     v-on:action-approve=\"$emit('action-approve', comment)\"\r\n                     v-on:action-unapprove=\"$emit('action-unapprove', comment)\"\r\n                     v-on:action-reply=\"$emit('action-reply', comment)\"\r\n                     v-on:action-edit=\"$emit('action-edit', comment)\"\r\n                     v-on:action-ham=\"$emit('action-ham', comment)\"\r\n                     v-on:action-spam=\"$emit('action-spam', comment)\"\r\n                     v-on:action-remove=\"$emit('action-remove', comment)\"></comment-actions>\r\n</div>";
 // Exports
 module.exports = code;
 
@@ -34299,6 +34307,9 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentEditor/styl
       this.comment.cancelEditing();
     }
   },
+  mounted: function mounted() {
+    this.$refs.markdownEditor.focus();
+  },
   created: function created() {
     this.$keys.bind('esc', this.cancel);
   }
@@ -34325,7 +34336,7 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentEditor/styl
 /***/ (function(module, exports) {
 
 // Module
-var code = "<div>\r\n    <div class=\"meerkat__temp-markdown-editor--wrapper\">\r\n        <markdown-fieldtype v-model=\"comment.editProperties.content\"></markdown-fieldtype>\r\n    </div>\r\n\r\n    <div class=\"p-2 bg-grey-20 border-t flex items-center text-sm\">\r\n        <button class=\"btn-primary mr-2\" v-on:click=\"$emit('update-requested', comment)\">{{\r\n            trans('actions.edit_confirm_button') }}\r\n        </button>\r\n        <button class=\"text-grey hover:text=grey-90\"\r\n                v-on:click=\"cancel()\">{{ trans('actions.cancel') }}\r\n        </button>\r\n    </div>\r\n</div>";
+var code = "<div>\r\n    <div class=\"meerkat__temp-markdown-editor--wrapper\">\r\n        <markdown-fieldtype ref=\"markdownEditor\" v-model=\"comment.editProperties.content\"></markdown-fieldtype>\r\n    </div>\r\n\r\n    <div class=\"p-2 bg-grey-20 border-t flex items-center text-sm\">\r\n        <button class=\"btn-primary mr-2\" v-on:click=\"$emit('update-requested', comment)\">{{\r\n            trans('actions.edit_confirm_button') }}\r\n        </button>\r\n        <button class=\"text-grey hover:text=grey-90\"\r\n                v-on:click=\"cancel()\">{{ trans('actions.cancel') }}\r\n        </button>\r\n    </div>\r\n</div>";
 // Exports
 module.exports = code;
 
@@ -35157,24 +35168,28 @@ var ReplyCommentHandler = /*#__PURE__*/function (_ActionState) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.function.bind */ "./node_modules/core-js/modules/es.function.bind.js");
-/* harmony import */ var core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _Handlers__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Handlers */ "./src/App/Components/CommentTable/Handlers/index.js");
-/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./template.html */ "./src/App/Components/CommentTable/template.html");
-/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_template_html__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _Http_Responses_commentResponse__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../Http/Responses/commentResponse */ "./src/Http/Responses/commentResponse.js");
-/* harmony import */ var _Config_environment__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../Config/environment */ "./src/Config/environment.js");
-/* harmony import */ var _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../Extend/Avatars/avatarDriverRegistry */ "./src/Extend/Avatars/avatarDriverRegistry.js");
-/* harmony import */ var _AuthorDisplay__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../AuthorDisplay */ "./src/App/Components/AuthorDisplay/index.js");
-/* harmony import */ var _Data_Comments_comment__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../Data/Comments/comment */ "./src/Data/Comments/comment.js");
-/* harmony import */ var _CommentDisplay__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../CommentDisplay */ "./src/App/Components/CommentDisplay/index.js");
-/* harmony import */ var _CommentEditor__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../CommentEditor */ "./src/App/Components/CommentEditor/index.js");
-/* harmony import */ var _ReplyEditor__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../ReplyEditor */ "./src/App/Components/ReplyEditor/index.js");
-/* harmony import */ var _Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../Mixins/usesTranslator */ "./src/App/Mixins/usesTranslator.js");
-/* harmony import */ var _Types_type__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../../Types/type */ "./src/Types/type.js");
-/* harmony import */ var _actionState__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../actionState */ "./src/App/actionState.js");
-/* harmony import */ var _Mixins_actionHandler__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../Mixins/actionHandler */ "./src/App/Mixins/actionHandler.js");
-/* harmony import */ var _trans__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../../trans */ "./src/trans.js");
+/* harmony import */ var core_js_modules_es_array_for_each__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.for-each */ "./node_modules/core-js/modules/es.array.for-each.js");
+/* harmony import */ var core_js_modules_es_array_for_each__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_for_each__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.function.bind */ "./node_modules/core-js/modules/es.function.bind.js");
+/* harmony import */ var core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _Handlers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Handlers */ "./src/App/Components/CommentTable/Handlers/index.js");
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./template.html */ "./src/App/Components/CommentTable/template.html");
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_template_html__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _Http_Responses_commentResponse__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../Http/Responses/commentResponse */ "./src/Http/Responses/commentResponse.js");
+/* harmony import */ var _Config_environment__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../Config/environment */ "./src/Config/environment.js");
+/* harmony import */ var _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../Extend/Avatars/avatarDriverRegistry */ "./src/Extend/Avatars/avatarDriverRegistry.js");
+/* harmony import */ var _AuthorDisplay__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../AuthorDisplay */ "./src/App/Components/AuthorDisplay/index.js");
+/* harmony import */ var _Data_Comments_comment__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../Data/Comments/comment */ "./src/Data/Comments/comment.js");
+/* harmony import */ var _CommentDisplay__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../CommentDisplay */ "./src/App/Components/CommentDisplay/index.js");
+/* harmony import */ var _CommentEditor__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../CommentEditor */ "./src/App/Components/CommentEditor/index.js");
+/* harmony import */ var _ReplyEditor__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../ReplyEditor */ "./src/App/Components/ReplyEditor/index.js");
+/* harmony import */ var _Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../Mixins/usesTranslator */ "./src/App/Mixins/usesTranslator.js");
+/* harmony import */ var _Types_type__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../../Types/type */ "./src/Types/type.js");
+/* harmony import */ var _actionState__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../actionState */ "./src/App/actionState.js");
+/* harmony import */ var _Mixins_actionHandler__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../Mixins/actionHandler */ "./src/App/Mixins/actionHandler.js");
+/* harmony import */ var _trans__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../../../trans */ "./src/trans.js");
 
 
 
@@ -35191,17 +35206,21 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
+
+var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
 
 __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style.less");
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  mixins: [_Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_11__["default"], _Mixins_actionHandler__WEBPACK_IMPORTED_MODULE_14__["default"]],
-  template: _template_html__WEBPACK_IMPORTED_MODULE_2___default.a,
+  mixins: [_Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_13__["default"], _Mixins_actionHandler__WEBPACK_IMPORTED_MODULE_16__["default"]],
+  template: _template_html__WEBPACK_IMPORTED_MODULE_4___default.a,
   components: {
-    'author-display': _AuthorDisplay__WEBPACK_IMPORTED_MODULE_6__["default"],
-    'comment-display': _CommentDisplay__WEBPACK_IMPORTED_MODULE_8__["default"],
-    'comment-editor': _CommentEditor__WEBPACK_IMPORTED_MODULE_9__["default"],
-    'reply-editor': _ReplyEditor__WEBPACK_IMPORTED_MODULE_10__["default"]
+    'author-display': _AuthorDisplay__WEBPACK_IMPORTED_MODULE_8__["default"],
+    'comment-display': _CommentDisplay__WEBPACK_IMPORTED_MODULE_10__["default"],
+    'comment-editor': _CommentEditor__WEBPACK_IMPORTED_MODULE_11__["default"],
+    'reply-editor': _ReplyEditor__WEBPACK_IMPORTED_MODULE_12__["default"]
   },
   props: {
     loading: {
@@ -35209,7 +35228,7 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style
       "default": false
     },
     comments: {
-      type: _Http_Responses_commentResponse__WEBPACK_IMPORTED_MODULE_3__["default"],
+      type: _Http_Responses_commentResponse__WEBPACK_IMPORTED_MODULE_5__["default"],
       "default": null
     },
     displayFocusMode: {
@@ -35223,18 +35242,18 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style
       avatarDriver: null,
       permissions: null,
       handlers: {
-        'edit': _Handlers__WEBPACK_IMPORTED_MODULE_1__["EditCommentHandler"],
-        'reply': _Handlers__WEBPACK_IMPORTED_MODULE_1__["ReplyCommentHandler"]
+        'edit': _Handlers__WEBPACK_IMPORTED_MODULE_3__["EditCommentHandler"],
+        'reply': _Handlers__WEBPACK_IMPORTED_MODULE_3__["ReplyCommentHandler"]
       },
-      singleSelectTranslation: Object(_trans__WEBPACK_IMPORTED_MODULE_15__["default"])('actions.select_comment'),
+      singleSelectTranslation: Object(_trans__WEBPACK_IMPORTED_MODULE_17__["default"])('actions.select_comment'),
       canUseBulkActions: false,
       currentBulkAction: 'approve',
       bulkHandlers: {
-        'approve': _Handlers__WEBPACK_IMPORTED_MODULE_1__["BulkApproveHandler"],
-        'unapprove': _Handlers__WEBPACK_IMPORTED_MODULE_1__["BulkUnapproveHandler"],
-        'delete': _Handlers__WEBPACK_IMPORTED_MODULE_1__["BulkDeleteHandler"],
-        'mark-spam': _Handlers__WEBPACK_IMPORTED_MODULE_1__["BulkSpamHandler"],
-        'mark-ham': _Handlers__WEBPACK_IMPORTED_MODULE_1__["BulkNotSpamHandler"]
+        'approve': _Handlers__WEBPACK_IMPORTED_MODULE_3__["BulkApproveHandler"],
+        'unapprove': _Handlers__WEBPACK_IMPORTED_MODULE_3__["BulkUnapproveHandler"],
+        'delete': _Handlers__WEBPACK_IMPORTED_MODULE_3__["BulkDeleteHandler"],
+        'mark-spam': _Handlers__WEBPACK_IMPORTED_MODULE_3__["BulkSpamHandler"],
+        'mark-ham': _Handlers__WEBPACK_IMPORTED_MODULE_3__["BulkNotSpamHandler"]
       }
     };
   },
@@ -35270,6 +35289,12 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style
     }
   },
   methods: {
+    commentsUpdated: function commentsUpdated(comments) {
+      // TODO: Close on bulk actions, too.
+      this.$refs.commentDisplay.forEach(function (d) {
+        d.forceDismiss();
+      });
+    },
     getSelectedIds: function getSelectedIds() {
       var ids = [],
           selectedComments = this.comments.comments.getSelected();
@@ -35297,7 +35322,7 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style
       this.comments.comments.unSelectAll();
     },
     performBulkAction: function performBulkAction(action) {
-      if (_Types_type__WEBPACK_IMPORTED_MODULE_12__["default"].hasValue(this.bulkHandlers[action])) {
+      if (_Types_type__WEBPACK_IMPORTED_MODULE_14__["default"].hasValue(this.bulkHandlers[action])) {
         var bulkHandler = new this.bulkHandlers[action](null);
         bulkHandler.commentIds = this.getSelectedIds();
         this.confirm(bulkHandler).onConfirm(function (state) {
@@ -35308,14 +35333,15 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style
       }
     },
     performAction: function performAction(action, comment) {
-      if (_Types_type__WEBPACK_IMPORTED_MODULE_12__["default"].hasValue(this.handlers[action])) {
+      if (_Types_type__WEBPACK_IMPORTED_MODULE_14__["default"].hasValue(this.handlers[action])) {
         this.confirm(new this.handlers[action](comment)).onConfirm(function (state) {
           state.proceed();
         });
+        console.log('from performAction', this.currentAction);
       }
     },
     performActionNow: function performActionNow(action, comment) {
-      if (_Types_type__WEBPACK_IMPORTED_MODULE_12__["default"].hasValue(this.handlers[action])) {
+      if (_Types_type__WEBPACK_IMPORTED_MODULE_14__["default"].hasValue(this.handlers[action])) {
         this.confirm(new this.handlers[action](comment)).onConfirm(function (state) {
           state.proceed();
         }).onComplete(function () {
@@ -35336,16 +35362,17 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style
     }
   },
   created: function created() {
-    this.permissions = _Config_environment__WEBPACK_IMPORTED_MODULE_4__["default"].getPermissions();
+    syncjs.Hubs.comments().handledBy(this).reactsToInstance(false).redirectTo(this.commentsUpdated);
+    this.permissions = _Config_environment__WEBPACK_IMPORTED_MODULE_6__["default"].getPermissions();
 
     if (this.permissions.canApproveComments || this.permissions.canEditComments || this.permissions.canRemoveComments || this.permissions.canReportAsHam || this.permissions.canReportAsSpam || this.permissions.canUnApproveComments) {
       this.canUseBulkActions = true;
     }
 
-    if (_Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_5__["default"].hasDriver(_Config_environment__WEBPACK_IMPORTED_MODULE_4__["default"].Settings.avatarDriver)) {
-      this.avatarDriver = _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_5__["default"].getDriverName(_Config_environment__WEBPACK_IMPORTED_MODULE_4__["default"].Settings.avatarDriver);
+    if (_Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_7__["default"].hasDriver(_Config_environment__WEBPACK_IMPORTED_MODULE_6__["default"].Settings.avatarDriver)) {
+      this.avatarDriver = _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_7__["default"].getDriverName(_Config_environment__WEBPACK_IMPORTED_MODULE_6__["default"].Settings.avatarDriver);
     } else {
-      this.avatarDriver = _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_5__["default"].getDriverName(_Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_5__["default"].DefaultDriverName);
+      this.avatarDriver = _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_7__["default"].getDriverName(_Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_7__["default"].DefaultDriverName);
     }
   }
 });
@@ -35371,7 +35398,7 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style
 /***/ (function(module, exports) {
 
 // Module
-var code = "<div>\r\n    <meerkat-stateful-confirm-dialog\r\n            name=\"tableMeerkatActionConfirm\" v-if=\"currentAction !== null && currentAction.display === true\"\r\n            :action-state=\"currentAction\" v-on:cancel=\"checkForDismiss\"></meerkat-stateful-confirm-dialog>\r\n\r\n    <div class=\"card p-0 relative\">\r\n        <div class=\"data-table-header\">\r\n            <table class=\"data-table\" v-bind:class=\"tableClasses\">\r\n                <thead>\r\n                <tr v-if=\"canUseBulkActions && hasSelection === true\">\r\n                    <th colspan=\"2\">\r\n                        <label class=\"text-gray-500 font-bold inline cursor-pointer\" :title=\"singleSelectTranslation\">\r\n                            <input class=\"mr-2 leading-tight cursor-pointer\" type=\"checkbox\"\r\n                                   :title=\"trans('actions.select_all_comments')\"\r\n                                   v-model=\"comments.comments.allSelected\"\r\n                                   v-on:click=\"comments.comments.toggleSelections()\">\r\n                        </label>\r\n\r\n                        <div class=\"meerkat__bulk-actions\">\r\n                            <select v-model=\"currentBulkAction\">\r\n                                <option v-if=\"permissions.canApproveComments === true\" value=\"approve\">{{ trans('actions.bulk_list_approve') }}</option>\r\n                                <option v-if=\"permissions.canUnApproveComments === true\" value=\"unapprove\">{{ trans('actions.bulk_list_unapprove') }}</option>\r\n                                <option v-if=\"permissions.canRemoveComments === true\" value=\"delete\">{{ trans('actions.bulk_list_delete') }}</option>\r\n                                <option v-if=\"permissions.canReportAsSpam === true\" value=\"mark-spam\">{{ trans('actions.bulk_list_spam') }}</option>\r\n                                <option v-if=\"permissions.canReportAsHam === true\" value=\"mark-ham\">{{ trans('actions.bulk_list_ham') }}</option>\r\n                            </select>\r\n\r\n                            <button class=\"btn-primary mr-2\" v-on:click=\"performBulkAction(currentBulkAction)\">{{ trans('actions.bulk_perform_action') }}</button>\r\n                            <button class=\"text-grey hover:text-grey-90\" v-on:click=\"cancelBulkActions\">{{ trans('actions.cancel') }}</button>\r\n\r\n                        </div>\r\n                    </th>\r\n                </tr>\r\n                <tr>\r\n                    <th class=\"comment-table__author-column\">\r\n                        <label class=\"text-gray-500 font-bold inline cursor-pointer\" :title=\"singleSelectTranslation\"\r\n                               v-if=\"canUseBulkActions && hasSelection === false\">\r\n                            <input class=\"mr-2 leading-tight cursor-pointer\" type=\"checkbox\"\r\n                                   :title=\"trans('actions.select_all_comments')\"\r\n                                   v-model=\"comments.comments.allSelected\"\r\n                                   v-on:click=\"comments.comments.toggleSelections()\">\r\n                        </label>\r\n\r\n                        {{ trans('display.header_author') }}\r\n                    </th>\r\n                    <th>{{ trans('display.header_comment') }}</th>\r\n                </tr>\r\n                </thead>\r\n                <tbody>\r\n                <tr>\r\n                    <td colspan=\"2\">\r\n                        <p>In response to: Some thread.</p>\r\n                    </td>\r\n                </tr>\r\n                <tr v-for=\"(comment, i) in comments.comments\" class=\"meerkat__comment-row\"\r\n                    v-bind:class=\"getCommentClasses(comment)\" v-if=\"comment.isDeleted === false\">\r\n                    <td class=\"author-display__container\">\r\n                        <label class=\"text-gray-500 font-bold cursor-pointer\" :title=\"singleSelectTranslation\" v-if=\"canUseBulkActions\">\r\n                            <input class=\"mr-2 leading-tight cursor-pointer\" type=\"checkbox\"\r\n                                   v-model=\"comment.isSelected\">\r\n                        </label>\r\n                        <author-display :author=\"comment.getAuthor()\" :avatar-driver=\"avatarDriver\"></author-display>\r\n                    </td>\r\n                    <td>\r\n                        <p><strong>{{ comment.id }}</strong></p>\r\n                        <comment-display v-if=\"comment.isSelected === true || comment.state.isEditing === false\" :comment=\"comment\"\r\n                                         :avatar-driver=\"avatarDriver\" :permissions=\"permissions\"\r\n                                         v-on:action-edit=\"beforeEdit\" :actions-disabled=\"selectedCount > 0\"\r\n                                         v-on:action-reply=\"beforeReply\"></comment-display>\r\n                        <comment-editor v-if=\"selectedCount === 0 && comment.state.isEditing === true\" :comment=\"comment\"\r\n                                        v-on:update-requested=\"performActionNow('edit', comment)\"\r\n                                        v-on:update-canceled=\"disableFocusMode\"></comment-editor>\r\n                        <reply-editor v-if=\"selectedCount === 0 && comment.state.isReplying === true\" :comment=\"comment\"\r\n                                      v-on:reply-requested=\"performActionNow('reply', comment)\"\r\n                                      v-on:reply-canceled=\"disableFocusMode\"></reply-editor>\r\n                    </td>\r\n                </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n    </div>\r\n</div>";
+var code = "<div>\r\n    <meerkat-stateful-confirm-dialog\r\n            name=\"tableMeerkatActionConfirm\" v-if=\"currentAction !== null && currentAction.display === true\"\r\n            :action-state=\"currentAction\" v-on:cancel=\"checkForDismiss\"></meerkat-stateful-confirm-dialog>\r\n\r\n    <div class=\"card p-0 relative\">\r\n        <div class=\"data-table-header\">\r\n            <table class=\"data-table\" v-bind:class=\"tableClasses\">\r\n                <thead>\r\n                <tr v-if=\"canUseBulkActions && hasSelection === true\">\r\n                    <th colspan=\"2\">\r\n                        <label class=\"text-gray-500 font-bold inline cursor-pointer\" :title=\"singleSelectTranslation\">\r\n                            <input class=\"mr-2 leading-tight cursor-pointer\" type=\"checkbox\"\r\n                                   :title=\"trans('actions.select_all_comments')\"\r\n                                   v-model=\"comments.comments.allSelected\"\r\n                                   v-on:click=\"comments.comments.toggleSelections()\">\r\n                        </label>\r\n\r\n                        <div class=\"meerkat__bulk-actions\">\r\n                            <select v-model=\"currentBulkAction\">\r\n                                <option v-if=\"permissions.canApproveComments === true\" value=\"approve\">{{ trans('actions.bulk_list_approve') }}</option>\r\n                                <option v-if=\"permissions.canUnApproveComments === true\" value=\"unapprove\">{{ trans('actions.bulk_list_unapprove') }}</option>\r\n                                <option v-if=\"permissions.canRemoveComments === true\" value=\"delete\">{{ trans('actions.bulk_list_delete') }}</option>\r\n                                <option v-if=\"permissions.canReportAsSpam === true\" value=\"mark-spam\">{{ trans('actions.bulk_list_spam') }}</option>\r\n                                <option v-if=\"permissions.canReportAsHam === true\" value=\"mark-ham\">{{ trans('actions.bulk_list_ham') }}</option>\r\n                            </select>\r\n\r\n                            <button class=\"btn-primary mr-2\" v-on:click=\"performBulkAction(currentBulkAction)\">{{ trans('actions.bulk_perform_action') }}</button>\r\n                            <button class=\"text-grey hover:text-grey-90\" v-on:click=\"cancelBulkActions\">{{ trans('actions.cancel') }}</button>\r\n\r\n                        </div>\r\n                    </th>\r\n                </tr>\r\n                <tr>\r\n                    <th class=\"comment-table__author-column\">\r\n                        <label class=\"text-gray-500 font-bold inline cursor-pointer\" :title=\"singleSelectTranslation\"\r\n                               v-if=\"canUseBulkActions && hasSelection === false\">\r\n                            <input class=\"mr-2 leading-tight cursor-pointer\" type=\"checkbox\"\r\n                                   :title=\"trans('actions.select_all_comments')\"\r\n                                   v-model=\"comments.comments.allSelected\"\r\n                                   v-on:click=\"comments.comments.toggleSelections()\">\r\n                        </label>\r\n\r\n                        {{ trans('display.header_author') }}\r\n                    </th>\r\n                    <th>{{ trans('display.header_comment') }}</th>\r\n                </tr>\r\n                </thead>\r\n                <tbody>\r\n                <tr>\r\n                    <td colspan=\"2\">\r\n                        <p>In response to: Some thread.</p>\r\n                    </td>\r\n                </tr>\r\n                <tr v-for=\"(comment, i) in comments.comments\" class=\"meerkat__comment-row\"\r\n                    v-bind:class=\"getCommentClasses(comment)\" v-if=\"comment.isDeleted === false\">\r\n                    <td class=\"author-display__container\">\r\n                        <label class=\"text-gray-500 font-bold cursor-pointer\" :title=\"singleSelectTranslation\" v-if=\"canUseBulkActions\">\r\n                            <input class=\"mr-2 leading-tight cursor-pointer\" type=\"checkbox\"\r\n                                   v-model=\"comment.isSelected\">\r\n                        </label>\r\n                        <author-display :author=\"comment.getAuthor()\" :avatar-driver=\"avatarDriver\"></author-display>\r\n                    </td>\r\n                    <td>\r\n                        <comment-display ref=\"commentDisplay\" v-if=\"comment.isSelected === true || comment.state.isEditing === false\" :comment=\"comment\"\r\n                                         :avatar-driver=\"avatarDriver\" :permissions=\"permissions\"\r\n                                         v-on:action-edit=\"beforeEdit\" :actions-disabled=\"selectedCount > 0\"\r\n                                         v-on:action-reply=\"beforeReply\"></comment-display>\r\n                        <comment-editor v-if=\"selectedCount === 0 && comment.state.isEditing === true\" :comment=\"comment\"\r\n                                        v-on:update-requested=\"performActionNow('edit', comment)\"\r\n                                        v-on:update-canceled=\"disableFocusMode\"></comment-editor>\r\n                        <reply-editor v-if=\"selectedCount === 0 && comment.state.isReplying === true\" :comment=\"comment\"\r\n                                      v-on:reply-requested=\"performActionNow('reply', comment)\"\r\n                                      v-on:reply-canceled=\"disableFocusMode\"></reply-editor>\r\n                    </td>\r\n                </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n    </div>\r\n</div>";
 // Exports
 module.exports = code;
 
@@ -36036,6 +36063,15 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   methods: {
+    getHandler: function getHandler() {
+      return this.currentAction;
+    },
+    closeHandler: function closeHandler() {
+      if (this.currentAction !== null) {
+        this.currentAction.display = false;
+        this.currentAction = null;
+      }
+    },
     confirm: function confirm(handler) {
       this.currentAction = handler;
       this.currentAction.display = true;
@@ -37304,6 +37340,11 @@ var Comment = /*#__PURE__*/function () {
       this.cancelReply();
       this.cancelEditing();
       this.isDeleted = true;
+    }
+  }, {
+    key: "onCommentUpdated",
+    value: function onCommentUpdated(newVal) {
+      this.content = newVal.content;
     }
   }, {
     key: "startReplying",
@@ -40019,7 +40060,13 @@ var CommentRepository = /*#__PURE__*/function () {
         var requestState = this.shouldProcessRequest(requestHash, 500);
         this.client.post(_Http_endpoints__WEBPACK_IMPORTED_MODULE_4__["default"].url(_Http_endpoints__WEBPACK_IMPORTED_MODULE_4__["default"].CommentsUpdate), request, requestState).then(function (result) {
           this.releasePending(requestHash);
-          resolve(_Http_Responses_commentMutationResponse__WEBPACK_IMPORTED_MODULE_10__["default"].fromApiResponse(result));
+          var updateResult = _Http_Responses_commentMutationResponse__WEBPACK_IMPORTED_MODULE_10__["default"].fromApiResponse(result);
+
+          if (updateResult.success) {
+            syncjs.Hubs.comments().updated([result.comment]);
+          }
+
+          resolve(updateResult);
         }.bind(this))["catch"](function (err) {
           this.releasePending(requestHash);
           reject(_Http_Responses_errorResponse__WEBPACK_IMPORTED_MODULE_7__["default"].fromError(err));
@@ -42018,6 +42065,136 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./src/syncjs/Messaging/handlerManager.js":
+/*!************************************************!*\
+  !*** ./src/syncjs/Messaging/handlerManager.js ***!
+  \************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.object.define-property */ "./node_modules/core-js/modules/es.object.define-property.js");
+/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _Types_type__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Types/type */ "./src/syncjs/Types/type.js");
+/* harmony import */ var _message__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./message */ "./src/syncjs/Messaging/message.js");
+/* harmony import */ var _index__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./index */ "./src/syncjs/Messaging/index.js");
+
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+
+
+
+var HandlerManager = /*#__PURE__*/function () {
+  function HandlerManager(hub, handler) {
+    _classCallCheck(this, HandlerManager);
+
+    this.hub = hub;
+    this.handler = handler;
+    this.methodRedirects = [];
+    this.reactsToCurrentSyncInstance = true;
+  }
+  /**
+   * Tests if the manager has method redirects.
+   *
+   * @returns {boolean}
+   */
+
+
+  _createClass(HandlerManager, [{
+    key: "hasRedirects",
+    value: function hasRedirects() {
+      return this.methodRedirects.length > 0;
+    }
+    /**
+     * Tests if the handler has the requested method.
+     *
+     * @param method
+     */
+
+  }, {
+    key: "hasMethod",
+    value: function hasMethod(method) {
+      return _Types_type__WEBPACK_IMPORTED_MODULE_1__["default"].isFunction(this.handler[method]);
+    }
+    /**
+     * Adds the method to the internal redirects list.
+     *
+     * @param {string} method The method name.
+     */
+
+  }, {
+    key: "redirectTo",
+    value: function redirectTo(method) {
+      this.methodRedirects.push(method);
+    }
+  }, {
+    key: "reactsToInstance",
+    value: function reactsToInstance(doesReact) {
+      this.reactsToCurrentSyncInstance = doesReact;
+      return this;
+    }
+    /**
+     * Removes all previously registered method redirects.
+     */
+
+  }, {
+    key: "clearRedirects",
+    value: function clearRedirects() {
+      this.methodRedirects = [];
+    }
+    /**
+     * Invokes the provided method by name
+     *
+     * @param {string} methodName The method name.
+     * @param {data} data The data to supply as the first argument.
+     * @private
+     */
+
+  }, {
+    key: "_invokeMethod",
+    value: function _invokeMethod(methodName, data) {
+      this.handler[methodName](data);
+    }
+  }, {
+    key: "triggerRedirects",
+    value: function triggerRedirects(message) {
+      if (this.hasRedirects()) {
+        for (var i = 0; i < this.methodRedirects.length; i += 1) {
+          this.methodRedirects[i](message.data);
+        }
+      }
+    }
+  }, {
+    key: "triggerHandler",
+    value: function triggerHandler(handlerName, message) {
+      if (this.reactsToCurrentSyncInstance === false) {
+        if (message.origin === _index__WEBPACK_IMPORTED_MODULE_3__["Hubs"].getIdentifier()) {
+          return;
+        }
+      }
+
+      this.triggerRedirects(message);
+
+      if (this.hasMethod(handlerName)) {
+        this._invokeMethod(handlerName, message.data);
+      }
+    }
+  }]);
+
+  return HandlerManager;
+}();
+
+/* harmony default export */ __webpack_exports__["default"] = (HandlerManager);
+
+/***/ }),
+
 /***/ "./src/syncjs/Messaging/hub.js":
 /*!*************************************!*\
   !*** ./src/syncjs/Messaging/hub.js ***!
@@ -42071,6 +42248,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _message__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./message */ "./src/syncjs/Messaging/message.js");
 /* harmony import */ var _Types_type__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ../Types/type */ "./src/syncjs/Types/type.js");
 /* harmony import */ var _Types_string__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ../Types/string */ "./src/syncjs/Types/string.js");
+/* harmony import */ var _handlerManager__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./handlerManager */ "./src/syncjs/Messaging/handlerManager.js");
 
 
 
@@ -42120,6 +42298,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 
 
+
 /**
  * The Hub is a dynamic wrapper around the Manager.
  */
@@ -42139,7 +42318,7 @@ var Hub = /*#__PURE__*/function (_Manager) {
     _this.name = name;
     _this.reactNamespace = _Types_type__WEBPACK_IMPORTED_MODULE_22__["default"].withDefault(typeNamespace, null);
     _this.receiverKey = _this.getMessageKey();
-    _this.messageHandlers = [];
+    _this.handlerManagers = [];
     _this.typeHandlers = [];
     _this.handlePrefix = 'on' + _Types_string__WEBPACK_IMPORTED_MODULE_23__["default"].ucFirst(_this.name.toLowerCase());
     _this.reactPrefix = null;
@@ -42172,7 +42351,9 @@ var Hub = /*#__PURE__*/function (_Manager) {
   _createClass(Hub, [{
     key: "handledBy",
     value: function handledBy(handler) {
-      this.messageHandlers.push(handler);
+      var handlerManager = new _handlerManager__WEBPACK_IMPORTED_MODULE_24__["default"](this, handler);
+      this.handlerManagers.push(handlerManager);
+      return handlerManager;
     }
     /**
      * Generates a custom message key for this hub.
@@ -42205,11 +42386,21 @@ var Hub = /*#__PURE__*/function (_Manager) {
           var _handleName = this.reactPrefix + messageName;
 
           for (var i = 0; i < message.data.length; i += 1) {
-            if (_Types_string__WEBPACK_IMPORTED_MODULE_23__["default"].hasValue(message.data[i])) {
+            if (_typeof(message.data[i]) === 'object' || _Types_string__WEBPACK_IMPORTED_MODULE_23__["default"].hasValue(message.data[i])) {
               if (this.typeHandlers.length > 0) {
                 for (var j = 0; j < this.typeHandlers.length; j += 1) {
-                  if (this.typeHandlers[j].__syncJsGetIdentity() === message.data[i]) {
-                    this.typeHandlers[j].__syncJsTriggerFromTypeHandle(_handleName);
+                  var idField = this.typeHandlers[j].__syncJsIdentityField;
+
+                  if (_typeof(message.data[i]) === 'object') {
+                    if (_Types_type__WEBPACK_IMPORTED_MODULE_22__["default"].hasValue(message.data[i][idField])) {
+                      if (message.data[i][idField] === this.typeHandlers[j].__syncJsGetIdentity()) {
+                        this.typeHandlers[j].__syncJsTriggerFromTypeHandleWithObjParam(_handleName, message.data[i]);
+                      }
+                    }
+                  } else {
+                    if (this.typeHandlers[j].__syncJsGetIdentity() === message.data[i]) {
+                      this.typeHandlers[j].__syncJsTriggerFromTypeHandle(_handleName);
+                    }
                   }
                 }
               }
@@ -42217,10 +42408,8 @@ var Hub = /*#__PURE__*/function (_Manager) {
           }
         }
 
-        for (var _i = 0; _i < this.messageHandlers.length; _i += 1) {
-          if (_Types_type__WEBPACK_IMPORTED_MODULE_22__["default"].isFunction(this.messageHandlers[_i][handleName])) {
-            this.messageHandlers[_i][handleName](message.data);
-          }
+        for (var _i = 0; _i < this.handlerManagers.length; _i += 1) {
+          this.handlerManagers[_i].triggerHandler(handleName, message);
         }
       }
     }
@@ -42251,6 +42440,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _hub__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./hub */ "./src/syncjs/Messaging/hub.js");
 /* harmony import */ var _Types_type__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../Types/type */ "./src/syncjs/Types/type.js");
 /* harmony import */ var _Types_string__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../Types/string */ "./src/syncjs/Types/string.js");
+/* harmony import */ var _Types_guid__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../Types/guid */ "./src/syncjs/Types/guid.js");
 
 
 
@@ -42260,6 +42450,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
 
 
 
@@ -42294,6 +42485,11 @@ var Hubs = /*#__PURE__*/function () {
   }
 
   _createClass(Hubs, [{
+    key: "getIdentifier",
+    value: function getIdentifier() {
+      return Hubs.GlobalIdentifier;
+    }
+  }, {
     key: "make",
     value: function make(name, typeNamespace) {
       var hub = new _hub__WEBPACK_IMPORTED_MODULE_3__["default"](name, typeNamespace);
@@ -42329,6 +42525,7 @@ var Hubs = /*#__PURE__*/function () {
   return Hubs;
 }();
 
+Hubs.GlobalIdentifier = _Types_guid__WEBPACK_IMPORTED_MODULE_6__["default"].newGuid();
 Hubs.Registered = {};
 Hubs.TypedHubs = {};
 /* harmony default export */ __webpack_exports__["default"] = (new Hubs());
@@ -42581,6 +42778,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_function_name__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_function_name__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.object.define-property */ "./node_modules/core-js/modules/es.object.define-property.js");
 /* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _index__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./index */ "./src/syncjs/Messaging/index.js");
 
 
 
@@ -42590,12 +42788,15 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
+
+
 var Message = /*#__PURE__*/function () {
   function Message(name, eventData) {
     _classCallCheck(this, Message);
 
     this.name = name;
     this.data = eventData;
+    this.origin = _index__WEBPACK_IMPORTED_MODULE_2__["Hubs"].getIdentifier();
   }
   /**
    * Constructs a message from the provided details.
@@ -42618,7 +42819,8 @@ var Message = /*#__PURE__*/function () {
     value: function toMessageString() {
       return JSON.stringify({
         name: this.name,
-        data: this.data
+        data: this.data,
+        origin: this.origin
       });
     }
   }], [{
@@ -42627,6 +42829,7 @@ var Message = /*#__PURE__*/function () {
       var message = new Message();
       message.name = eventName;
       message.data = eventData;
+      message.origin = _index__WEBPACK_IMPORTED_MODULE_2__["Hubs"].getIdentifier();
       return message;
     }
   }]);
@@ -42663,6 +42866,7 @@ function reactsToType(instance, options) {
   }
 
   instance.__syncJsType = _Types_type__WEBPACK_IMPORTED_MODULE_1__["default"].typeOf(instance);
+  instance.__syncJsIdentityField = options.identity;
   instance.__syncJsTypeNamespace = _manager__WEBPACK_IMPORTED_MODULE_3__["default"].StorageNamespaceMessageKey + '@' + instance.__syncJsType;
 
   instance.__syncJsGetIdentity = function () {
@@ -42675,12 +42879,75 @@ function reactsToType(instance, options) {
     }
   }.bind(instance);
 
+  instance.__syncJsTriggerFromTypeHandleWithObjParam = function (typeHandler, objParam) {
+    if (_Types_type__WEBPACK_IMPORTED_MODULE_1__["default"].isFunction(this[typeHandler])) {
+      this[typeHandler](objParam);
+    }
+  }.bind(instance);
+
   var typedHubs = _hubs__WEBPACK_IMPORTED_MODULE_2__["default"].getTypedHubs(instance.__syncJsType);
 
   for (var i = 0; i < typedHubs.length; i += 1) {
     typedHubs[i].typeHandlers.push(instance);
   }
 }
+
+/***/ }),
+
+/***/ "./src/syncjs/Types/guid.js":
+/*!**********************************!*\
+  !*** ./src/syncjs/Types/guid.js ***!
+  \**********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.date.to-string */ "./node_modules/core-js/modules/es.date.to-string.js");
+/* harmony import */ var core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.object.define-property */ "./node_modules/core-js/modules/es.object.define-property.js");
+/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.object.to-string */ "./node_modules/core-js/modules/es.object.to-string.js");
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.regexp.exec */ "./node_modules/core-js/modules/es.regexp.exec.js");
+/* harmony import */ var core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
+/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_5__);
+
+
+
+
+
+
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Guid = /*#__PURE__*/function () {
+  function Guid() {
+    _classCallCheck(this, Guid);
+  }
+
+  _createClass(Guid, null, [{
+    key: "newGuid",
+    value: function newGuid() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16 | 0,
+            v = c === 'x' ? r : r & 0x3 | 0x8;
+        return v.toString(16);
+      });
+    }
+  }]);
+
+  return Guid;
+}();
+
+/* harmony default export */ __webpack_exports__["default"] = (Guid);
 
 /***/ }),
 

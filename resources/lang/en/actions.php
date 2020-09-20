@@ -11,11 +11,12 @@ return [
     'select_comment' => 'Select this comment',
     'select_all_comments' => 'Select all visible comments',
 
-    'bulk_approve' => 'Publish the selected comment(s)',
-    'bulk_unapprove' => 'Unpublish the selected comment(s)',
-    'bulk_delete' => 'Delete the selected comment(s)',
-    'bulk_spam' => 'Mark the selected comment(s) as spam',
-    'bulk_ham' => 'Mark the selected comment(s) as not spam',
+    'bulk_perform_action' => 'Perform Action',
+    'bulk_list_approve' => 'Publish the selected comment(s)',
+    'bulk_list_unapprove' => 'Unpublish the selected comment(s)',
+    'bulk_list_delete' => 'Delete the selected comment(s)',
+    'bulk_list_spam' => 'Mark the selected comment(s) as spam',
+    'bulk_list_ham' => 'Mark the selected comment(s) as not spam',
 
     'approve' => 'Publish',
     'approve_confirm_title' => 'Publish Comment',

@@ -89,8 +89,11 @@ class RemoveCommentController extends CpController
 
             $result = $storageManager->removeById($comment->getId());
 
+            $commentsRemoved = array_keys($result->comments);
+            $commentsRemoved[] = $commentId;
+
             return Responses::conditionalWithData($result->success, [
-                ApiParameters::RESULT_REMOVED_IDS => $result->comments
+                ApiParameters::RESULT_REMOVED_IDS => $commentsRemoved
             ]);
         } catch (CommentNotFoundException $notFound) {
             return $resultGenerator->notFound($commentId);

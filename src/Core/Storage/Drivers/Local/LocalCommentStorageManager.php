@@ -1706,13 +1706,15 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             try {
                 $removeResult = $this->removeById($commentId);
 
-                if ($result->success === true) {
+                if ($removeResult->success === true) {
                     $result->succeeded[$commentId] = $removeResult;
 
                     $result->comments[] = $commentId;
-                    $result->comments = array_merge($result->comments, $removeResult->comments);
+                    $result->comments = array_merge($result->comments, array_map('strval', array_keys($removeResult->comments)));
                 } else {
-                    $result->failed[$commentId] = $removeResult;
+                    if (!in_array($commentId, $result->comments)) {
+                        $result->failed[$commentId] = $removeResult;
+                    }
                 }
             } catch (Exception $e) {
                 $result->failed[$commentId] = $e;

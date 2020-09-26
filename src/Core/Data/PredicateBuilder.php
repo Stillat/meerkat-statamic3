@@ -19,12 +19,44 @@ class PredicateBuilder
     const KEY_PROPERTY = 'property';
     const KEY_IS_ASC = 'asc';
 
+    const KEY_DIRECTION_ASC = 'asc';
+    const KEY_DIRECTION_DESC = 'desc';
+
     /**
      * A collection of comparisons to apply to a data collection.
      *
      * @var array
      */
     protected $comparisons = [];
+
+    /**
+     * Returns a sort string representing the current sort configuration.
+     *
+     *
+     * @return string
+     */
+    public function getSortString()
+    {
+        $sortStringParts = [];
+
+        foreach ($this->comparisons as $comparison) {
+            if (!is_array($comparison) || array_key_exists(self::KEY_IS_ASC, $comparison) === false ||
+                array_key_exists(self::KEY_PROPERTY, $comparison) === false) {
+                continue;
+            }
+
+            $direction = self::KEY_DIRECTION_DESC;
+            $isAsc = $comparison[self::KEY_IS_ASC];
+
+            if ($isAsc) {
+                $direction = self::KEY_DIRECTION_ASC;
+            }
+
+            $sortStringParts[] = $comparison[self::KEY_PROPERTY] . ',' . $direction;
+        }
+
+        return implode('|', $sortStringParts);
+    }
 
     /**
      * Sorts the collection using the provided property in ascending order.

@@ -406,6 +406,16 @@ class DataQuery
     }
 
     /**
+     * Gets a string representing all sort orders and comparisons.
+     *
+     * @return string
+     */
+    public function getSortString()
+    {
+        return $this->sortPredicateBuilder->getSortString();
+    }
+
+    /**
      * Sets the name of an individual group's dataset.
      *
      * @param string $name The name to set.

@@ -26,6 +26,7 @@ class CommentResponseGenerator
     const KEY_API_COMMENT_COLLECTION = 'comments';
     const KEY_API_AUTHOR_COLLECTION = 'authors';
     const KEY_API_THREAD_COLLECTION = 'threads';
+    const KEY_API_SORT_ORDERS = 'orders';
     const KEY_API_PAGE_METADATA = 'pages';
 
     const KEY_PARAM_PAGE = 'page';
@@ -100,6 +101,64 @@ class CommentResponseGenerator
      */
     public function updateFromParameters($parameters)
     {
+        $filters = [];
+        $orders = [];
+
+        $requestOrders = [];
+
+
+        if (array_key_exists('order', $parameters) && mb_strlen(trim($parameters['order'])) > 0) {
+            $requestOrders = explode('|', $parameters['order']);
+        }
+
+        if (count($requestOrders) === 0) {
+            $requestOrders[] = 'id,desc';
+        }
+
+        for ($i = 0; $i < count($requestOrders); $i++) {
+            $orderParts = explode(',', $requestOrders[$i]);
+            $dataPoint = trim($orderParts[0]);
+
+            if ($dataPoint === 'date') {
+                $dataPoint = 'id';
+            }
+
+            if (count($orderParts) === 2) {
+                $direction = mb_strtolower(trim($orderParts[1]));
+
+                if ($direction === 'asc') {
+                    if ($i === 0) {
+                        $this->query->sortAsc($dataPoint);
+                    } else {
+                        $this->query->thenSortAsc($dataPoint);
+                    }
+                } elseif ($direction === 'desc') {
+                    if ($i === 0) {
+                        $this->query->sortDesc($dataPoint);
+                    } else {
+                        $this->query->thenSortDesc($dataPoint);
+                    }
+                }
+            }
+        }
+
+        // TODO: Check for filter existence to prevent FilterExceptiosn.
+        if (array_key_exists('filter', $parameters) && mb_strlen(trim($parameters['filter'])) > 0) {
+            $requestFilters = explode('|', $parameters['filter']);
+
+            if (count($requestFilters) > 0) {
+                $firstFilter = array_shift($requestFilters);
+
+                $this->query->filterBy($firstFilter);
+
+                if (count($requestFilters) > 0) {
+                    foreach ($requestFilters as $filter) {
+                        $this->query->thenFilterBy($filter);
+                    }
+                }
+            }
+        }
+
         $this->query->withContext($this->runtimeContext);
 
         $this->query->pageBy('page');
@@ -169,6 +228,7 @@ class CommentResponseGenerator
             CommentResponseGenerator::KEY_API_AUTHOR_COLLECTION => $responseAuthors,
             CommentResponseGenerator::KEY_API_COMMENT_COLLECTION => $commentsToReturn,
             CommentResponseGenerator::KEY_API_THREAD_COLLECTION => array_values($threads),
+            CommentResponseGenerator::KEY_API_SORT_ORDERS => $this->query->getSortString(),
             CommentResponseGenerator::KEY_API_PAGE_METADATA => $pageMetaData
         ];
     }

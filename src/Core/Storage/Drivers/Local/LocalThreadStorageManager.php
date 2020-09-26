@@ -515,72 +515,6 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
     }
 
     /**
-     * Attempts to create a new thread for the provided context.
-     *
-     * @param ThreadContextContract $context The thread's context.
-     * @return bool
-     */
-    public function createForContext(ThreadContextContract $context)
-    {
-        if ($this->canUseDirectory === false) {
-            return false;
-        }
-
-        if ($this->isValidThreadId($context->getId())) {
-            return false;
-        }
-
-        if ($this->existsForContext($context->getId(), true)) {
-            return true;
-        }
-
-        $path = $this->determineVirtualPathById($context->getId());
-        $threadMetaData = new ThreadMetaData();
-        $threadMetaData->setCreatedOn(time());
-        $threadMetaData->setIsTrashed(false);
-
-        $threadDirectoryCreated = mkdir($path, Paths::DIRECTORY_PERMISSIONS, true);
-
-        if ($threadDirectoryCreated) {
-            return $this->saveMetaData($context->getId(), $threadMetaData);
-        }
-
-        return false;
-    }
-
-    /**
-     * Returns a value indicating if a thread exists with the provided identifier.
-     *
-     * @param string $contextId The thread's identifier.
-     * @param bool $withTrashed Indicates if soft-deleted threads are considered.
-     * @return bool
-     */
-    public function existsForContext($contextId, $withTrashed)
-    {
-        if ($this->canUseDirectory === false) {
-            return false;
-        }
-
-        $targetPath = $this->storagePath . Paths::SYM_FORWARD_SEPARATOR . $contextId . Paths::SYM_FORWARD_SEPARATOR;
-
-        if (file_exists($targetPath) == false || is_dir($targetPath) == false) {
-            return false;
-        }
-
-        if ($withTrashed == true) {
-            return true;
-        }
-
-        $metaData = $this->getMetaData($contextId);
-
-        if ($metaData !== null && $metaData->getIsTrashed()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
      * Attempts to permanently delete the provided thread instance.
      *
      * @param ThreadContract $thread The thread instance.
@@ -748,10 +682,85 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
         }
 
         if ($this->existsForContext($id, $withTrashed) == false) {
+            $context = $this->contextResolver->findById($id);
+
+            if ($context !== null) {
+                $newThreadCreated = $this->createForContext($context);
+
+                if ($newThreadCreated === true) {
+                    return $this->materializeThread($id, $includeComments);
+                }
+            }
             return null;
         }
 
         return $this->materializeThread($id, $includeComments);
+    }
+
+    /**
+     * Attempts to create a new thread for the provided context.
+     *
+     * @param ThreadContextContract $context The thread's context.
+     * @return bool
+     */
+    public function createForContext(ThreadContextContract $context)
+    {
+        if ($this->canUseDirectory === false) {
+            return false;
+        }
+
+        if ($this->isValidThreadId($context->getId()) === false) {
+            return false;
+        }
+
+        if ($this->existsForContext($context->getId(), true)) {
+            return true;
+        }
+
+        $path = $this->determineVirtualPathById($context->getId());
+        $threadMetaData = new ThreadMetaData();
+        $threadMetaData->setCreatedOn(time());
+        $threadMetaData->setIsTrashed(false);
+
+        $threadDirectoryCreated = mkdir($path, Paths::DIRECTORY_PERMISSIONS, true);
+
+        if ($threadDirectoryCreated) {
+            return $this->saveMetaData($context->getId(), $threadMetaData);
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns a value indicating if a thread exists with the provided identifier.
+     *
+     * @param string $contextId The thread's identifier.
+     * @param bool $withTrashed Indicates if soft-deleted threads are considered.
+     * @return bool
+     */
+    public function existsForContext($contextId, $withTrashed)
+    {
+        if ($this->canUseDirectory === false) {
+            return false;
+        }
+
+        $targetPath = $this->storagePath . Paths::SYM_FORWARD_SEPARATOR . $contextId . Paths::SYM_FORWARD_SEPARATOR;
+
+        if (file_exists($targetPath) == false || is_dir($targetPath) == false) {
+            return false;
+        }
+
+        if ($withTrashed == true) {
+            return true;
+        }
+
+        $metaData = $this->getMetaData($contextId);
+
+        if ($metaData !== null && $metaData->getIsTrashed()) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

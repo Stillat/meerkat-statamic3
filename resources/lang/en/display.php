@@ -11,7 +11,9 @@ return [
     'header_author' => 'Author',
     'header_comment' => 'Comment',
 
-    'author_in_reply_to' => 'In reply to',
+    'thread_single_response' => 'All in response to:',
+    'thread_multiple_response' => 'In response to:',
+    'author_in_reply_to' => 'Replying to:',
 
 ];
 

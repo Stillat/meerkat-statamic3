@@ -514,6 +514,20 @@ class DataQuery
     }
 
     /**
+     * Returns the search terms that were applied.
+     *
+     * @return string
+     */
+    public function getTerms()
+    {
+        if ($this->searchTerms === null) {
+            return '';
+        }
+
+        return $this->searchTerms;
+    }
+
+    /**
      * Sets whether or not to automatically process comment content as Markdown.
      *
      * @param bool $useMarkdown Whether to automatically process content as Markdown.

@@ -27,6 +27,7 @@ class CommentResponseGenerator
     const KEY_API_AUTHOR_COLLECTION = 'authors';
     const KEY_API_THREAD_COLLECTION = 'threads';
     const KEY_API_SORT_ORDERS = 'orders';
+    const KEY_API_TERMS = 'terms';
     const KEY_API_PAGE_METADATA = 'pages';
 
     const KEY_PARAM_PAGE = 'page';
@@ -106,13 +107,12 @@ class CommentResponseGenerator
 
         $requestOrders = [];
 
+        if (array_key_exists('terms', $parameters) && mb_strlen(trim($parameters['terms'])) > 0) {
+            $this->query->searchFor(trim($parameters['terms']));
+        }
 
         if (array_key_exists('order', $parameters) && mb_strlen(trim($parameters['order'])) > 0) {
             $requestOrders = explode('|', $parameters['order']);
-        }
-
-        if (count($requestOrders) === 0) {
-            $requestOrders[] = 'id,desc';
         }
 
         for ($i = 0; $i < count($requestOrders); $i++) {
@@ -121,6 +121,10 @@ class CommentResponseGenerator
 
             if ($dataPoint === 'date') {
                 $dataPoint = 'id';
+            }
+
+            if ($dataPoint === 'comment') {
+                $dataPoint = 'content_raw';
             }
 
             if (count($orderParts) === 2) {
@@ -224,11 +228,14 @@ class CommentResponseGenerator
 
         $pageMetaData = PaginationMetaDataResponseGenerator::getApiResponse($queryResults->getMetaData());
 
+        // TODO: Need to add the 'filters' that were applied, as well.
+
         return [
             CommentResponseGenerator::KEY_API_AUTHOR_COLLECTION => $responseAuthors,
             CommentResponseGenerator::KEY_API_COMMENT_COLLECTION => $commentsToReturn,
             CommentResponseGenerator::KEY_API_THREAD_COLLECTION => array_values($threads),
             CommentResponseGenerator::KEY_API_SORT_ORDERS => $this->query->getSortString(),
+            CommentResponseGenerator::KEY_API_TERMS => $this->query->getTerms(),
             CommentResponseGenerator::KEY_API_PAGE_METADATA => $pageMetaData
         ];
     }

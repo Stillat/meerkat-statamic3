@@ -45,16 +45,6 @@
   font-family: monospace;
   font-size: 13px;
 }
-.meerkat__bulk-actions {
-  display: inline-block;
-}
-.meerkat__bulk-actions select {
-  padding-top: 4px;
-  margin-top: 1px;
-}
-.meerkat__bulk-actions button {
-  margin-top: -4px;
-}
 
 .meerkat__loader--inline {
   float: left;
@@ -68,6 +58,28 @@
 }
 .author-display__web-address {
   color: #7a7a7a;
+}
+.author-display {
+  width: 100%;
+}
+.author-display__details {
+  margin-top: 5px;
+}
+.author-display__details p {
+  display: inline;
+}
+.date__icon {
+  color: #797979;
+  width: 15px;
+  transition: color 120ms linear;
+}
+.date__icon > svg {
+  fill: #797979;
+  transition: fill 120ms linear;
+}
+.date__icon > svg #icon-shape {
+  fill: #797979;
+  transition: fill 120ms linear;
 }
 
 .comment-display__actions {
@@ -113,6 +125,9 @@
   vertical-align: middle;
 }
 
+.comment-display__author-reply {
+  display: inline;
+}
 .comment-display__author-reply-avatar {
   width: 12px;
   height: 12px;
@@ -131,6 +146,10 @@
 .comment-display__author-reply {
   margin-bottom: 10px;
 }
+.comment-display__inline-details {
+  padding-bottom: 3px;
+  margin-bottom: 10px;
+}
 .comment-display__content {
   color: #2a2a2a;
 }
@@ -145,16 +164,12 @@
   display: none !important;
 }
 
-.meerkat__sort-indicator-badge {
-  background-color: #eef2f6;
-  text-align: center;
-  display: inline-block;
-  min-width: 23px;
-  border-radius: 5px;
+.meerkat__filter-toggle {
+  min-width: 15px;
 }
-
-.comment-table__author-column {
-  width: 18rem;
+.meerkat__filter-toggle:focus {
+  outline: 1px solid;
+  padding: 1px;
 }
 .filter__icon {
   color: #797979;
@@ -167,6 +182,34 @@
 .filter__icon > svg #icon-shape {
   fill: #797979;
   transition: fill 120ms linear;
+}
+.meerkat__filter-toggle--open .filter__icon {
+  color: #2b96f1 !important;
+}
+.meerkat__filter-toggle--open .filter__icon > svg {
+  fill: #2b96f1 !important;
+}
+.meerkat__filter-toggle--open .filter__icon > svg #icon-shape {
+  fill: #2b96f1 !important;
+}
+
+.meerkat__sort-indicator-badge {
+  background-color: #eef2f6;
+  text-align: center;
+  display: inline-block;
+  min-width: 23px;
+  border-radius: 5px;
+}
+
+.comment-table__author-column {
+  width: 18rem;
+}
+.meerkat__checkbox {
+  width: 17px;
+  height: 17px;
+}
+.meerkat__header-checkbox {
+  top: 2px !important;
 }
 .meerkat__comment-row {
   border-left: 2px solid #ffffff;
@@ -182,6 +225,17 @@
 }
 .meerkat__comment-table--focus tr.meerkat__comment-row--focused {
   opacity: 1;
+}
+.meerkat__bulk-actions {
+  display: inline-block;
+}
+.meerkat__bulk-actions .select-input-container {
+  display: inherit;
+  position: relative;
+}
+
+.meerkat__inline-callout {
+  color: #5d5d7d;
 }
 
 

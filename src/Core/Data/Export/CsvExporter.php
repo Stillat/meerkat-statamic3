@@ -6,6 +6,14 @@ use Stillat\Meerkat\Core\Contracts\Data\Export\CsvWriterContract;
 use Stillat\Meerkat\Core\Contracts\Data\Export\DataExporterContract;
 use Stillat\Meerkat\Core\Data\FieldMapper;
 
+/**
+ * Class CsvExporter
+ *
+ * Exports the comments as a CSV document.
+ *
+ * @package Stillat\Meerkat\Core\Data\Export
+ * @since 2.0.0
+ */
 class CsvExporter implements DataExporterContract
 {
 

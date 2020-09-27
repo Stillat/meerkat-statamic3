@@ -32,14 +32,21 @@ class FieldMapper
      *
      * @param array $comment The comment data.
      * @param array $fields The fields to retrieve.
+     * @param bool $transform Whether to transform the data.
      * @return array
      */
-    public function getData($comment, $fields)
+    public function getData($comment, $fields, $transform = true)
     {
         $props = [];
 
         foreach ($fields as $field) {
-            $props[] = ValueTransformer::transform(Arr::getValue($field, $comment, null));
+            $value = Arr::getValue($field, $comment, null);
+
+            if ($transform) {
+                $props[] = ValueTransformer::transform($value);
+            } else {
+                $props[] = $value;
+            }
         }
 
         return $props;

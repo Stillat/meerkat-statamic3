@@ -29,6 +29,11 @@ Route::group(['prefix' => Addon::getApiPrefix()], function () {
         Route::post('/report-many-ham', '\Stillat\Meerkat\Http\Controllers\Api\NotSpamController@markManyAsNotSpam');
     });
 
+    Route::group(['prefix' => 'export'], function () {
+
+        Route::get('csv', '\Stillat\Meerkat\Http\Controllers\Api\ExportController@csv');
+    });
+
     Route::group(['prefix' => 'reporting'], function () {
         Route::get('overview', '\Stillat\Meerkat\Http\Controllers\Api\ReportingController@getReportOverview');
     });

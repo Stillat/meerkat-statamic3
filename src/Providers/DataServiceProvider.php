@@ -2,10 +2,12 @@
 
 namespace Stillat\Meerkat\Providers;
 
+use Stillat\Meerkat\Core\Contracts\Data\Export\CsvWriterContract;
 use Stillat\Meerkat\Core\Contracts\Data\PaginatorContract;
 use Stillat\Meerkat\Core\Contracts\Data\QueryFactoryContract;
 use Stillat\Meerkat\Core\Data\DataQueryFactory;
 use Stillat\Meerkat\Core\Data\Filters\CommentFilterManager;
+use Stillat\Meerkat\Data\Export\CsvWriter;
 use Stillat\Meerkat\Data\Paginator;
 use Stillat\Meerkat\Support\Factories\DataQueryBuilderFactory;
 
@@ -22,6 +24,9 @@ class DataServiceProvider extends AddonServiceProvider
 
     public function register()
     {
+
+        $this->app->bind(CsvWriterContract::class, CsvWriter::class);
+
         $this->app->singleton(CommentFilterManager::class, function ($app) {
             $manager = new CommentFilterManager();
             $manager->registerDefaultFilters();

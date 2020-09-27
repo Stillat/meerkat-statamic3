@@ -19,4 +19,13 @@ class SqlExporter implements DataExporterContract
         // TODO: Implement export() method.
     }
 
+    /**
+     * Gets the content type.
+     *
+     * @return string
+     */
+    public function getContentType()
+    {
+        // TODO: Implement getContentType() method.
+    }
 }

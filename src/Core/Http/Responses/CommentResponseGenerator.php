@@ -99,8 +99,9 @@ class CommentResponseGenerator
      * Updates the internal query state from request parameters.
      *
      * @param array $parameters The query parameters.
+     * @param bool $disablePaging Indicates if pagination should be disabled.
      */
-    public function updateFromParameters($parameters)
+    public function updateFromParameters($parameters, $disablePaging = false)
     {
         $filters = [];
         $orders = [];
@@ -165,19 +166,34 @@ class CommentResponseGenerator
 
         $this->query->withContext($this->runtimeContext);
 
-        $this->query->pageBy('page');
+        if ($disablePaging === false) {
+            $this->query->pageBy('page');
 
-        if (array_key_exists(CommentResponseGenerator::KEY_PARAM_PAGE, $parameters)) {
-            $this->query->forPage(intval($parameters[CommentResponseGenerator::KEY_PARAM_PAGE]));
-        } else {
-            $this->query->forPage(1);
-        }
+            if (array_key_exists(CommentResponseGenerator::KEY_PARAM_PAGE, $parameters)) {
+                $this->query->forPage(intval($parameters[CommentResponseGenerator::KEY_PARAM_PAGE]));
+            } else {
+                $this->query->forPage(1);
+            }
 
-        if (array_key_exists(CommentResponseGenerator::KEY_PARAM_RESULTS_PER_PAGE, $parameters)) {
-            $this->query->limit(intval($parameters[CommentResponseGenerator::KEY_PARAM_RESULTS_PER_PAGE]));
-        } else {
-            $this->query->limit(CommentResponseGenerator::VALUE_DEFAULT_PER_PAGE);
+            if (array_key_exists(CommentResponseGenerator::KEY_PARAM_RESULTS_PER_PAGE, $parameters)) {
+                $this->query->limit(intval($parameters[CommentResponseGenerator::KEY_PARAM_RESULTS_PER_PAGE]));
+            } else {
+                $this->query->limit(CommentResponseGenerator::VALUE_DEFAULT_PER_PAGE);
+            }
         }
+    }
+
+    /**
+     * Returns the comments from the request.
+     *
+     * @return CommentContract[]
+     * @throws FilterException
+     */
+    public function getRequestComments()
+    {
+        $results = $this->manager->queryAll($this->query);
+
+        return $results->getData();
     }
 
     /**

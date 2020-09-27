@@ -10,7 +10,7 @@ return [
     'pending' => 'Pending',
 
     'no_data' => 'There are no comments to display',
-    'no_data_filter' => 'This is most likely due to current filters',
+    'no_data_filter' => 'This is most likely due to the applied filters',
     'search_placeholder' => 'Search within comments...'
 
 ];

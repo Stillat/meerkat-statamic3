@@ -201,6 +201,17 @@
   border-radius: 5px;
 }
 
+.meerkat__no-data-indicator-graphic {
+  width: 35%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-bottom: 50px;
+}
+.meerkat__no-data-message p {
+  font-size: 1.4em;
+  color: #606467;
+}
+
 .comment-table__author-column {
   width: 18rem;
 }
@@ -234,6 +245,12 @@
   position: relative;
 }
 
+.meerkat__bg-brand-dark {
+  background: #14a5b2;
+}
+.meerkat__bg-brand-light {
+  background: #10b7c5;
+}
 .meerkat__inline-callout {
   color: #5d5d7d;
 }

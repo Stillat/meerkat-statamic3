@@ -41886,6 +41886,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Components_CommentTable_sortManager__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../Components/CommentTable/sortManager */ "./src/App/Components/CommentTable/sortManager.js");
 /* harmony import */ var _Types_url__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../../Types/url */ "./src/Types/url.js");
 /* harmony import */ var _Data_Filters_defaultFilterApplicator__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../../Data/Filters/defaultFilterApplicator */ "./src/Data/Filters/defaultFilterApplicator.js");
+/* harmony import */ var _Http_endpoints__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../../Http/endpoints */ "./src/Http/endpoints.js");
+
 
 
 
@@ -41933,7 +41935,11 @@ var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
       defaultFilters: ['all', 'pending', 'published', 'spam'],
       searchOptions: new _Data_Comments_searchOptions__WEBPACK_IMPORTED_MODULE_12__["default"](),
       commentRepo: new _Repositories_commentRepository__WEBPACK_IMPORTED_MODULE_8__["default"](),
-      commentData: null
+      commentData: null,
+      exportLinks: {
+        csv: _Http_endpoints__WEBPACK_IMPORTED_MODULE_19__["default"].url(_Http_endpoints__WEBPACK_IMPORTED_MODULE_19__["default"].ExportCsv) + '?download=true',
+        json: _Http_endpoints__WEBPACK_IMPORTED_MODULE_19__["default"].url(_Http_endpoints__WEBPACK_IMPORTED_MODULE_19__["default"].ExportJson) + '?download=true'
+      }
     };
   },
   methods: {
@@ -42049,7 +42055,7 @@ var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
 /***/ (function(module, exports) {
 
 // Module
-var code = "<div>\r\n    <div class=\"flex items-center justify-between mb-3\">\r\n        <h1 class=\"flex-1\">{{ trans('display.header_comments') }}</h1>\r\n\r\n        <loader v-if=\"state.loadingData\" :display-inline=\"true\"></loader>\r\n        <a href=\"#\" class=\"btn-primary\">Export</a>\r\n    </div>\r\n\r\n    <div v-if=\"state.loadingInitial === true\" class=\"card loading\">\r\n        <loader :display-text=\"trans('display.loading')\"></loader>\r\n    </div>\r\n\r\n    <comment-table ref=\"commentTable\" v-on:table-available=\"onTableAvailable\" v-if=\"state.loadingInitial === false\"\r\n                   :comments=\"commentData\" :active-filter-id=\"state.activeFilterId\"\r\n                   v-on:filter-changed=\"onFilterChanged\" v-on:order-changed=\"onOrderUpdated\" v-on:search-updated=\"onSearchUpdated\"\r\n                   v-on:data-update-requested=\"onRefreshRequested\"\r\n                   :loading=\"state.loadingData\"></comment-table>\r\n\r\n    <paginator v-if=\"commentData !== null\" :per-page=\"state.initialPerPage\" :page-data=\"commentData.pages\"\r\n               v-on:page-updated=\"updateQueryWithPage\" v-on:per-page-updated=\"updateQueryWithPerPage\">\r\n    </paginator>\r\n</div>";
+var code = "<div>\r\n    <div class=\"flex items-center justify-between mb-3\">\r\n        <h1 class=\"flex-1\">{{ trans('display.header_comments') }}</h1>\r\n\r\n        <loader v-if=\"state.loadingData\" :display-inline=\"true\"></loader>\r\n        <dropdown-list class=\"mr-1\">\r\n            <button class=\"btn\" slot=\"trigger\">{{ trans('actions.export') }}</button>\r\n            <dropdown-item :text=\"trans('actions.export_csv')\" :redirect=\"exportLinks.csv\"></dropdown-item>\r\n            <dropdown-item :text=\"trans('actions.export_json')\" :redirect=\"exportLinks.json\"></dropdown-item>\r\n        </dropdown-list>\r\n    </div>\r\n\r\n    <div v-if=\"state.loadingInitial === true\" class=\"card loading\">\r\n        <loader :display-text=\"trans('display.loading')\"></loader>\r\n    </div>\r\n\r\n    <comment-table ref=\"commentTable\" v-on:table-available=\"onTableAvailable\" v-if=\"state.loadingInitial === false\"\r\n                   :comments=\"commentData\" :active-filter-id=\"state.activeFilterId\"\r\n                   v-on:filter-changed=\"onFilterChanged\" v-on:order-changed=\"onOrderUpdated\" v-on:search-updated=\"onSearchUpdated\"\r\n                   v-on:data-update-requested=\"onRefreshRequested\"\r\n                   :loading=\"state.loadingData\"></comment-table>\r\n\r\n    <paginator v-if=\"commentData !== null\" :per-page=\"state.initialPerPage\" :page-data=\"commentData.pages\"\r\n               v-on:page-updated=\"updateQueryWithPage\" v-on:per-page-updated=\"updateQueryWithPerPage\">\r\n    </paginator>\r\n</div>";
 // Exports
 module.exports = code;
 
@@ -50017,6 +50023,8 @@ Endpoints.CommentMarkManySpam = 'comments/report-many-spam';
 Endpoints.CommentMarkHam = 'comments/report-ham';
 Endpoints.CommentMarkManyHam = 'comments/report-many-ham';
 Endpoints.CommentsUpdate = 'comments/update';
+Endpoints.ExportCsv = 'export/csv';
+Endpoints.ExportJson = 'export/json';
 Endpoints.ReportingOverview = 'reporting/overview';
 Endpoints.TelemetryViewReport = 'telemetry/report';
 Endpoints.TelemetrySubmitReport = 'telemetry/submit';

@@ -8,6 +8,10 @@ return [
     'try_again' => 'Try Again',
     'submit_error_try_again' => 'Submit and Try Again',
 
+    'export' => 'Export',
+    'export_json' => 'JSON',
+    'export_csv' => 'CSV',
+
     'select_comment' => 'Select this comment',
     'select_all_comments' => 'Select all visible comments',
 

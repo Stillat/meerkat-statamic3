@@ -28,7 +28,7 @@ Route::group(['prefix' => Addon::getApiPrefix()], function () {
         Route::post('/report-ham', '\Stillat\Meerkat\Http\Controllers\Api\NotSpamController@markAsNotSpam');
         Route::post('/report-many-ham', '\Stillat\Meerkat\Http\Controllers\Api\NotSpamController@markManyAsNotSpam');
 
-        Route::post('/check-for-spam', '\Stillat\Meerkat\Http\Controllers\Api\NotSpamController@checkForSpam');
+        Route::post('/check-for-spam', '\Stillat\Meerkat\Http\Controllers\Api\CheckForSpamController@checkForSpam');
     });
 
     Route::group(['prefix' => 'export'], function () {

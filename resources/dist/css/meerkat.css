@@ -215,8 +215,10 @@
   padding-bottom: 50px;
 }
 .meerkat__no-data-message p {
-  font-size: 1.4em;
   color: #606467;
+}
+.meerkat__no-data-message p.meerkat__no-data-message--primary {
+  font-size: 1.4em;
 }
 
 .comment-table__author-column {

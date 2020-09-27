@@ -41887,6 +41887,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Types_url__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../../Types/url */ "./src/Types/url.js");
 /* harmony import */ var _Data_Filters_defaultFilterApplicator__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../../Data/Filters/defaultFilterApplicator */ "./src/Data/Filters/defaultFilterApplicator.js");
 /* harmony import */ var _Http_endpoints__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../../Http/endpoints */ "./src/Http/endpoints.js");
+/* harmony import */ var _Reporting_overviewProvider__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ../../Reporting/overviewProvider */ "./src/Reporting/overviewProvider.js");
+
 
 
 
@@ -41952,6 +41954,23 @@ var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
     onSearchUpdated: function onSearchUpdated(terms) {
       this.searchOptions.query.terms = terms;
       this.loadCommentData();
+    },
+    checkFilters: function checkFilters(comments) {
+      var filterComments = this.commentData.comments.whereIn(comments);
+      this.$refs.commentTable.checkFilters(filterComments);
+      _Reporting_overviewProvider__WEBPACK_IMPORTED_MODULE_20__["default"].Instance.refresh();
+    },
+    onCommentsPublished: function onCommentsPublished(comments) {
+      this.checkFilters(comments);
+    },
+    onCommentsUnpublished: function onCommentsUnpublished(comments) {
+      this.checkFilters(comments);
+    },
+    onCommentsMarkedAsSpam: function onCommentsMarkedAsSpam(comments) {
+      this.checkFilters(comments);
+    },
+    onCommentsMarkedAsHam: function onCommentsMarkedAsHam(comments) {
+      this.checkFilters(comments);
     },
     onCommentsRemoved: function onCommentsRemoved(comments) {
       this.loadCommentData();
@@ -42063,7 +42082,7 @@ var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
 /***/ (function(module, exports) {
 
 // Module
-var code = "<div>\r\n    <div class=\"flex items-center justify-between mb-3\">\r\n        <h1 class=\"flex-1\">{{ trans('display.header_comments') }}</h1>\r\n\r\n        <loader v-if=\"state.loadingData\" :display-inline=\"true\"></loader>\r\n        <dropdown-list class=\"mr-1\">\r\n            <button class=\"btn\" slot=\"trigger\">{{ trans('actions.export') }}</button>\r\n            <dropdown-item :text=\"trans('actions.export_csv')\" :redirect=\"exportLinks.csv\"></dropdown-item>\r\n            <dropdown-item :text=\"trans('actions.export_json')\" :redirect=\"exportLinks.json\"></dropdown-item>\r\n        </dropdown-list>\r\n        <button class=\"btn btn-primary\" v-if=\"canCheckForSpam\">{{ trans('actions.check_for_spam') }}</button>\r\n    </div>\r\n\r\n    <div v-if=\"state.loadingInitial === true\" class=\"card loading\">\r\n        <loader :display-text=\"trans('display.loading')\"></loader>\r\n    </div>\r\n\r\n    <comment-table ref=\"commentTable\" v-on:table-available=\"onTableAvailable\" v-if=\"state.loadingInitial === false\"\r\n                   :comments=\"commentData\" :active-filter-id=\"state.activeFilterId\"\r\n                   v-on:filter-changed=\"onFilterChanged\" v-on:order-changed=\"onOrderUpdated\" v-on:search-updated=\"onSearchUpdated\"\r\n                   v-on:data-update-requested=\"onRefreshRequested\"\r\n                   :loading=\"state.loadingData\"></comment-table>\r\n\r\n    <paginator v-if=\"commentData !== null\" :per-page=\"state.initialPerPage\" :page-data=\"commentData.pages\"\r\n               v-on:page-updated=\"updateQueryWithPage\" v-on:per-page-updated=\"updateQueryWithPerPage\">\r\n    </paginator>\r\n</div>";
+var code = "<div>\r\n    <div class=\"flex items-center justify-between mb-3\">\r\n        <h1 class=\"flex-1\">{{ trans('display.header_comments') }}</h1>\r\n\r\n        <loader v-if=\"state.loadingData\" :display-inline=\"true\" class=\"mr-1\"></loader>\r\n        <dropdown-list class=\"mr-1\">\r\n            <button class=\"btn\" slot=\"trigger\">{{ trans('actions.export') }}</button>\r\n            <dropdown-item :text=\"trans('actions.export_csv')\" :redirect=\"exportLinks.csv\"></dropdown-item>\r\n            <dropdown-item :text=\"trans('actions.export_json')\" :redirect=\"exportLinks.json\"></dropdown-item>\r\n        </dropdown-list>\r\n        <button class=\"btn btn-primary\" v-if=\"canCheckForSpam\">{{ trans('actions.check_for_spam') }}</button>\r\n    </div>\r\n\r\n    <div v-if=\"state.loadingInitial === true\" class=\"card loading\">\r\n        <loader :display-text=\"trans('display.loading')\"></loader>\r\n    </div>\r\n\r\n    <comment-table ref=\"commentTable\" v-on:table-available=\"onTableAvailable\" v-if=\"state.loadingInitial === false\"\r\n                   :comments=\"commentData\" :active-filter-id=\"state.activeFilterId\"\r\n                   v-on:filter-changed=\"onFilterChanged\" v-on:order-changed=\"onOrderUpdated\" v-on:search-updated=\"onSearchUpdated\"\r\n                   v-on:data-update-requested=\"onRefreshRequested\"\r\n                   :loading=\"state.loadingData\"></comment-table>\r\n\r\n    <paginator v-if=\"commentData !== null\" :per-page=\"state.initialPerPage\" :page-data=\"commentData.pages\"\r\n               v-on:page-updated=\"updateQueryWithPage\" v-on:per-page-updated=\"updateQueryWithPerPage\">\r\n    </paginator>\r\n</div>";
 // Exports
 module.exports = code;
 
@@ -43865,7 +43884,10 @@ __webpack_require__.r(__webpack_exports__);
 
 var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
 
-__webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style.less");
+__webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style.less"); // TODO: When adjustments to publish/spam, etc are made (even bulk) - must check the active filter and apply again.
+//       If no changes would be required (i.e., on all) - do nothing, but on others remove immediately and then
+//       update the view and trigger an update on the OverviewProvider.
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   mixins: [_Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_14__["default"], _Mixins_actionHandler__WEBPACK_IMPORTED_MODULE_18__["default"]],
@@ -43979,6 +44001,11 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style
     }
   },
   methods: {
+    checkFilters: function checkFilters(comments) {
+      if (this.$refs.tableFilters.filterRequiresUpdate(comments)) {
+        this.$emit('data-update-requested');
+      }
+    },
     checkStateFromProvider: function checkStateFromProvider(report) {
       if (report.success) {
         this.state.totalCount = report.total;
@@ -44046,7 +44073,10 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style
       }
     },
     forceDismissBulkActions: function forceDismissBulkActions() {
-      this.currentAction.dismiss();
+      if (this.currentAction !== null) {
+        this.currentAction.dismiss();
+      }
+
       this.currentAction = null;
     },
     cancelBulkActions: function cancelBulkActions() {
@@ -45312,6 +45342,17 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/TableFilters/style
     };
   },
   methods: {
+    filterRequiresUpdate: function filterRequiresUpdate(comments) {
+      for (var i = 0; i < this.filters.length; i += 1) {
+        if (_Types_type__WEBPACK_IMPORTED_MODULE_9__["default"].hasValue(this.filters[i]['shouldReload'])) {
+          if (this.filters[i].shouldReload(comments)) {
+            return true;
+          }
+        }
+      }
+
+      return false;
+    },
     updateFilterDisplays: function updateFilterDisplays(report) {
       if (report.success) {
         for (var i = 0; i < this.filters.length; i += 1) {
@@ -47222,37 +47263,43 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var core_js_modules_es_array_for_each__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.for-each */ "./node_modules/core-js/modules/es.array.for-each.js");
 /* harmony import */ var core_js_modules_es_array_for_each__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_for_each__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.array.index-of */ "./node_modules/core-js/modules/es.array.index-of.js");
-/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
-/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.date.to-string */ "./node_modules/core-js/modules/es.date.to-string.js");
-/* harmony import */ var core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.function.bind */ "./node_modules/core-js/modules/es.function.bind.js");
-/* harmony import */ var core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var core_js_modules_es_map__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/es.map */ "./node_modules/core-js/modules/es.map.js");
-/* harmony import */ var core_js_modules_es_map__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_map__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/es.object.create */ "./node_modules/core-js/modules/es.object.create.js");
-/* harmony import */ var core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! core-js/modules/es.object.get-prototype-of */ "./node_modules/core-js/modules/es.object.get-prototype-of.js");
-/* harmony import */ var core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! core-js/modules/es.object.set-prototype-of */ "./node_modules/core-js/modules/es.object.set-prototype-of.js");
-/* harmony import */ var core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_11__);
-/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! core-js/modules/es.object.to-string */ "./node_modules/core-js/modules/es.object.to-string.js");
-/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_12__);
-/* harmony import */ var core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! core-js/modules/es.reflect.construct */ "./node_modules/core-js/modules/es.reflect.construct.js");
-/* harmony import */ var core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_13__);
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_14__);
-/* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! core-js/modules/es.string.iterator */ "./node_modules/core-js/modules/es.string.iterator.js");
-/* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_15__);
-/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
-/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_16__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_17__);
-/* harmony import */ var _comment__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./comment */ "./src/Data/Comments/comment.js");
-/* harmony import */ var _Types_type__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../../Types/type */ "./src/Types/type.js");
-/* harmony import */ var _Concerns_providesCollectionInteractivity__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ../Concerns/providesCollectionInteractivity */ "./src/Data/Concerns/providesCollectionInteractivity.js");
+/* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.array.includes */ "./node_modules/core-js/modules/es.array.includes.js");
+/* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.array.index-of */ "./node_modules/core-js/modules/es.array.index-of.js");
+/* harmony import */ var core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_index_of__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.date.to-string */ "./node_modules/core-js/modules/es.date.to-string.js");
+/* harmony import */ var core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/es.function.bind */ "./node_modules/core-js/modules/es.function.bind.js");
+/* harmony import */ var core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var core_js_modules_es_map__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/es.map */ "./node_modules/core-js/modules/es.map.js");
+/* harmony import */ var core_js_modules_es_map__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_map__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! core-js/modules/es.object.create */ "./node_modules/core-js/modules/es.object.create.js");
+/* harmony import */ var core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! core-js/modules/es.object.get-prototype-of */ "./node_modules/core-js/modules/es.object.get-prototype-of.js");
+/* harmony import */ var core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! core-js/modules/es.object.set-prototype-of */ "./node_modules/core-js/modules/es.object.set-prototype-of.js");
+/* harmony import */ var core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_12__);
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! core-js/modules/es.object.to-string */ "./node_modules/core-js/modules/es.object.to-string.js");
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_13__);
+/* harmony import */ var core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! core-js/modules/es.reflect.construct */ "./node_modules/core-js/modules/es.reflect.construct.js");
+/* harmony import */ var core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_14__);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_15__);
+/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! core-js/modules/es.string.includes */ "./node_modules/core-js/modules/es.string.includes.js");
+/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_16__);
+/* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! core-js/modules/es.string.iterator */ "./node_modules/core-js/modules/es.string.iterator.js");
+/* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_17__);
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_18___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_18__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_19___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_19__);
+/* harmony import */ var _comment__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./comment */ "./src/Data/Comments/comment.js");
+/* harmony import */ var _Types_type__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ../../Types/type */ "./src/Types/type.js");
+/* harmony import */ var _Concerns_providesCollectionInteractivity__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ../Concerns/providesCollectionInteractivity */ "./src/Data/Concerns/providesCollectionInteractivity.js");
+
+
 
 
 
@@ -47311,9 +47358,32 @@ var CommentCollection = /*#__PURE__*/function (_Array) {
     _classCallCheck(this, CommentCollection);
 
     _this = _super.call(this);
-    Object(_Concerns_providesCollectionInteractivity__WEBPACK_IMPORTED_MODULE_20__["enforceCollectionType"])(_assertThisInitialized(_this), _Types_type__WEBPACK_IMPORTED_MODULE_19__["default"].typeOf(_comment__WEBPACK_IMPORTED_MODULE_18__["default"]));
-    Object(_Concerns_providesCollectionInteractivity__WEBPACK_IMPORTED_MODULE_20__["applyCollectionSelectable"])(_assertThisInitialized(_this));
-    Object(_Concerns_providesCollectionInteractivity__WEBPACK_IMPORTED_MODULE_20__["applyErrorState"])(_assertThisInitialized(_this));
+    Object(_Concerns_providesCollectionInteractivity__WEBPACK_IMPORTED_MODULE_22__["enforceCollectionType"])(_assertThisInitialized(_this), _Types_type__WEBPACK_IMPORTED_MODULE_21__["default"].typeOf(_comment__WEBPACK_IMPORTED_MODULE_20__["default"]));
+    Object(_Concerns_providesCollectionInteractivity__WEBPACK_IMPORTED_MODULE_22__["applyCollectionSelectable"])(_assertThisInitialized(_this));
+    Object(_Concerns_providesCollectionInteractivity__WEBPACK_IMPORTED_MODULE_22__["applyErrorState"])(_assertThisInitialized(_this));
+
+    _this.anyInView = function (commentIds) {
+      for (var i = 0; i < this.length; i += 1) {
+        if (commentIds.includes(this[i].id)) {
+          return true;
+        }
+      }
+
+      return false;
+    };
+
+    _this.whereIn = function (commentIds) {
+      var commentsToReturn = [];
+
+      for (var i = 0; i < this.length; i += 1) {
+        if (commentIds.includes(this[i].id)) {
+          commentsToReturn.push(this[i]);
+        }
+      }
+
+      return commentsToReturn;
+    };
+
     _this.editCount = 0;
     _this.replyingCount = 0;
 
@@ -48015,13 +48085,13 @@ var Filter = /*#__PURE__*/function () {
     /**
      * Determines if the filter should reload based on the comment.
      *
-     * @param {Comment} comment The comment to test.
+     * @param {Array<Comment>} comments The comment to test.
      * @returns {boolean}
      */
 
   }, {
     key: "shouldReload",
-    value: function shouldReload(comment) {
+    value: function shouldReload(comments) {
       return false;
     }
   }, {
@@ -48079,6 +48149,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _trans__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../trans */ "./src/trans.js");
 /* harmony import */ var _Http_Responses_Reporting_overviewResponse__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../../Http/Responses/Reporting/overviewResponse */ "./src/Http/Responses/Reporting/overviewResponse.js");
 /* harmony import */ var _App__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../../App */ "./src/App/index.js");
+/* harmony import */ var _Comments_comment__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../Comments/comment */ "./src/Data/Comments/comment.js");
 
 
 
@@ -48122,6 +48193,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 
 
+
 var IsSpamFilter = /*#__PURE__*/function (_Filter) {
   _inherits(IsSpamFilter, _Filter);
 
@@ -48145,6 +48217,24 @@ var IsSpamFilter = /*#__PURE__*/function (_Filter) {
     value: function updateState(report) {
       this.count = report.totalSpam;
       this.countDisplay = _App__WEBPACK_IMPORTED_MODULE_18__["App"].NumberFormatter.abbreviate(this.count);
+    }
+    /**
+     * Determines if the filter should reload based on the comment.
+     *
+     * @param {Array<Comment>} comments The comment to test.
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "shouldReload",
+    value: function shouldReload(comments) {
+      for (var i = 0; i < comments.length; i += 1) {
+        if (comments[i].hasBeenCheckedForSpam === false || comments[i].isSpam === false) {
+          return true;
+        }
+      }
+
+      return false;
     }
   }]);
 
@@ -48198,6 +48288,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _trans__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../trans */ "./src/trans.js");
 /* harmony import */ var _Http_Responses_Reporting_overviewResponse__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../../Http/Responses/Reporting/overviewResponse */ "./src/Http/Responses/Reporting/overviewResponse.js");
 /* harmony import */ var _App__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../../App */ "./src/App/index.js");
+/* harmony import */ var _Comments_comment__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../Comments/comment */ "./src/Data/Comments/comment.js");
 
 
 
@@ -48241,6 +48332,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 
 
+
 var PendingFilter = /*#__PURE__*/function (_Filter) {
   _inherits(PendingFilter, _Filter);
 
@@ -48264,6 +48356,24 @@ var PendingFilter = /*#__PURE__*/function (_Filter) {
     value: function updateState(report) {
       this.count = report.pending;
       this.countDisplay = _App__WEBPACK_IMPORTED_MODULE_18__["App"].NumberFormatter.abbreviate(this.count);
+    }
+    /**
+     * Determines if the filter should reload based on the comment.
+     *
+     * @param {Array<Comment>} comments The comment to test.
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "shouldReload",
+    value: function shouldReload(comments) {
+      for (var i = 0; i < comments.length; i += 1) {
+        if (comments[i].published === true) {
+          return true;
+        }
+      }
+
+      return false;
     }
   }]);
 
@@ -48317,6 +48427,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _trans__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../trans */ "./src/trans.js");
 /* harmony import */ var _Http_Responses_Reporting_overviewResponse__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../../Http/Responses/Reporting/overviewResponse */ "./src/Http/Responses/Reporting/overviewResponse.js");
 /* harmony import */ var _App__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../../App */ "./src/App/index.js");
+/* harmony import */ var _Comments_comment__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../Comments/comment */ "./src/Data/Comments/comment.js");
 
 
 
@@ -48360,6 +48471,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 
 
+
 var PublishedFilter = /*#__PURE__*/function (_Filter) {
   _inherits(PublishedFilter, _Filter);
 
@@ -48383,6 +48495,24 @@ var PublishedFilter = /*#__PURE__*/function (_Filter) {
     value: function updateState(report) {
       this.count = report.totalPublished;
       this.countDisplay = _App__WEBPACK_IMPORTED_MODULE_18__["App"].NumberFormatter.abbreviate(this.count);
+    }
+    /**
+     * Determines if the filter should reload based on the comment.
+     *
+     * @param {Array<Comment>} comments The comment to test.
+     * @returns {boolean}
+     */
+
+  }, {
+    key: "shouldReload",
+    value: function shouldReload(comments) {
+      for (var i = 0; i < comments.length; i += 1) {
+        if (comments[i].published === false) {
+          return true;
+        }
+      }
+
+      return false;
     }
   }]);
 
@@ -50189,6 +50319,11 @@ var OverviewProvider = /*#__PURE__*/function (_EventEmitter) {
         window.clearInterval(this.intervalId);
         this.intervalId = null;
       }
+    }
+  }, {
+    key: "refresh",
+    value: function refresh() {
+      this._updateNow();
     }
   }]);
 

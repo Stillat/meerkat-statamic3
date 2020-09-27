@@ -12,6 +12,8 @@ return [
     'export_json' => 'JSON',
     'export_csv' => 'CSV',
 
+    'check_for_spam' => 'Check for Spam',
+
     'select_comment' => 'Select this comment',
     'select_all_comments' => 'Select all visible comments',
 

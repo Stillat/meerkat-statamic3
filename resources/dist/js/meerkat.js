@@ -41927,7 +41927,8 @@ var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
         initialPerPage: 10,
         initialSortString: null,
         tableIsAvailable: false,
-        activeFilterId: 0
+        activeFilterId: 0,
+        activeFilterName: 'all'
       },
       defaultFilters: ['all', 'pending', 'published', 'spam'],
       searchOptions: new _Data_Comments_searchOptions__WEBPACK_IMPORTED_MODULE_12__["default"](),
@@ -41948,8 +41949,14 @@ var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
       this.loadCommentData();
     },
     onFilterChanged: function onFilterChanged(filter) {
+      this.state.activeFilterId = filter.id;
+      this.state.activeFilterName = filter.internalName;
+      this.updateHistoryState();
       this.searchOptions = filter.adjustOptions(this.searchOptions);
       this.loadCommentData();
+    },
+    updateHistoryState: function updateHistoryState() {
+      _Config_environment__WEBPACK_IMPORTED_MODULE_14__["default"].pushHistoryState(this.state.activeFilterName);
     },
     onOrderUpdated: function onOrderUpdated(manager) {
       this.searchOptions.query.order = manager.sortString;
@@ -42003,19 +42010,27 @@ var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
           reject(e);
         });
       }.bind(this));
+    },
+    applyFromDefaultFilter: function applyFromDefaultFilter(currentUrlRequest) {
+      if (this.defaultFilters.includes(currentUrlRequest)) {
+        var defaultFilter = Object(_Data_Filters_defaultFilterApplicator__WEBPACK_IMPORTED_MODULE_18__["getDefaultFilter"])(currentUrlRequest);
+
+        if (defaultFilter !== null) {
+          this.state.activeFilterId = defaultFilter.id;
+          this.state.activeFilterName = defaultFilter.internalName;
+          this.onFilterChanged(defaultFilter);
+        }
+      }
     }
   },
   created: function created() {
     var currentUrlRequest = _Types_url__WEBPACK_IMPORTED_MODULE_17__["default"].currentLastValue().toLowerCase();
+    this.applyFromDefaultFilter(currentUrlRequest);
 
-    if (this.defaultFilters.includes(currentUrlRequest)) {
-      var defaultFilter = Object(_Data_Filters_defaultFilterApplicator__WEBPACK_IMPORTED_MODULE_18__["getDefaultFilter"])(currentUrlRequest);
-
-      if (defaultFilter !== null) {
-        this.state.activeFilterId = defaultFilter.id;
-        this.onFilterChanged(defaultFilter);
-      }
-    }
+    window.onpopstate = function (event) {
+      var poppedValue = _Types_url__WEBPACK_IMPORTED_MODULE_17__["default"].lastValue(event.state.urlPath);
+      this.applyFromDefaultFilter(poppedValue);
+    }.bind(this);
 
     syncjs.Hubs.comments().handledBy(this);
     this.loadCommentData();
@@ -46376,7 +46391,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Types_jQuery__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Types/jQuery */ "./src/Types/jQuery.js");
 /* harmony import */ var _settings__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./settings */ "./src/Config/settings.js");
 /* harmony import */ var _Types_type__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../Types/type */ "./src/Types/type.js");
-/* harmony import */ var _Data_defaultPermissionSet__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../Data/defaultPermissionSet */ "./src/Data/defaultPermissionSet.js");
+/* harmony import */ var _Types_string__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../Types/string */ "./src/Types/string.js");
+/* harmony import */ var _Data_defaultPermissionSet__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../Data/defaultPermissionSet */ "./src/Data/defaultPermissionSet.js");
 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -46384,6 +46400,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
 
 
 
@@ -46428,7 +46445,7 @@ var Environment = /*#__PURE__*/function () {
   }, {
     key: "getPermissions",
     value: function getPermissions() {
-      return _Types_type__WEBPACK_IMPORTED_MODULE_3__["default"].withDefault(Environment.UserContext, _Data_defaultPermissionSet__WEBPACK_IMPORTED_MODULE_4__["default"]);
+      return _Types_type__WEBPACK_IMPORTED_MODULE_3__["default"].withDefault(Environment.UserContext, _Data_defaultPermissionSet__WEBPACK_IMPORTED_MODULE_5__["default"]);
     }
     /**
      * Tests if telemetry has been enabled.
@@ -46446,6 +46463,16 @@ var Environment = /*#__PURE__*/function () {
     key: "getCsrfToken",
     value: function getCsrfToken() {
       return window.Statamic.$config.get('csrfToken');
+    }
+  }, {
+    key: "pushHistoryState",
+    value: function pushHistoryState(relativeUrl) {
+      if (window.history.pushState) {
+        var fullUrl = _Types_string__WEBPACK_IMPORTED_MODULE_4__["default"].finish(Environment.StatamicCpRoot, '/') + 'meerkat/' + relativeUrl;
+        window.history.pushState({
+          urlPath: fullUrl
+        }, '', fullUrl);
+      }
     }
   }]);
 

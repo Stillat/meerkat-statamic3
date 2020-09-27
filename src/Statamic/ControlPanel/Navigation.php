@@ -27,6 +27,7 @@ class Navigation
             $nav->create($this->trans('display.nav_comments'))
                 ->section('Content')
                 ->icon('addons/meerkat/meerkat-nav')
+                ->view('meerkat::nav.comments')
                 ->route('cp.meerkat.dashboard');
 
         });

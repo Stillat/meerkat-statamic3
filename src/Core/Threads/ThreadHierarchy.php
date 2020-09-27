@@ -2,6 +2,8 @@
 
 namespace Stillat\Meerkat\Core\Threads;
 
+use ArrayAccess;
+use Iterator;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 
 /**
@@ -12,7 +14,7 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
  * @package Stillat\Meerkat\Core\Threads
  * @since 2.0.0
  */
-class ThreadHierarchy
+class ThreadHierarchy implements ArrayAccess, Iterator
 {
 
     /**
@@ -191,16 +193,6 @@ class ThreadHierarchy
     }
 
     /**
-     * Sets the descendent mapping table.
-     *
-     * @param array $mapping The mapping.
-     */
-    public function setDescendentMapping($mapping)
-    {
-        $this->descendentMapping = $mapping;
-    }
-
-    /**
      * Gets the descendent mapping table.
      *
      * @return array
@@ -208,6 +200,16 @@ class ThreadHierarchy
     public function getDescendentMapping()
     {
         return $this->descendentMapping;
+    }
+
+    /**
+     * Sets the descendent mapping table.
+     *
+     * @param array $mapping The mapping.
+     */
+    public function setDescendentMapping($mapping)
+    {
+        $this->descendentMapping = $mapping;
     }
 
     /**
@@ -402,4 +404,121 @@ class ThreadHierarchy
         return 0;
     }
 
+    /**
+     * Offset to retrieve
+     * @link https://php.net/manual/en/arrayaccess.offsetget.php
+     * @param mixed $offset <p>
+     * The offset to retrieve.
+     * </p>
+     * @return mixed Can return all value types.
+     */
+    public function offsetGet($offset)
+    {
+        if ($this->offsetExists($offset)) {
+            return $this->comments[$offset];
+        }
+
+        return null;
+    }
+
+    /**
+     * Whether a offset exists
+     * @link https://php.net/manual/en/arrayaccess.offsetexists.php
+     * @param mixed $offset <p>
+     * An offset to check for.
+     * </p>
+     * @return bool true on success or false on failure.
+     * </p>
+     * <p>
+     * The return value will be casted to boolean if non-boolean was returned.
+     */
+    public function offsetExists($offset)
+    {
+        return isset($this->comments[$offset]);
+    }
+
+    /**
+     * Offset to set
+     * @link https://php.net/manual/en/arrayaccess.offsetset.php
+     * @param mixed $offset <p>
+     * The offset to assign the value to.
+     * </p>
+     * @param mixed $value <p>
+     * The value to set.
+     * </p>
+     * @return void
+     */
+    public function offsetSet($offset, $value)
+    {
+        if (is_null($offset)) {
+            $this->comments[] = $value;
+        } else {
+            $this->comments[$offset] = $value;
+        }
+    }
+
+    /**
+     * Offset to unset
+     * @link https://php.net/manual/en/arrayaccess.offsetunset.php
+     * @param mixed $offset <p>
+     * The offset to unset.
+     * </p>
+     * @return void
+     */
+    public function offsetUnset($offset)
+    {
+        if ($this->offsetExists($offset)) {
+            unset($this->directAncestorMapping[$offset]);
+        }
+    }
+
+    /**
+     * Return the current element
+     * @link https://php.net/manual/en/iterator.current.php
+     * @return mixed Can return any type.
+     */
+    public function current()
+    {
+        return current($this->comments);
+    }
+
+    /**
+     * Move forward to next element
+     * @link https://php.net/manual/en/iterator.next.php
+     */
+    public function next()
+    {
+        return next($this->comments);
+    }
+
+    /**
+     * Checks if current position is valid
+     * @link https://php.net/manual/en/iterator.valid.php
+     * @return bool The return value will be casted to boolean and then evaluated.
+     * Returns true on success or false on failure.
+     */
+    public function valid()
+    {
+        return isset($this->comments[$this->key()]);
+    }
+
+    /**
+     * Return the key of the current element
+     * @link https://php.net/manual/en/iterator.key.php
+     * @return string|float|int|bool|null scalar on success, or null on failure.
+     */
+    public function key()
+    {
+        return key($this->comments);
+    }
+
+    /**
+     * Rewind the Iterator to the first element
+     * @link https://php.net/manual/en/iterator.rewind.php
+     * @return void Any returned value is ignored.
+     */
+    public function rewind()
+    {
+        reset($this->comments);
+    }
 }

@@ -13,11 +13,7 @@ use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Data\Mutations\ChangeSetCollection;
 use Stillat\Meerkat\Core\Data\Retrievers\PathThreadIdRetriever;
 use Stillat\Meerkat\Core\DataObject;
-use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Exceptions\InconsistentCompositionException;
-use Stillat\Meerkat\Core\Logging\ErrorLog;
-use Stillat\Meerkat\Core\Logging\ErrorLogContext;
-use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
 use Stillat\Meerkat\Core\Parsing\UsesMarkdownParser;
 use Stillat\Meerkat\Core\Parsing\UsesYAMLParser;
 use Stillat\Meerkat\Core\Storage\Data\CommentAuthorRetriever;
@@ -507,6 +503,16 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     public function setParentId($parentId)
     {
         $this->setDataAttribute(CommentContract::KEY_PARENT_ID, $parentId);
+    }
+
+    /**
+     * Tests if the comment has been checked for spam.
+     *
+     * @return boolean
+     */
+    public function hasBeenCheckedForSpam()
+    {
+        return $this->hasDataAttribute(CommentContract::KEY_SPAM);
     }
 
     /**

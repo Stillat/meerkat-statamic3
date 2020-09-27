@@ -241,6 +241,13 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     public function getDepth();
 
     /**
+     * Tests if the comment has been checked for spam.
+     *
+     * @return boolean
+     */
+    public function hasBeenCheckedForSpam();
+
+    /**
      * Returns a value indicating if the comment was marked as spam.
      *
      * @return boolean

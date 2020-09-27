@@ -28,7 +28,9 @@ class Navigation
                 ->section('Content')
                 ->icon('addons/meerkat/meerkat-nav')
                 ->view('meerkat::nav.comments')
-                ->route('cp.meerkat.dashboard');
+                ->route('cp.meerkat.filteredDashboard', [
+                    'filter' => 'pending'
+                ]);
 
         });
     }

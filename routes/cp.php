@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => Addon::ROUTE_PREFIX], function () {
    Route::get('/', '\Stillat\Meerkat\Http\Controllers\DashboardController@index')->name('cp.meerkat.dashboard');
+
+
    Route::get('blueprint', '\Stillat\Meerkat\Http\Controllers\MeerkatBlueprintController@edit')->name('cp.meerkat.blueprint');
    Route::patch('blueprint', '\Stillat\Meerkat\Http\Controllers\MeerkatBlueprintController@update')->name('cp.meerkat.blueprint.update');
 
@@ -15,4 +17,5 @@ Route::group(['prefix' => Addon::ROUTE_PREFIX], function () {
        Route::post('remove-log-instance','\Stillat\Meerkat\Http\Controllers\ErrorLogsController@postRemoveLogInstance');
    });
 
+    Route::get('/{filter}', '\Stillat\Meerkat\Http\Controllers\DashboardController@dashboardWithFilter')->name('cp.meerkat.filteredDashboard');
 });

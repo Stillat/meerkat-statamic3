@@ -14,4 +14,16 @@ class DashboardController extends CpController
         return view('meerkat::dashboard');
     }
 
+    public function dashboardWithFilter($filter)
+    {
+        $validFilters = ['all', 'pending', 'published', 'spam'];
+
+        if (!in_array($filter, $validFilters)) {
+            abort(404);
+            exit;
+        }
+
+        return view('meerkat::dashboard');
+    }
+
 }

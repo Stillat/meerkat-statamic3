@@ -13460,6 +13460,36 @@ $({ target: 'Array', stat: true, forced: INCORRECT_ITERATION }, {
 
 /***/ }),
 
+/***/ "./node_modules/core-js/modules/es.array.includes.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/core-js/modules/es.array.includes.js ***!
+  \***********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(/*! ../internals/export */ "./node_modules/core-js/internals/export.js");
+var $includes = __webpack_require__(/*! ../internals/array-includes */ "./node_modules/core-js/internals/array-includes.js").includes;
+var addToUnscopables = __webpack_require__(/*! ../internals/add-to-unscopables */ "./node_modules/core-js/internals/add-to-unscopables.js");
+var arrayMethodUsesToLength = __webpack_require__(/*! ../internals/array-method-uses-to-length */ "./node_modules/core-js/internals/array-method-uses-to-length.js");
+
+var USES_TO_LENGTH = arrayMethodUsesToLength('indexOf', { ACCESSORS: true, 1: 0 });
+
+// `Array.prototype.includes` method
+// https://tc39.github.io/ecma262/#sec-array.prototype.includes
+$({ target: 'Array', proto: true, forced: !USES_TO_LENGTH }, {
+  includes: function includes(el /* , fromIndex = 0 */) {
+    return $includes(this, el, arguments.length > 1 ? arguments[1] : undefined);
+  }
+});
+
+// https://tc39.github.io/ecma262/#sec-array.prototype-@@unscopables
+addToUnscopables('includes');
+
+
+/***/ }),
+
 /***/ "./node_modules/core-js/modules/es.array.index-of.js":
 /*!***********************************************************!*\
   !*** ./node_modules/core-js/modules/es.array.index-of.js ***!
@@ -14652,6 +14682,32 @@ $({ target: 'String', proto: true, forced: !MDN_POLYFILL_BUG && !CORRECT_IS_REGE
     return nativeEndsWith
       ? nativeEndsWith.call(that, search, end)
       : that.slice(end - search.length, end) === search;
+  }
+});
+
+
+/***/ }),
+
+/***/ "./node_modules/core-js/modules/es.string.includes.js":
+/*!************************************************************!*\
+  !*** ./node_modules/core-js/modules/es.string.includes.js ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(/*! ../internals/export */ "./node_modules/core-js/internals/export.js");
+var notARegExp = __webpack_require__(/*! ../internals/not-a-regexp */ "./node_modules/core-js/internals/not-a-regexp.js");
+var requireObjectCoercible = __webpack_require__(/*! ../internals/require-object-coercible */ "./node_modules/core-js/internals/require-object-coercible.js");
+var correctIsRegExpLogic = __webpack_require__(/*! ../internals/correct-is-regexp-logic */ "./node_modules/core-js/internals/correct-is-regexp-logic.js");
+
+// `String.prototype.includes` method
+// https://tc39.github.io/ecma262/#sec-string.prototype.includes
+$({ target: 'String', proto: true, forced: !correctIsRegExpLogic('includes') }, {
+  includes: function includes(searchString /* , position = 0 */) {
+    return !!~String(requireObjectCoercible(this))
+      .indexOf(notARegExp(searchString), arguments.length > 1 ? arguments[1] : undefined);
   }
 });
 
@@ -41803,27 +41859,37 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/*!
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.function.bind */ "./node_modules/core-js/modules/es.function.bind.js");
-/* harmony import */ var core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.object.to-string */ "./node_modules/core-js/modules/es.object.to-string.js");
-/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_promise__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.promise */ "./node_modules/core-js/modules/es.promise.js");
-/* harmony import */ var core_js_modules_es_promise__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_promise__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.regexp.exec */ "./node_modules/core-js/modules/es.regexp.exec.js");
-/* harmony import */ var core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_string_search__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.string.search */ "./node_modules/core-js/modules/es.string.search.js");
-/* harmony import */ var core_js_modules_es_string_search__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_search__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./template.html */ "./src/App/CommentThread/template.html");
-/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_template_html__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _Repositories_commentRepository__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../Repositories/commentRepository */ "./src/Repositories/commentRepository.js");
-/* harmony import */ var _Components_Pagination__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../Components/Pagination */ "./src/App/Components/Pagination/index.js");
-/* harmony import */ var _Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../Mixins/usesTranslator */ "./src/App/Mixins/usesTranslator.js");
-/* harmony import */ var _Components_CommentTable__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../Components/CommentTable */ "./src/App/Components/CommentTable/index.js");
-/* harmony import */ var _Data_Comments_searchOptions__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../Data/Comments/searchOptions */ "./src/Data/Comments/searchOptions.js");
-/* harmony import */ var _Components_Loader__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../Components/Loader */ "./src/App/Components/Loader/index.js");
-/* harmony import */ var _Config_environment__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../Config/environment */ "./src/Config/environment.js");
-/* harmony import */ var _Data_Filters_filter__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../Data/Filters/filter */ "./src/Data/Filters/filter.js");
-/* harmony import */ var _Components_CommentTable_sortManager__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../Components/CommentTable/sortManager */ "./src/App/Components/CommentTable/sortManager.js");
+/* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.includes */ "./node_modules/core-js/modules/es.array.includes.js");
+/* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.function.bind */ "./node_modules/core-js/modules/es.function.bind.js");
+/* harmony import */ var core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.object.to-string */ "./node_modules/core-js/modules/es.object.to-string.js");
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_promise__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.promise */ "./node_modules/core-js/modules/es.promise.js");
+/* harmony import */ var core_js_modules_es_promise__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_promise__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.regexp.exec */ "./node_modules/core-js/modules/es.regexp.exec.js");
+/* harmony import */ var core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.string.includes */ "./node_modules/core-js/modules/es.string.includes.js");
+/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_es_string_search__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.string.search */ "./node_modules/core-js/modules/es.string.search.js");
+/* harmony import */ var core_js_modules_es_string_search__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_search__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./template.html */ "./src/App/CommentThread/template.html");
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_template_html__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _Repositories_commentRepository__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../Repositories/commentRepository */ "./src/Repositories/commentRepository.js");
+/* harmony import */ var _Components_Pagination__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../Components/Pagination */ "./src/App/Components/Pagination/index.js");
+/* harmony import */ var _Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../Mixins/usesTranslator */ "./src/App/Mixins/usesTranslator.js");
+/* harmony import */ var _Components_CommentTable__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../Components/CommentTable */ "./src/App/Components/CommentTable/index.js");
+/* harmony import */ var _Data_Comments_searchOptions__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../Data/Comments/searchOptions */ "./src/Data/Comments/searchOptions.js");
+/* harmony import */ var _Components_Loader__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../Components/Loader */ "./src/App/Components/Loader/index.js");
+/* harmony import */ var _Config_environment__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../Config/environment */ "./src/Config/environment.js");
+/* harmony import */ var _Data_Filters_filter__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../Data/Filters/filter */ "./src/Data/Filters/filter.js");
+/* harmony import */ var _Components_CommentTable_sortManager__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../Components/CommentTable/sortManager */ "./src/App/Components/CommentTable/sortManager.js");
+/* harmony import */ var _Types_url__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../../Types/url */ "./src/Types/url.js");
+/* harmony import */ var _Data_Filters_defaultFilterApplicator__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../../Data/Filters/defaultFilterApplicator */ "./src/Data/Filters/defaultFilterApplicator.js");
+
+
+
+
 
 
 
@@ -41843,12 +41909,12 @@ __webpack_require__.r(__webpack_exports__);
 var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  mixins: [_Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_8__["default"]],
-  template: _template_html__WEBPACK_IMPORTED_MODULE_5___default.a,
+  mixins: [_Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_10__["default"]],
+  template: _template_html__WEBPACK_IMPORTED_MODULE_7___default.a,
   components: {
-    'comment-table': _Components_CommentTable__WEBPACK_IMPORTED_MODULE_9__["default"],
-    'loader': _Components_Loader__WEBPACK_IMPORTED_MODULE_11__["default"],
-    'paginator': _Components_Pagination__WEBPACK_IMPORTED_MODULE_7__["default"]
+    'comment-table': _Components_CommentTable__WEBPACK_IMPORTED_MODULE_11__["default"],
+    'loader': _Components_Loader__WEBPACK_IMPORTED_MODULE_13__["default"],
+    'paginator': _Components_Pagination__WEBPACK_IMPORTED_MODULE_9__["default"]
   },
   data: function data() {
     return {
@@ -41860,10 +41926,12 @@ var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
         lastPerPageRequest: -1,
         initialPerPage: 10,
         initialSortString: null,
-        tableIsAvailable: false
+        tableIsAvailable: false,
+        activeFilterId: 0
       },
-      searchOptions: new _Data_Comments_searchOptions__WEBPACK_IMPORTED_MODULE_10__["default"](),
-      commentRepo: new _Repositories_commentRepository__WEBPACK_IMPORTED_MODULE_6__["default"](),
+      defaultFilters: ['all', 'pending', 'published', 'spam'],
+      searchOptions: new _Data_Comments_searchOptions__WEBPACK_IMPORTED_MODULE_12__["default"](),
+      commentRepo: new _Repositories_commentRepository__WEBPACK_IMPORTED_MODULE_8__["default"](),
       commentData: null
     };
   },
@@ -41888,7 +41956,7 @@ var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
       this.loadCommentData();
     },
     updateQueryWithPerPage: function updateQueryWithPerPage(perPageCount) {
-      _Config_environment__WEBPACK_IMPORTED_MODULE_12__["default"].Preferences.updatePerPage(perPageCount);
+      _Config_environment__WEBPACK_IMPORTED_MODULE_14__["default"].Preferences.updatePerPage(perPageCount);
 
       if (this.state.lastPerPageRequest > -1 && this.state.lastPerPageRequest === perPageCount) {
         return;
@@ -41898,7 +41966,7 @@ var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
       this.searchOptions.resultsPerPage = perPageCount;
       this.loadCommentData().then(function () {
         this.$nextTick(function () {
-          _Config_environment__WEBPACK_IMPORTED_MODULE_12__["default"].scrollTop();
+          _Config_environment__WEBPACK_IMPORTED_MODULE_14__["default"].scrollTop();
         });
       }.bind(this));
     },
@@ -41938,9 +42006,20 @@ var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
     }
   },
   created: function created() {
+    var currentUrlRequest = _Types_url__WEBPACK_IMPORTED_MODULE_17__["default"].currentLastValue().toLowerCase();
+
+    if (this.defaultFilters.includes(currentUrlRequest)) {
+      var defaultFilter = Object(_Data_Filters_defaultFilterApplicator__WEBPACK_IMPORTED_MODULE_18__["getDefaultFilter"])(currentUrlRequest);
+
+      if (defaultFilter !== null) {
+        this.state.activeFilterId = defaultFilter.id;
+        this.onFilterChanged(defaultFilter);
+      }
+    }
+
     syncjs.Hubs.comments().handledBy(this);
     this.loadCommentData();
-    this.state.initialPerPage = _Config_environment__WEBPACK_IMPORTED_MODULE_12__["default"].Preferences.getPerPage();
+    this.state.initialPerPage = _Config_environment__WEBPACK_IMPORTED_MODULE_14__["default"].Preferences.getPerPage();
     this.searchOptions.resultsPerPage = this.state.initialPerPage;
   }
 });
@@ -41955,7 +42034,7 @@ var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
 /***/ (function(module, exports) {
 
 // Module
-var code = "<div>\r\n    <div class=\"flex items-center justify-between mb-3\">\r\n        <h1 class=\"flex-1\">{{ trans('display.header_comments') }}</h1>\r\n\r\n        <loader v-if=\"state.loadingData\" :display-inline=\"true\"></loader>\r\n        <a href=\"#\" class=\"btn-primary\">Export</a>\r\n    </div>\r\n\r\n    <div v-if=\"state.loadingInitial === true\" class=\"card loading\">\r\n        <loader :display-text=\"trans('display.loading')\"></loader>\r\n    </div>\r\n\r\n    <comment-table ref=\"commentTable\" v-on:table-available=\"onTableAvailable\" v-if=\"state.loadingInitial === false\" :comments=\"commentData\"\r\n                   v-on:filter-changed=\"onFilterChanged\" v-on:order-changed=\"onOrderUpdated\" v-on:search-updated=\"onSearchUpdated\"\r\n                   v-on:data-update-requested=\"onRefreshRequested\"\r\n                   :loading=\"state.loadingData\"></comment-table>\r\n\r\n    <paginator v-if=\"commentData !== null\" :per-page=\"state.initialPerPage\" :page-data=\"commentData.pages\"\r\n               v-on:page-updated=\"updateQueryWithPage\" v-on:per-page-updated=\"updateQueryWithPerPage\">\r\n    </paginator>\r\n</div>";
+var code = "<div>\r\n    <div class=\"flex items-center justify-between mb-3\">\r\n        <h1 class=\"flex-1\">{{ trans('display.header_comments') }}</h1>\r\n\r\n        <loader v-if=\"state.loadingData\" :display-inline=\"true\"></loader>\r\n        <a href=\"#\" class=\"btn-primary\">Export</a>\r\n    </div>\r\n\r\n    <div v-if=\"state.loadingInitial === true\" class=\"card loading\">\r\n        <loader :display-text=\"trans('display.loading')\"></loader>\r\n    </div>\r\n\r\n    <comment-table ref=\"commentTable\" v-on:table-available=\"onTableAvailable\" v-if=\"state.loadingInitial === false\"\r\n                   :comments=\"commentData\" :active-filter-id=\"state.activeFilterId\"\r\n                   v-on:filter-changed=\"onFilterChanged\" v-on:order-changed=\"onOrderUpdated\" v-on:search-updated=\"onSearchUpdated\"\r\n                   v-on:data-update-requested=\"onRefreshRequested\"\r\n                   :loading=\"state.loadingData\"></comment-table>\r\n\r\n    <paginator v-if=\"commentData !== null\" :per-page=\"state.initialPerPage\" :page-data=\"commentData.pages\"\r\n               v-on:page-updated=\"updateQueryWithPage\" v-on:per-page-updated=\"updateQueryWithPerPage\">\r\n    </paginator>\r\n</div>";
 // Exports
 module.exports = code;
 
@@ -43703,30 +43782,33 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_array_for_each__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_for_each__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.function.bind */ "./node_modules/core-js/modules/es.function.bind.js");
 /* harmony import */ var core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_function_bind__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
-/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _Handlers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Handlers */ "./src/App/Components/CommentTable/Handlers/index.js");
-/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./template.html */ "./src/App/Components/CommentTable/template.html");
-/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_template_html__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _Http_Responses_commentResponse__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../Http/Responses/commentResponse */ "./src/Http/Responses/commentResponse.js");
-/* harmony import */ var _Config_environment__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../Config/environment */ "./src/Config/environment.js");
-/* harmony import */ var _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../Extend/Avatars/avatarDriverRegistry */ "./src/Extend/Avatars/avatarDriverRegistry.js");
-/* harmony import */ var _AuthorDisplay__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../AuthorDisplay */ "./src/App/Components/AuthorDisplay/index.js");
-/* harmony import */ var _Data_Comments_comment__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../Data/Comments/comment */ "./src/Data/Comments/comment.js");
-/* harmony import */ var _CommentDisplay__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../CommentDisplay */ "./src/App/Components/CommentDisplay/index.js");
-/* harmony import */ var _CommentEditor__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../CommentEditor */ "./src/App/Components/CommentEditor/index.js");
-/* harmony import */ var _ReplyEditor__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../ReplyEditor */ "./src/App/Components/ReplyEditor/index.js");
-/* harmony import */ var _Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../Mixins/usesTranslator */ "./src/App/Mixins/usesTranslator.js");
-/* harmony import */ var _Types_type__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../../Types/type */ "./src/Types/type.js");
-/* harmony import */ var _Types_string__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../../Types/string */ "./src/Types/string.js");
-/* harmony import */ var _actionState__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../actionState */ "./src/App/actionState.js");
-/* harmony import */ var _Mixins_actionHandler__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../../Mixins/actionHandler */ "./src/App/Mixins/actionHandler.js");
-/* harmony import */ var _TableFilters__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../TableFilters */ "./src/App/Components/TableFilters/index.js");
-/* harmony import */ var _sortManager__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./sortManager */ "./src/App/Components/CommentTable/sortManager.js");
-/* harmony import */ var _sortIndicator__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./sortIndicator */ "./src/App/Components/CommentTable/sortIndicator.js");
-/* harmony import */ var _EmptyIndicator__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ../EmptyIndicator */ "./src/App/Components/EmptyIndicator/index.js");
-/* harmony import */ var _Reporting_overviewProvider__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ../../../Reporting/overviewProvider */ "./src/Reporting/overviewProvider.js");
-/* harmony import */ var _Http_Responses_Reporting_overviewResponse__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ../../../Http/Responses/Reporting/overviewResponse */ "./src/Http/Responses/Reporting/overviewResponse.js");
+/* harmony import */ var core_js_modules_es_number_constructor__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.number.constructor */ "./node_modules/core-js/modules/es.number.constructor.js");
+/* harmony import */ var core_js_modules_es_number_constructor__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_number_constructor__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _Handlers__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Handlers */ "./src/App/Components/CommentTable/Handlers/index.js");
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./template.html */ "./src/App/Components/CommentTable/template.html");
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_template_html__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _Http_Responses_commentResponse__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../Http/Responses/commentResponse */ "./src/Http/Responses/commentResponse.js");
+/* harmony import */ var _Config_environment__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../Config/environment */ "./src/Config/environment.js");
+/* harmony import */ var _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../Extend/Avatars/avatarDriverRegistry */ "./src/Extend/Avatars/avatarDriverRegistry.js");
+/* harmony import */ var _AuthorDisplay__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../AuthorDisplay */ "./src/App/Components/AuthorDisplay/index.js");
+/* harmony import */ var _Data_Comments_comment__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../Data/Comments/comment */ "./src/Data/Comments/comment.js");
+/* harmony import */ var _CommentDisplay__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../CommentDisplay */ "./src/App/Components/CommentDisplay/index.js");
+/* harmony import */ var _CommentEditor__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../CommentEditor */ "./src/App/Components/CommentEditor/index.js");
+/* harmony import */ var _ReplyEditor__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../ReplyEditor */ "./src/App/Components/ReplyEditor/index.js");
+/* harmony import */ var _Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../Mixins/usesTranslator */ "./src/App/Mixins/usesTranslator.js");
+/* harmony import */ var _Types_type__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../../Types/type */ "./src/Types/type.js");
+/* harmony import */ var _Types_string__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../../Types/string */ "./src/Types/string.js");
+/* harmony import */ var _actionState__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../../actionState */ "./src/App/actionState.js");
+/* harmony import */ var _Mixins_actionHandler__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../../Mixins/actionHandler */ "./src/App/Mixins/actionHandler.js");
+/* harmony import */ var _TableFilters__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../TableFilters */ "./src/App/Components/TableFilters/index.js");
+/* harmony import */ var _sortManager__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./sortManager */ "./src/App/Components/CommentTable/sortManager.js");
+/* harmony import */ var _sortIndicator__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./sortIndicator */ "./src/App/Components/CommentTable/sortIndicator.js");
+/* harmony import */ var _EmptyIndicator__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ../EmptyIndicator */ "./src/App/Components/EmptyIndicator/index.js");
+/* harmony import */ var _Reporting_overviewProvider__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ../../../Reporting/overviewProvider */ "./src/Reporting/overviewProvider.js");
+/* harmony import */ var _Http_Responses_Reporting_overviewResponse__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ../../../Http/Responses/Reporting/overviewResponse */ "./src/Http/Responses/Reporting/overviewResponse.js");
+
 
 
 
@@ -43757,16 +43839,16 @@ var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
 __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style.less");
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  mixins: [_Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_13__["default"], _Mixins_actionHandler__WEBPACK_IMPORTED_MODULE_17__["default"]],
-  template: _template_html__WEBPACK_IMPORTED_MODULE_4___default.a,
+  mixins: [_Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_14__["default"], _Mixins_actionHandler__WEBPACK_IMPORTED_MODULE_18__["default"]],
+  template: _template_html__WEBPACK_IMPORTED_MODULE_5___default.a,
   components: {
-    'table-filters': _TableFilters__WEBPACK_IMPORTED_MODULE_18__["default"],
-    'author-display': _AuthorDisplay__WEBPACK_IMPORTED_MODULE_8__["default"],
-    'comment-display': _CommentDisplay__WEBPACK_IMPORTED_MODULE_10__["default"],
-    'comment-editor': _CommentEditor__WEBPACK_IMPORTED_MODULE_11__["default"],
-    'reply-editor': _ReplyEditor__WEBPACK_IMPORTED_MODULE_12__["default"],
-    'sort-indicator': _sortIndicator__WEBPACK_IMPORTED_MODULE_20__["default"],
-    'empty-indicator': _EmptyIndicator__WEBPACK_IMPORTED_MODULE_21__["default"]
+    'table-filters': _TableFilters__WEBPACK_IMPORTED_MODULE_19__["default"],
+    'author-display': _AuthorDisplay__WEBPACK_IMPORTED_MODULE_9__["default"],
+    'comment-display': _CommentDisplay__WEBPACK_IMPORTED_MODULE_11__["default"],
+    'comment-editor': _CommentEditor__WEBPACK_IMPORTED_MODULE_12__["default"],
+    'reply-editor': _ReplyEditor__WEBPACK_IMPORTED_MODULE_13__["default"],
+    'sort-indicator': _sortIndicator__WEBPACK_IMPORTED_MODULE_21__["default"],
+    'empty-indicator': _EmptyIndicator__WEBPACK_IMPORTED_MODULE_22__["default"]
   },
   props: {
     loading: {
@@ -43774,12 +43856,16 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style
       "default": false
     },
     comments: {
-      type: _Http_Responses_commentResponse__WEBPACK_IMPORTED_MODULE_5__["default"],
+      type: _Http_Responses_commentResponse__WEBPACK_IMPORTED_MODULE_6__["default"],
       "default": null
     },
     displayFocusMode: {
       type: Boolean,
       "default": false
+    },
+    activeFilterId: {
+      type: Number,
+      "default": 0
     }
   },
   data: function data() {
@@ -43789,43 +43875,43 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style
       avatarDriver: null,
       permissions: null,
       handlers: {
-        'edit': _Handlers__WEBPACK_IMPORTED_MODULE_3__["EditCommentHandler"],
-        'reply': _Handlers__WEBPACK_IMPORTED_MODULE_3__["ReplyCommentHandler"]
+        'edit': _Handlers__WEBPACK_IMPORTED_MODULE_4__["EditCommentHandler"],
+        'reply': _Handlers__WEBPACK_IMPORTED_MODULE_4__["ReplyCommentHandler"]
       },
       singleSelectTranslation: this.trans('actions.select_comment'),
       canUseBulkActions: false,
       currentBulkAction: 'approve',
       bulkHandlers: {
-        'approve': _Handlers__WEBPACK_IMPORTED_MODULE_3__["BulkApproveHandler"],
-        'unapprove': _Handlers__WEBPACK_IMPORTED_MODULE_3__["BulkUnapproveHandler"],
-        'delete': _Handlers__WEBPACK_IMPORTED_MODULE_3__["BulkDeleteHandler"],
-        'mark-spam': _Handlers__WEBPACK_IMPORTED_MODULE_3__["BulkSpamHandler"],
-        'mark-ham': _Handlers__WEBPACK_IMPORTED_MODULE_3__["BulkNotSpamHandler"]
+        'approve': _Handlers__WEBPACK_IMPORTED_MODULE_4__["BulkApproveHandler"],
+        'unapprove': _Handlers__WEBPACK_IMPORTED_MODULE_4__["BulkUnapproveHandler"],
+        'delete': _Handlers__WEBPACK_IMPORTED_MODULE_4__["BulkDeleteHandler"],
+        'mark-spam': _Handlers__WEBPACK_IMPORTED_MODULE_4__["BulkSpamHandler"],
+        'mark-ham': _Handlers__WEBPACK_IMPORTED_MODULE_4__["BulkNotSpamHandler"]
       }
     };
   },
   computed: {
     hasData: function hasData() {
-      if (_Types_type__WEBPACK_IMPORTED_MODULE_14__["default"].hasValue(this.comments) === false) {
+      if (_Types_type__WEBPACK_IMPORTED_MODULE_15__["default"].hasValue(this.comments) === false) {
         return false;
       }
 
       return this.comments.comments.length > 0;
     },
     shouldDisplayThread: function shouldDisplayThread() {
-      if (_Types_type__WEBPACK_IMPORTED_MODULE_14__["default"].hasValue(this.comments) === false) {
+      if (_Types_type__WEBPACK_IMPORTED_MODULE_15__["default"].hasValue(this.comments) === false) {
         return false;
       }
 
       return this.comments.threads.length > 1;
     },
     hasCommentResponse: function hasCommentResponse() {
-      return _Types_type__WEBPACK_IMPORTED_MODULE_14__["default"].hasValue(this.comments);
+      return _Types_type__WEBPACK_IMPORTED_MODULE_15__["default"].hasValue(this.comments);
     },
     selectedCount: function selectedCount() {
       var selectedCount = 0;
 
-      if (_Types_type__WEBPACK_IMPORTED_MODULE_14__["default"].hasValue(this.comments) === false) {
+      if (_Types_type__WEBPACK_IMPORTED_MODULE_15__["default"].hasValue(this.comments) === false) {
         return selectedCount;
       }
 
@@ -43840,7 +43926,7 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style
     hasSelection: function hasSelection() {
       var hasSelection = false;
 
-      if (_Types_type__WEBPACK_IMPORTED_MODULE_14__["default"].hasValue(this.comments) === false) {
+      if (_Types_type__WEBPACK_IMPORTED_MODULE_15__["default"].hasValue(this.comments) === false) {
         return hasSelection;
       }
 
@@ -43867,7 +43953,7 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style
           this.clearData();
         }
 
-        if (_Types_type__WEBPACK_IMPORTED_MODULE_14__["default"].hasValue(this.comments) === true && this.comments.comments.length === 0) {
+        if (_Types_type__WEBPACK_IMPORTED_MODULE_15__["default"].hasValue(this.comments) === true && this.comments.comments.length === 0) {
           if (report.total > 0) {
             this.$emit('data-update-requested');
           }
@@ -43879,7 +43965,7 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style
       this.comments.clear();
     },
     updateSortFromHeader: function updateSortFromHeader(columnId) {
-      if (_Types_string__WEBPACK_IMPORTED_MODULE_15__["default"].hasValue(columnId)) {
+      if (_Types_string__WEBPACK_IMPORTED_MODULE_16__["default"].hasValue(columnId)) {
         this.sortManager.toggleColumn(columnId);
         this.updateStateFromOrder();
       }
@@ -43933,7 +44019,7 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style
       this.comments.comments.unSelectAll();
     },
     performBulkAction: function performBulkAction(action) {
-      if (_Types_type__WEBPACK_IMPORTED_MODULE_14__["default"].hasValue(this.bulkHandlers[action])) {
+      if (_Types_type__WEBPACK_IMPORTED_MODULE_15__["default"].hasValue(this.bulkHandlers[action])) {
         var bulkHandler = new this.bulkHandlers[action](null);
         bulkHandler.commentIds = this.getSelectedIds();
         this.confirm(bulkHandler).onConfirm(function (state) {
@@ -43944,7 +44030,7 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style
       }
     },
     performAction: function performAction(action, comment) {
-      if (_Types_type__WEBPACK_IMPORTED_MODULE_14__["default"].hasValue(this.handlers[action])) {
+      if (_Types_type__WEBPACK_IMPORTED_MODULE_15__["default"].hasValue(this.handlers[action])) {
         this.confirm(new this.handlers[action](comment)).onConfirm(function (state) {
           state.proceed();
         });
@@ -43952,7 +44038,7 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style
       }
     },
     performActionNow: function performActionNow(action, comment) {
-      if (_Types_type__WEBPACK_IMPORTED_MODULE_14__["default"].hasValue(this.handlers[action])) {
+      if (_Types_type__WEBPACK_IMPORTED_MODULE_15__["default"].hasValue(this.handlers[action])) {
         this.confirm(new this.handlers[action](comment)).onConfirm(function (state) {
           state.proceed();
         }).onComplete(function () {
@@ -43980,23 +44066,23 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style
   },
   created: function created() {
     syncjs.Hubs.comments().handledBy(this).reactsToInstance(false).redirectTo(this.closeAllActionDialogs);
-    var sortManager = new _sortManager__WEBPACK_IMPORTED_MODULE_19__["default"]();
-    _Reporting_overviewProvider__WEBPACK_IMPORTED_MODULE_22__["default"].Instance.on('updated', this.checkStateFromProvider);
+    var sortManager = new _sortManager__WEBPACK_IMPORTED_MODULE_20__["default"]();
+    _Reporting_overviewProvider__WEBPACK_IMPORTED_MODULE_23__["default"].Instance.on('updated', this.checkStateFromProvider);
     sortManager.setColumns({
-      'id': _sortManager__WEBPACK_IMPORTED_MODULE_19__["default"].Desc,
-      'comment': _sortManager__WEBPACK_IMPORTED_MODULE_19__["default"].None
+      'id': _sortManager__WEBPACK_IMPORTED_MODULE_20__["default"].Desc,
+      'comment': _sortManager__WEBPACK_IMPORTED_MODULE_20__["default"].None
     });
     this.sortManager = sortManager;
-    this.permissions = _Config_environment__WEBPACK_IMPORTED_MODULE_6__["default"].getPermissions();
+    this.permissions = _Config_environment__WEBPACK_IMPORTED_MODULE_7__["default"].getPermissions();
 
     if (this.permissions.canApproveComments || this.permissions.canEditComments || this.permissions.canRemoveComments || this.permissions.canReportAsHam || this.permissions.canReportAsSpam || this.permissions.canUnApproveComments) {
       this.canUseBulkActions = true;
     }
 
-    if (_Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_7__["default"].hasDriver(_Config_environment__WEBPACK_IMPORTED_MODULE_6__["default"].Settings.avatarDriver)) {
-      this.avatarDriver = _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_7__["default"].getDriverName(_Config_environment__WEBPACK_IMPORTED_MODULE_6__["default"].Settings.avatarDriver);
+    if (_Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_8__["default"].hasDriver(_Config_environment__WEBPACK_IMPORTED_MODULE_7__["default"].Settings.avatarDriver)) {
+      this.avatarDriver = _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_8__["default"].getDriverName(_Config_environment__WEBPACK_IMPORTED_MODULE_7__["default"].Settings.avatarDriver);
     } else {
-      this.avatarDriver = _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_7__["default"].getDriverName(_Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_7__["default"].DefaultDriverName);
+      this.avatarDriver = _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_8__["default"].getDriverName(_Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_8__["default"].DefaultDriverName);
     }
   }
 });
@@ -44361,7 +44447,7 @@ SortManager.None = 0;
 /***/ (function(module, exports) {
 
 // Module
-var code = "<div>\r\n    <meerkat-stateful-confirm-dialog\r\n            name=\"tableMeerkatActionConfirm\" v-if=\"currentAction !== null && currentAction.display === true\"\r\n            :action-state=\"currentAction\" v-on:cancel=\"checkForDismiss\"></meerkat-stateful-confirm-dialog>\r\n\r\n    <div class=\"card p-0 relative\">\r\n        <table-filters ref=\"tableFilters\" v-on:filter-changed=\"onFilterChange\" v-on:search-updated=\"onSearchUpdated\"></table-filters>\r\n\r\n        <div class=\"data-table-header\">\r\n\r\n            <table class=\"meerkat__data-table data-table\" v-bind:class=\"tableClasses\" v-show=\"hasData === true\">\r\n                <thead>\r\n                <tr v-if=\"hasCommentResponse && canUseBulkActions && hasSelection === true\">\r\n                    <th colspan=\"2\">\r\n                        <label class=\"text-gray-500 font-bold inline cursor-pointer\" :title=\"singleSelectTranslation\">\r\n                            <input class=\"mr-2 leading-tight cursor-pointer meerkat__checkbox meerkat__header-checkbox\" type=\"checkbox\"\r\n                                   :title=\"trans('actions.select_all_comments')\"\r\n                                   v-model=\"comments.comments.allSelected\"\r\n                                   v-on:click=\"comments.comments.toggleSelections()\">\r\n                        </label>\r\n\r\n                        <!-- TODO: Refactor out to a bulk options thing -->\r\n                        <div class=\"meerkat__bulk-actions\">\r\n                            <div class=\"select-input-container\">\r\n                                <select class=\"select-input\" v-model=\"currentBulkAction\">\r\n                                    <option v-if=\"permissions.canApproveComments === true\" value=\"approve\">{{\r\n                                        trans('actions.bulk_list_approve') }}\r\n                                    </option>\r\n                                    <option v-if=\"permissions.canUnApproveComments === true\" value=\"unapprove\">{{\r\n                                        trans('actions.bulk_list_unapprove') }}\r\n                                    </option>\r\n                                    <option v-if=\"permissions.canRemoveComments === true\" value=\"delete\">{{\r\n                                        trans('actions.bulk_list_delete') }}\r\n                                    </option>\r\n                                    <option v-if=\"permissions.canReportAsSpam === true\" value=\"mark-spam\">{{\r\n                                        trans('actions.bulk_list_spam') }}\r\n                                    </option>\r\n                                    <option v-if=\"permissions.canReportAsHam === true\" value=\"mark-ham\">{{\r\n                                        trans('actions.bulk_list_ham') }}\r\n                                    </option>\r\n                                </select>\r\n\r\n                                <div class=\"select-input-toggle\">\r\n                                    <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\">\r\n                                        <path d=\"M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z\"/>\r\n                                    </svg>\r\n                                </div>\r\n                            </div>\r\n\r\n                            <button class=\"btn-primary mr-2\" v-on:click=\"performBulkAction(currentBulkAction)\">{{\r\n                                trans('actions.bulk_perform_action') }}\r\n                            </button>\r\n                            <button class=\"text-grey hover:text-grey-90\" v-on:click=\"cancelBulkActions\">{{\r\n                                trans('actions.cancel') }}\r\n                            </button>\r\n                        </div>\r\n                    </th>\r\n                </tr>\r\n                <tr>\r\n                    <th class=\"comment-table__author-column sortable-column\" v-on:click=\"updateSortFromHeader('id')\">\r\n                        <label class=\"text-gray-500 font-bold inline cursor-pointer\" :title=\"singleSelectTranslation\"\r\n                               v-if=\"hasCommentResponse && canUseBulkActions && hasSelection === false\"\r\n                               v-on:click.stop>\r\n                            <input class=\"mr-2 leading-tight cursor-pointer meerkat__checkbox  meerkat__header-checkbox\" type=\"checkbox\"\r\n                                   :title=\"trans('actions.select_all_comments')\"\r\n                                   v-model=\"comments.comments.allSelected\"\r\n                                   v-on:click.stop=\"comments.comments.toggleSelections()\">\r\n                        </label>\r\n                        <sort-indicator :column=\"'id'\" :manager=\"sortManager\" :respond-to-click=\"false\"\r\n                                        v-on:order-changed=\"updateStateFromOrder\">\r\n                            {{ trans('display.header_author') }}\r\n                        </sort-indicator>\r\n                    </th>\r\n                    <th class=\"sortable-column\" v-on:click=\"updateSortFromHeader('comment')\">\r\n                        <sort-indicator :column=\"'comment'\" :manager=\"sortManager\" :manager=\"sortManager\" style=\"display: inline-block;padding-top:2px;\"\r\n                                        :respond-to-click=\"false\" v-on:order-changed=\"updateStateFromOrder\">\r\n                            {{ trans('display.header_comment') }}\r\n                        </sort-indicator>\r\n                    </th>\r\n                </tr>\r\n                </thead>\r\n                <tbody v-if=\"hasCommentResponse\">\r\n                <tr v-if=\"comments.threads.length === 1\">\r\n                    <td colspan=\"2\">\r\n                        <p :title=\"comments.threads[0].name\"><span class=\"meerkat__inline-callout\"><strong>{{ trans('display.thread_single_response') }}</strong></span> {{ comments.threads[0].name | meerkatTruncate(75) }}</p>\r\n                    </td>\r\n                </tr>\r\n                <tr v-for=\"(comment, i) in comments.comments\" class=\"meerkat__comment-row\"\r\n                    v-bind:class=\"getCommentClasses(comment)\" v-if=\"comment.isDeleted === false\">\r\n                    <td class=\"author-display__container\">\r\n                        <label class=\"text-gray-500 font-bold cursor-pointer\" :title=\"singleSelectTranslation\"\r\n                               v-if=\"canUseBulkActions\">\r\n                            <input class=\"mr-2 leading-tight cursor-pointer meerkat__checkbox\" type=\"checkbox\"\r\n                                   v-model=\"comment.isSelected\">\r\n                        </label>\r\n                        <author-display :comment=\"comment\" :author=\"comment.getAuthor()\" :avatar-driver=\"avatarDriver\"></author-display>\r\n                    </td>\r\n                    <td>\r\n                        <comment-display ref=\"commentDisplay\"\r\n                                         v-if=\"comment.isSelected === true || comment.state.isEditing === false\"\r\n                                         :comment=\"comment\" :display-thread=\"shouldDisplayThread\"\r\n                                         :avatar-driver=\"avatarDriver\" :permissions=\"permissions\"\r\n                                         v-on:action-edit=\"beforeEdit\" :actions-disabled=\"selectedCount > 0\"\r\n                                         v-on:action-reply=\"beforeReply\"></comment-display>\r\n                        <comment-editor v-if=\"selectedCount === 0 && comment.state.isEditing === true\"\r\n                                        :comment=\"comment\"\r\n                                        v-on:update-requested=\"performActionNow('edit', comment)\"\r\n                                        v-on:update-canceled=\"disableFocusMode\"></comment-editor>\r\n                        <reply-editor v-if=\"selectedCount === 0 && comment.state.isReplying === true\" :comment=\"comment\"\r\n                                      v-on:reply-requested=\"performActionNow('reply', comment)\"\r\n                                      v-on:reply-canceled=\"disableFocusMode\"></reply-editor>\r\n                    </td>\r\n                </tr>\r\n                </tbody>\r\n            </table>\r\n            <empty-indicator v-if=\"hasData === false\"></empty-indicator>\r\n        </div>\r\n    </div>\r\n</div>";
+var code = "<div>\r\n    <meerkat-stateful-confirm-dialog\r\n            name=\"tableMeerkatActionConfirm\" v-if=\"currentAction !== null && currentAction.display === true\"\r\n            :action-state=\"currentAction\" v-on:cancel=\"checkForDismiss\"></meerkat-stateful-confirm-dialog>\r\n\r\n    <div class=\"card p-0 relative\">\r\n        <table-filters ref=\"tableFilters\" :active-filter-id=\"activeFilterId\" v-on:filter-changed=\"onFilterChange\" v-on:search-updated=\"onSearchUpdated\"></table-filters>\r\n\r\n        <div class=\"data-table-header\">\r\n\r\n            <table class=\"meerkat__data-table data-table\" v-bind:class=\"tableClasses\" v-show=\"hasData === true\">\r\n                <thead>\r\n                <tr v-if=\"hasCommentResponse && canUseBulkActions && hasSelection === true\">\r\n                    <th colspan=\"2\">\r\n                        <label class=\"text-gray-500 font-bold inline cursor-pointer\" :title=\"singleSelectTranslation\">\r\n                            <input class=\"mr-2 leading-tight cursor-pointer meerkat__checkbox meerkat__header-checkbox\" type=\"checkbox\"\r\n                                   :title=\"trans('actions.select_all_comments')\"\r\n                                   v-model=\"comments.comments.allSelected\"\r\n                                   v-on:click=\"comments.comments.toggleSelections()\">\r\n                        </label>\r\n\r\n                        <!-- TODO: Refactor out to a bulk options thing -->\r\n                        <div class=\"meerkat__bulk-actions\">\r\n                            <div class=\"select-input-container\">\r\n                                <select class=\"select-input\" v-model=\"currentBulkAction\">\r\n                                    <option v-if=\"permissions.canApproveComments === true\" value=\"approve\">{{\r\n                                        trans('actions.bulk_list_approve') }}\r\n                                    </option>\r\n                                    <option v-if=\"permissions.canUnApproveComments === true\" value=\"unapprove\">{{\r\n                                        trans('actions.bulk_list_unapprove') }}\r\n                                    </option>\r\n                                    <option v-if=\"permissions.canRemoveComments === true\" value=\"delete\">{{\r\n                                        trans('actions.bulk_list_delete') }}\r\n                                    </option>\r\n                                    <option v-if=\"permissions.canReportAsSpam === true\" value=\"mark-spam\">{{\r\n                                        trans('actions.bulk_list_spam') }}\r\n                                    </option>\r\n                                    <option v-if=\"permissions.canReportAsHam === true\" value=\"mark-ham\">{{\r\n                                        trans('actions.bulk_list_ham') }}\r\n                                    </option>\r\n                                </select>\r\n\r\n                                <div class=\"select-input-toggle\">\r\n                                    <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\">\r\n                                        <path d=\"M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z\"/>\r\n                                    </svg>\r\n                                </div>\r\n                            </div>\r\n\r\n                            <button class=\"btn-primary mr-2\" v-on:click=\"performBulkAction(currentBulkAction)\">{{\r\n                                trans('actions.bulk_perform_action') }}\r\n                            </button>\r\n                            <button class=\"text-grey hover:text-grey-90\" v-on:click=\"cancelBulkActions\">{{\r\n                                trans('actions.cancel') }}\r\n                            </button>\r\n                        </div>\r\n                    </th>\r\n                </tr>\r\n                <tr>\r\n                    <th class=\"comment-table__author-column sortable-column\" v-on:click=\"updateSortFromHeader('id')\">\r\n                        <label class=\"text-gray-500 font-bold inline cursor-pointer\" :title=\"singleSelectTranslation\"\r\n                               v-if=\"hasCommentResponse && canUseBulkActions && hasSelection === false\"\r\n                               v-on:click.stop>\r\n                            <input class=\"mr-2 leading-tight cursor-pointer meerkat__checkbox  meerkat__header-checkbox\" type=\"checkbox\"\r\n                                   :title=\"trans('actions.select_all_comments')\"\r\n                                   v-model=\"comments.comments.allSelected\"\r\n                                   v-on:click.stop=\"comments.comments.toggleSelections()\">\r\n                        </label>\r\n                        <sort-indicator :column=\"'id'\" :manager=\"sortManager\" :respond-to-click=\"false\"\r\n                                        v-on:order-changed=\"updateStateFromOrder\">\r\n                            {{ trans('display.header_author') }}\r\n                        </sort-indicator>\r\n                    </th>\r\n                    <th class=\"sortable-column\" v-on:click=\"updateSortFromHeader('comment')\">\r\n                        <sort-indicator :column=\"'comment'\" :manager=\"sortManager\" :manager=\"sortManager\" style=\"display: inline-block;padding-top:2px;\"\r\n                                        :respond-to-click=\"false\" v-on:order-changed=\"updateStateFromOrder\">\r\n                            {{ trans('display.header_comment') }}\r\n                        </sort-indicator>\r\n                    </th>\r\n                </tr>\r\n                </thead>\r\n                <tbody v-if=\"hasCommentResponse\">\r\n                <tr v-if=\"comments.threads.length === 1\">\r\n                    <td colspan=\"2\">\r\n                        <p :title=\"comments.threads[0].name\"><span class=\"meerkat__inline-callout\"><strong>{{ trans('display.thread_single_response') }}</strong></span> {{ comments.threads[0].name | meerkatTruncate(75) }}</p>\r\n                    </td>\r\n                </tr>\r\n                <tr v-for=\"(comment, i) in comments.comments\" class=\"meerkat__comment-row\"\r\n                    v-bind:class=\"getCommentClasses(comment)\" v-if=\"comment.isDeleted === false\">\r\n                    <td class=\"author-display__container\">\r\n                        <label class=\"text-gray-500 font-bold cursor-pointer\" :title=\"singleSelectTranslation\"\r\n                               v-if=\"canUseBulkActions\">\r\n                            <input class=\"mr-2 leading-tight cursor-pointer meerkat__checkbox\" type=\"checkbox\"\r\n                                   v-model=\"comment.isSelected\">\r\n                        </label>\r\n                        <author-display :comment=\"comment\" :author=\"comment.getAuthor()\" :avatar-driver=\"avatarDriver\"></author-display>\r\n                    </td>\r\n                    <td>\r\n                        <comment-display ref=\"commentDisplay\"\r\n                                         v-if=\"comment.isSelected === true || comment.state.isEditing === false\"\r\n                                         :comment=\"comment\" :display-thread=\"shouldDisplayThread\"\r\n                                         :avatar-driver=\"avatarDriver\" :permissions=\"permissions\"\r\n                                         v-on:action-edit=\"beforeEdit\" :actions-disabled=\"selectedCount > 0\"\r\n                                         v-on:action-reply=\"beforeReply\"></comment-display>\r\n                        <comment-editor v-if=\"selectedCount === 0 && comment.state.isEditing === true\"\r\n                                        :comment=\"comment\"\r\n                                        v-on:update-requested=\"performActionNow('edit', comment)\"\r\n                                        v-on:update-canceled=\"disableFocusMode\"></comment-editor>\r\n                        <reply-editor v-if=\"selectedCount === 0 && comment.state.isReplying === true\" :comment=\"comment\"\r\n                                      v-on:reply-requested=\"performActionNow('reply', comment)\"\r\n                                      v-on:reply-canceled=\"disableFocusMode\"></reply-editor>\r\n                    </td>\r\n                </tr>\r\n                </tbody>\r\n            </table>\r\n            <empty-indicator v-if=\"hasData === false\"></empty-indicator>\r\n        </div>\r\n    </div>\r\n</div>";
 // Exports
 module.exports = code;
 
@@ -45133,16 +45219,19 @@ module.exports = code;
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./template.html */ "./src/App/Components/TableFilters/template.html");
-/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_template_html__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../Mixins/usesTranslator */ "./src/App/Mixins/usesTranslator.js");
-/* harmony import */ var _Data_Filters_defaultFilters__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../Data/Filters/defaultFilters */ "./src/Data/Filters/defaultFilters.js");
-/* harmony import */ var _Types_guid__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../Types/guid */ "./src/Types/guid.js");
-/* harmony import */ var _Config_environment__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../Config/environment */ "./src/Config/environment.js");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../utils */ "./src/utils.js");
-/* harmony import */ var _Reporting_overviewProvider__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../Reporting/overviewProvider */ "./src/Reporting/overviewProvider.js");
-/* harmony import */ var _Http_Responses_Reporting_overviewResponse__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../Http/Responses/Reporting/overviewResponse */ "./src/Http/Responses/Reporting/overviewResponse.js");
-/* harmony import */ var _Types_type__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../Types/type */ "./src/Types/type.js");
+/* harmony import */ var core_js_modules_es_number_constructor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.number.constructor */ "./node_modules/core-js/modules/es.number.constructor.js");
+/* harmony import */ var core_js_modules_es_number_constructor__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_number_constructor__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./template.html */ "./src/App/Components/TableFilters/template.html");
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_template_html__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../Mixins/usesTranslator */ "./src/App/Mixins/usesTranslator.js");
+/* harmony import */ var _Data_Filters_defaultFilters__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../Data/Filters/defaultFilters */ "./src/Data/Filters/defaultFilters.js");
+/* harmony import */ var _Types_guid__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../Types/guid */ "./src/Types/guid.js");
+/* harmony import */ var _Config_environment__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../Config/environment */ "./src/Config/environment.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../utils */ "./src/utils.js");
+/* harmony import */ var _Reporting_overviewProvider__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../Reporting/overviewProvider */ "./src/Reporting/overviewProvider.js");
+/* harmony import */ var _Http_Responses_Reporting_overviewResponse__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../Http/Responses/Reporting/overviewResponse */ "./src/Http/Responses/Reporting/overviewResponse.js");
+/* harmony import */ var _Types_type__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../Types/type */ "./src/Types/type.js");
+
 
 
 
@@ -45156,12 +45245,17 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__(/*! ./style.less */ "./src/App/Components/TableFilters/style.less");
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  template: _template_html__WEBPACK_IMPORTED_MODULE_0___default.a,
-  mixins: [_Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_1__["default"]],
+  template: _template_html__WEBPACK_IMPORTED_MODULE_1___default.a,
+  mixins: [_Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_2__["default"]],
+  props: {
+    activeFilterId: {
+      type: Number,
+      "default": 0
+    }
+  },
   data: function data() {
     return {
-      searchId: 'meerkat-search-' + _Types_guid__WEBPACK_IMPORTED_MODULE_3__["default"].newGuid(),
-      activeFilterId: 0,
+      searchId: 'meerkat-search-' + _Types_guid__WEBPACK_IMPORTED_MODULE_4__["default"].newGuid(),
       searchFilter: '',
       filters: [],
       state: {
@@ -45173,7 +45267,7 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/TableFilters/style
     updateFilterDisplays: function updateFilterDisplays(report) {
       if (report.success) {
         for (var i = 0; i < this.filters.length; i += 1) {
-          if (_Types_type__WEBPACK_IMPORTED_MODULE_8__["default"].hasValue(this.filters[i]['updateState'])) {
+          if (_Types_type__WEBPACK_IMPORTED_MODULE_9__["default"].hasValue(this.filters[i]['updateState'])) {
             this.filters[i].updateState(report);
           }
         }
@@ -45187,18 +45281,18 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/TableFilters/style
       this.searchFilter = '';
       this.$emit('search-updated', this.searchFilter);
     },
-    searchEvent: Object(_utils__WEBPACK_IMPORTED_MODULE_5__["debounce"])(function (e) {
+    searchEvent: Object(_utils__WEBPACK_IMPORTED_MODULE_6__["debounce"])(function (e) {
       this.$emit('search-updated', this.searchFilter);
     }, 750),
     toggle: function toggle() {
       this.state.isOpen = !this.state.isOpen;
-      _Config_environment__WEBPACK_IMPORTED_MODULE_4__["default"].Preferences.updateDisplayTableFilters(this.state.isOpen);
+      _Config_environment__WEBPACK_IMPORTED_MODULE_5__["default"].Preferences.updateDisplayTableFilters(this.state.isOpen);
       this.checkForFocus();
     },
     checkForFocus: function checkForFocus() {
       if (this.state.isOpen) {
         this.$nextTick(function () {
-          _Config_environment__WEBPACK_IMPORTED_MODULE_4__["default"].ContextJquery('#' + this.searchId).focus();
+          _Config_environment__WEBPACK_IMPORTED_MODULE_5__["default"].ContextJquery('#' + this.searchId).focus();
         });
       }
     },
@@ -45210,17 +45304,17 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/TableFilters/style
     }
   },
   created: function created() {
-    this.filters.push(new _Data_Filters_defaultFilters__WEBPACK_IMPORTED_MODULE_2__["AllFilter"]());
-    this.filters.push(new _Data_Filters_defaultFilters__WEBPACK_IMPORTED_MODULE_2__["PendingFilter"]());
-    this.filters.push(new _Data_Filters_defaultFilters__WEBPACK_IMPORTED_MODULE_2__["IsSpamFilter"]());
-    this.filters.push(new _Data_Filters_defaultFilters__WEBPACK_IMPORTED_MODULE_2__["PublishedFilter"]());
-    _Reporting_overviewProvider__WEBPACK_IMPORTED_MODULE_6__["default"].Instance.on('updated', this.updateFilterDisplays);
+    this.filters.push(new _Data_Filters_defaultFilters__WEBPACK_IMPORTED_MODULE_3__["AllFilter"]());
+    this.filters.push(new _Data_Filters_defaultFilters__WEBPACK_IMPORTED_MODULE_3__["PendingFilter"]());
+    this.filters.push(new _Data_Filters_defaultFilters__WEBPACK_IMPORTED_MODULE_3__["IsSpamFilter"]());
+    this.filters.push(new _Data_Filters_defaultFilters__WEBPACK_IMPORTED_MODULE_3__["PublishedFilter"]());
+    _Reporting_overviewProvider__WEBPACK_IMPORTED_MODULE_7__["default"].Instance.on('updated', this.updateFilterDisplays);
 
-    if (_Reporting_overviewProvider__WEBPACK_IMPORTED_MODULE_6__["default"].Instance.hasData()) {
-      this.updateFilterDisplays(_Reporting_overviewProvider__WEBPACK_IMPORTED_MODULE_6__["default"].Instance.report);
+    if (_Reporting_overviewProvider__WEBPACK_IMPORTED_MODULE_7__["default"].Instance.hasData()) {
+      this.updateFilterDisplays(_Reporting_overviewProvider__WEBPACK_IMPORTED_MODULE_7__["default"].Instance.report);
     }
 
-    this.state.isOpen = _Config_environment__WEBPACK_IMPORTED_MODULE_4__["default"].Preferences.getDisplayTableFilters();
+    this.state.isOpen = _Config_environment__WEBPACK_IMPORTED_MODULE_5__["default"].Preferences.getDisplayTableFilters();
     this.checkForFocus();
   }
 });
@@ -47714,6 +47808,7 @@ var AllFilter = /*#__PURE__*/function (_Filter) {
 
     _this = _super.call(this);
     _this.id = 0;
+    _this.internalName = 'all';
     _this.name = Object(_trans__WEBPACK_IMPORTED_MODULE_16__["default"])('filters.all');
     return _this;
   }
@@ -47730,6 +47825,41 @@ var AllFilter = /*#__PURE__*/function (_Filter) {
 }(_filter__WEBPACK_IMPORTED_MODULE_15__["default"]);
 
 /* harmony default export */ __webpack_exports__["default"] = (AllFilter);
+
+/***/ }),
+
+/***/ "./src/Data/Filters/defaultFilterApplicator.js":
+/*!*****************************************************!*\
+  !*** ./src/Data/Filters/defaultFilterApplicator.js ***!
+  \*****************************************************/
+/*! exports provided: getDefaultFilter */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getDefaultFilter", function() { return getDefaultFilter; });
+/* harmony import */ var _defaultFilters__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./defaultFilters */ "./src/Data/Filters/defaultFilters.js");
+/* harmony import */ var _Types_type__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../Types/type */ "./src/Types/type.js");
+
+
+function getDefaultFilter(filterName) {
+  // Create a temp mapping for all of the default filters.
+  var allFilter = new _defaultFilters__WEBPACK_IMPORTED_MODULE_0__["AllFilter"](),
+      spamFilter = new _defaultFilters__WEBPACK_IMPORTED_MODULE_0__["IsSpamFilter"](),
+      pendingFilter = new _defaultFilters__WEBPACK_IMPORTED_MODULE_0__["PendingFilter"](),
+      publishedFilter = new _defaultFilters__WEBPACK_IMPORTED_MODULE_0__["PublishedFilter"](),
+      filterMap = {};
+  filterMap[allFilter.internalName] = allFilter;
+  filterMap[spamFilter.internalName] = spamFilter;
+  filterMap[pendingFilter.internalName] = pendingFilter;
+  filterMap[publishedFilter.internalName] = publishedFilter;
+
+  if (_Types_type__WEBPACK_IMPORTED_MODULE_1__["default"].hasValue(filterMap[filterName])) {
+    return filterMap[filterName];
+  }
+
+  return null;
+}
 
 /***/ }),
 
@@ -47807,6 +47937,7 @@ var Filter = /*#__PURE__*/function () {
     _classCallCheck(this, Filter);
 
     this.id = _Types_guid__WEBPACK_IMPORTED_MODULE_6__["default"].newGuid();
+    this.internalName = '';
     this.name = '';
     this.count = 0;
     this.countDisplay = '';
@@ -47943,6 +48074,7 @@ var IsSpamFilter = /*#__PURE__*/function (_Filter) {
 
     _this = _super.call(this);
     _this.id = 1;
+    _this.internalName = 'spam';
     _this.name = Object(_trans__WEBPACK_IMPORTED_MODULE_16__["default"])('filters.spam');
     _this.filters = ['is:spam(true)'];
     return _this;
@@ -48061,6 +48193,7 @@ var PendingFilter = /*#__PURE__*/function (_Filter) {
 
     _this = _super.call(this);
     _this.id = 2;
+    _this.internalName = 'pending';
     _this.name = Object(_trans__WEBPACK_IMPORTED_MODULE_16__["default"])('filters.pending');
     _this.filters = ['is:published(false)'];
     return _this;
@@ -48179,6 +48312,7 @@ var PublishedFilter = /*#__PURE__*/function (_Filter) {
 
     _this = _super.call(this);
     _this.id = 3;
+    _this.internalName = 'published';
     _this.name = Object(_trans__WEBPACK_IMPORTED_MODULE_16__["default"])('filters.published');
     _this.filters = ['is:published(true)'];
     return _this;
@@ -52278,6 +52412,27 @@ var Url = /*#__PURE__*/function () {
       }
 
       return stack.join('/');
+    }
+  }, {
+    key: "current",
+    value: function current() {
+      return window.location.href;
+    }
+  }, {
+    key: "currentLastValue",
+    value: function currentLastValue() {
+      return Url.lastValue(Url.current());
+    }
+  }, {
+    key: "lastValue",
+    value: function lastValue(url) {
+      var parts = url.split('/');
+
+      if (parts.length === 0) {
+        return '';
+      }
+
+      return parts[parts.length - 1];
     }
   }]);
 

@@ -50023,6 +50023,7 @@ Endpoints.CommentMarkManySpam = 'comments/report-many-spam';
 Endpoints.CommentMarkHam = 'comments/report-ham';
 Endpoints.CommentMarkManyHam = 'comments/report-many-ham';
 Endpoints.CommentsUpdate = 'comments/update';
+Endpoints.CommentsCheckForSpam = 'comments/check-for-spam';
 Endpoints.ExportCsv = 'export/csv';
 Endpoints.ExportJson = 'export/json';
 Endpoints.ReportingOverview = 'reporting/overview';

@@ -52472,13 +52472,14 @@ var Url = /*#__PURE__*/function () {
   }, {
     key: "lastValue",
     value: function lastValue(url) {
-      var parts = url.split('/');
+      var parts = url.split('?'),
+          nonParamPart = parts[0].split('/');
 
-      if (parts.length === 0) {
+      if (nonParamPart.length === 0) {
         return '';
       }
 
-      return parts[parts.length - 1];
+      return nonParamPart[nonParamPart.length - 1];
     }
   }]);
 

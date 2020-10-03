@@ -11,6 +11,9 @@ use Stillat\Meerkat\Core\Support\TypeConversions;
  *
  * Contains the user:<> default filters.
  *
+ * user:from_auth(true) - Returns only comments from authenticated users.
+ * user:from_auth(false) - Returns only comments from un-authenticated users.
+ *
  * @package Stillat\Meerkat\Core\Data\Filters\DefaultFilters
  * @since 1.5.85
  *
@@ -21,6 +24,8 @@ use Stillat\Meerkat\Core\Support\TypeConversions;
 class UserFromAuth
 {
 
+    const FILTER_FROM_AUTHENTICATED_USER = 'user:from_auth';
+
     /**
      * Registers the default Meerkat users:<> filters.
      *
@@ -28,7 +33,7 @@ class UserFromAuth
      */
     public function register(CommentFilterManager $manager)
     {
-        $manager->filter('user:from_auth', function ($comments) {
+        $manager->filter(UserFromAuth::FILTER_FROM_AUTHENTICATED_USER, function ($comments) {
             $includeUsers = TypeConversions::getBooleanValue($this->get(IsFilters::PARAM_COMPARISON, false));
 
             return array_filter($comments, function (CommentContract $comment) use ($includeUsers) {

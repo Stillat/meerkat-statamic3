@@ -2,6 +2,8 @@
 
 namespace Stillat\Meerkat\Core\Contracts;
 
+use Stillat\Meerkat\Core\Guard\SpamReason;
+
 /**
  * Interface SpamGuardContract
  *
@@ -26,6 +28,13 @@ interface SpamGuardContract
      * @return boolean
      */
     public function wasSuccess();
+
+    /**
+     * Gets the reasons the item was marked as spam.
+     *
+     * @return SpamReason[]
+     */
+    public function getSpamReasons();
 
     /**
      * Returns a value indicating if the provided object has a

@@ -13,6 +13,11 @@ use Stillat\Meerkat\Core\Data\Converters\DataSetCollectionConverter;
 use Stillat\Meerkat\Core\Data\Converters\GroupedCollectionConverter;
 use Stillat\Meerkat\Core\Data\Converters\PagedCollectionConverter;
 use Stillat\Meerkat\Core\Data\Converters\PagedGroupedCollectionConverter;
+use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\Like;
+use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\NotLike;
+use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\Where;
+use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\WhereIn;
+use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\WhereNotIn;
 use Stillat\Meerkat\Core\Data\Filters\FilterRunner;
 use Stillat\Meerkat\Core\Data\Retrievers\CommentIdRetriever;
 use Stillat\Meerkat\Core\Exceptions\FilterException;
@@ -309,6 +314,46 @@ class DataQuery
     }
 
     /**
+     * @param $property
+     * @param $comparison
+     * @param $value
+     * @return $this
+     */
+    public function where($property, $comparison, $value)
+    {
+        return $this->createWrappedFilter(Where::FILTER_WHERE, [
+            $property, $comparison, $value
+        ]);
+    }
+
+    /**
+     * Creates a filter string where the last parameter value is wrapped.
+     *
+     * @param string $filter The filter name.
+     * @param array $parameters The filter parameters.
+     * @return $this
+     */
+    private function createWrappedFilter($filter, $parameters)
+    {
+        $paramLen = count($parameters);
+
+        if ($paramLen > 1) {
+            $lastParam = $paramLen - 1;
+            $parameters[$lastParam] = ValueWrapper::wrap($parameters[$lastParam]);
+        }
+
+        $filterString = $filter . '(' . implode(',', $parameters) . ')';
+
+        if (count($this->filters) > 0) {
+            $this->filterBy($filterString);
+        } else {
+            $this->thenFilterBy($filterString);
+        }
+
+        return $this;
+    }
+
+    /**
      * Filters the comment collection using the provided filter.
      *
      * @param string $filterString The filter input.
@@ -316,9 +361,7 @@ class DataQuery
      */
     public function filterBy($filterString)
     {
-        $this->filters = [];
-
-        return $this->thenFilterBy($filterString);
+        return $this->clearFilters()->thenFilterBy($filterString);
     }
 
     /**
@@ -332,6 +375,68 @@ class DataQuery
         $this->filters[] = $filterString;
 
         return $this;
+    }
+
+    /**
+     * Clears all registered filters.
+     *
+     * @return $this
+     */
+    public function clearFilters()
+    {
+        $this->filters = [];
+
+        return $this;
+    }
+
+    /**
+     * @param $property
+     * @param $value
+     * @return $this
+     */
+    public function whereNotIn($property, $value)
+    {
+        return $this->createWrappedFilter(WhereNotIn::FILTER_WHERE_NOT_IN, [
+            $property, $value
+        ]);
+    }
+
+    /**
+     * @param $property
+     * @param $value
+     * @return $this
+     */
+    public function whereIn($property, $value)
+    {
+        return $this->createWrappedFilter(WhereIn::FILTER_WHERE_IN, [
+            $property, $value
+        ]);
+    }
+
+    /**
+     * @param $property
+     * @param $value
+     * @return $this
+     */
+    public function whereLike($property, $value)
+    {
+        return $this->createWrappedFilter(Like::FILTER_LIKE, [
+            $property,
+            $value
+        ]);
+    }
+
+    /**
+     * @param $property
+     * @param $value
+     * @return $this
+     */
+    public function whereNotLike($property, $value)
+    {
+        return $this->createWrappedFilter(NotLike::FILTER_NOT_LIKE, [
+            $property,
+            $value
+        ]);
     }
 
     /**
@@ -544,7 +649,7 @@ class DataQuery
      * Retrieves the results and converts the internal dataset into its array form.
      *
      * @param CommentContract[] $sourceComments The comments to analyze.
-     * @param string $repliesName The name of the nested dataset colletion.
+     * @param string $repliesName The name of the nested dataset collection.
      * @return GroupedDataSetContract|PagedDataSetContract|PagedGroupedDataSetContract|DataSetContract
      * @throws FilterException
      */
@@ -569,31 +674,6 @@ class DataQuery
         }
 
         return $result;
-    }
-
-    /**
-     * Indicates if soft deleted comments shbould be part of the result set.
-     *
-     * @param bool $trashed If false, soft deleted comments will be removed.
-     * @return $this
-     */
-    public function withTrashed($trashed = false)
-    {
-        $filterToApply = 'is:deleted(false)';
-
-        if ($trashed === true) {
-            $filterToApply = null;
-        }
-
-        if ($filterToApply !== null) {
-            if (count($this->filters) > 0) {
-                return $this->thenFilterBy($filterToApply);
-            } else {
-                return $this->filterBy($filterToApply);
-            }
-        }
-
-        return $this;
     }
 
     /**
@@ -696,6 +776,31 @@ class DataQuery
         $dataSet->setData($data);
 
         return $dataSet;
+    }
+
+    /**
+     * Indicates if soft deleted comments should be part of the result set.
+     *
+     * @param bool $trashed If false, soft deleted comments will be removed.
+     * @return $this
+     */
+    public function withTrashed($trashed = false)
+    {
+        $filterToApply = 'is:deleted(false)';
+
+        if ($trashed === true) {
+            $filterToApply = null;
+        }
+
+        if ($filterToApply !== null) {
+            if (count($this->filters) > 0) {
+                return $this->thenFilterBy($filterToApply);
+            } else {
+                return $this->filterBy($filterToApply);
+            }
+        }
+
+        return $this;
     }
 
 }

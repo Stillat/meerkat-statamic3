@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat\Core\Contracts\Storage;
 
+use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContextContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContract;
 use Stillat\Meerkat\Core\Threads\Thread;
@@ -77,6 +78,13 @@ interface ThreadStorageManagerContract
      * @return ThreadHierarchy
      */
     public function getAllCommentsById($threadId);
+
+    /**
+     * Returns all comments across all threads.
+     *
+     * @return CommentContract[]
+     */
+    public function getAllSystemComments();
 
     /**
      * Attempts to locate a thread by its identifier.

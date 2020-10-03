@@ -23,13 +23,20 @@ use Stillat\Meerkat\Core\Support\TypeConversions;
 class IsFilters
 {
 
+    const FILTER_IS_BEFORE = 'is:before';
+    const FILTER_IS_AFTER = 'is:after';
+    const FILTER_IS_BETWEEN = 'is:between';
+    const FILTER_IS_SPAM = 'is:spam';
+    const FILTER_IS_PUBLISHED = 'is:published';
+    const FILTER_IS_DELETED = 'is:deleted';
+
     const PARAM_COMPARISON = 'comparison';
     const PARAM_TIMESTAMP = 'timestamp';
     const PARAM_RANGE = 'range';
 
     public function register(CommentFilterManager $manager)
     {
-        $manager->filterWithTagContext('is:before', function ($comments) {
+        $manager->filterWithTagContext(IsFilters::FILTER_IS_BEFORE, function ($comments) {
             $beforeTimestamp = intval($this->get(IsFilters::PARAM_TIMESTAMP));
 
             return array_filter($comments, function (CommentContract $comment) use ($beforeTimestamp) {
@@ -37,15 +44,15 @@ class IsFilters
             });
         }, IsFilters::PARAM_TIMESTAMP);
 
-        $manager->filterWithTagContext('is:after', function ($comments) {
+        $manager->filterWithTagContext(IsFilters::FILTER_IS_AFTER, function ($comments) {
             $sinceTimestamp = intval($this->get(IsFilters::PARAM_TIMESTAMP));
 
             return array_filter($comments, function (CommentContract $comment) use ($sinceTimestamp) {
-               return intval($comment->getId()) >= $sinceTimestamp;
+                return intval($comment->getId()) >= $sinceTimestamp;
             });
         }, IsFilters::PARAM_TIMESTAMP);
 
-        $manager->filterWithTagContext('is:between', function ($comments) {
+        $manager->filterWithTagContext(IsFilters::FILTER_IS_BETWEEN, function ($comments) {
             $range = TypeConversions::parseToArray($this->get(IsFilters::PARAM_RANGE), ',');
 
             if (count($range) === 2) {
@@ -59,10 +66,10 @@ class IsFilters
                 });
             }
 
-            throw new FilterException('is:between requires two parameters: '.count($range). ' given.');
+            throw new FilterException('is:between requires two parameters: ' . count($range) . ' given.');
         }, IsFilters::PARAM_RANGE);
 
-        $manager->filterWithTagContext('is:spam', function ($comments) {
+        $manager->filterWithTagContext(IsFilters::FILTER_IS_SPAM, function ($comments) {
             $includeSpam = TypeConversions::getBooleanValue($this->get(IsFilters::PARAM_COMPARISON, false));
 
             return array_filter($comments, function (CommentContract $comment) use ($includeSpam) {
@@ -84,7 +91,7 @@ class IsFilters
             });
         }, IsFilters::PARAM_COMPARISON);
 
-        $manager->filterWithTagContext('is:published', function ($comments) {
+        $manager->filterWithTagContext(IsFilters::FILTER_IS_PUBLISHED, function ($comments) {
             $includePublished = TypeConversions::getBooleanValue($this->get(IsFilters::PARAM_COMPARISON, true));
 
             return array_filter($comments, function (CommentContract $comment) use ($includePublished) {
@@ -106,7 +113,7 @@ class IsFilters
             });
         }, IsFilters::PARAM_COMPARISON);
 
-        $manager->filterWithTagContext('is:deleted', function ($comments) {
+        $manager->filterWithTagContext(IsFilters::FILTER_IS_DELETED, function ($comments) {
             $includeTrashed = TypeConversions::getBooleanValue($this->get(IsFilters::PARAM_COMPARISON, true));
 
             return array_filter($comments, function (CommentContract $comment) use ($includeTrashed) {

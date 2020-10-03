@@ -13,6 +13,10 @@ use Stillat\Meerkat\Core\Support\TypeConversions;
  *
  * Contains the user:<> default filters.
  *
+ * user:in(list, of, ids)
+ * user:not_in(list, of, ids) - legacy alias
+ * not:user:in(list, of, ids)
+ *
  * @package Stillat\Meerkat\Core\Data\Filters\DefaultFilters
  * @since 1.5.85
  *
@@ -22,6 +26,9 @@ use Stillat\Meerkat\Core\Support\TypeConversions;
  */
 class UserIn
 {
+    const FILTER_USER_IN = 'user:in';
+    const FILTER_USER_NOT_IN = 'user:not_in';
+    const FILTER_USER_NOT_IN_ALIAS = 'not:user:in';
     const PARAM_USERS = 'users';
 
     /**
@@ -31,7 +38,7 @@ class UserIn
      */
     public function register(CommentFilterManager $manager)
     {
-        $manager->filter('user:in', function ($comments) {
+        $manager->filter(UserIn::FILTER_USER_IN, function ($comments) {
             $tempUsers = TypeConversions::parseToArray($this->get(UserIn::PARAM_USERS, []));
             $userList = UserHelpers::buildContextualUserList($tempUsers);
 
@@ -44,7 +51,20 @@ class UserIn
             });
         }, UserIn::PARAM_USERS);
 
-        $manager->filter('user:not_in', function ($comments) {
+        $manager->filter(UserIn::FILTER_USER_NOT_IN, function ($comments) {
+            $tempUsers = TypeConversions::parseToArray($this->get(UserIn::PARAM_USERS, []));
+            $userList = UserHelpers::buildContextualUserList($tempUsers);
+
+            return array_filter($comments, function (CommentContract $comment) use ($userList) {
+                if ($comment->leftByAuthenticatedUser() && $comment->getAuthor() !== null) {
+                    return in_array($comment->getAuthor()->getId(), $userList) == false;
+                }
+
+                return true;
+            });
+        }, UserIn::PARAM_USERS);
+
+        $manager->filter(UserIn::FILTER_USER_NOT_IN_ALIAS, function ($comments) {
             $tempUsers = TypeConversions::parseToArray($this->get(UserIn::PARAM_USERS, []));
             $userList = UserHelpers::buildContextualUserList($tempUsers);
 

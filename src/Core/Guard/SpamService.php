@@ -51,6 +51,13 @@ class SpamService
      */
     protected $guardPipeline = null;
 
+    /**
+     * The last SpamCheckReport, if available.
+     *
+     * @var SpamCheckReport|null
+     */
+    protected $lastReport = null;
+
     public function __construct(GuardConfiguration $config, SpamGuardPipelineContract $pipeline)
     {
         $this->config = $config;
@@ -218,6 +225,16 @@ class SpamService
     }
 
     /**
+     * Gets the last spam check report, if available.
+     *
+     * @return SpamCheckReport|null
+     */
+    public function getLastReport()
+    {
+        return $this->lastReport;
+    }
+
+    /**
      * Checks the provided comment against any registered spam guards.
      *
      * @param CommentContract $comment
@@ -226,6 +243,8 @@ class SpamService
      */
     public function isSpam(CommentContract $comment)
     {
+        $this->lastReport = null;
+
         if ($comment == null) {
             return false;
         }
@@ -240,27 +259,37 @@ class SpamService
         // Indicates the number of spam guards that have marked the comment as spam.
         $spamCount = 0;
 
+        $this->lastReport = new SpamCheckReport();
+        /** @var SpamGuardContract $guard */
         foreach ($this->spamGuards as $guard) {
             try {
                 if ($guard->getIsSpam($comment)) {
                     $spamCount += 1;
 
-                    if ($this->config->autoSubmitSpamToThirdParties) {
-                        $guard->markAsSpam($comment);
+                    $guardReasons = $guard->getSpamReasons();
 
-                        if ($guard->hasErrors()) {
-                            $this->errors = array_merge($this->errors, $guard->getErrors());
+                    if ($guardReasons !== null && is_array($guardReasons)) {
+                        /** @var SpamReason $reason */
+                        foreach ($guardReasons as $reason) {
+                            $reason->setGuardName($guard->getName());
+                            $reason->setGuardClass(get_class($guard));
 
-                            if ($this->config->unpublishOnGuardFailures) {
-                                $comment->unpublish();
-                            }
+                            $this->lastReport->addReason($reason);
                         }
                     }
 
+                    if ($guard->hasErrors()) {
+                        $this->errors = array_merge($this->errors, $guard->getErrors());
+
+                        if ($this->config->unpublishOnGuardFailures) {
+                            $comment->unpublish();
+                        }
+                    }
                     // If the configuration specifies that we should not check against
                     // all spam guard services after a positive match has been
                     // identified, we will not continue to check other guards.
                     if ($this->config->checkAgainstAllGuardServices == false) {
+                        $this->lastReport->setSkippedGuards(true);
                         break;
                     }
                 }
@@ -276,7 +305,11 @@ class SpamService
             }
         }
 
-        return ($spamCount > 0);
+        $foundSpam = $spamCount > 0;
+
+        $this->lastReport->setDetectedSpam($foundSpam);
+
+        return $foundSpam;
     }
 
 }

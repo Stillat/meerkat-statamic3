@@ -4,6 +4,7 @@ namespace Stillat\Meerkat\Core\Guard\Providers;
 
 use Stillat\Meerkat\Core\Contracts\DataObjectContract;
 use Stillat\Meerkat\Core\Contracts\SpamGuardContract;
+use Stillat\Meerkat\Core\Guard\SpamReason;
 use Stillat\Meerkat\Core\Support\Str;
 
 /**
@@ -23,6 +24,27 @@ use Stillat\Meerkat\Core\Support\Str;
 class GTUBESpamGuard implements SpamGuardContract
 {
 
+    const GTUBE_MATCH_REASON = 'GTSG-01-001';
+    const GTUBE_MATCH_DEFAULT_MESSAGE = 'Message contained GTUBE test string.';
+    const GTUBE_TEST_STRING = 'XJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X';
+
+    /**
+     * The reasons the item was marked as spam.
+     *
+     * @var SpamReason[]
+     */
+    protected $reasons = [];
+
+    /**
+     * Gets the name of the spam detector.
+     *
+     * @return string
+     */
+    public static function getConfigName()
+    {
+        return 'GTUBE Detector';
+    }
+
     /**
      * Gets the name of the spam detector.
      *
@@ -31,6 +53,16 @@ class GTUBESpamGuard implements SpamGuardContract
     public function getName()
     {
         return 'GTUBEDetector';
+    }
+
+    /**
+     * Gets the reasons the item was marked as spam.
+     *
+     * @return SpamReason[]
+     */
+    public function getSpamReasons()
+    {
+        return $this->reasons;
     }
 
     /**
@@ -55,7 +87,16 @@ class GTUBESpamGuard implements SpamGuardContract
     {
         foreach ($data->getDataAttributes() as $item) {
             if (is_string($item)) {
-                if (Str::contains($item, 'XJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X')) {
+                if (Str::contains($item, self::GTUBE_TEST_STRING)) {
+                    $reason = new SpamReason();
+                    $reason->setReasonCode(self::GTUBE_MATCH_REASON);
+                    $reason->setReasonText(self::GTUBE_MATCH_DEFAULT_MESSAGE);
+                    $reason->setReasonContext([
+                        'position' => mb_strpos($item, self::GTUBE_TEST_STRING)
+                    ]);
+
+                    $this->reasons[] = $reason;
+
                     return true;
                 }
             }

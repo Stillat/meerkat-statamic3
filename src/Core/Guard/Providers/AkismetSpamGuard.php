@@ -7,6 +7,7 @@ use Stillat\Meerkat\Core\Contracts\DataObjectContract;
 use Stillat\Meerkat\Core\Contracts\Http\HttpClientContract;
 use Stillat\Meerkat\Core\Contracts\SpamGuardContract;
 use Stillat\Meerkat\Core\Errors;
+use Stillat\Meerkat\Core\Guard\SpamReason;
 use Stillat\Meerkat\Core\GuardConfiguration;
 use Stillat\Meerkat\Core\Logging\ErrorLog;
 use Stillat\Meerkat\Core\Logging\ErrorLogContext;
@@ -23,6 +24,8 @@ use Stillat\Meerkat\Core\ValidationResult;
  */
 class AkismetSpamGuard implements SpamGuardContract
 {
+    const AKISMET_MATCH_REASON = 'AKS-01-001';
+    const AKISMET_MATCH_DEFAULT_MESSAGE = 'The Akismet service has identified the message as spam.';
 
     /**
      * The configuration entry key for the Akismet API key.
@@ -73,28 +76,36 @@ class AkismetSpamGuard implements SpamGuardContract
      * The Akismet API property to specify that the request is being made as a test.
      */
     const AKISMET_API_IS_TEST_MODE = 'is_test';
-
+    /**
+     * Indicates if last operation was a success.
+     *
+     * @var bool
+     */
+    protected $success = false;
+    /**
+     * The reasons the item was marked as spam.
+     *
+     * @var SpamReason[]
+     */
+    protected $reasons = [];
     /**
      * Indicates if requests to the API should use HTTP or HTTPS.
      *
      * @var boolean
      */
     private $useSsl = true;
-
     /**
      * The Meerkat configuration instance.
      *
      * @var GuardConfiguration
      */
     private $config = null;
-
     /**
      * The HTTP Client used to make external web requests.
      *
      * @var HttpClientContract
      */
     private $httpClient = null;
-
     /**
      * Indicates if the spam guard can make external web requests.
      *
@@ -103,14 +114,12 @@ class AkismetSpamGuard implements SpamGuardContract
      * @var boolean
      */
     private $canMakeRequests = false;
-
     /**
      * Indicates if the API keys have been validated and connections configured.
      *
      * @var boolean
      */
     private $hasBeenValidated = false;
-
     /**
      * The default value that should be returned when a COMMENT-CHECK API request fails for any reason.
      *
@@ -120,14 +129,12 @@ class AkismetSpamGuard implements SpamGuardContract
      * @var boolean
      */
     private $defaultValueOnApiFailure = true;
-
     /**
      * A mapping of Meerkat form fields to Akismet API fields.
      *
      * @var array
      */
     private $fieldMappings = [];
-
     /**
      * Determines if API requests will be made using the `is_test` flag.
      *
@@ -138,40 +145,12 @@ class AkismetSpamGuard implements SpamGuardContract
      * @var boolean
      */
     private $isApiTestMode = false;
-
     /**
      * A collection of errors, if encountered.
      *
      * @var array
      */
     private $errors = [];
-
-    /**
-     * Indicates if last operation was a success.
-     *
-     * @var bool
-     */
-    protected $success = false;
-
-    /**
-     * Gets the name of the spam detector.
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return 'Akismet';
-    }
-
-    /**
-     * Gets a value indicating if the detector succeeded.
-     *
-     * @return boolean
-     */
-    public function wasSuccess()
-    {
-        return $this->success;
-    }
 
     public function __construct(GuardConfiguration $config, HttpClientContract $httpClient)
     {
@@ -223,6 +202,46 @@ class AkismetSpamGuard implements SpamGuardContract
     }
 
     /**
+     * Gets the name of the spam detector.
+     *
+     * @return string
+     */
+    public static function getConfigName()
+    {
+        return 'Akismet';
+    }
+
+    /**
+     * Gets the name of the spam detector.
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return 'Akismet';
+    }
+
+    /**
+     * Gets a value indicating if the detector succeeded.
+     *
+     * @return boolean
+     */
+    public function wasSuccess()
+    {
+        return $this->success;
+    }
+
+    /**
+     * Gets the reasons the item was marked as spam.
+     *
+     * @return SpamReason[]
+     */
+    public function getSpamReasons()
+    {
+        return $this->reasons;
+    }
+
+    /**
      * Returns a value indicating if the provided comment has a
      * high probability of being a disingenuous posting.
      *
@@ -252,6 +271,12 @@ class AkismetSpamGuard implements SpamGuardContract
                     if ($responseBody == 'false') {
                         return false;
                     } else if ($responseBody == 'true') {
+                        $reason = new SpamReason();
+                        $reason->setReasonCode(self::AKISMET_MATCH_REASON);
+                        $reason->setReasonText(self::AKISMET_MATCH_DEFAULT_MESSAGE);
+
+                        $this->reasons[] = $reason;
+
                         return true;
                     }
                 }

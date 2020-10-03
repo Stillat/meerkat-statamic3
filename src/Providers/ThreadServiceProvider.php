@@ -15,6 +15,7 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentMutationPipelineContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentChangeSetStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
+use Stillat\Meerkat\Core\Contracts\Storage\GuardReportStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\ThreadStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ContextResolverContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
@@ -23,6 +24,7 @@ use Stillat\Meerkat\Core\Parsing\SanitationManager;
 use Stillat\Meerkat\Core\Parsing\SanitationManagerFactory;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalCommentChangeSetStorageManager;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalCommentStorageManager;
+use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalGuardReportStorageManager;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalThreadStorageManager;
 use Stillat\Meerkat\Core\Threads\ContextResolverFactory;
 use Stillat\Meerkat\Core\Threads\ThreadManager;
@@ -55,6 +57,11 @@ class ThreadServiceProvider extends AddonServiceProvider
      */
     const CONFIG_COMMENT_DRIVER = 'comments';
 
+    /**
+     * The configuration key that represents the spam guard report storage driver.
+     */
+    const CONFIG_SPAM_REPORT_DRIVER = 'spam_reports';
+
     public function register()
     {
         $driverConfiguration = $this->getConfig('storage.drivers', null);
@@ -72,12 +79,16 @@ class ThreadServiceProvider extends AddonServiceProvider
             $driverConfiguration[self::CONFIG_THREAD_DRIVER] = LocalThreadStorageManager::class;
         }
 
+        if (array_key_exists(self::CONFIG_SPAM_REPORT_DRIVER, $driverConfiguration) === false) {
+            $driverConfiguration[self::CONFIG_SPAM_REPORT_DRIVER] = LocalGuardReportStorageManager::class;
+        }
+
         // If for some reason the specified driver does not exist, fallback to local defaults.
-        if (!class_exists($driverConfiguration[self::CONFIG_COMMENT_DRIVER])) {
+        if (class_exists($driverConfiguration[self::CONFIG_COMMENT_DRIVER]) === false) {
             $driverConfiguration[self::CONFIG_COMMENT_DRIVER] = LocalCommentStorageManager::class;
         }
 
-        if (!class_exists($driverConfiguration[self::CONFIG_THREAD_DRIVER])) {
+        if (class_exists($driverConfiguration[self::CONFIG_THREAD_DRIVER]) === false) {
             $driverConfiguration[self::CONFIG_THREAD_DRIVER] = LocalThreadStorageManager::class;
         }
 
@@ -123,6 +134,10 @@ class ThreadServiceProvider extends AddonServiceProvider
 
         $this->app->singleton(CommentChangeSetStorageManagerContract::class, function ($app) {
             return $app->make(LocalCommentChangeSetStorageManager::class);
+        });
+
+        $this->app->singleton(GuardReportStorageManagerContract::class, function ($app) use ($driverConfiguration) {
+            return $app->make($driverConfiguration[self::CONFIG_SPAM_REPORT_DRIVER]);
         });
 
         $this->app->singleton(CommentStorageManagerContract::class, function ($app) use ($driverConfiguration) {

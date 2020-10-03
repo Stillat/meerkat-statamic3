@@ -25,7 +25,9 @@ class ErrorLog implements Serializable
     const TYPE_ERROR = 0;
     const TYPE_WARNING = 1;
     const TYPE_MESSAGE = 3;
+
     public static $currentActionId = null;
+
     /**
      * The log's instance identifier.
      *

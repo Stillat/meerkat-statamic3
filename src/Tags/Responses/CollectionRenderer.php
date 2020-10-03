@@ -105,8 +105,6 @@ class CollectionRenderer extends MeerkatTag
         $this->applyParamFiltersToQuery();
         $this->applyParamOrdersToQuery();
 
-        // TODO: Non-date groups?
-
         $thread = $this->threadManager->findById($this->threadId);
 
         $comments = $thread->getComments();

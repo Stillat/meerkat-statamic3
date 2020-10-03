@@ -7,6 +7,8 @@ namespace Stillat\Meerkat\Core\Data;
  *
  * Provides utilities for transforming object values.
  *
+ * Used by the export processes.
+ *
  * @package Stillat\Meerkat\Core\Data
  * @since 2.0.0
  */

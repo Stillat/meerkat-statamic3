@@ -4,10 +4,15 @@ namespace Stillat\Meerkat\Core\Data\Filters;
 
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\IsFilters;
+use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\Like;
+use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\NotLike;
 use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\Search;
 use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\ThreadIn;
 use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\UserFromAuth;
 use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\UserIn;
+use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\Where;
+use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\WhereIn;
+use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\WhereNotIn;
 use Stillat\Meerkat\Core\Exceptions\FilterException;
 use Stillat\Meerkat\Core\Support\Str;
 
@@ -85,6 +90,11 @@ class CommentFilterManager
      */
     public function registerDefaultFilters()
     {
+        (new Where())->register($this);
+        (new WhereIn())->register($this);
+        (new WhereNotIn())->register($this);
+        (new Like())->register($this);
+        (new NotLike())->register($this);
         (new UserFromAuth())->register($this);
         (new UserIn())->register($this);
         (new ThreadIn())->register($this);
@@ -291,6 +301,7 @@ class CommentFilterManager
         if (array_key_exists($filterName, $this->filters)) {
             $filter = $this->filters[$filterName];
             $filter->setContext($context);
+            $filter->setName($filterName);
             $filter->setParameters($parameters);
             $filter->setUser($this->getUser());
 

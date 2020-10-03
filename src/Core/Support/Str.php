@@ -14,6 +14,51 @@ class Str
 {
 
     /**
+     * Tests if the input value matches the provided pattern.
+     *
+     * @param string $pattern The search pattern.
+     * @param string $value The value to test.
+     * @return bool
+     */
+    public static function isLike($pattern, $value)
+    {
+        $pattern = str_replace('%', '.*', preg_quote($pattern, '/'));
+
+        return (bool)preg_match("/^{$pattern}$/i", $value);
+    }
+
+    /**
+     * Tests if the input string is null or all whitespace.
+     *
+     * @param string $val The value to test.
+     * @return bool
+     */
+    public static function isNullOrEmpty($val)
+    {
+        if ($val === null) {
+            return true;
+        }
+
+        if (mb_strlen(trim($val)) === 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+
+    /**
+     * Returns a version of the input value without spaces.
+     *
+     * @param string $value The input value.
+     * @return string
+     */
+    public static function withoutSpaces($value)
+    {
+        return preg_replace("/\s+/", '', $value);
+    }
+
+    /**
      * Determine if a given string contains a given substring.
      *
      * Origin: Laravel Framework 6.x

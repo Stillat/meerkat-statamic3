@@ -112,7 +112,7 @@ class ServiceProvider extends AddonServiceProvider
             $guardConfiguration->autoSubmitSpamToThirdParties = $this->getConfig('publishing.auto_submit_results', false);
             $guardConfiguration->checkAgainstAllGuardServices = $this->getConfig('publishing.guard_check_all_providers', false);
             $guardConfiguration->unpublishOnGuardFailures = $this->getConfig('publishing.guard_unpublish_on_guard_failure', false);
-            $guardConfiguration->bannedWords = $this->getConfig('wordlist.banned', []);
+            $guardConfiguration->bannedWords = array_map('mb_strtolower', $this->getConfig('wordlist.banned', []));
 
             // Set the Akismet configuration data, if available.
             foreach ($this->getConfig('akismet', []) as $configSetting => $configValue) {

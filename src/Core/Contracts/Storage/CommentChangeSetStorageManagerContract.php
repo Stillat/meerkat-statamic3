@@ -9,7 +9,7 @@ use Stillat\Meerkat\Core\Data\Mutations\ChangeSetCollection;
 /**
  * Interface CommentChangeSetStorageManagerContract
  *
- * Provides a consistent API for interacting with Comment change sets.
+ * Provides a consistent API for interacting with comment change sets.
  *
  * @package Stillat\Meerkat\Core\Contracts\Storage
  * @since 2.0.0

@@ -16,6 +16,8 @@ class ExportController extends CpController
 {
     use UsesTranslations;
 
+    // TODO: Check for exceptions on export and log to error logs.
+
     /**
      * The fields to export.
      *

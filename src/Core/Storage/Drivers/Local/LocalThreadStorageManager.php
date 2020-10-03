@@ -4,6 +4,7 @@ namespace Stillat\Meerkat\Core\Storage\Drivers\Local;
 
 use DirectoryIterator;
 use Stillat\Meerkat\Core\Configuration;
+use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\YAMLParserContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\ThreadStorageManagerContract;
@@ -489,6 +490,31 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
     }
 
     /**
+     * Returns all comments across all threads.
+     *
+     * @return CommentContract[]
+     */
+    public function getAllSystemComments()
+    {
+        $threads = $this->getAllThreadIds();
+        $comments = [];
+
+        foreach ($threads as $thread) {
+            $threadHierarchy = $this->getAllCommentsById($thread);
+
+            if ($threadHierarchy !== null) {
+                $threadComments = $threadHierarchy->getComments();
+
+                foreach ($threadComments as $comment) {
+                    $comments[$comment->getId()] = $comment;
+                }
+            }
+        }
+
+        return $comments;
+    }
+
+    /**
      * Retrieves the comments for the provided thread.
      *
      * @param ThreadContract $thread
@@ -632,6 +658,38 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
     }
 
     /**
+     * Returns a value indicating if a thread exists with the provided identifier.
+     *
+     * @param string $contextId The thread's identifier.
+     * @param bool $withTrashed Indicates if soft-deleted threads are considered.
+     * @return bool
+     */
+    public function existsForContext($contextId, $withTrashed)
+    {
+        if ($this->canUseDirectory === false) {
+            return false;
+        }
+
+        $targetPath = $this->storagePath . Paths::SYM_FORWARD_SEPARATOR . $contextId . Paths::SYM_FORWARD_SEPARATOR;
+
+        if (file_exists($targetPath) == false || is_dir($targetPath) == false) {
+            return false;
+        }
+
+        if ($withTrashed == true) {
+            return true;
+        }
+
+        $metaData = $this->getMetaData($contextId);
+
+        if ($metaData !== null && $metaData->getIsTrashed()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Updates the meta data for the provided thread.
      *
      * @param string $contextId The thread's string identifier.
@@ -687,10 +745,11 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
             if ($context !== null) {
                 $newThreadCreated = $this->createForContext($context);
 
-                if ($newThreadCreated === true) {
+                if ($newThreadCreated !== false) {
                     return $this->materializeThread($id, $includeComments);
                 }
             }
+
             return null;
         }
 
@@ -729,38 +788,6 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
         }
 
         return false;
-    }
-
-    /**
-     * Returns a value indicating if a thread exists with the provided identifier.
-     *
-     * @param string $contextId The thread's identifier.
-     * @param bool $withTrashed Indicates if soft-deleted threads are considered.
-     * @return bool
-     */
-    public function existsForContext($contextId, $withTrashed)
-    {
-        if ($this->canUseDirectory === false) {
-            return false;
-        }
-
-        $targetPath = $this->storagePath . Paths::SYM_FORWARD_SEPARATOR . $contextId . Paths::SYM_FORWARD_SEPARATOR;
-
-        if (file_exists($targetPath) == false || is_dir($targetPath) == false) {
-            return false;
-        }
-
-        if ($withTrashed == true) {
-            return true;
-        }
-
-        $metaData = $this->getMetaData($contextId);
-
-        if ($metaData !== null && $metaData->getIsTrashed()) {
-            return false;
-        }
-
-        return true;
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat\Core\Data\Filters;
 
 use Closure;
+use Stillat\Meerkat\Core\Exceptions\FilterException;
 
 /**
  * Class CommentFilter
@@ -57,6 +58,18 @@ class CommentFilter
      * @var array
      */
     protected $supportedTags = [];
+
+    /**
+     * The ParameterParser instance.
+     *
+     * @var ParameterParser
+     */
+    protected $parser = null;
+
+    public function __construct()
+    {
+        $this->parser = new ParameterParser();
+    }
 
     /**
      * Gets the user context.
@@ -119,16 +132,6 @@ class CommentFilter
     }
 
     /**
-     * Gets the name of the filter.
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->filterName;
-    }
-
-    /**
      * Gets the filter context, if available.
      *
      * @return mixed|null
@@ -172,10 +175,50 @@ class CommentFilter
      * Sets the filter's parameters.
      *
      * @param array $parameters The parameters.
+     * @throws FilterException
      */
     public function setParameters($parameters)
     {
-        $this->parameters = $parameters;
+        $constructedParameters = [];
+        foreach ($parameters as $nameMapping => $valueMapping) {
+            $paramNames = $this->parser->parseParameterString($nameMapping);
+            $paramValues = $this->parser->parseParameterValues($valueMapping);
+
+            if (count($paramNames) === 1) {
+                $constructedParameters[$paramNames[0]] = $valueMapping;
+                continue;
+            }
+
+            if (count($paramNames) === count($paramValues)) {
+                for ($i = 0; $i < count($paramNames); $i++) {
+                    $constructedParameters[$paramNames[$i]] = $paramValues[$i];
+                }
+            } else {
+                if (count($paramNames) == 2 && count($paramValues) > 2) {
+                    $firstValue = array_shift($paramValues);
+                    $secondValue = implode(',', $paramValues);
+
+                    $constructedParameters[$paramNames[0]] = $firstValue;
+                    $constructedParameters[$paramNames[1]] = $secondValue;
+
+                    continue;
+                } else {
+                    throw new FilterException('Unmatched argument and value count supplied to: ' . $this->getName());
+                }
+            }
+        }
+
+        $this->parameters = $constructedParameters;
+    }
+
+    /**
+     * Gets the name of the filter.
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->filterName;
     }
 
     /**

@@ -6,14 +6,14 @@ use Statamic\Http\Controllers\CP\CpController;
 use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
 use Stillat\Meerkat\Core\Contracts\Permissions\PermissionsManagerContract;
 use Stillat\Meerkat\Core\Errors;
-use Stillat\Meerkat\Core\Http\Responses\CommentResponseGenerator;
+use Stillat\Meerkat\Core\Guard\SpamChecker;
 
 class CheckForSpamController extends CpController
 {
 
     public function checkForSpam(PermissionsManagerContract $manager,
                                  IdentityManagerContract $identityManager,
-                                 CommentResponseGenerator $resultGenerator)
+                                 SpamChecker $spamChecker)
     {
         $permissions = $manager->getPermissions($identityManager->getIdentityContext());
 
@@ -38,6 +38,10 @@ class CheckForSpamController extends CpController
                 exit;
             }
         }
+
+        // TODO: Create a "task" id, return that as part of the response.
+        //       After request,
+        dd($spamChecker->check());
     }
 
 }

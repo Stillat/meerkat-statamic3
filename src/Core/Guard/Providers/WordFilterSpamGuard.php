@@ -6,6 +6,7 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\DataObjectContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\SpamGuardContract;
+use Stillat\Meerkat\Core\Guard\SpamReason;
 use Stillat\Meerkat\Core\GuardConfiguration;
 use Stillat\Meerkat\Core\Support\Str;
 
@@ -19,6 +20,10 @@ use Stillat\Meerkat\Core\Support\Str;
  */
 class WordFilterSpamGuard implements SpamGuardContract
 {
+    const WDF_MATCHED = 'WDF-01-001';
+    const WDF_DEFAULT_MESSAGE = 'Word filter matched against a configured value.';
+
+    private $reasons = [];
 
     /**
      * The Meerkat Guard configuration instance.
@@ -37,9 +42,29 @@ class WordFilterSpamGuard implements SpamGuardContract
      *
      * @return string
      */
+    public static function getConfigName()
+    {
+        return 'Word Filter';
+    }
+
+    /**
+     * Gets the name of the spam detector.
+     *
+     * @return string
+     */
     public function getName()
     {
         return 'WordFilter';
+    }
+
+    /**
+     * Gets the reasons the item was marked as spam.
+     *
+     * @return SpamReason[]
+     */
+    public function getSpamReasons()
+    {
+        return $this->reasons;
     }
 
     /**
@@ -66,25 +91,83 @@ class WordFilterSpamGuard implements SpamGuardContract
             return false;
         }
 
-        $emailAddress = $data->getDataAttribute(AuthorContract::KEY_EMAIL_ADDRESS);
-        $name = $data->getDataAttribute(AuthorContract::KEY_NAME);
-        $content = $data->getDataAttribute(CommentContract::KEY_LEGACY_COMMENT);
-        $contentComment = $data->getDataAttribute(CommentContract::KEY_CONTENT);
+        $emailAddress = mb_strtolower($data->getDataAttribute(AuthorContract::KEY_EMAIL_ADDRESS));
+        $name = mb_strtolower($data->getDataAttribute(AuthorContract::KEY_NAME));
+        $content = mb_strtolower($data->getDataAttribute(CommentContract::KEY_LEGACY_COMMENT));
+        $contentComment = mb_strtolower($data->getDataAttribute(CommentContract::KEY_CONTENT));
+        $contentRaw = mb_strtolower($data->getDataAttribute(CommentContract::INTERNAL_CONTENT_RAW));
 
         foreach ($this->guardConfig->bannedWords as $word) {
+            if (Str::contains($contentRaw, $word)) {
+                $reason = new SpamReason();
+                $reason->setReasonText(self::WDF_DEFAULT_MESSAGE);
+                $reason->setReasonCode(self::WDF_MATCHED);
+                $reason->setReasonContext([
+                    'word' => $word,
+                    'property' => CommentContract::INTERNAL_CONTENT_RAW
+                ]);
+
+                $this->reasons[] = $reason;
+
+                return true;
+            }
+
             if (Str::contains($emailAddress, $word)) {
+                $reason = new SpamReason();
+                $reason->setReasonText(self::WDF_DEFAULT_MESSAGE);
+                $reason->setReasonCode(self::WDF_MATCHED);
+                $reason->setReasonContext([
+                    'word' => $word,
+                    'property' => AuthorContract::KEY_EMAIL_ADDRESS
+                ]);
+
+                $this->reasons[] = $reason;
+
                 return true;
             }
 
             if (Str::contains($name, $word)) {
+
+                $reason = new SpamReason();
+                $reason->setReasonText(self::WDF_DEFAULT_MESSAGE);
+                $reason->setReasonCode(self::WDF_MATCHED);
+                $reason->setReasonContext([
+                    'word' => $word,
+                    'property' => AuthorContract::KEY_NAME
+                ]);
+
+                $this->reasons[] = $reason;
+
+
                 return true;
             }
 
             if (Str::contains($content, $word)) {
+                $reason = new SpamReason();
+                $reason->setReasonText(self::WDF_DEFAULT_MESSAGE);
+                $reason->setReasonCode(self::WDF_MATCHED);
+                $reason->setReasonContext([
+                    'word' => $word,
+                    'property' => CommentContract::KEY_LEGACY_COMMENT
+                ]);
+
+                $this->reasons[] = $reason;
+
+
                 return true;
             }
 
             if (Str::contains($contentComment, $word)) {
+                $reason = new SpamReason();
+                $reason->setReasonText(self::WDF_DEFAULT_MESSAGE);
+                $reason->setReasonCode(self::WDF_MATCHED);
+                $reason->setReasonContext([
+                    'word' => $word,
+                    'property' => CommentContract::KEY_CONTENT
+                ]);
+
+                $this->reasons[] = $reason;
+
                 return true;
             }
         }

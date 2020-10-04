@@ -29,7 +29,7 @@ Route::middleware('statamic.cp.authenticated')->group(function () {
             Route::post('/report-ham', '\Stillat\Meerkat\Http\Controllers\Api\NotSpamController@markAsNotSpam');
             Route::post('/report-many-ham', '\Stillat\Meerkat\Http\Controllers\Api\NotSpamController@markManyAsNotSpam');
 
-            Route::get('/check-for-spam', '\Stillat\Meerkat\Http\Controllers\Api\CheckForSpamController@checkForSpam');
+            Route::post('/check-for-spam', '\Stillat\Meerkat\Http\Controllers\Api\CheckForSpamController@checkForSpam');
         });
 
         Route::group(['prefix' => 'export'], function () {

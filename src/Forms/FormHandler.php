@@ -70,8 +70,18 @@ class FormHandler
      */
     protected $threadManager = null;
 
+    /**
+     * The CommentFactoryContract implementation instance.
+     *
+     * @var CommentFactoryContract
+     */
     protected $commentFactory = null;
 
+    /**
+     * The CommentManager instance.
+     *
+     * @var CommentManager
+     */
     protected $commentManager = null;
 
     public function __construct(
@@ -116,6 +126,11 @@ class FormHandler
         $this->validate();
     }
 
+    /**
+     * Checks the submission data for honeypot fields.
+     *
+     * @throws RejectSubmissionException
+     */
     public function checkHoneypot()
     {
         $honeypotField = $this->getConfig('publishing.honeypot', null);
@@ -160,7 +175,7 @@ class FormHandler
 
         $submissionData = $this->getSubmissionData();
 
-        $validator = $validatorFactory->make($this->getSubmissionData(), $rules, [], $attributes);
+        $validator = $validatorFactory->make($submissionData, $rules, [], $attributes);
 
         if ($validator->fails()) {
             $validationException = new FormValidationException();
@@ -264,6 +279,12 @@ class FormHandler
         })->all();
     }
 
+    /**
+     * Attempts to save the Meerkat submission.
+     *
+     * @param array $data The data to save.
+     * @return bool
+     */
     public function store($data)
     {
         $newCommentId = strval(time());

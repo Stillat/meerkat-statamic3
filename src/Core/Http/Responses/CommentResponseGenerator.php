@@ -337,4 +337,22 @@ class CommentResponseGenerator
         }
     }
 
+    /**
+     * Returns the comments from the request.
+     *
+     * @return CommentContract[]
+     * @throws FilterException
+     */
+    public function getRequestComments()
+    {
+        $results = $this->manager->queryAll($this->query);
+
+        return $results->getData();
+        if (array_key_exists(CommentResponseGenerator::KEY_PARAM_RESULTS_PER_PAGE, $parameters)) {
+            $this->query->limit(intval($parameters[CommentResponseGenerator::KEY_PARAM_RESULTS_PER_PAGE]));
+        } else {
+            $this->query->limit(CommentResponseGenerator::VALUE_DEFAULT_PER_PAGE);
+        }
+    }
+
 }

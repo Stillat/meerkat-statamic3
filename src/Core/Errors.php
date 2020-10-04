@@ -58,4 +58,6 @@ class Errors
 
     const TASK_NOT_FOUND = '07-001';
 
+    const HANDLER_GENERAL_EXCEPTION = '08-001';
+
 }

@@ -38,6 +38,16 @@ class FilterRunner
     }
 
     /**
+     * Returns access to the CommentFilterManager.
+     *
+     * @return CommentFilterManager|null
+     */
+    public function getFilterManager()
+    {
+        return $this->filterManager;
+    }
+
+    /**
      * Processes the provided filters within the surrounding context.
      *
      * @param CommentContract[] $comments The comments to filter.

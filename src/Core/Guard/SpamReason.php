@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat\Core\Guard;
 
 use Serializable;
+use Stillat\Meerkat\Core\Support\Arr;
 use Stillat\Meerkat\Core\UuidGenerator;
 
 /**
@@ -80,14 +81,17 @@ class SpamReason implements Serializable
     {
         $reason = new SpamReason();
 
-        // TODO: Add an Arr::matches(fields, $data) to check for all fields.
-
-        $reason->setReasonId($array[self::KEY_ID]);
-        $reason->setReasonCode($array[self::KEY_CODE]);
-        $reason->setReasonContext($array[self::KEY_CONTEXT]);
-        $reason->setReasonText($array[self::KEY_TEXT]);
-        $reason->setGuardClass($array[self::KEY_CLASS]);
-        $reason->setGuardName($array[self::KEY_NAME]);
+        if (Arr::matches([
+            self::KEY_ID, self::KEY_CODE, self::KEY_CONTEXT, self::KEY_TEXT,
+            self::KEY_CLASS, self::KEY_NAME
+        ], $array)) {
+            $reason->setReasonId($array[self::KEY_ID]);
+            $reason->setReasonCode($array[self::KEY_CODE]);
+            $reason->setReasonContext($array[self::KEY_CONTEXT]);
+            $reason->setReasonText($array[self::KEY_TEXT]);
+            $reason->setGuardClass($array[self::KEY_CLASS]);
+            $reason->setGuardName($array[self::KEY_NAME]);
+        }
 
         return $reason;
     }

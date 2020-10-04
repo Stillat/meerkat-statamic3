@@ -11,7 +11,6 @@ use Stillat\Meerkat\Core\Contracts\Logging\ErrorCodeRepositoryContract;
  * Provides an error code repository implementation for a local filesystem.
  *
  * @package Stillat\Meerkat\Core\Logging
- * @since 2.0.0
  */
 class LocalErrorCodeRepository implements ErrorCodeRepositoryContract
 {

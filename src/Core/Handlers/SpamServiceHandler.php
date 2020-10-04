@@ -7,6 +7,14 @@ use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Guard\SpamService;
 use Stillat\Meerkat\Core\GuardConfiguration;
 
+/**
+ * Class SpamServiceHandler
+ *
+ * Checks submissions for spam.
+ *
+ * @package Stillat\Meerkat\Core\Handlers
+ * @since 2.0.0
+ */
 class SpamServiceHandler extends BaseHandler
 {
 

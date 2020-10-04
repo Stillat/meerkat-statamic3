@@ -4,7 +4,9 @@ namespace Stillat\Meerkat\Core\Handlers;
 
 use Exception;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
+use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
+use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
 
 /**
  * Class HandlerManager
@@ -72,7 +74,7 @@ class HandlerManager
                 $handler->handle($comment);
             } catch (Exception $e) {
                 ExceptionLoggerFactory::log($e);
-                // TODO: Log to error repository.
+                LocalErrorCodeRepository::logCodeMessage(Errors::HANDLER_GENERAL_EXCEPTION, $e->getMessage());
             }
         }
     }

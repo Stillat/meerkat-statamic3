@@ -10,7 +10,6 @@ use Stillat\Meerkat\Core\Support\TypeConversions;
  *
  * Registers the not:where:in filter, the logical opposite of where:in.
  *
- * // TODO: Need to test this one as it might break with param length validations?
  * not:where:in(property_name, a, list, of, values)
  *
  * @package Stillat\Meerkat\Core\Data\Filters\DefaultFilters

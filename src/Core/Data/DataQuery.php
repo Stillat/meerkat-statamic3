@@ -22,6 +22,7 @@ use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\WhereNotIn;
 use Stillat\Meerkat\Core\Data\Filters\FilterRunner;
 use Stillat\Meerkat\Core\Data\Retrievers\CommentIdRetriever;
 use Stillat\Meerkat\Core\Exceptions\FilterException;
+use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
 use Stillat\Meerkat\Core\Parsing\MarkdownParserFactory;
 use Stillat\Meerkat\Core\Search\Engine;
 use Stillat\Meerkat\Core\Search\Providers\BitapSearchProvider;
@@ -65,154 +66,132 @@ class DataQuery
      * @var PredicateBuilder
      */
     private $sortPredicateBuilder = null;
-
     /**
      * The PaginatorContract implementation instance.
      *
      * @var PaginatorContract
      */
     private $paginator = null;
-
     /**
      * Indicates if the result set will be paginated.
      *
      * @var bool
      */
     private $isPaged = false;
-
     /**
      * Indicates if the result set will be grouped.
      *
      * @var bool
      */
     private $isGrouped = false;
-
     /**
      * The name of pages, in a paged result set.
      *
      * @var string
      */
     private $pageName = 'page';
-
     /**
      * The current page, in a paged result set.
      *
      * @var int
      */
     private $currentPage = 0;
-
     /**
      * The number of records to skip when processing data.
      *
      * @var int
      */
     private $dataOffset = 0;
-
     /**
      * The number of records to restrict the result set to.
      *
      * @var int|null
      */
     private $dataLimit = null;
-
     /**
      * The property name to group the dataset by.
      *
      * @var null|string
      */
     private $groupBy = null;
-
     /**
      * An optional callback used to generate a dynamic group property.
      *
      * @var null|callable
      */
     private $groupCallback = null;
-
     /**
      * The name of an individual group's dataset.
      *
      * @var null|string
      */
     private $groupCollectionName = null;
-
     /**
      * The name of an individual group.
      *
      * @var null|string
      */
     private $groupName = null;
-
     /**
      * The name given to a collection of groups.
      *
      * @var null|string
      */
     private $groupCollectiveName = null;
-
     /**
      * Indicates if empty groups should be included in a grouped dataset.
      *
      * @var bool
      */
     private $groupKeepEmptyResults = false;
-
     /**
      * Indicates if meta data should be collected before paging takes place.
      *
      * @var bool
      */
     private $pagesGetMetaDataBeforePaging = false;
-
     /**
      * A search Engine implementation instance.
      *
      * @var Engine
      */
     private $searchEngine = null;
-
     /**
      * The SanitationManagerContract implementation instance.
      *
      * @var SanitationManagerContract
      */
     private $sanitationManager = null;
-
     /**
      * The GroupedCollectionConverter instance.
      *
      * @var GroupedCollectionConverter
      */
     private $groupedCollectionConverter = null;
-
     /**
      * The PagedGroupedCollectionConverter instance.
      *
      * @var PagedGroupedCollectionConverter
      */
     private $pagedGroupedCollectionConverter = null;
-
     /**
      * The PagedCollectionConverter instance.
      *
      * @var PagedCollectionConverter
      */
     private $pagedCollectionConverter = null;
-
     /**
      * The DataSetCollectionConverter instance.
      *
      * @var DataSetCollectionConverter
      */
     private $basicDataSetConverter = null;
-
     /**
      * Indicates if content should be parsed as Markdown automatically.
      *
      * @var bool
      */
     private $returnWithMarkdown = false;
-
     /**
      * Optional search terms.
      *
@@ -370,6 +349,26 @@ class DataQuery
     }
 
     /**
+     * Attempts to filter the query by the provided filter string.
+
+     * @param string $filterString The filter string.
+     * @return $this
+     */
+    public function safeThenFilterBy($filterString)
+    {
+        try {
+            if ($this->filterRunner->getFilterManager()->hasFilter($filterString) === false) {
+                return $this;
+            }
+        } catch (FilterException $e) {
+            ExceptionLoggerFactory::log($e);
+            return $this;
+        }
+
+        return $this->thenFilterBy($filterString);
+    }
+
+    /**
      * Filters the comment collection using the provided filter.
      *
      * @param string $filterString The filter input.
@@ -392,6 +391,26 @@ class DataQuery
         $this->filters = [];
 
         return $this;
+    }
+
+    /**
+     * Attempts to filter the query by the provided filter string.
+
+     * @param string $filterString The filter string.
+     * @return $this
+     */
+    public function safeFilterBy($filterString)
+    {
+        try {
+            if ($this->filterRunner->getFilterManager()->hasFilter($filterString) === false) {
+                return $this;
+            }
+        } catch (FilterException $e) {
+            ExceptionLoggerFactory::log($e);
+            return $this;
+        }
+
+        return $this->filterBy($filterString);
     }
 
     /**

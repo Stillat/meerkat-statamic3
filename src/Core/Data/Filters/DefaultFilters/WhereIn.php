@@ -11,7 +11,6 @@ use Stillat\Meerkat\Core\Support\TypeConversions;
  *
  * Registers the where:in filters.
  *
- * // TODO: Need to test this one as it might break with param length validations?
  * where:in(property_name, a, list, of, values)
  *
  * @package Stillat\Meerkat\Core\Data\Filters\DefaultFilters

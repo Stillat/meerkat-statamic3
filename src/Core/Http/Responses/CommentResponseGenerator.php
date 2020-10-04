@@ -146,18 +146,17 @@ class CommentResponseGenerator
             }
         }
 
-        // TODO: Check for filter existence to prevent FilterExceptiosn.
         if (array_key_exists('filter', $parameters) && mb_strlen(trim($parameters['filter'])) > 0) {
             $requestFilters = explode('|', $parameters['filter']);
 
             if (count($requestFilters) > 0) {
                 $firstFilter = array_shift($requestFilters);
 
-                $this->query->filterBy($firstFilter);
+                $this->query->safeFilterBy($firstFilter);
 
                 if (count($requestFilters) > 0) {
                     foreach ($requestFilters as $filter) {
-                        $this->query->thenFilterBy($filter);
+                        $this->query->safeThenFilterBy($filter);
                     }
                 }
             }

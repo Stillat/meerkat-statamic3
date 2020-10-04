@@ -10,6 +10,8 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\SpamGuardContract;
 use Stillat\Meerkat\Core\Contracts\SpamGuardPipelineContract;
 use Stillat\Meerkat\Core\Errors;
+use Stillat\Meerkat\Core\Guard\SpamChecker;
+use Stillat\Meerkat\Core\Guard\SpamCheckerFactory;
 use Stillat\Meerkat\Core\Guard\SpamService;
 use Stillat\Meerkat\Core\GuardConfiguration;
 use Stillat\Meerkat\Core\Logging\ErrorLog;
@@ -52,6 +54,10 @@ class SpamServiceProvider extends AddonServiceProvider
         Statamic::booted(function () {
             /** @var SpamService $spamService */
             $spamService = app(SpamService::class);
+
+            SpamCheckerFactory::$factoryMethod = function () {
+                return app()->make(SpamChecker::class);
+            };
 
             foreach ($this->getConfig('publishing.guards') as $guard) {
                 if (class_exists($guard)) {

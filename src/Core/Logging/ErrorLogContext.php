@@ -32,6 +32,12 @@ class ErrorLogContext
      */
     public $details = '';
 
+    /**
+     * Attempts to convert the string to an ErrorLogContext instance.
+     *
+     * @param string $value The value to convert.
+     * @return ErrorLogContext
+     */
     public static function fromString($value)
     {
         $contextToReturn = new ErrorLogContext();

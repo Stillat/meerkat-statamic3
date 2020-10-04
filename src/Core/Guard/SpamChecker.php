@@ -2,12 +2,19 @@
 
 namespace Stillat\Meerkat\Core\Guard;
 
+use Exception;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
+use Stillat\Meerkat\Core\Contracts\Comments\CommentMutationPipelineContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\GuardReportStorageManagerContract;
+use Stillat\Meerkat\Core\Contracts\Storage\TaskStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\ThreadStorageManagerContract;
+use Stillat\Meerkat\Core\Contracts\Tasks\TaskContract;
 use Stillat\Meerkat\Core\Data\DataQuery;
 use Stillat\Meerkat\Core\Data\RuntimeContext;
+use Stillat\Meerkat\Core\Exceptions\FilterException;
+use Stillat\Meerkat\Core\TaskCodes;
+use Stillat\Meerkat\Core\Tasks\Task;
 use Stillat\Meerkat\Core\UuidGenerator;
 
 /**
@@ -20,6 +27,9 @@ use Stillat\Meerkat\Core\UuidGenerator;
  */
 class SpamChecker
 {
+    const FILTER_ONLY_PENDING = 'pending';
+    const FILTER_ALL = 'all';
+    const ARG_FILTER = 'filter';
 
     /**
      * The SpamService instance.
@@ -63,15 +73,39 @@ class SpamChecker
      */
     private $reportStorageManager = null;
 
+    /**
+     * The TaskStorageManagerContract implementation instance.
+     *
+     * @var TaskStorageManagerContract
+     */
+    private $taskManager = null;
+
+    /**
+     * The CommentMutationPipelineContract implementation instance.
+     *
+     * @var CommentMutationPipelineContract
+     */
+    private $commentMutationPipeline = null;
+
+    /**
+     * The comment filter applied.
+     *
+     * @var string
+     */
+    private $commentFilter = '';
+
     public function __construct(SpamService $service, DataQuery $query, UuidGenerator $idGenerator,
                                 ThreadStorageManagerContract $threadManager, CommentStorageManagerContract $commentManager,
-                                GuardReportStorageManagerContract $reportStorageManager)
+                                GuardReportStorageManagerContract $reportStorageManager, TaskStorageManagerContract $taskManager,
+                                CommentMutationPipelineContract $pipelineContract)
     {
         $this->threadManager = $threadManager;
         $this->commentManager = $commentManager;
         $this->reportStorageManager = $reportStorageManager;
         $this->service = $service;
         $this->instanceId = $idGenerator->newId();
+        $this->taskManager = $taskManager;
+        $this->commentMutationPipeline = $pipelineContract;
         $this->query = $query;
 
         $runtimeContext = new RuntimeContext();
@@ -89,6 +123,66 @@ class SpamChecker
     }
 
     /**
+     * Creates a spam check task and returns the TaskContract.
+     *
+     * @return TaskContract|null
+     */
+    public function check()
+    {
+        if ($this->service === null || $this->threadManager === null) {
+            return null;
+        }
+
+        // Construct a new task object.
+        $spamCheckTask = Task::taskFromMethod(TaskCodes::SPAM_CHECKER_CHECK);
+        $spamCheckTask->setArguments([
+            self::ARG_FILTER => $this->commentFilter
+        ]);
+
+        $this->taskManager->saveTask($spamCheckTask);
+
+        $this->commentMutationPipeline->checkingForSpam([$spamCheckTask->getInstanceId()], function ($args) {
+            $spamChecker = SpamCheckerFactory::getNew();
+
+            $spamChecker->checkFromTask($args[0]);
+        });
+
+        return $spamCheckTask;
+    }
+
+    /**
+     * Retrieves arguments from a stored task and starts the spam check.
+     *
+     * @param string $taskId The task identifier.
+     */
+    public function checkFromTask($taskId)
+    {
+        $task = $this->taskManager->findById($taskId);
+
+        if ($task === null) {
+            return;
+        }
+
+        $taskArgs = $task->getArguments();
+
+        if (array_key_exists(self::ARG_FILTER, $taskArgs) === false ||
+            $taskArgs[self::ARG_FILTER] === self::FILTER_ONLY_PENDING) {
+            $this->onlyCheckNeedingReview();
+        } else {
+            $this->checkAllComments();
+        }
+
+        try {
+            $this->checkCommentsNow();
+        } catch (Exception $e) {
+
+            $this->taskManager->markCanceledById($taskId);
+        }
+
+        $this->taskManager->markCompleteById($taskId);
+    }
+
+    /**
      * Adds all existing comments to the spam checker's scope.
      *
      * @return SpamChecker
@@ -96,16 +190,17 @@ class SpamChecker
     public function checkAllComments()
     {
         $this->query->clearFilters();
+        $this->commentFilter = self::FILTER_ALL;
 
         return $this;
     }
 
-    public function check()
+    /**
+     * Checks the comments for spam immediately.
+     * @throws FilterException
+     */
+    public function checkCommentsNow()
     {
-        if ($this->service === null || $this->threadManager === null) {
-            return;
-        }
-
         $comments = $this->threadManager->getAllSystemComments();
 
         $this->onlyCheckNeedingReview();
@@ -133,6 +228,7 @@ class SpamChecker
     {
         $this->query->clearFilters()
             ->where(CommentContract::KEY_SPAM, '==', null);
+        $this->commentFilter = self::FILTER_ONLY_PENDING;
 
         return $this;
     }

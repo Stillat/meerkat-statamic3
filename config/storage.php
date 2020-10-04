@@ -10,6 +10,7 @@ return [
         'comments' => \Stillat\Meerkat\Core\Storage\Drivers\Local\LocalCommentStorageManager::class,
         'spam_reports' => \Stillat\Meerkat\Core\Storage\Drivers\Local\LocalGuardReportStorageManager::class,
         'threads' => \Stillat\Meerkat\Core\Storage\Drivers\Local\LocalThreadStorageManager::class,
+        'tasks' => \Stillat\Meerkat\Core\STorage\Drivers\Local\LocalTaskStorageManager::class,
     ]
 
 ];

@@ -16,15 +16,18 @@ use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentChangeSetStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\GuardReportStorageManagerContract;
+use Stillat\Meerkat\Core\Contracts\Storage\TaskStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\ThreadStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ContextResolverContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadMutationPipelineContract;
 use Stillat\Meerkat\Core\Parsing\SanitationManager;
 use Stillat\Meerkat\Core\Parsing\SanitationManagerFactory;
+use Stillat\Meerkat\Core\Tasks\TaskManagerFactory;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalCommentChangeSetStorageManager;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalCommentStorageManager;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalGuardReportStorageManager;
+use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalTaskStorageManager;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalThreadStorageManager;
 use Stillat\Meerkat\Core\Threads\ContextResolverFactory;
 use Stillat\Meerkat\Core\Threads\ThreadManager;
@@ -62,6 +65,11 @@ class ThreadServiceProvider extends AddonServiceProvider
      */
     const CONFIG_SPAM_REPORT_DRIVER = 'spam_reports';
 
+    /**
+     * The configuration key that represents the tasks manager storage driver.
+     */
+    const CONFIG_TASKS_DRIVER = 'tasks';
+
     public function register()
     {
         $driverConfiguration = $this->getConfig('storage.drivers', null);
@@ -81,6 +89,10 @@ class ThreadServiceProvider extends AddonServiceProvider
 
         if (array_key_exists(self::CONFIG_SPAM_REPORT_DRIVER, $driverConfiguration) === false) {
             $driverConfiguration[self::CONFIG_SPAM_REPORT_DRIVER] = LocalGuardReportStorageManager::class;
+        }
+
+        if (array_key_exists(self::CONFIG_TASKS_DRIVER, $driverConfiguration) === false) {
+            $driverConfiguration[self::CONFIG_TASKS_DRIVER] = LocalTaskStorageManager::class;
         }
 
         // If for some reason the specified driver does not exist, fallback to local defaults.
@@ -136,6 +148,10 @@ class ThreadServiceProvider extends AddonServiceProvider
             return $app->make(LocalCommentChangeSetStorageManager::class);
         });
 
+        $this->app->singleton(TaskStorageManagerContract::class, function ($app) use ($driverConfiguration) {
+            return $app->make($driverConfiguration[self::CONFIG_TASKS_DRIVER]);
+        });
+
         $this->app->singleton(GuardReportStorageManagerContract::class, function ($app) use ($driverConfiguration) {
             return $app->make($driverConfiguration[self::CONFIG_SPAM_REPORT_DRIVER]);
         });
@@ -158,6 +174,7 @@ class ThreadServiceProvider extends AddonServiceProvider
 
         Statamic::booted(function () {
             // Register internal factory instances.
+            TaskManagerFactory::$instance = app(TaskStorageManagerContract::class);
             ThreadManagerFactory::$instance = app(ThreadManagerContract::class);
             CommentManagerFactory::$instance = app(CommentManagerContract::class);
             CommentChangeSetManagerFactory::$instance = app(CommentChangeSetStorageManagerContract::class);

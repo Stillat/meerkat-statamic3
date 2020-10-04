@@ -7,6 +7,7 @@ use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
 use Stillat\Meerkat\Core\Contracts\Permissions\PermissionsManagerContract;
 use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Guard\SpamChecker;
+use Stillat\Meerkat\Core\Http\Responses\Responses;
 
 class CheckForSpamController extends CpController
 {
@@ -39,9 +40,16 @@ class CheckForSpamController extends CpController
             }
         }
 
-        // TODO: Create a "task" id, return that as part of the response.
-        //       After request,
-        dd($spamChecker->check());
+        $spamChecker->onlyCheckNeedingReview();
+        $task = $spamChecker->check();
+
+        if ($task === null) {
+            return Responses::generalFailure();
+        }
+
+        return Responses::successWithData([
+            'task' => $task->getInstanceId()
+        ]);
     }
 
 }

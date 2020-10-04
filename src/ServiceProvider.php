@@ -19,6 +19,7 @@ use Stillat\Meerkat\Core\GuardConfiguration;
 use Stillat\Meerkat\Core\Http\Client;
 use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
 use Stillat\Meerkat\Core\Parsing\MarkdownParserFactory;
+use Stillat\Meerkat\Core\Storage\Paths;
 use Stillat\Meerkat\Parsing\MarkdownParser;
 use Stillat\Meerkat\Parsing\YAMLParser;
 use Stillat\Meerkat\Providers\AddonServiceProvider;
@@ -72,6 +73,8 @@ class ServiceProvider extends AddonServiceProvider
 
     public function register()
     {
+        $this->createPaths();
+
         // Registers the error log repository utilized by many Meerkat services and features.
         $this->registerMeerkatCoreErrorLogRepository();
         // Register Meerkat Core configuration containers.
@@ -162,6 +165,7 @@ class ServiceProvider extends AddonServiceProvider
 
             $globalConfiguration->storageDirectory = PathProvider::contentPath();
             $globalConfiguration->indexDirectory = storage_path('meerkat/index');
+            $globalConfiguration->taskDirectory = storage_path('meerkat/tasks');
 
             foreach ($this->getConfig('authors', []) as $configSetting => $configValue) {
                 $globalConfiguration->set('author_' . $configSetting, $configValue);
@@ -191,6 +195,25 @@ class ServiceProvider extends AddonServiceProvider
         Statamic::booted(function () {
             MarkdownParserFactory::$instance = app(MarkdownParserContract::class);
         });
+    }
+
+    /**
+     * Creates the required storage paths for Meerkat.
+     */
+    private function createPaths()
+    {
+        $paths = [
+            storage_path('/meerkat/tmp'),
+            storage_path('/meerkat/tasks'),
+            storage_path('/meerkat/logs'),
+            storage_path('/meerkat/index')
+        ];
+
+        foreach ($paths as $path) {
+            if (file_exists($path) === false) {
+                mkdir($path, Paths::DIRECTORY_PERMISSIONS, true);
+            }
+        }
     }
 
     private function checkIntegrationResourcesExist()

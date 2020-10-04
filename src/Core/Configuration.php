@@ -53,9 +53,18 @@ class Configuration extends ConfigurationContainer
     /**
      * Specifies the storage directory that should be used
      * to store data for the comment indexes and caches.
+     *
      * @var string
      */
     public $indexDirectory = '';
+
+    /**
+     * Specifies the storage directory that should be used
+     * to store data related to long running tasks.
+     *
+     * @var string
+     */
+    public $taskDirectory = '';
 
     /**
      * Indicates if Meerkat Core should run in debug mode.

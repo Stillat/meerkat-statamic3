@@ -203,4 +203,9 @@ class CommentMutationPipeline extends EventPipeline implements CommentMutationPi
 
         $this->delayMutate(CommentMutationPipelineContract::MUTATION_RESTORED, $pipelineArgs, $callback);
     }
+
+    public function checkingForSpam($args, $callback)
+    {
+        $this->delayExecute($args, $callback);
+    }
 }

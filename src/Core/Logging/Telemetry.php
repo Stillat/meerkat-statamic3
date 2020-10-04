@@ -5,6 +5,14 @@ namespace Stillat\Meerkat\Core\Logging;
 use Stillat\Meerkat\Core\Contracts\Http\HttpClientContract;
 use Stillat\Meerkat\Core\UuidGenerator;
 
+/**
+ * Class Telemetry
+ *
+ * Provides interactions with the backend error report telemetry service.
+ *
+ * @package Stillat\Meerkat\Core\Logging
+ * @since 2.0.0
+ */
 class Telemetry
 {
 

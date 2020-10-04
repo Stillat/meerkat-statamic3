@@ -3,7 +3,6 @@
 namespace Stillat\Meerkat\Core\Identity;
 
 use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
-use Stillat\Meerkat\Core\Threads\ThreadManagerFactory;
 
 /**
  * Class IdentityManagerFactory

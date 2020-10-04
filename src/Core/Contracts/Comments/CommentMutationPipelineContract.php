@@ -41,6 +41,7 @@ interface CommentMutationPipelineContract extends MutationPipelineContract
     const MUTATION_MARKED_AS_SPAM = 'comments.spam.markedAsSpam';
     const MUTATION_MARKING_AS_HAM = 'comments.spam.markingAsHam';
     const MUTATION_MARKED_AS_HAM = 'comments.spam.markedAsHam';
+    const MUTATION_SPAM_CHECKING = 'comments.spam.checking';
     const MUTATION_APPROVING = 'comments.approving';
     const MUTATION_APPROVED = 'comments.approved';
     const MUTATION_UNAPPROVING = 'comments.unapproving';
@@ -62,6 +63,7 @@ interface CommentMutationPipelineContract extends MutationPipelineContract
     const METHOD_APPROVED = 'approved';
     const METHOD_UNAPPROVING = 'unapproving';
     const METHOD_UNAPPROVED = 'unapproved';
+    const METHOD_CHECKING_FOR_SPAM = 'checkingForSpam';
 
     public function collecting(CommentContract $comment, $callback);
     public function collectingAll($comments, $callable);
@@ -69,6 +71,8 @@ interface CommentMutationPipelineContract extends MutationPipelineContract
     public function removing(CommentRemovalEventArgs $eventArgs, $callback);
     public function removed($commentId, $callback);
     public function softDeleted($commentId, $callback);
+
+    public function checkingForSpam($args, $callback);
 
     public function restoring(CommentRestoringEventArgs $eventArgs, $callback);
     public function restored(CommentContract $comment, $callback);

@@ -42,8 +42,21 @@ abstract class EventPipeline implements MutationPipelineContract
     {
         foreach ($this->emitEvent($request, $object) as $pipelineStop) {
             if ($callback !== null && is_string($callback)) {
-                    $callback($pipelineStop);
+                $callback($pipelineStop);
             }
+        }
+    }
+
+    public function delayExecute($args, $callback)
+    {
+        $runSync = $this->getConfig('internals.runDelayedMutationsSync', false);
+
+        if ($runSync === false) {
+            app()->terminating(function () use ($args, $callback) {
+                $callback($args);
+            });
+        } else {
+            $callback($args);
         }
     }
 

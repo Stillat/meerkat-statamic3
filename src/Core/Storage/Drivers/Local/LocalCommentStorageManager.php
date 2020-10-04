@@ -29,6 +29,7 @@ use Stillat\Meerkat\Core\Data\Validators\CommentValidator;
 use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Exceptions\ConcurrentResourceAccessViolationException;
 use Stillat\Meerkat\Core\Exceptions\MutationException;
+use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
 use Stillat\Meerkat\Core\Paths\PathUtilities;
 use Stillat\Meerkat\Core\RuntimeStateGuard;
 use Stillat\Meerkat\Core\Storage\Data\CommentAuthorRetriever;
@@ -1452,6 +1453,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
                     $result->failed[$commentId] = false;
                 }
             } catch (Exception $e) {
+                ExceptionLoggerFactory::log($e);
                 $result->failed[$commentId] = $e;
             }
         }
@@ -1577,6 +1579,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
                     $result->failed[$commentId] = false;
                 }
             } catch (Exception $e) {
+                ExceptionLoggerFactory::log($e);
                 $result->failed[$commentId] = $e;
             }
         }
@@ -1717,6 +1720,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
                     }
                 }
             } catch (Exception $e) {
+                ExceptionLoggerFactory::log($e);
                 $result->failed[$commentId] = $e;
             }
         }
@@ -1905,6 +1909,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
                     $result->failed[$comment] = false;
                 }
             } catch (Exception $e) {
+                ExceptionLoggerFactory::log($e);
                 $result->failed[$comment] = $e;
             }
         }
@@ -1943,6 +1948,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
                     $result->failed[$commentId] = $restoreResult;
                 }
             } catch (Exception $e) {
+                ExceptionLoggerFactory::log($e);
                 $result->failed[$commentId] = $e;
             }
         }

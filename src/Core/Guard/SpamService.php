@@ -8,6 +8,7 @@ use Stillat\Meerkat\Core\Contracts\DataObjectContract;
 use Stillat\Meerkat\Core\Contracts\SpamGuardContract;
 use Stillat\Meerkat\Core\Contracts\SpamGuardPipelineContract;
 use Stillat\Meerkat\Core\GuardConfiguration;
+use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
 
 /**
  * Class SpamService
@@ -160,6 +161,7 @@ class SpamService
                         $this->errors = array_merge($this->errors, $guard->getErrors());
                     }
                 } catch (Exception $e) {
+                    ExceptionLoggerFactory::log($e);
                     $this->errors[] = $e;
                     $result->success = false;
                 }
@@ -213,6 +215,7 @@ class SpamService
                         $this->errors = array_merge($this->errors, $guard->getErrors());
                     }
                 } catch (Exception $e) {
+                    ExceptionLoggerFactory::log($e);
                     $this->errors[] = $e;
                     $result->success = false;
                 }
@@ -294,6 +297,7 @@ class SpamService
                     }
                 }
             } catch (Exception $e) {
+                ExceptionLoggerFactory::log($e);
                 $this->errors[] = $e;
 
                 // If we could not connect to the remote service, check if we

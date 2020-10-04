@@ -7,6 +7,7 @@ use Stillat\Meerkat\Core\Contracts\Http\HttpClientContract;
 use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Logging\ErrorLog;
 use Stillat\Meerkat\Core\Logging\ErrorLogContext;
+use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
 use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
 
 /**
@@ -117,6 +118,7 @@ class Client implements HttpClientContract
 
             fclose($fp);
         } catch (Exception $e) {
+            ExceptionLoggerFactory::log($e);
             $httpResponse->wasSuccess = false;
             $httpResponse->wasClientFailure = true;
             $httpResponse->error = $e->getMessage();
@@ -126,6 +128,7 @@ class Client implements HttpClientContract
             $logContext->msg = 'An exception was thrown during the execution of an HTTP Request (' . $httpVerb . '): ' . $url;
             $logContext->details = $e->getMessage();
 
+            ExceptionLoggerFactory::log($e);
             LocalErrorCodeRepository::log(ErrorLog::make(Errors::HTTP_CLIENT_REQUEST_FAILED, $logContext));
         }
 

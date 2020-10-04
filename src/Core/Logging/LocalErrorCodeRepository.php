@@ -183,7 +183,7 @@ class LocalErrorCodeRepository implements ErrorCodeRepositoryContract
 
                     $logsToReturn[] = $restoredLog;
                 } catch (Exception $e) {
-                    // Skip.
+                    ExceptionLoggerFactory::log($e);
                 }
             }
         }

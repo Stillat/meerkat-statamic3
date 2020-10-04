@@ -54,7 +54,7 @@ class ErrorLogContext
                 $contextToReturn->details = $decoded[self::KEY_DETAILS];
             }
         } catch (Exception $e) {
-
+            ExceptionLoggerFactory::log($e);
         }
 
         return $contextToReturn;

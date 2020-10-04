@@ -11,6 +11,7 @@ use Stillat\Meerkat\Core\Guard\SpamReason;
 use Stillat\Meerkat\Core\GuardConfiguration;
 use Stillat\Meerkat\Core\Logging\ErrorLog;
 use Stillat\Meerkat\Core\Logging\ErrorLogContext;
+use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
 use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
 use Stillat\Meerkat\Core\ValidationResult;
 
@@ -281,6 +282,7 @@ class AkismetSpamGuard implements SpamGuardContract
                     }
                 }
             } catch (Exception $generalException) {
+                ExceptionLoggerFactory::log($generalException);
                 $this->errors[] = $generalException;
             }
         }
@@ -396,6 +398,7 @@ class AkismetSpamGuard implements SpamGuardContract
                 ));
             }
         } catch (Exception $e) {
+            ExceptionLoggerFactory::log($e);
             $results->reasons[] = [
                 'msg' => 'General request failure.',
                 'error' => $e,
@@ -488,6 +491,7 @@ class AkismetSpamGuard implements SpamGuardContract
                     }
                 }
             } catch (Exception $generalException) {
+                ExceptionLoggerFactory::log($generalException);
                 $this->errors[] = $generalException;
             }
         }
@@ -532,6 +536,7 @@ class AkismetSpamGuard implements SpamGuardContract
                     }
                 }
             } catch (Exception $generalException) {
+                ExceptionLoggerFactory::log($generalException);
                 $this->errors[] = $generalException;
             }
         }

@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat\Core\Storage\Validators;
 
 use Exception;
+use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
 use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
 use Stillat\Meerkat\Core\Storage\Paths;
 use Stillat\Meerkat\Core\ValidationResult;
@@ -59,6 +60,7 @@ class PathPrivilegeValidator
                         $canUseDirectory = true;
                     }
                 } catch (Exception $e) {
+                    ExceptionLoggerFactory::log($e);
                     // Permission denied.
                     $canUseDirectory = false;
                     $validationResults->reasons[] = [

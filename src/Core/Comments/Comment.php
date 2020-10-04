@@ -364,17 +364,6 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
      */
     public function publish()
     {
-        /*try {
-            throw new \Exception('test...');
-        } catch (\Exception $e) {
-            $context = new ErrorLogContext();
-            $context->msg = $e->getMessage();
-            $context->details = $e->getTraceAsString();
-
-            LocalErrorCodeRepository::log(ErrorLog::make(Errors::COMMENT_PUBLISH_FAILURE, $context));
-
-            throw $e;
-        }*/
         $this->setDataAttribute(CommentContract::KEY_PUBLISHED, true);
 
         return $this->save();

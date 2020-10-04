@@ -13,6 +13,7 @@ use Stillat\Meerkat\Core\Contracts\Tasks\TaskContract;
 use Stillat\Meerkat\Core\Data\DataQuery;
 use Stillat\Meerkat\Core\Data\RuntimeContext;
 use Stillat\Meerkat\Core\Exceptions\FilterException;
+use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
 use Stillat\Meerkat\Core\TaskCodes;
 use Stillat\Meerkat\Core\Tasks\Task;
 use Stillat\Meerkat\Core\UuidGenerator;
@@ -175,11 +176,25 @@ class SpamChecker
         try {
             $this->checkCommentsNow();
         } catch (Exception $e) {
-
+            ExceptionLoggerFactory::log($e);
             $this->taskManager->markCanceledById($taskId);
         }
 
         $this->taskManager->markCompleteById($taskId);
+    }
+
+    /**
+     * Limits the scope of the spam check to only those comments not already checked.
+     *
+     * @return SpamChecker
+     */
+    public function onlyCheckNeedingReview()
+    {
+        $this->query->clearFilters()
+            ->where(CommentContract::KEY_SPAM, '==', null);
+        $this->commentFilter = self::FILTER_ONLY_PENDING;
+
+        return $this;
     }
 
     /**
@@ -217,20 +232,6 @@ class SpamChecker
                 $this->reportStorageManager->addGuardReport($comment, $report);
             }
         }
-    }
-
-    /**
-     * Limits the scope of the spam check to only those comments not already checked.
-     *
-     * @return SpamChecker
-     */
-    public function onlyCheckNeedingReview()
-    {
-        $this->query->clearFilters()
-            ->where(CommentContract::KEY_SPAM, '==', null);
-        $this->commentFilter = self::FILTER_ONLY_PENDING;
-
-        return $this;
     }
 
 }

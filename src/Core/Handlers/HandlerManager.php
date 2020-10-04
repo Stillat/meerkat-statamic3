@@ -4,6 +4,7 @@ namespace Stillat\Meerkat\Core\Handlers;
 
 use Exception;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
+use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
 
 /**
  * Class HandlerManager
@@ -31,20 +32,9 @@ class HandlerManager
      */
     public function registerHandler($name, $handler)
     {
-       if (is_object($handler) && $handler instanceof BaseHandler) {
-           $this->handlers[$name] = $handler;
-       }
-    }
-
-    /**
-     * Tests if a handler has been registered.
-     *
-     * @param string $name The friendly name of the handler.
-     * @return bool
-     */
-    public function hasHandler($name)
-    {
-        return array_key_exists($name, $this->handlers);
+        if (is_object($handler) && $handler instanceof BaseHandler) {
+            $this->handlers[$name] = $handler;
+        }
     }
 
     /**
@@ -60,17 +50,28 @@ class HandlerManager
     }
 
     /**
+     * Tests if a handler has been registered.
+     *
+     * @param string $name The friendly name of the handler.
+     * @return bool
+     */
+    public function hasHandler($name)
+    {
+        return array_key_exists($name, $this->handlers);
+    }
+
+    /**
      * Runs all registered handlers against the provided comment.
      *
      * @param CommentContract $comment The comment to run handlers against.
      */
     public function handle(CommentContract $comment)
     {
-        // TODO: Capture handler errors.
         foreach ($this->handlers as $handlerName => $handler) {
             try {
                 $handler->handle($comment);
             } catch (Exception $e) {
+                ExceptionLoggerFactory::log($e);
                 // TODO: Log to error repository.
             }
         }

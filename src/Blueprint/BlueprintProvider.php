@@ -4,6 +4,7 @@ namespace Stillat\Meerkat\Blueprint;
 
 use Statamic\Fields\Blueprint;
 use Statamic\Fields\BlueprintRepository;
+use Statamic\Yaml\ParseException;
 use Stillat\Meerkat\Addon;
 use Stillat\Meerkat\Parsing\YAMLParser;
 use Stillat\Meerkat\PathProvider;
@@ -43,6 +44,7 @@ class BlueprintProvider
      * Gets the Meerkat blueprint.
      *
      * @return Blueprint
+     * @throws ParseException
      */
     public function getBlueprint()
     {
@@ -55,7 +57,7 @@ class BlueprintProvider
      * Ensures that the default Meerkat blueprint is available.
      *
      * @return void
-     * @throws \Statamic\Yaml\ParseException
+     * @throws ParseException
      */
     public function ensureExistence()
     {
@@ -86,7 +88,7 @@ class BlueprintProvider
      * Creates a default blueprint.
      *
      * @return Blueprint
-     * @throws \Statamic\Yaml\ParseException
+     * @throws ParseException
      */
     private function makeBlueprint()
     {

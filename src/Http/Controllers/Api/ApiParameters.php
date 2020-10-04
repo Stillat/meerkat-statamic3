@@ -8,6 +8,8 @@ class ApiParameters
     const PARAM_COMMENT = 'comment';
     const PARAM_COMMENTS = 'comments';
 
+    const PARAM_TASK_ID = 'task';
+
     const PARAM_COMMENT_CONTENT = 'content';
     const RESULT_COMMENT = 'comment';
     const RESULT_REMOVED_IDS = 'comments';

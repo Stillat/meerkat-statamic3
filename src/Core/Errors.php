@@ -55,4 +55,7 @@ class Errors
     const TELEMETRY_DISABLED = '06-001';
     const TELEMETRY_MISSING_ACTION = '06-002';
     const TELEMETRY_OPERATION_FAILURE = '06-003';
+
+    const TASK_NOT_FOUND = '07-001';
+
 }

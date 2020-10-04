@@ -32,6 +32,10 @@ Route::middleware('statamic.cp.authenticated')->group(function () {
             Route::post('/check-for-spam', '\Stillat\Meerkat\Http\Controllers\Api\CheckForSpamController@checkForSpam');
         });
 
+        Route::group(['prefix' => 'tasks'], function () {
+            Route::get('status', '\Stillat\Meerkat\Http\Controllers\Api\TaskController@getTaskStatus');
+        });
+
         Route::group(['prefix' => 'export'], function () {
 
             Route::get('csv', '\Stillat\Meerkat\Http\Controllers\Api\ExportController@csv');

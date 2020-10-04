@@ -65,42 +65,197 @@ interface CommentMutationPipelineContract extends MutationPipelineContract
     const METHOD_UNAPPROVED = 'unapproved';
     const METHOD_CHECKING_FOR_SPAM = 'checkingForSpam';
 
+    /**
+     * Called when an individual comment is being constructed from storage.
+     *
+     * @param CommentContract $comment The comment.
+     * @param callable $callback An optional callback.
+     */
     public function collecting(CommentContract $comment, $callback);
-    public function collectingAll($comments, $callable);
 
+    /**
+     * Called when the provided comments are being constructed from storage.
+     *
+     * @param CommentContract[] $comments The comments.
+     * @param callable $callback An optional callback.
+     */
+    public function collectingAll($comments, $callback);
+
+    /**
+     * Called before a comment is removed.
+     *
+     * @param CommentRemovalEventArgs $eventArgs The event arguments.
+     * @param callable $callback An optional callback.
+     */
     public function removing(CommentRemovalEventArgs $eventArgs, $callback);
+
+    /**
+     * Called after a comment has been removed.
+     *
+     * This method may not have access to request values or the comment instance.
+     * The comment may have been permanently removed, and existence checks
+     * should be performed before taking any action against an instance.
+     *
+     * @param string $commentId The comment identifier.
+     * @param callable $callback An optional callback.
+     */
     public function removed($commentId, $callback);
+
+    /**
+     * Called after a comment has been soft-deleted.
+     *
+     * This method may not have access to request values or the comment instance.
+     * The comment may have been permanently removed **, and existence checks
+     * should be performed before taking any action against an instance.
+     *
+     * ** Although this is called after soft-deletes, other developer code may
+     *     have permanently removed the comment instance from storage.
+     *
+     * @param string $commentId The comment identifier.
+     * @param callable $callback An optional callback.
+     */
     public function softDeleted($commentId, $callback);
 
+    /**
+     * Executes the callback with the provided arguments when a checking-for-spam request was initiated.
+     *
+     * @param array $args The arguments.
+     * @param callable $callback The callback.
+     */
     public function checkingForSpam($args, $callback);
 
+    /**
+     * Called before a comment is being restored from a soft-deleted state.
+     *
+     * @param CommentRestoringEventArgs $eventArgs The event arguments.
+     * @param callable $callback An optional callback.
+     */
     public function restoring(CommentRestoringEventArgs $eventArgs, $callback);
+
+    /**
+     * Called after a comment has been restored from a soft-deleted state.
+     *
+     * @param CommentContract $comment The comment instance.
+     * @param callable $callback An optional callback.
+     */
     public function restored(CommentContract $comment, $callback);
 
     /**
-     * @param CommentContract $comment
-     * @param $callback
-     * @return CommentContract
+     * Called before the provided comment is fully created and saved.
+     *
+     * @param CommentContract $comment The comment.
+     * @param callable $callback An optional callback.
      */
     public function creating(CommentContract $comment, $callback);
+
+    /**
+     * Called after a comment has been created.
+     *
+     * This method may not have access to request values, and it should
+     * be assumed that only the comment is available to the plugin.
+     *
+     * @param CommentContract $comment The comment.
+     * @param callable $callback An optional callback.
+     */
     public function created(CommentContract $comment, $callback);
 
+    /**
+     * Called when a comment is being updated, but before it is saved.
+     *
+     * @param CommentContract $comment The comment.
+     * @param callable $callback An optional callback.
+     */
     public function updating(CommentContract $comment, $callback);
+
+    /**
+     * Called after a comment has been updated.
+     *
+     * This method may not have access to request values, and it should
+     * be assumed that only the comment is available to the plugin.
+     *
+     * @param CommentContract $comment The comment.
+     * @param callable $callback An optional callback.
+     */
     public function updated(CommentContract $comment, $callback);
 
+    /**
+     * Called before a reply is saved to disk.
+     *
+     * @param CommentContract $comment The comment.
+     * @param callable $callback An optional callback.
+     */
     public function replying(CommentContract $comment, $callback);
+
+    /**
+     * Called after a comment reply has been saved.
+     *
+     * @param CommentContract $comment The comment instance.
+     * @param callable $callback An optional callback.
+     */
     public function replied(CommentContract $comment, $callback);
 
+    /**
+     * Called before a comment has been marked as not spam.
+     *
+     * @param CommentContract $comment The comment instance.
+     * @param callable $callback An optional callback.
+     */
     public function markingAsSpam(CommentContract $comment, $callback);
+
+    /**
+     * Called after a comment has been marked as spam.
+     *
+     * @param CommentContract $comment The comment instance.
+     * @param callable $callback An optional callback.
+     */
     public function markedAsSpam(CommentContract $comment, $callback);
 
+    /**
+     * Called before a comment has been marked as not spam.
+     *
+     * @param CommentContract $comment The comment instance.
+     * @param callable $callback An optional callback.
+     */
     public function markingAsHam(CommentContract $comment, $callback);
+
+    /**
+     * Called after a comment has been marked as not spam.
+     *
+     * @param CommentContract $comment The comment instance.
+     * @param callable $callback An optional callback.
+     */
     public function markedAsHam(CommentContract $comment, $callback);
 
+    /**
+     * Called before a comment is approved.
+     *
+     * @param CommentContract $comment The comment instance.
+     * @param callable $callback An optional callback.
+     */
     public function approving(CommentContract $comment, $callback);
+
+    /**
+     * Called after a comment has been approved.
+     *
+     * @param CommentContract $comment The comment instance.
+     * @param callable $callback An optional callback.
+     */
     public function approved(CommentContract $comment, $callback);
 
+    /**
+     * Called before a comment has been un-approved.
+     *
+     * @param CommentContract $comment The comment instance.
+     * @param callable $callback An optional callback.
+     */
     public function unapproving(CommentContract $comment, $callback);
+
+    /**
+     * Called after a comment has been un-approved.
+     *
+     * @param CommentContract $comment The comment instance.
+     * @param callable $callback An optional callback.
+     */
     public function unapproved(CommentContract $comment, $callback);
 
 }

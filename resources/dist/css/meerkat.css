@@ -254,6 +254,17 @@
   position: relative;
 }
 
+.meerkat__status--message {
+  background: #daffda;
+  border: 1px solid #64bd63;
+  padding: 10px;
+  border-radius: 4px;
+}
+.meerkat__status--message a {
+  color: #2b96f1;
+  text-decoration: underline;
+}
+
 .meerkat__bg-brand-dark {
   background: #14a5b2;
 }

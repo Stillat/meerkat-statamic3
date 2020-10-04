@@ -8,6 +8,8 @@ return [
     'try_again' => 'Try Again',
     'submit_error_try_again' => 'Submit and Try Again',
 
+    'reload_anyway' => 'Reload Anyway',
+
     'export' => 'Export',
     'export_json' => 'JSON',
     'export_csv' => 'CSV',
@@ -17,6 +19,7 @@ return [
     'check_all_spam_task_created' => 'The spam check task has been started',
     'check_all_spam_complete' => 'The spam check has completed',
     'check_all_spam_canceled' => 'The spam check task was canceled',
+    'check_all_spam_complete_open_editors' => 'The spam check has completed, but it looks like you are making changes. The loaded list will not be updated automatically.',
 
     'select_comment' => 'Select this comment',
     'select_all_comments' => 'Select all visible comments',

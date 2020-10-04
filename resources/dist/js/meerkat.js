@@ -41916,6 +41916,8 @@ __webpack_require__.r(__webpack_exports__);
 
 var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
 
+__webpack_require__(/*! ./style.less */ "./src/App/CommentThread/style.less");
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   mixins: [_Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_10__["default"]],
   template: _template_html__WEBPACK_IMPORTED_MODULE_7___default.a,
@@ -41937,7 +41939,9 @@ var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
         tableIsAvailable: false,
         activeFilterId: 0,
         activeFilterName: 'all',
-        isCheckingAllForSpam: false
+        isCheckingAllForSpam: false,
+        statusMessage: '',
+        showStatusMessage: false
       },
       defaultFilters: ['all', 'pending', 'published', 'spam'],
       searchOptions: new _Data_Comments_searchOptions__WEBPACK_IMPORTED_MODULE_12__["default"](),
@@ -41953,6 +41957,28 @@ var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
     };
   },
   methods: {
+    hasEditorOpen: function hasEditorOpen() {
+      if (this.commentData === null) {
+        return false;
+      }
+
+      for (var i = 0; i < this.commentData.comments.length; i += 1) {
+        var comment = this.commentData.comments[i];
+
+        if (comment.state.isEditing === true || comment.state.isReplying === true) {
+          return true;
+        }
+      }
+
+      return false;
+    },
+    reloadStateAnyway: function reloadStateAnyway() {
+      this.commentData.comments.cancelAllEditing();
+      this.commentData.comments.cancelAllReplying();
+      this.state.showStatusMessage = false;
+      this.$refs.commentTable.exitFocusMode();
+      this.loadCommentData();
+    },
     checkForSpam: function checkForSpam() {
       this.state.isCheckingAllForSpam = true;
       this.commentRepo.checkForSpam().then(function (response) {
@@ -41968,10 +41994,20 @@ var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
         _controlPanelApplication__WEBPACK_IMPORTED_MODULE_21__["default"].current().controlPanel.message().error(this.trans('actions.check_all_spam_error'));
       }.bind(this));
     },
+    onCommentsGlobalSpamCheckComplete: function onCommentsGlobalSpamCheckComplete() {
+      if (this.hasEditorOpen() === false) {
+        this.loadCommentData();
+      } else {
+        this.state.statusMessage = this.trans('actions.check_all_spam_complete_open_editors');
+        this.state.showStatusMessage = true;
+      }
+    },
     onSpamTaskComplete: function onSpamTaskComplete() {
       this.state.isCheckingAllForSpam = false;
       this.spamTaskObserver.ensureStopped();
       _controlPanelApplication__WEBPACK_IMPORTED_MODULE_21__["default"].current().controlPanel.message().success(this.trans('actions.check_all_spam_complete'));
+      _Reporting_overviewProvider__WEBPACK_IMPORTED_MODULE_20__["default"].Instance.refresh();
+      syncjs.Hubs.comments().globalSpamCheckComplete();
     },
     onSpamTaskCanceled: function onSpamTaskCanceled() {
       this.state.isCheckingAllForSpam = false;
@@ -42114,6 +42150,17 @@ var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
 
 /***/ }),
 
+/***/ "./src/App/CommentThread/style.less":
+/*!******************************************!*\
+  !*** ./src/App/CommentThread/style.less ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+// extracted by mini-css-extract-plugin
+
+/***/ }),
+
 /***/ "./src/App/CommentThread/template.html":
 /*!*********************************************!*\
   !*** ./src/App/CommentThread/template.html ***!
@@ -42122,7 +42169,7 @@ var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
 /***/ (function(module, exports) {
 
 // Module
-var code = "<div>\r\n    <div class=\"flex items-center justify-between mb-3\">\r\n        <h1 class=\"flex-1\">{{ trans('display.header_comments') }}</h1>\r\n\r\n        <loader v-if=\"state.loadingData\" :display-inline=\"true\" class=\"mr-1\"></loader>\r\n        <dropdown-list class=\"mr-1\">\r\n            <button class=\"btn\" slot=\"trigger\">{{ trans('actions.export') }}</button>\r\n            <dropdown-item :text=\"trans('actions.export_csv')\" :redirect=\"exportLinks.csv\"></dropdown-item>\r\n            <dropdown-item :text=\"trans('actions.export_json')\" :redirect=\"exportLinks.json\"></dropdown-item>\r\n        </dropdown-list>\r\n        <button class=\"btn btn-primary\" :disabled=\"state.isCheckingAllForSpam\" v-if=\"canCheckForSpam\" v-on:click=\"checkForSpam\">{{ trans('actions.check_for_spam') }}</button>\r\n    </div>\r\n\r\n    <div v-if=\"state.loadingInitial === true\" class=\"card loading\">\r\n        <loader :display-text=\"trans('display.loading')\"></loader>\r\n    </div>\r\n\r\n    <comment-table ref=\"commentTable\" v-on:table-available=\"onTableAvailable\" v-if=\"state.loadingInitial === false\"\r\n                   :comments=\"commentData\" :active-filter-id=\"state.activeFilterId\"\r\n                   v-on:filter-changed=\"onFilterChanged\" v-on:order-changed=\"onOrderUpdated\" v-on:search-updated=\"onSearchUpdated\"\r\n                   v-on:data-update-requested=\"onRefreshRequested\"\r\n                   :loading=\"state.loadingData\"></comment-table>\r\n\r\n    <paginator v-if=\"commentData !== null\" :per-page=\"state.initialPerPage\" :page-data=\"commentData.pages\"\r\n               v-on:page-updated=\"updateQueryWithPage\" v-on:per-page-updated=\"updateQueryWithPerPage\">\r\n    </paginator>\r\n</div>";
+var code = "<div>\r\n    <div class=\"flex items-center justify-between mb-3\">\r\n        <h1 class=\"flex-1\">{{ trans('display.header_comments') }}</h1>\r\n\r\n        <loader v-if=\"state.loadingData\" :display-inline=\"true\" class=\"mr-1\"></loader>\r\n        <dropdown-list class=\"mr-1\">\r\n            <button class=\"btn\" slot=\"trigger\">{{ trans('actions.export') }}</button>\r\n            <dropdown-item :text=\"trans('actions.export_csv')\" :redirect=\"exportLinks.csv\"></dropdown-item>\r\n            <dropdown-item :text=\"trans('actions.export_json')\" :redirect=\"exportLinks.json\"></dropdown-item>\r\n        </dropdown-list>\r\n        <button class=\"btn btn-primary\" :disabled=\"state.isCheckingAllForSpam\" v-if=\"canCheckForSpam\" v-on:click=\"checkForSpam\">{{ trans('actions.check_for_spam') }}</button>\r\n    </div>\r\n\r\n    <div class=\"flex mb-3 meerkat__status--message\" v-if=\"state.showStatusMessage\">\r\n        <p>{{ state.statusMessage }} <a class=\"cursor__pointer\" v-on:click=\"state.showStatusMessage = false\">{{ trans('actions.ok') }}</a> &mdash; <a class=\"cursor__pointer\" v-on:click=\"reloadStateAnyway()\">{{ trans('actions.reload_anyway') }}</a></p>\r\n    </div>\r\n\r\n    <div v-if=\"state.loadingInitial === true\" class=\"card loading\">\r\n        <loader :display-text=\"trans('display.loading')\"></loader>\r\n    </div>\r\n\r\n    <comment-table ref=\"commentTable\" v-on:table-available=\"onTableAvailable\" v-if=\"state.loadingInitial === false\"\r\n                   :comments=\"commentData\" :active-filter-id=\"state.activeFilterId\"\r\n                   v-on:filter-changed=\"onFilterChanged\" v-on:order-changed=\"onOrderUpdated\" v-on:search-updated=\"onSearchUpdated\"\r\n                   v-on:data-update-requested=\"onRefreshRequested\"\r\n                   :loading=\"state.loadingData\"></comment-table>\r\n\r\n    <paginator v-if=\"commentData !== null\" :per-page=\"state.initialPerPage\" :page-data=\"commentData.pages\"\r\n               v-on:page-updated=\"updateQueryWithPage\" v-on:per-page-updated=\"updateQueryWithPerPage\">\r\n    </paginator>\r\n</div>";
 // Exports
 module.exports = code;
 
@@ -44060,6 +44107,9 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style
           }
         }
       }
+    },
+    exitFocusMode: function exitFocusMode() {
+      this.displayFocusMode = false;
     },
     clearData: function clearData() {
       this.closeAllActionDialogs([]);

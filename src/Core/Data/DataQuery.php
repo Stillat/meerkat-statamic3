@@ -349,26 +349,6 @@ class DataQuery
     }
 
     /**
-     * Attempts to filter the query by the provided filter string.
-
-     * @param string $filterString The filter string.
-     * @return $this
-     */
-    public function safeThenFilterBy($filterString)
-    {
-        try {
-            if ($this->filterRunner->getFilterManager()->hasFilter($filterString) === false) {
-                return $this;
-            }
-        } catch (FilterException $e) {
-            ExceptionLoggerFactory::log($e);
-            return $this;
-        }
-
-        return $this->thenFilterBy($filterString);
-    }
-
-    /**
      * Filters the comment collection using the provided filter.
      *
      * @param string $filterString The filter input.
@@ -395,7 +375,25 @@ class DataQuery
 
     /**
      * Attempts to filter the query by the provided filter string.
+     * @param string $filterString The filter string.
+     * @return $this
+     */
+    public function safeThenFilterBy($filterString)
+    {
+        try {
+            if ($this->filterRunner->getFilterManager()->hasFilter($filterString) === false) {
+                return $this;
+            }
+        } catch (FilterException $e) {
+            ExceptionLoggerFactory::log($e);
+            return $this;
+        }
 
+        return $this->thenFilterBy($filterString);
+    }
+
+    /**
+     * Attempts to filter the query by the provided filter string.
      * @param string $filterString The filter string.
      * @return $this
      */
@@ -411,6 +409,16 @@ class DataQuery
         }
 
         return $this->filterBy($filterString);
+    }
+
+    /**
+     * Returns the filters used while processing the query.
+     *
+     * @return array
+     */
+    public function getFilters()
+    {
+        return $this->filters;
     }
 
     /**

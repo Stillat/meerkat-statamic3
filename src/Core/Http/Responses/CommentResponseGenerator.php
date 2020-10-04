@@ -29,6 +29,7 @@ class CommentResponseGenerator
     const KEY_API_SORT_ORDERS = 'orders';
     const KEY_API_TERMS = 'terms';
     const KEY_API_PAGE_METADATA = 'pages';
+    const KEY_API_FILTERS = 'filters';
 
     const KEY_PARAM_PAGE = 'page';
     const KEY_PARAM_RESULTS_PER_PAGE = 'resultsPerPage';
@@ -62,6 +63,11 @@ class CommentResponseGenerator
      */
     protected $runtimeContext = null;
 
+    /**
+     * The properties to remove from the API response.
+     *
+     * @var array
+     */
     protected $propertiesToRemove = [];
 
     public function __construct(CommentManagerContract $manager,
@@ -102,9 +108,6 @@ class CommentResponseGenerator
      */
     public function updateFromParameters($parameters)
     {
-        $filters = [];
-        $orders = [];
-
         $requestOrders = [];
 
         if (array_key_exists('terms', $parameters) && mb_strlen(trim($parameters['terms'])) > 0) {
@@ -226,8 +229,7 @@ class CommentResponseGenerator
         }
 
         $pageMetaData = PaginationMetaDataResponseGenerator::getApiResponse($queryResults->getMetaData());
-
-        // TODO: Need to add the 'filters' that were applied, as well.
+        $filterString = implode('|', $this->query->getFilters());
 
         return [
             CommentResponseGenerator::KEY_API_AUTHOR_COLLECTION => $responseAuthors,
@@ -235,7 +237,8 @@ class CommentResponseGenerator
             CommentResponseGenerator::KEY_API_THREAD_COLLECTION => array_values($threads),
             CommentResponseGenerator::KEY_API_SORT_ORDERS => $this->query->getSortString(),
             CommentResponseGenerator::KEY_API_TERMS => $this->query->getTerms(),
-            CommentResponseGenerator::KEY_API_PAGE_METADATA => $pageMetaData
+            CommentResponseGenerator::KEY_API_PAGE_METADATA => $pageMetaData,
+            CommentResponseGenerator::KEY_API_FILTERS => $filterString
         ];
     }
 

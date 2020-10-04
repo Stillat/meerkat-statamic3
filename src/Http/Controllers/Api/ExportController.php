@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat\Http\Controllers\Api;
 
+use Exception;
 use Illuminate\Support\Facades\File;
 use Statamic\Http\Controllers\CP\CpController;
 use Stillat\Meerkat\Concerns\UsesTranslations;
@@ -10,7 +11,10 @@ use Stillat\Meerkat\Core\Contracts\Permissions\PermissionsManagerContract;
 use Stillat\Meerkat\Core\Data\Export\CsvExporter;
 use Stillat\Meerkat\Core\Data\Export\JsonExporter;
 use Stillat\Meerkat\Core\Errors;
+use Stillat\Meerkat\Core\Exceptions\FilterException;
 use Stillat\Meerkat\Core\Http\Responses\CommentResponseGenerator;
+use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
+use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
 use Stillat\Meerkat\Core\Storage\Paths;
 
 class ExportController extends CpController
@@ -55,11 +59,20 @@ class ExportController extends CpController
             }
         }
 
-        $jsonExporter->setProperties($this->exportFields);
+        $data = '';
 
-        $resultGenerator->updateFromParameters($this->request->all());
-        $comments = $resultGenerator->getRequestComments();
-        $data = $jsonExporter->export($comments);
+        try {
+            $jsonExporter->setProperties($this->exportFields);
+            $resultGenerator->updateFromParameters($this->request->all());
+            $comments = $resultGenerator->getRequestComments();
+            $data = $jsonExporter->export($comments);
+        } catch (FilterException $filterException) {
+            LocalErrorCodeRepository::logCodeMessage(Errors::EXPORT_FILTER_FAILURE, $filterException->getMessage());
+            ExceptionLoggerFactory::log($filterException);
+        } catch (Exception $exception) {
+            LocalErrorCodeRepository::logCodeMessage(Errors::EXPORT_GENERAL_FAILURE, $exception->getMessage());
+            ExceptionLoggerFactory::log($exception);
+        }
 
         return $this->getResponse($data, 'json', $jsonExporter->getContentType());
     }
@@ -106,12 +119,22 @@ class ExportController extends CpController
             $exportHeaders[] = $this->trans('fields.' . $field);
         }
 
-        $csvExporter->setPropertyNames($exportHeaders);
-        $csvExporter->setProperties($this->exportFields);
+        $data = '';
 
-        $resultGenerator->updateFromParameters($this->request->all());
-        $comments = $resultGenerator->getRequestComments();
-        $data = $csvExporter->export($comments);
+        try {
+            $csvExporter->setPropertyNames($exportHeaders);
+            $csvExporter->setProperties($this->exportFields);
+
+            $resultGenerator->updateFromParameters($this->request->all());
+            $comments = $resultGenerator->getRequestComments();
+            $data = $csvExporter->export($comments);
+        } catch (FilterException $filterException) {
+            LocalErrorCodeRepository::logCodeMessage(Errors::EXPORT_FILTER_FAILURE, $filterException->getMessage());
+            ExceptionLoggerFactory::log($filterException);
+        } catch (Exception $exception) {
+            LocalErrorCodeRepository::logCodeMessage(Errors::EXPORT_GENERAL_FAILURE, $exception->getMessage());
+            ExceptionLoggerFactory::log($exception);
+        }
 
         return $this->getResponse($data, 'csv', $csvExporter->getContentType());
     }

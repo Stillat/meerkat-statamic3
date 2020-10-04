@@ -111,6 +111,15 @@ class Configuration extends ConfigurationContainer
      */
     private $formatConfiguration = null;
 
+    /**
+     * A list of searchable comment attributes.
+     *
+     * @var string[]
+     */
+    public $searchableAttributes = [
+
+    ];
+
     public function __construct()
     {
         $this->formatConfiguration = new FormattingConfiguration;

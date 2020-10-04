@@ -165,6 +165,7 @@ class ServiceProvider extends AddonServiceProvider
             $globalConfiguration->autoPublishAuthenticatedPosts = $this->getConfig('publishing.auto_publish_authenticated_users', false);
             $globalConfiguration->disableCommentsAfterDays = $this->getConfig('publishing.automatically_close_comments', 0);
             $globalConfiguration->trackChanges = $this->getConfig('storage.trackChanges', true);
+            $globalConfiguration->searchableAttributes = $this->getConfig('search.attributes', []);
 
             $globalConfiguration->storageDirectory = PathProvider::contentPath();
             $globalConfiguration->indexDirectory = storage_path('meerkat/index');

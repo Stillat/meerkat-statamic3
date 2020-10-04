@@ -71,8 +71,11 @@ class StatamicAccessManager extends AccessManager
         // Handle non-super user permissions.
         $userRoles = $identity->getDataAttribute(StatamicAuthorFactory::STATAMIC_USER_ROLES, collect());
 
-        if ($userRoles != null && $userRoles->count() > 0) {
-            $this->userRoles = $userRoles->keys();
+        if ($userRoles != null && method_exists($userRoles, 'count') && $userRoles->count() > 0) {
+            if (method_exists($userRoles, 'keys')) {
+                $this->userRoles = $userRoles->keys();
+            }
+
             $this->userRoleInstances = $userRoles;
         }
 

@@ -5,6 +5,7 @@ namespace Stillat\Meerkat\Http\Controllers\Api;
 use Statamic\Http\Controllers\CP\CpController;
 use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
 use Stillat\Meerkat\Core\Contracts\Permissions\PermissionsManagerContract;
+use Stillat\Meerkat\Core\Contracts\Tasks\TaskContract;
 use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Guard\SpamChecker;
 use Stillat\Meerkat\Core\Http\Responses\Responses;
@@ -41,6 +42,7 @@ class CheckForSpamController extends CpController
         }
 
         $spamChecker->onlyCheckNeedingReview();
+
         $task = $spamChecker->check();
 
         if ($task === null) {
@@ -48,7 +50,8 @@ class CheckForSpamController extends CpController
         }
 
         return Responses::successWithData([
-            'task' => $task->getInstanceId()
+            'task' => $task->getInstanceId(),
+            'status' => TaskContract::STATUS_IN_PROGRESS
         ]);
     }
 

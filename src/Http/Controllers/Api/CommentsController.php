@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat\Http\Controllers\Api;
 
 use Exception;
+use Illuminate\Support\Facades\Log;
 use Statamic\Http\Controllers\CP\CpController;
 use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
 use Stillat\Meerkat\Core\Contracts\Permissions\PermissionsManagerContract;
@@ -36,6 +37,7 @@ class CommentsController extends CpController
 
             return Responses::successWithData($resultGenerator->getApiResponse());
         } catch (FilterException $filterException) {
+
             dd($filterException);
             return Responses::fromErrorCode(Errors::COMMENT_DATA_FILTER_FAILURE, false);
         } catch (Exception $e) {

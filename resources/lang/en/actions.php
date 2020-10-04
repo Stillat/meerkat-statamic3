@@ -13,6 +13,10 @@ return [
     'export_csv' => 'CSV',
 
     'check_for_spam' => 'Check for Spam',
+    'check_all_spam_error' => 'There was a problem checking all comments for spam',
+    'check_all_spam_task_created' => 'The spam check task has been started',
+    'check_all_spam_complete' => 'The spam check has completed',
+    'check_all_spam_canceled' => 'The spam check task was canceled',
 
     'select_comment' => 'Select this comment',
     'select_all_comments' => 'Select all visible comments',

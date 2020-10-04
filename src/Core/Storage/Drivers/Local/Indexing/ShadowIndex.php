@@ -5,7 +5,7 @@ namespace Stillat\Meerkat\Core\Storage\Drivers\Local\Indexing;
 use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Storage\Paths;
 
-// TODO: Documentation!
+// TODO: Documentation - this will be replaced sometime soon.
 class ShadowIndex
 {
 

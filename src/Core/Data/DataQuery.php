@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat\Core\Data;
 
+use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Data\DataSetContract;
 use Stillat\Meerkat\Core\Contracts\Data\GroupedDataSetContract;
@@ -222,6 +223,7 @@ class DataQuery
     private $searchTerms = null;
 
     public function __construct(
+        Configuration $config,
         PaginatorContract $paginator,
         FilterRunner $filterRunner,
         SanitationManagerContract $sanitationManager)
@@ -236,8 +238,11 @@ class DataQuery
         $this->basicDataSetConverter = new DataSetCollectionConverter($this->sanitationManager);
 
         $this->searchEngine = new Engine(new BitapSearchProvider());
-        // TODO: Review, and possibly expose this as a configuration item.
-        $this->searchEngine->setSearchAttributes(InternalAttributes::getInternalAttributes());
+        $this->searchEngine->setSearchAttributes(array_merge(
+            InternalAttributes::getInternalAttributes(),
+            $config->searchableAttributes
+        ));
+
     }
 
     /**

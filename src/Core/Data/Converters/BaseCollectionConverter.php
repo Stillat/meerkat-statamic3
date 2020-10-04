@@ -5,7 +5,6 @@ namespace Stillat\Meerkat\Core\Data\Converters;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
 use Stillat\Meerkat\Core\Exceptions\InconsistentCompositionException;
-use Stillat\Meerkat\Core\Parsing\MarkdownParserFactory;
 use Stillat\Meerkat\Core\Parsing\SanitationManagerFactory;
 use Stillat\Meerkat\Core\Threads\ContextResolverFactory;
 
@@ -111,14 +110,6 @@ class BaseCollectionConverter
         foreach ($comments as $datasetKey => $comment) {
             $commentArray = $comment->toArray();
             $commentArray[$datasetName] = [];
-
-            // TODO: Re-evaluate - may remove auto markdown processing from this step entirely and leave it up to presenters.
-            /*if (MarkdownParserFactory::hasInstance()) {
-                $parsedContent = trim(MarkdownParserFactory::$instance->parse($comment->getRawContent()));
-
-                $comment->setDataAttribute(CommentContract::KEY_CONTENT, $parsedContent);
-                $comment->setDataAttribute(CommentContract::KEY_COMMENT_MARKDOWN, $parsedContent);
-            }*/
 
             if (ContextResolverFactory::hasInstance()) {
                 $threadId = $comment->getThreadId();

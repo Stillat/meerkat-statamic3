@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat\Data\Export;
 
+use League\Csv\CannotInsertRecord;
 use League\Csv\Writer;
 use SplTempFileObject;
 use Stillat\Meerkat\Core\Contracts\Data\Export\CsvWriterContract;
@@ -33,7 +34,7 @@ class CsvWriter implements CsvWriterContract
      * Writes the headers to the CSV file.
      *
      * @param array $headers The headers.
-     * @throws \League\Csv\CannotInsertRecord
+     * @throws CannotInsertRecord
      */
     public function writeHeaders($headers)
     {

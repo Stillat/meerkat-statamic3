@@ -17,6 +17,10 @@ trait EmitsEvents
 
     /**
      * Emits an addon event.
+     *
+     * @param string $eventName The name of the event.
+     * @param mixed $payload The event payload/arguments.
+     * @return array|null
      */
     protected function emitEvent($eventName, $payload)
     {

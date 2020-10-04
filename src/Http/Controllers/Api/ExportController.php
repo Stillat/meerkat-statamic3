@@ -57,7 +57,7 @@ class ExportController extends CpController
 
         $jsonExporter->setProperties($this->exportFields);
 
-        $resultGenerator->updateFromParameters($this->request->all(), true);
+        $resultGenerator->updateFromParameters($this->request->all());
         $comments = $resultGenerator->getRequestComments();
         $data = $jsonExporter->export($comments);
 
@@ -109,7 +109,7 @@ class ExportController extends CpController
         $csvExporter->setPropertyNames($exportHeaders);
         $csvExporter->setProperties($this->exportFields);
 
-        $resultGenerator->updateFromParameters($this->request->all(), true);
+        $resultGenerator->updateFromParameters($this->request->all());
         $comments = $resultGenerator->getRequestComments();
         $data = $csvExporter->export($comments);
 

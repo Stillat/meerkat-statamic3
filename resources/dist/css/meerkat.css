@@ -86,6 +86,12 @@
   margin-top: 10px;
   margin-bottom: 5px;
 }
+.comment-display__actions .comment-display__actions-list {
+  list-style-type: none;
+}
+.comment-display__actions .comment-display__actions-list li {
+  float: left;
+}
 .comment-display__actions li a {
   color: #797979;
   transition: color 120ms linear;

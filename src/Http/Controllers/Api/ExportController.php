@@ -11,6 +11,7 @@ use Stillat\Meerkat\Core\Data\Export\CsvExporter;
 use Stillat\Meerkat\Core\Data\Export\JsonExporter;
 use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Http\Responses\CommentResponseGenerator;
+use Stillat\Meerkat\Core\Storage\Paths;
 
 class ExportController extends CpController
 {
@@ -62,6 +63,26 @@ class ExportController extends CpController
         return $this->getResponse($data, 'json', $jsonExporter->getContentType());
     }
 
+    private function getResponse($data, $extension, $type)
+    {
+        if ($this->request->has('download')) {
+            $dir = storage_path('meerkat/tmp/downloads');
+
+            if (!file_exists($dir)) {
+                mkdir($dir, Paths::DIRECTORY_PERMISSIONS, true);
+            }
+
+            $path = storage_path('meerkat/tmp/downloads/Comments-' . time() . '.' . $extension);
+            File::put($path, $data);
+
+            $response = response()->download($path)->deleteFileAfterSend(true);
+        } else {
+            $response = response($data)->header('Content-Type', $type);
+        }
+
+        return $response;
+    }
+
     public function csv(CsvExporter $csvExporter, PermissionsManagerContract $manager, IdentityManagerContract $identityManager,
                         CommentResponseGenerator $resultGenerator)
     {
@@ -92,26 +113,6 @@ class ExportController extends CpController
         $data = $csvExporter->export($comments);
 
         return $this->getResponse($data, 'csv', $csvExporter->getContentType());
-    }
-
-    private function getResponse($data, $extension, $type)
-    {
-        if ($this->request->has('download')) {
-            $dir = storage_path('meerkat/tmp/downloads');
-
-            if (!file_exists($dir)) {
-                mkdir($dir, 0655, true);
-            }
-
-            $path = storage_path('meerkat/tmp/downloads/Comments-' . time() . '.' . $extension);
-            File::put($path, $data);
-
-            $response = response()->download($path)->deleteFileAfterSend(true);
-        } else {
-            $response = response($data)->header('Content-Type', $type);
-        }
-
-        return $response;
     }
 
 }

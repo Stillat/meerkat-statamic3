@@ -6,6 +6,7 @@ Route::post('/!/Meerkat/socialize', '\Stillat\Meerkat\Http\Controllers\Socialize
 
 // /!/ Endpoints are just there for backwards compatibility.
 // TODO: don't use closures to allow for route optimization.
+// TODO: Re-enable.
 /*
 Route::post('/!/Meerkat/delete', function () {
 

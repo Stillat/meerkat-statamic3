@@ -12,14 +12,17 @@ use Stillat\Meerkat\Core\Configuration as GlobalConfiguration;
 use Stillat\Meerkat\Core\ConfigurationFactories;
 use Stillat\Meerkat\Core\Contracts\Http\HttpClientContract;
 use Stillat\Meerkat\Core\Contracts\Logging\ErrorCodeRepositoryContract;
+use Stillat\Meerkat\Core\Contracts\Logging\ExceptionLoggerContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\YAMLParserContract;
 use Stillat\Meerkat\Core\FormattingConfiguration;
 use Stillat\Meerkat\Core\GuardConfiguration;
 use Stillat\Meerkat\Core\Http\Client;
+use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
 use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
 use Stillat\Meerkat\Core\Parsing\MarkdownParserFactory;
 use Stillat\Meerkat\Core\Storage\Paths;
+use Stillat\Meerkat\Logging\ExceptionLogger;
 use Stillat\Meerkat\Parsing\MarkdownParser;
 use Stillat\Meerkat\Parsing\YAMLParser;
 use Stillat\Meerkat\Providers\AddonServiceProvider;
@@ -182,6 +185,10 @@ class ServiceProvider extends AddonServiceProvider
      */
     private function registerCoreDependencies()
     {
+        $this->app->singleton(ExceptionLoggerContract::class, function ($app) {
+            return $app->make(ExceptionLogger::class);
+        });
+
         $this->app->singleton(YAMLParserContract::class, function ($app) {
             return $app->make(YAMLParser::class);
         });
@@ -193,6 +200,7 @@ class ServiceProvider extends AddonServiceProvider
         $this->app->bind(HttpClientContract::class, Client::class);
 
         Statamic::booted(function () {
+            ExceptionLoggerFactory::$instance = app(ExceptionLoggerContract::class);
             MarkdownParserFactory::$instance = app(MarkdownParserContract::class);
         });
     }

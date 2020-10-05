@@ -11,7 +11,7 @@ use Stillat\Meerkat\EventPipeline;
  * Class PermissionMutationPipeline
  *
  * Implements the permissions pipeline so that other developers may
- * hook into the Meerakt<>Statamic permission-resolving process.
+ * hook into the Meerakt<=>Statamic permission-resolving process.
  *
  * @package Stillat\Meerkat\Permissions
  * @since 2.0.0

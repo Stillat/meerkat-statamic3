@@ -256,47 +256,6 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
     }
 
     /**
-     * Loads addon language translations into the application instance.
-     */
-    private function includeAddonLanguages()
-    {
-        if (AddonServiceProvider::$langIncluded || $this->app == null) {
-            return;
-        }
-
-        $langDirectory = PathProvider::getResourcesDirectory('lang');
-
-        if (file_exists($langDirectory) && is_dir($langDirectory)) {
-            $this->loadTranslationsFrom($langDirectory, Addon::CODE_ADDON_NAME);
-        }
-
-        AddonServiceProvider::$langIncluded = true;
-    }
-
-    /**
-     * Registers the current provider and all additional providers, if required.
-     */
-    public function register()
-    {
-        parent::register();
-
-        foreach ($this->providers as $provider) {
-            /** @var ServiceProvider $providerInstance */
-            $providerInstance = app($provider);
-
-            if ($providerInstance !== null) {
-                if ($providerInstance instanceof AddonServiceProvider) {
-                    if ($this->isServiceProviderUsable($providerInstance)) {
-                        $providerInstance->register();
-                    }
-                } else {
-                    $providerInstance->register();
-                }
-            }
-        }
-    }
-
-    /**
      * Publishes the specified resources.
      *
      * @param array $assets The resource asset mapping.
@@ -351,6 +310,47 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
 
         foreach ($versionsToCleanUp as $assetPath) {
             Paths::recursivelyRemoveDirectory($assetPath);
+        }
+    }
+
+    /**
+     * Loads addon language translations into the application instance.
+     */
+    private function includeAddonLanguages()
+    {
+        if (AddonServiceProvider::$langIncluded || $this->app == null) {
+            return;
+        }
+
+        $langDirectory = PathProvider::getResourcesDirectory('lang');
+
+        if (file_exists($langDirectory) && is_dir($langDirectory)) {
+            $this->loadTranslationsFrom($langDirectory, Addon::CODE_ADDON_NAME);
+        }
+
+        AddonServiceProvider::$langIncluded = true;
+    }
+
+    /**
+     * Registers the current provider and all additional providers, if required.
+     */
+    public function register()
+    {
+        parent::register();
+
+        foreach ($this->providers as $provider) {
+            /** @var ServiceProvider $providerInstance */
+            $providerInstance = app($provider);
+
+            if ($providerInstance !== null) {
+                if ($providerInstance instanceof AddonServiceProvider) {
+                    if ($this->isServiceProviderUsable($providerInstance)) {
+                        $providerInstance->register();
+                    }
+                } else {
+                    $providerInstance->register();
+                }
+            }
         }
     }
 

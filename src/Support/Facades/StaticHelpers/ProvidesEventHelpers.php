@@ -5,6 +5,7 @@ namespace Stillat\Meerkat\Support\Facades\StaticHelpers;
 use Illuminate\Support\Facades\Event;
 use Stillat\Meerkat\Addon;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentMutationPipelineContract;
+use Stillat\Meerkat\Core\Contracts\Permissions\PermissionsMutationPipelineContract;
 use Stillat\Meerkat\Core\Contracts\SpamGuardPipelineContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadMutationPipelineContract;
 use Stillat\Meerkat\Providers\ControlPanelServiceProvider;
@@ -429,6 +430,20 @@ trait ProvidesEventHelpers
     public static function onThreadRestored(callable  $handler)
     {
         self::listenToEvent(ThreadMutationPipelineContract::MUTATION_RESTORED, $handler);
+    }
+
+    /**
+     * Called when permissions are being resolved for an individual identity.
+     *
+     * Callable arguments:
+     *      0: AuthorContract
+     *      1: PermissionsSet
+     *
+     * @param callable $handler The callback.
+     */
+    public static function onPermissionsResolving(callable  $handler)
+    {
+        self::listenToEvent(PermissionsMutationPipelineContract::MUTATION_RESOLVING, $handler);
     }
 
 }

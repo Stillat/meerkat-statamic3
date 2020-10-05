@@ -47,6 +47,12 @@ class ContextResolver implements ContextResolverContract
         $this->threadPipeline = new ThreadMutationPipeline();
     }
 
+    /**
+     * Tests if a thread exists for the provided identifier.
+     *
+     * @param string $contextId The thread identifier.
+     * @return bool
+     */
     public function contextExistsById($contextId)
     {
         $context = $this->findById($contextId);

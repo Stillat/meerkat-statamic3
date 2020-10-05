@@ -56,7 +56,7 @@ class TranslationEmitter
     }
 
     /**
-     * Emits a JavaScript statement to patch the provided translation key/value pari.
+     * Emits a JavaScript statement to patch the provided translation key/value pair.
      *
      * @param $transKey string The translation key.
      * @param $transValue string The translation key value.

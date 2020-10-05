@@ -20,8 +20,6 @@ class GuardPipeline extends EventPipeline implements SpamGuardPipelineContract
     /**
      * Called when the Spam Service is starting.
      *
-     * // TODO: Add to event life-cycle static helpers.
-     *
      * @param SpamService $service The spam service.
      * @param callable $callback An optional callback.
      */

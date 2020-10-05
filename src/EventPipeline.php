@@ -47,6 +47,12 @@ abstract class EventPipeline implements MutationPipelineContract
         }
     }
 
+    /**
+     * Attempts to execute the callback after the current request.
+     *
+     * @param string[] $args The arguments.
+     * @param callable $callback The callback to execute later.
+     */
     public function delayExecute($args, $callback)
     {
         $runSync = $this->getConfig('internals.runDelayedMutationsSync', false);

@@ -43,14 +43,26 @@ class PathProvider
         return PathProvider::normalize(base_path(PathProvider::MEERKAT_COMMENTS_DIRECTORY));
     }
 
+    /**
+     * Ensures that all directory separators are forward slashes.
+     *
+     * @param string $path The path to normalize.
+     * @return string
+     */
     public static function normalize($path)
     {
         return str_replace('\\', '/', $path);
     }
 
-    public static function getRouteFile($file)
+    /**
+     * Generates a path to the addon resource directory.
+     *
+     * @param string $path The relative path.
+     * @return string
+     */
+    public static function getResourcesDirectory($path = '')
     {
-        return PathProvider::normalize(realpath(PathProvider::getAddonDirectory() . 'routes/' . $file . '.php'));
+        return PathProvider::normalize(PathProvider::getAddonDirectory() . '/resources/' . $path);
     }
 
     /**
@@ -64,21 +76,34 @@ class PathProvider
         return PathProvider::normalize(realpath(__DIR__ . '/../' . $path));
     }
 
-    public static function getResourcesDirectory($path = '')
-    {
-        return PathProvider::normalize(PathProvider::getAddonDirectory() . '/resources/' . $path);
-    }
-
+    /**
+     * Generates a path to an addon stub file.
+     *
+     * @param string $file The relative path.
+     * @return string
+     */
     public static function getStub($file)
     {
         return PathProvider::normalize(PathProvider::getAddonDirectory('src/_stubs/' . $file));
     }
 
+    /**
+     * Ensures all directory separators are back slashes.
+     *
+     * @param string $path The path.
+     * @return string
+     */
     public static function winPath($path)
     {
         return str_replace('/', '\\', PathProvider::normalize($path));
     }
 
+    /**
+     * Generates a URL for the requested JavaScript resource name.
+     *
+     * @param string $resourceName The public resource name.
+     * @return string
+     */
     public static function publicJsVendorPath($resourceName)
     {
         return url('vendor/' . Addon::CODE_ADDON_NAME . '/js/' . Addon::VERSION . '/' . $resourceName . '.js');

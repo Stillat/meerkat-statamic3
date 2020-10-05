@@ -38,18 +38,76 @@ interface ThreadMutationPipelineContract extends MutationPipelineContract
      */
     public function resolving(ThreadContextContract $thread, $callback);
 
+    /**
+     * Called before the thread is removed.
+     *
+     * @param ThreadRemovalEventArgs $eventArgs The event args.
+     * @param callable $callback The callback.
+     */
     public function removing(ThreadRemovalEventArgs $eventArgs, $callback);
+
+    /**
+     * Called after the thread has been removed.
+     *
+     * @param ThreadContextContract $threadContext The thread context.
+     * @param callable $callback The callback.
+     */
     public function removed(ThreadContextContract $threadContext, $callback);
 
+    /**
+     * Called after a thread has been soft-deleted.
+     *
+     * @param ThreadContextContract $threadContext The thread context.
+     * @param callable $callback The callback.
+     */
     public function softDeleted(ThreadContextContract $threadContext, $callback);
 
+    /**
+     * Called before the thread is created.
+     *
+     * @param ThreadContextContract $threadContext The thread context.
+     * @param callable $callback The callback.
+     */
     public function creating(ThreadContextContract $threadContext, $callback);
+
+    /**
+     * Called after the thread is created.
+     *
+     * @param ThreadContextContract $threadContext
+     * @param callable $callback The callback.
+     */
     public function created(ThreadContextContract $threadContext, $callback);
 
+    /**
+     * Called before the thread is moved to another context.
+     *
+     * @param ThreadMovingEventArgs $eventArgs The event args.
+     * @param callable $callback The callback.
+     */
     public function moving(ThreadMovingEventArgs $eventArgs, $callback);
+
+    /**
+     * Called after the thread has been moved.
+     *
+     * @param ThreadContextContract $thread
+     * @param callable $callback The callback.
+     */
     public function moved(ThreadContextContract $thread, $callback);
 
+    /**
+     * Called before the thread is being restored from a soft-deleted state.
+     *
+     * @param ThreadRestoringEventArgs $eventArgs The event args.
+     * @param callable $callback The callback.
+     */
     public function restoring(ThreadRestoringEventArgs $eventArgs, $callback);
+
+    /**
+     * Called after the thread has been restored from a soft-deleted state.
+     *
+     * @param ThreadContextContract $thread The thread context.
+     * @param callable $callback The callback.
+     */
     public function restored(ThreadContextContract $thread, $callback);
 
 }

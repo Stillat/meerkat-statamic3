@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Event;
 use Stillat\Meerkat\Addon;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentMutationPipelineContract;
 use Stillat\Meerkat\Core\Contracts\SpamGuardPipelineContract;
+use Stillat\Meerkat\Core\Contracts\Threads\ThreadMutationPipelineContract;
 use Stillat\Meerkat\Providers\ControlPanelServiceProvider;
 
 /**
@@ -72,7 +73,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler An optional callback.
+     * @param callable $handler The callback.
      */
     public static function onCommentCreating(callable $handler)
     {
@@ -85,7 +86,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler An optional callback.
+     * @param callable $handler The callback.
      */
     public static function onCommentUpdating(callable $handler)
     {
@@ -98,7 +99,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler An optional callback.
+     * @param callable $handler The callback.
      */
     public static function onCommentCreated(callable $handler)
     {
@@ -111,7 +112,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler An optional callback.
+     * @param callable $handler The callback.
      */
     public static function onCommentRemoving(callable $handler)
     {
@@ -124,7 +125,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: string - The comment identifier.
      *
-     * @param callable $handler An optional callback.
+     * @param callable $handler The callback.
      */
     public static function onCommentRemoved(callable $handler)
     {
@@ -137,7 +138,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: string - The comment identifier.
      *
-     * @param callable $handler An optional callback.
+     * @param callable $handler The callback.
      */
     public static function onCommentSoftDeleted(callable $handler)
     {
@@ -150,7 +151,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler An optional callback.
+     * @param callable $handler The callback.
      */
     public static function onCommentReplying(callable $handler)
     {
@@ -163,7 +164,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler An optional callback.
+     * @param callable $handler The callback.
      */
     public static function onCommentReplied(callable $handler)
     {
@@ -176,7 +177,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler An optional callback.
+     * @param callable $handler The callback.
      */
     public static function onCommentMarkingAsSpam(callable $handler)
     {
@@ -189,7 +190,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler An optional callback.
+     * @param callable $handler The callback.
      */
     public static function onCommentMarkedAsSpam(callable $handler)
     {
@@ -202,7 +203,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler An optional callback.
+     * @param callable $handler The callback.
      */
     public static function onCommentMarkingAsHam(callable $handler)
     {
@@ -215,7 +216,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler An optional callback.
+     * @param callable $handler The callback.
      */
     public static function onCommentMarkedAsHam(callable $handler)
     {
@@ -228,7 +229,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler An optional callback.
+     * @param callable $handler The callback.
      */
     public static function onCommentApproving(callable $handler)
     {
@@ -241,7 +242,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler An optional callback.
+     * @param callable $handler The callback.
      */
     public static function onCommentApproved(callable $handler)
     {
@@ -254,7 +255,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler An optional callback.
+     * @param callable $handler The callback.
      */
     public static function onCommentUnapproving(callable $handler)
     {
@@ -267,7 +268,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler An optional callback.
+     * @param callable $handler The callback.
      */
     public static function onCommentUnapproved(callable $handler)
     {
@@ -280,7 +281,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler An optional callback.
+     * @param callable $handler The callback.
      */
     public static function onCommentRestoring(callable $handler)
     {
@@ -293,7 +294,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler An optional callback.
+     * @param callable $handler The callback.
      */
     public static function onCommentRestored(callable $handler)
     {
@@ -306,11 +307,128 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: SpamService
      *
-     * @param callable $handler An optional callback.
+     * @param callable $handler The callback.
      */
     public static function onGuardStarting(callable $handler)
     {
         self::listenToEvent(SpamGuardPipelineContract::MUTATION_REGISTERING, $handler);
+    }
+
+    /**
+     * Called before a thread is removed.
+     *
+     * Callable arguments:
+     *      0: ThreadRemovalEventArgs
+     *
+     * @param callable $handler The callback.
+     */
+    public static function onThreadRemoving(callable $handler)
+    {
+        self::listenToEvent(ThreadMutationPipelineContract::MUTATION_REMOVING, $handler);
+    }
+
+    /**
+     * Called after a thread has been removed.
+     *
+     * Callable arguments:
+     *      0: ThreadContextContract
+     *
+     * @param callable $handler The callback.
+     */
+    public static function onThreadRemoved(callable $handler)
+    {
+        self::listenToEvent(ThreadMutationPipelineContract::MUTATION_REMOVED, $handler);
+    }
+
+    /**
+     * Called after a thread has been soft deleted.
+     *
+     * Callable arguments:
+     *      0: ThreadContextContract
+     *
+     * @param callable $handler The callback.
+     */
+    public static function onThreadSoftDeleted(callable $handler)
+    {
+        self::listenToEvent(ThreadMutationPipelineContract::MUTATION_SOFT_DELETED, $handler);
+    }
+
+    /**
+     * Called before a thread is created.
+     *
+     * Callable arguments:
+     *      0: ThreadContextContract
+     *
+     * @param callable $handler The callback.
+     */
+    public static function onThreadCreating(callable $handler)
+    {
+        self::listenToEvent(ThreadMutationPipelineContract::MUTATION_CREATING, $handler);
+    }
+
+    /**
+     * Called after a thread is created.
+     *
+     * Callback arguments:
+     *      0: ThreadContextContract
+     *
+     * @param callable $handler The callback.
+     */
+    public static function onThreadCreated(callable $handler)
+    {
+        self::listenToEvent(ThreadMutationPipelineContract::MUTATION_CREATED, $handler);
+    }
+
+    /**
+     * Called before a thread is moved to another context.
+     *
+     * Callable arguments:
+     *      0: ThreadMovingEventArgs
+     *
+     * @param callable $handler The callback.
+     */
+    public static function onThreadMoving(callable $handler)
+    {
+        self::listenToEvent(ThreadMutationPipelineContract::MUTATION_MOVING, $handler);
+    }
+
+    /**
+     * Called after a thread has been moved.
+     *
+     * Callable arguments:
+     *      0: ThreadContextContract
+     *
+     * @param callable $handler The callback.
+     */
+    public static function onThreadMoved(callable $handler)
+    {
+        self::listenToEvent(ThreadMutationPipelineContract::MUTATION_MOVED, $handler);
+    }
+
+    /**
+     * Called before a thread is restored from a soft-deleted state.
+     *
+     * Callable arguments:
+     *      0: ThreadRestoringEventArgs
+     *
+     * @param callable $handler The callback.
+     */
+    public static function onThreadRestoring(callable  $handler)
+    {
+        self::listenToEvent(ThreadMutationPipelineContract::MUTATION_RESTORING, $handler);
+    }
+
+    /**
+     * Called after a thread has been restored from a soft-deleted state.
+     *
+     * Callable arguments:
+     *      0: ThreadContextContract
+     *
+     * @param callable $handler The callback.
+     */
+    public static function onThreadRestored(callable  $handler)
+    {
+        self::listenToEvent(ThreadMutationPipelineContract::MUTATION_RESTORED, $handler);
     }
 
 }

@@ -20,6 +20,11 @@ class Addon
     public const ADDON_ID = 'stillat/meerkat';
     public const VERSION = '0.0.7-dev';
 
+    /**
+     * Gets the addon API prefix.
+     *
+     * @return string
+     */
     public static function getApiPrefix()
     {
         return 'api/' . Addon::CODE_ADDON_NAME;

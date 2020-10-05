@@ -61,6 +61,12 @@ class RequestHelpers
         return false;
     }
 
+    /**
+     * Tests if the provided request is a Statamic Control Panel request by inspecting headers.
+     *
+     * @param Request $request The request.
+     * @return bool
+     */
     public static function isControlPanelRequestFromHeaders($request)
     {
         $referrer = strtolower($request->headers->get('referer'));
@@ -81,7 +87,6 @@ class RequestHelpers
                 return true;
             }
         }
-
 
         return false;
     }

@@ -17,6 +17,11 @@ use Stillat\Meerkat\Core\Support\TypeConversions;
 class XssSanitizer implements OutputSanitizerContract
 {
 
+    /**
+     * The Meerkat Core configuration instance.
+     *
+     * @var Configuration
+     */
     protected $config = null;
 
     /**

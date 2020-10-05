@@ -28,6 +28,7 @@ class Errors
     const GENERAL_EXCEPTION = '01-010';
     const EXPORT_GENERAL_FAILURE = '01-011';
     const EXPORT_FILTER_FAILURE = '01-012';
+    const PARSER_FAILURE = '01-013';
 
     const GUARD_CREATION_FAILED = '02-001';
     const GUARD_AKISMET_RESPONSE_FAILURE = '02-002';

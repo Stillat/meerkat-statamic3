@@ -5,6 +5,9 @@ namespace Stillat\Meerkat\Parsing;
 use Statamic\Yaml\ParseException;
 use Statamic\Yaml\Yaml;
 use Stillat\Meerkat\Core\Contracts\Parsing\YAMLParserContract;
+use Stillat\Meerkat\Core\Errors;
+use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
+use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
 use Stillat\Meerkat\Core\Parsing\AbstractYAMLParser;
 
 /**
@@ -47,7 +50,7 @@ class YAMLParser extends AbstractYAMLParser implements YAMLParserContract
      *
      * @param string $content The content to parse.
      * @return array
-     * @throws \Statamic\Yaml\ParseException
+     * @throws ParseException
      */
     public function parseDocument($content)
     {
@@ -66,7 +69,9 @@ class YAMLParser extends AbstractYAMLParser implements YAMLParserContract
             try {
                 return $this->statamicParser->parse($content);
             } catch (ParseException $parseException) {
-                // TODO: Emit warning.
+                ExceptionLoggerFactory::log($parseException);
+                LocalErrorCodeRepository::logCodeMessage(Errors::PARSER_FAILURE, $parseException->getMessage());
+
                 return [];
             }
         }

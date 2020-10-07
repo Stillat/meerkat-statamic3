@@ -1,3 +1,5 @@
+Copyright © Stillat, LLC.
+
 Meerkat is not free software, and is licensed on a *per-site* basis. Each site must also have an appropriate [Statamic License](https://statamic.com/pricing).
 
 ## Beta Period and Development (Trial) Access

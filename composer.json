@@ -6,7 +6,7 @@
         "statamic",
         "comments"
     ],
-    "license": "Commercial",
+    "license": "proprietary",
     "require": {
         "statamic/cms": "3.0.*"
     },

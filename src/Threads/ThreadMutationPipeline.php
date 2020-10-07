@@ -176,4 +176,5 @@ class ThreadMutationPipeline extends EventPipeline implements ThreadMutationPipe
             $callback
         );
     }
+
 }

@@ -2,6 +2,9 @@
 
 namespace Stillat\Meerkat\Core\Support;
 
+use Stillat\Meerkat\Core\Exceptions\ParserException;
+use Stillat\Meerkat\Core\Parsing\ArrayParser;
+
 /**
  * Class TypeConversions
  *
@@ -47,19 +50,12 @@ class TypeConversions
      * @param string $value The input string.
      * @param string $delimiter The string that separates values.
      * @return array
+     * @throws ParserException
      */
     public static function parseToArray($value, $delimiter = ',')
     {
         if (is_string($value)) {
-            $temp = explode($delimiter, $value);
-
-            if ($temp == false) {
-                $temp = [];
-            } else {
-                $temp = array_map('trim', $temp);
-            }
-
-            $value = $temp;
+            $value = ArrayParser::getValues($value, $delimiter);
         }
 
         return self::getArray($value);

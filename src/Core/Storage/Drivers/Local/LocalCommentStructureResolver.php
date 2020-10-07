@@ -221,7 +221,7 @@ class LocalCommentStructureResolver implements StructureResolverInterface
                         if ($i === 0) {
                             $subDescendentGraph = $descendentGraph;
                             $graphRoot = array_shift($subDescendentGraph);
-
+                            
                             if (array_key_exists($graphRoot, $this->descendentMapping) == false) {
                                 $this->descendentMapping[$graphRoot] = [];
                             }

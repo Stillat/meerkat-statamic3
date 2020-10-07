@@ -2,7 +2,6 @@
 
 namespace Stillat\Meerkat\Tags\Responses;
 
-use Carbon\Carbon;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Data\DataSetContract;
 use Stillat\Meerkat\Core\Contracts\Data\GroupedDataSetContract;
@@ -16,15 +15,22 @@ use Stillat\Meerkat\Core\Data\PagedDataSet;
 use Stillat\Meerkat\Core\Data\PredicateBuilder;
 use Stillat\Meerkat\Core\Data\RuntimeContext;
 use Stillat\Meerkat\Core\Exceptions\FilterException;
-use Stillat\Meerkat\Core\Support\TypeConversions;
 use Stillat\Meerkat\Tags\MeerkatTag;
 use Stillat\Meerkat\Tags\Output\RecursiveThreadRenderer;
 
-// TODO: Provide extra meta data, such as `comments_enabled` in Antlers contexts.
+/**
+ * Class CollectionRenderer
+ *
+ * Responsible for managing the interactions between Meerkat and Statamic's Antlers templating engine.
+ *
+ * @package Stillat\Meerkat\Tags\Responses
+ * @since 2.0.0
+ */
 class CollectionRenderer extends MeerkatTag
 {
     const PARAM_UNAPPROVED = 'include_unapproved';
     const PARAM_INCLUDE_SPAM = 'include_spam';
+    const PARAM_WITH_TRASHED = 'with_trashed';
     const PARAM_FILTER = 'filter';
     const PARAM_FLAT = 'flat';
     const PARAM_ORDER = 'order';
@@ -45,16 +51,74 @@ class CollectionRenderer extends MeerkatTag
     const RETURN_ITEMS_COUNT = 'items_count';
     const DEFAULT_COLLECTION_NAME = 'comments';
 
+    /**
+     * The current tag filter context, if any.
+     *
+     * @var string
+     */
     public $tagContext = '';
-    protected $filterManager = null;
+
+    /**
+     * The ThreadManagerContract implementation instance.
+     *
+     * @var ThreadManagerContract
+     */
     protected $threadManager = null;
+
+    /**
+     * The SanitationManagerContract implementation instance.
+     *
+     * @var SanitationManagerContract
+     */
     protected $sanitizer = null;
+
+    /**
+     * Indicates if the result set should be paginated.
+     *
+     * @var bool
+     */
     protected $paginated = false;
+
+    /**
+     * The maximum number of items per page, if any.
+     *
+     * @var int|null
+     */
     protected $pageLimit = null;
+
+    /**
+     * The current page offset, if any.
+     *
+     * @var int
+     */
     protected $pageOffset = 0;
+
+    /**
+     * The URL parameter that indicates what the current pagination page is.
+     *
+     * @var string
+     */
     protected $pageBy = 'page';
+
+    /**
+     * The current DataQuery instance, if any.
+     *
+     * @var DataQuery|null
+     */
     protected $query = null;
+
+    /**
+     * The current thread identifier, if any.
+     *
+     * @var string|null
+     */
     private $threadId = null;
+
+    /**
+     * Indicates if content should be processed as Markdown automatically.
+     *
+     * @var bool
+     */
     private $autoMarkdown = false;
 
     public function __construct(
@@ -63,8 +127,9 @@ class CollectionRenderer extends MeerkatTag
         SanitationManagerContract $sanitizer,
         DataQuery $query)
     {
+        parent::__construct($filterManager);
+
         $this->query = $query;
-        $this->filterManager = $filterManager;
         $this->threadManager = $threadManager;
         $this->sanitizer = $sanitizer;
     }
@@ -102,7 +167,7 @@ class CollectionRenderer extends MeerkatTag
 
         $flatList = $this->getParameterValue(CollectionRenderer::PARAM_FLAT, false);
 
-        $this->applyParamFiltersToQuery();
+        $this->applyParamFiltersToQuery($this->query);
         $this->applyParamOrdersToQuery();
 
         $thread = $this->threadManager->findById($this->threadId);
@@ -183,94 +248,6 @@ class CollectionRenderer extends MeerkatTag
     }
 
     /**
-     * Parses the provided tag parameters and applies any filters to the current data query.
-     */
-    private function applyParamFiltersToQuery()
-    {
-        $paramFilters = $this->getFiltersFromParams();
-        $filterString = $this->getParameterValue(CollectionRenderer::PARAM_FILTER, null);
-
-        if ($filterString !== null && mb_strlen(trim($filterString)) > 0) {
-            $parsedFilters = $this->filterManager->parseFilterString($filterString);
-
-            if ($parsedFilters !== null && is_array($parsedFilters)) {
-                $paramFilters = array_merge($paramFilters, $parsedFilters);
-            }
-        }
-
-        unset($filterString);
-
-        if (count($paramFilters) === 0) {
-            return;
-        }
-
-        $primaryFilter = array_shift($paramFilters);
-
-        $this->query->filterBy($primaryFilter);
-
-        if (count($paramFilters) > 0) {
-            foreach ($paramFilters as $filter) {
-                $this->query->thenFilterBy($filter);
-            }
-        }
-    }
-
-    /**
-     * Parses the Antlers parameters and converts them to filter expressions.
-     *
-     * @return array
-     */
-    private function getFiltersFromParams()
-    {
-        $filters = [];
-
-        if (TypeConversions::getBooleanValue(
-                $this->getParameterValue(CollectionRenderer::PARAM_INCLUDE_SPAM, false)
-            ) === false) {
-            $filters['is:spam'] = 'is:spam(false)';
-        }
-
-        if (TypeConversions::getBooleanValue(
-                $this->getParameterValue(CollectionRenderer::PARAM_UNAPPROVED, false)
-            ) === false) {
-            $filters['is:published'] = 'is:published(true)';
-        }
-
-        $untilFilter = $this->getParameterValue(CollectionRenderer::PARAM_UNTIL, null);
-        $sinceFilter = $this->getParameterValue(CollectionRenderer::PARAM_SINCE, null);
-
-        if ($untilFilter !== null && $sinceFilter !== null) {
-            $sinceDate = $this->getDateTimeTimestamp($sinceFilter);
-            $untilDate = $this->getDateTimeTimestamp($untilFilter);
-
-            $filters['is:between'] = 'is:between(' . $sinceDate . ',' . $untilDate . ')';
-        } elseif ($untilFilter === null && $sinceFilter !== null) {
-            $sinceDate = $this->getDateTimeTimestamp($sinceFilter);
-
-            $filters['is:after'] = 'is:after(' . $sinceDate . ')';
-        } elseif ($untilFilter !== null && $sinceFilter === null) {
-            $untilDate = $this->getDateTimeTimestamp($untilFilter);
-
-            $filters['is:before'] = 'is:before(' . $untilFilter . ')';
-        }
-
-        return $filters;
-    }
-
-    private function getDateTimeTimestamp($value)
-    {
-        $timestampValue = $value;
-
-        if (is_string($value) && mb_strlen(trim($value)) == 10) {
-            $timestampValue = $value;
-        } else {
-            $timestampValue = Carbon::parse($timestampValue)->timestamp;
-        }
-
-        return $timestampValue;
-    }
-
-    /**
      * Parses the Antlers order parameter and uses them to build up the sorting predicate.
      */
     private function applyParamOrdersToQuery()
@@ -331,13 +308,6 @@ class CollectionRenderer extends MeerkatTag
         }
     }
 
-    /**
-     * Removes any Antlers specific filter restrictions.
-     */
-    private function removeFilterRestrictions()
-    {
-        $this->filterManager->restrictFilter('thread:in', []);
-    }
 
     /**
      * Prepares a paginated, grouped dataset for rendering.
@@ -385,11 +355,11 @@ class CollectionRenderer extends MeerkatTag
     {
         if ($this->autoMarkdown) {
             $dataset->mutate(function ($comment) {
-               if (is_array($comment) && array_key_exists(CommentContract::KEY_COMMENT_MARKDOWN, $comment)) {
-                   $comment[CommentContract::KEY_CONTENT] = $comment[CommentContract::KEY_COMMENT_MARKDOWN];
-               }
+                if (is_array($comment) && array_key_exists(CommentContract::KEY_COMMENT_MARKDOWN, $comment)) {
+                    $comment[CommentContract::KEY_CONTENT] = $comment[CommentContract::KEY_COMMENT_MARKDOWN];
+                }
 
-               return $comment;
+                return $comment;
             });
         }
 
@@ -444,9 +414,11 @@ class CollectionRenderer extends MeerkatTag
     }
 
     /**
-     * @param $comments
-     * @param $collectionName
-     * @param $isFlatList
+     * Renders the provided list of comments.
+     *
+     * @param array $comments The comments to render.
+     * @param string $collectionName The collection name.
+     * @param bool $isFlatList Indicates if the results should be a flat list.
      * @return string
      */
     private function renderListComments($comments, $collectionName, $isFlatList)
@@ -454,11 +426,7 @@ class CollectionRenderer extends MeerkatTag
         $displayComments = [];
 
         if ($this->autoMarkdown) {
-            foreach ($comments as &$comment) {
-                if (array_key_exists(CommentContract::KEY_COMMENT_MARKDOWN, $comment)) {
-                    $comment[CommentContract::KEY_CONTENT] = $comment[CommentContract::KEY_COMMENT_MARKDOWN];
-                }
-            }
+            $comments = $this->recursivelyApplyMarkdown($comments, $collectionName);
         }
 
         if ($isFlatList === false) {
@@ -474,6 +442,30 @@ class CollectionRenderer extends MeerkatTag
         return $this->parseComments([
             $collectionName => $displayComments
         ], [], $collectionName);
+    }
+
+    /**
+     * Recursively processes the comment's content as Markdown.
+     *
+     * @param array $comments The comments to apply Markdown processing to.
+     * @param string $collectionName The inner collection name.
+     * @return array
+     */
+    private function recursivelyApplyMarkdown($comments, $collectionName)
+    {
+        foreach ($comments as $commentId => $comment) {
+            if (array_key_exists($collectionName, $comment)) {
+                $comments[$commentId][$collectionName] = $this->recursivelyApplyMarkdown(
+                    $comments[$commentId][$collectionName], $collectionName
+                );
+            }
+
+            if (array_key_exists(CommentContract::KEY_COMMENT_MARKDOWN, $comment)) {
+                $comments[$commentId][CommentContract::KEY_CONTENT] = $comment[CommentContract::KEY_COMMENT_MARKDOWN];
+            }
+        }
+
+        return $comments;
     }
 
     /**
@@ -502,6 +494,7 @@ class CollectionRenderer extends MeerkatTag
         if (count($metaData) > 0) {
             $data = array_merge($data, $metaData);
         }
+
 
         return RecursiveThreadRenderer::renderRecursiveThread(
             $this->sanitizer, $this->content, $data, $context, $collectionName

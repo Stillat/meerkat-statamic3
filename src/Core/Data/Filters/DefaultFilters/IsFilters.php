@@ -29,6 +29,7 @@ class IsFilters
     const FILTER_IS_SPAM = 'is:spam';
     const FILTER_IS_PUBLISHED = 'is:published';
     const FILTER_IS_DELETED = 'is:deleted';
+    const FILTER_ANY = '*';
 
     const PARAM_COMPARISON = 'comparison';
     const PARAM_TIMESTAMP = 'timestamp';
@@ -70,7 +71,13 @@ class IsFilters
         }, IsFilters::PARAM_RANGE);
 
         $manager->filterWithTagContext(IsFilters::FILTER_IS_SPAM, function ($comments) {
-            $includeSpam = TypeConversions::getBooleanValue($this->get(IsFilters::PARAM_COMPARISON, false));
+            $comparisonFilter = $this->get(IsFilters::PARAM_COMPARISON, false);
+
+            if ($comparisonFilter === IsFilters::FILTER_ANY) {
+                return $comments;
+            }
+
+            $includeSpam = TypeConversions::getBooleanValue($comparisonFilter);
 
             return array_filter($comments, function (CommentContract $comment) use ($includeSpam) {
                 $isSpam = $comment->isSpam();
@@ -92,7 +99,13 @@ class IsFilters
         }, IsFilters::PARAM_COMPARISON);
 
         $manager->filterWithTagContext(IsFilters::FILTER_IS_PUBLISHED, function ($comments) {
-            $includePublished = TypeConversions::getBooleanValue($this->get(IsFilters::PARAM_COMPARISON, true));
+            $comparisonFilter = $this->get(IsFilters::PARAM_COMPARISON, true);
+
+            if ($comparisonFilter === IsFilters::FILTER_ANY) {
+                return $comments;
+            }
+
+            $includePublished = TypeConversions::getBooleanValue($comparisonFilter);
 
             return array_filter($comments, function (CommentContract $comment) use ($includePublished) {
                 $isPublished = $comment->published();
@@ -114,7 +127,13 @@ class IsFilters
         }, IsFilters::PARAM_COMPARISON);
 
         $manager->filterWithTagContext(IsFilters::FILTER_IS_DELETED, function ($comments) {
-            $includeTrashed = TypeConversions::getBooleanValue($this->get(IsFilters::PARAM_COMPARISON, true));
+            $comparisonFilter = $this->get(IsFilters::PARAM_COMPARISON, false);
+
+            if ($comparisonFilter === IsFilters::FILTER_ANY) {
+                return $comments;
+            }
+
+            $includeTrashed = TypeConversions::getBooleanValue($comparisonFilter);
 
             return array_filter($comments, function (CommentContract $comment) use ($includeTrashed) {
                 $isDeleted = $comment->isDeleted();

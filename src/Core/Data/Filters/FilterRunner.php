@@ -5,6 +5,7 @@ namespace Stillat\Meerkat\Core\Data\Filters;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
 use Stillat\Meerkat\Core\Exceptions\FilterException;
+use Stillat\Meerkat\Core\Exceptions\ParserException;
 
 /**
  * Class FilterRunner
@@ -57,6 +58,7 @@ class FilterRunner
      * @param string $tagContext The run-time templating context, if any.
      * @return array
      * @throws FilterException
+     * @throws ParserException
      */
     public function processFilters($comments, $params, $filters, $context = null, $tagContext = '')
     {
@@ -102,9 +104,34 @@ class FilterRunner
             }
         }
 
-        // Re-create the main data array.
-        return array_filter($comments, function ($comment) use ($commentIdsToKeep) {
-            return in_array($comment->getId(), $commentIdsToKeep);
+        return $this->recursivelyFilterComments($comments, $commentIdsToKeep);
+    }
+
+    /**
+     * Filters list of comments, as well as all nested replies.
+     *
+     * @param CommentContract[] $comments The comment.
+     * @param string[] $idsToKeep The comment identifiers to maintain.
+     * @return CommentContract[]
+     */
+    private function recursivelyFilterComments($comments, $idsToKeep)
+    {
+        return array_filter($comments, function ($comment) use ($idsToKeep) {
+            $shouldKeep = in_array($comment->getId(), $idsToKeep);
+
+            if ($shouldKeep && $comment->isParent()) {
+                $filteredReplies = $this->recursivelyFilterComments($comment->getReplies(), $idsToKeep);
+                $comment->setReplies($filteredReplies);
+                $comment->setDataAttribute(CommentContract::KEY_CHILDREN, $comment->getReplies());
+
+                if (count($filteredReplies) === 0) {
+                    // Rewrite some values.
+                    // We will leave the descendents nodes alone, though.
+                    $comment->setDataAttribute(CommentContract::KEY_HAS_REPLIES, false);
+                }
+            }
+
+            return $shouldKeep;
         });
     }
 

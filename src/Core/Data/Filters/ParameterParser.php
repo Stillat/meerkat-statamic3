@@ -3,6 +3,8 @@
 namespace Stillat\Meerkat\Core\Data\Filters;
 
 use Stillat\Meerkat\Core\Data\ValueWrapper;
+use Stillat\Meerkat\Core\Exceptions\ParserException;
+use Stillat\Meerkat\Core\Parsing\ArrayParser;
 
 /**
  * Class ParameterParser
@@ -29,35 +31,16 @@ class ParameterParser
     /**
      * Parses the individual values from the filter's input stream.
      *
-     * @param stringn $values The input values.
+     * @param string $values The input values.
      * @return array
+     * @throws ParserException
      */
     public function parseParameterValues($values)
     {
         $returnValues = [];
-        $parsedValues = [];
-        $split = str_split($values);
 
-        $currentPieces = [];
-
-        $last = count($split) - 1;
-        for ($i = 0; $i < count($split); $i++) {
-            $thisToken = $split[$i];
-
-            if ($thisToken === ',') {
-                $parsedValues[] = implode('', $currentPieces);
-                $currentPieces = [];
-            } elseif ($i === $last) {
-                $currentPieces[] = $thisToken;
-                $parsedValues[] = implode('', $currentPieces);
-
-                break;
-            } else {
-                $currentPieces[] = $thisToken;
-            }
-        }
-
-        $parsedValues = array_map('trim', $parsedValues);
+        $parserParts = ArrayParser::getValues($values, ',');
+        $parsedValues = array_map('trim', $parserParts);
 
         foreach ($parsedValues as $value) {
             $returnValues[] = ValueWrapper::unwrap($value);

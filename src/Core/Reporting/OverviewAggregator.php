@@ -47,6 +47,10 @@ class OverviewAggregator
 
             /** @var CommentContract $comment */
             foreach ($this->threadManager->getAllCommentsById($thread) as $comment) {
+                if ($comment->isDeleted()) {
+                    $overviewReport->softDeleted += 1;
+                    continue;
+                }
                 $overviewReport->total += 1;
 
                 if (TypeConversions::getBooleanValue(

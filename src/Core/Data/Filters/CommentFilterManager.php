@@ -14,6 +14,8 @@ use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\Where;
 use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\WhereIn;
 use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\WhereNotIn;
 use Stillat\Meerkat\Core\Exceptions\FilterException;
+use Stillat\Meerkat\Core\Exceptions\ParserException;
+use Stillat\Meerkat\Core\Parsing\ArrayParser;
 use Stillat\Meerkat\Core\Support\Str;
 
 /**
@@ -250,6 +252,7 @@ class CommentFilterManager
      * @param string $tagContext The tag context.
      * @return mixed|null
      * @throws FilterException
+     * @throws ParserException
      */
     public function runFilter($filterName, $comments, $parameters, $context = null, $tagContext = '')
     {
@@ -271,23 +274,65 @@ class CommentFilterManager
                     // Remap the parameters.
                     if (array_key_exists($filterParamMapping, $parameters)) {
                         $parameters[$this->filterRequiredParamMapping[$filterName]] = $parameters[$filterParamMapping];
+
                     } else {
-                        if (Str::startsWith($filterParamMapping, '$')) {
-                            if (array_key_exists($filterParamMapping, $this->resolvableItems)) {
-                                if (array_key_exists($filterParamMapping, $this->resolvedCache) == false) {
-                                    /** @var FilterVariable $resolver */
-                                    $resolver = $this->resolvableItems[$filterParamMapping];
-                                    $resolver->setContext($context);
-                                    $resolver->setParameters($parameters);
-                                    $resolver->setUser($this->getUser());
 
-                                    $this->resolvedCache[$filterParamMapping] = $resolver->getValue();
+                        if (Str::contains($filterParamMapping, '$')) {
+                            $variableParameters = [];
+                            $mergeParameters = [];
+
+                            if (Str::contains($filterParamMapping, ',')) {
+                                $expandedParameters = ArrayParser::getValues($filterParamMapping);
+
+                                foreach ($expandedParameters as $param) {
+                                    if (Str::startsWith($param, '$')) {
+                                        $variableParameters[] = $param;
+                                    } else {
+                                        $mergeParameters[] = $param;
+                                    }
                                 }
-
-                                $parameters[$filterParamMapping] = $this->resolvedCache[$filterParamMapping];
-                            } else {
-                                throw new FilterException('Cannot resolve Meerkat filter variable ' . $filterParamMapping . ' in filter ' . $filterName);
                             }
+
+                            foreach ($variableParameters as $filterParam) {
+                                if (array_key_exists($filterParam, $this->resolvableItems)) {
+                                    if (array_key_exists($filterParam, $this->resolvedCache) == false) {
+                                        /** @var FilterVariable $resolver */
+                                        $resolver = $this->resolvableItems[$filterParam];
+                                        $resolver->setContext($context);
+                                        $resolver->setParameters($parameters);
+                                        $resolver->setUser($this->getUser());
+
+                                        $this->resolvedCache[$filterParam] = $resolver->getValue();
+                                    }
+
+                                    $parameters[$filterParam] = $this->resolvedCache[$filterParam];
+                                } else {
+                                    throw new FilterException('Cannot resolve Meerkat filter variable ' . $filterParam . ' in filter ' . $filterName);
+                                }
+                            }
+
+                            $resolvedParameters = [];
+
+                            if (count($mergeParameters) > 0) {
+                                $resolvedParameters = $mergeParameters;
+                            }
+
+                            if (count($variableParameters) > 0) {
+                                foreach ($variableParameters as $variableParameter) {
+                                    if (array_key_exists($variableParameter, $parameters)) {
+                                        $tempVar = $parameters[$variableParameter];
+
+                                        if (is_array($tempVar)) {
+                                            $resolvedParameters = array_merge($resolvedParameters, $tempVar);
+                                        } else {
+                                            $resolvedParameters[] = $tempVar;
+                                        }
+                                    }
+                                }
+                            }
+
+                            $parameters[$this->filterRequiredParamMapping[$filterName]] = $resolvedParameters;
+
                         } else {
                             $parameters[$this->filterRequiredParamMapping[$filterName]] = $filterParamMapping;
                         }

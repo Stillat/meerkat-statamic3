@@ -16,7 +16,6 @@ use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
  */
 class RecursiveThreadRenderer
 {
-
     const TEMPLATE_SUB_KEY = 'meerkat_comment_tags_';
 
     /**
@@ -31,9 +30,6 @@ class RecursiveThreadRenderer
      */
     public static function renderRecursiveThread(SanitationManagerContract $sanitizer, $template, $data, $context, $collectionName)
     {
-        // TODO: Capture memory exhaustion and throw a custom exception
-        //       when the template has malformed safety checks.
-
         $nestedTagRegex = '/\{\{\s*' . $collectionName . '\s*\}\}.*?\{\{\s*\/' . $collectionName . '\s*\}\}/ms';
         preg_match($nestedTagRegex, $template, $match);
 

@@ -3,15 +3,15 @@
 namespace Stillat\Meerkat\Tags;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Statamic\Tags\Tags;
 use Stillat\Meerkat\Addon as MeerkatAddon;
 use Stillat\Meerkat\Concerns\GetsHiddenContext;
+use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Data\DataSetContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ContextResolverContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
 use Stillat\Meerkat\Core\Data\DataQuery;
-use Stillat\Meerkat\Core\Exceptions\FilterException;
+use Stillat\Meerkat\Core\Data\Filters\CommentFilterManager;
 use Stillat\Meerkat\Core\Support\TypeConversions;
 use Stillat\Meerkat\Exceptions\TemplateTagsException;
 use Stillat\Meerkat\Forms\MeerkatForm;
@@ -22,12 +22,17 @@ use Stillat\Meerkat\Tags\Testing\OutputThreadDebugInformation;
 // TODO: Apply query from params.
 // TODO: Ensure that trashed comments are correctly filtered.
 // TODO: Ensure that trashed threads are correctly ignored.
-class Meerkat extends Tags
+class Meerkat extends MeerkatTag
 {
     use GetsHiddenContext;
 
     private $threadManager = null;
 
+    /**
+     * The SanitationManagerContract implementation instance.
+     *
+     * @var SanitationManagerContract
+     */
     private $sanitizer = null;
 
     /**
@@ -37,8 +42,22 @@ class Meerkat extends Tags
      */
     private $contextResolver = null;
 
-    public function __construct(ThreadManagerContract $threadManager, SanitationManagerContract $sanitizer)
+
+    /**
+     * The Meerkat Core configuration container.
+     *
+     * @var Configuration
+     */
+    private $config;
+
+    public function __construct(Configuration $config,
+                                CommentFilterManager $filterManager,
+                                ThreadManagerContract $threadManager,
+                                SanitationManagerContract $sanitizer)
     {
+        parent::__construct($filterManager);
+
+        $this->config = $config;
         $this->threadManager = $threadManager;
         $this->sanitizer = $sanitizer;
     }
@@ -133,7 +152,6 @@ class Meerkat extends Tags
      */
     public function commentsEnabled()
     {
-        // TODO: Make this value available as a meta property in all tag contexts.
         return $this->threadManager->areCommentsEnabledForContext($this->getHiddenContext());
     }
 
@@ -142,10 +160,11 @@ class Meerkat extends Tags
      *
      * @return int
      */
-    public function commentCount()
+    public function count()
     {
         // TODO: Allow override of query. Needs a global "query builder builder".
         $contextId = $this->getHiddenContext();
+        $this->setFromContext($this);
         $thread = $this->threadManager->findById($contextId);
 
         if ($thread === null) {
@@ -154,7 +173,8 @@ class Meerkat extends Tags
 
         /** @var DataSetContract $queryResults */
         $queryResults = $thread->query(function (DataQuery $builder) {
-            return $builder->filterBy('is:spam(false)')->thenFilterBy('is:published(true)');
+            $this->applyParamFiltersToQuery($builder);
+            return $builder;
         });
 
         return $queryResults->count();
@@ -260,4 +280,13 @@ class Meerkat extends Tags
         return true;
     }
 
+    /**
+     * Renders the tag content.
+     *
+     * @return string
+     */
+    public function render()
+    {
+        return '';
+    }
 }

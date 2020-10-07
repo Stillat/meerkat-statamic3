@@ -21,6 +21,7 @@ class OverviewReport
     const KEY_IS_PUBLISHED = 'is_published';
     const KEY_PUBLISHED_AND_SPAM = 'published_and_spam';
     const KEY_PENDING = 'pending';
+    const KEY_DELETED = 'is_deleted';
     const KEY_COMPLETION_TIME = 'completion_time';
 
     /**
@@ -87,6 +88,15 @@ class OverviewReport
     public $pending = 0;
 
     /**
+     * The total number of comments that have been soft deleted.
+     *
+     * Soft deleted comments will not contributed to the other metrics.
+     *
+     * @var int
+     */
+    public $softDeleted = 0;
+
+    /**
      * The total time to generate the report.
      *
      * @var float
@@ -101,6 +111,7 @@ class OverviewReport
     public function toArray()
     {
         return [
+            self::KEY_DELETED => $this->softDeleted,
             self::KEY_TOTAL => $this->total,
             self::KEY_THREAD_COUNT => $this->totalThreads,
             self::KEY_NEEDS_MIGRATION => $this->needsMigration,

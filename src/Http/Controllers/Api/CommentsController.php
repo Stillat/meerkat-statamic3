@@ -37,12 +37,8 @@ class CommentsController extends CpController
 
             return Responses::successWithData($resultGenerator->getApiResponse());
         } catch (FilterException $filterException) {
-
-            dd($filterException);
             return Responses::fromErrorCode(Errors::COMMENT_DATA_FILTER_FAILURE, false);
         } catch (Exception $e) {
-            //throw $e;
-            dd($e);
             return Responses::generalFailure();
         }
     }

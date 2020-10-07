@@ -149,19 +149,23 @@ class CommentResponseGenerator
             }
         }
 
+        $requestFilters = [];
+
         if (array_key_exists('filter', $parameters) && mb_strlen(trim($parameters['filter'])) > 0) {
             $requestFilters = explode('|', $parameters['filter']);
+        }
 
-            if (count($requestFilters) > 0) {
-                $firstFilter = array_shift($requestFilters);
+        if (count($requestFilters) === 0) {
+            $requestFilters[] = 'is:deleted(false)';
+        }
 
-                $this->query->safeFilterBy($firstFilter);
+        $firstFilter = array_shift($requestFilters);
 
-                if (count($requestFilters) > 0) {
-                    foreach ($requestFilters as $filter) {
-                        $this->query->safeThenFilterBy($filter);
-                    }
-                }
+        $this->query->safeFilterBy($firstFilter);
+
+        if (count($requestFilters) > 0) {
+            foreach ($requestFilters as $filter) {
+                $this->query->safeThenFilterBy($filter);
             }
         }
 

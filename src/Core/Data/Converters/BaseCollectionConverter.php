@@ -159,26 +159,21 @@ class BaseCollectionConverter
             return $value != null;
         });
 
+
         // Update the inner comment properties to use the array form.
         /** @var array $comment */
-        foreach ($comments as &$comment) {
+        foreach ($comments as $commentId => $comment) {
             if ($comment === null) {
                 continue;
             }
 
             /** @var CommentContract[] $currentChildren */
             $currentChildren = $comment[CommentContract::KEY_CHILDREN];
-            $newChildren = [];
 
-            foreach ($currentChildren as $child) {
-                $newChildren[] =& $comments[$child->getId()];
-            }
-
-            $comment[$datasetName] = $newChildren;
+            $comments[$commentId][$datasetName] = $this->convert($currentChildren, $datasetName);
 
             if (array_key_exists(CommentContract::KEY_PARENT, $comment)) {
                 $commentParent = [];
-
 
                 $parentId = $comment[CommentContract::KEY_PARENT]->getId();
                 $parentProperties = [];
@@ -200,7 +195,7 @@ class BaseCollectionConverter
                         $commentParent[$property] = $value;
                     }
 
-                    $comment[CommentContract::KEY_PARENT] = $commentParent;
+                    $comments[$commentId][CommentContract::KEY_PARENT] = $commentParent;
 
                 }
             }

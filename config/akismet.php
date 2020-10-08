@@ -2,17 +2,50 @@
 
 return [
 
-    'api_key'    => '',
+    /*
+    |--------------------------------------------------------------------------
+    | Akismet API Key
+    |--------------------------------------------------------------------------
+    |
+    | This value allows Meerkat to make requests to the Akismet services
+    | on your behalf. This is required to use the Akismet spam API.
+    |
+    | https://docs.akismet.com/getting-started/api-key/
+    */
+    'api_key' => '',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Akismet Front Page
+    |--------------------------------------------------------------------------
+    |
+    | This value should be the domain name of your site, or your home page,
+    | and should match the value you configured in your Akismet account.
+    */
     'front_page' => '',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Akismet Filed Mapping
+    |--------------------------------------------------------------------------
+    |
+    | Not all blueprints are the same; if you've customized the names of
+    | fields heavily, you will need to remap the following fields so
+    | that the appropriate data is sent with Akismet API calls.
+    |
+    | The fields on the left are the Akismet fields; the fields
+    | on the right are your blueprint's field names/handles.
+    */
     'fields' => [
         'author'     => 'name',
         'email'      => 'email',
-        'user_ip'    => 'user_up',
+        'content'    => 'comment',
+
+        // These values are handled automatically.
+        'user_ip'    => 'user_ip',
         'user_agent' => 'user_agent',
         'referrer'   => 'referrer',
         'permalink'  => 'page_url',
-        'content'    => 'comment',
     ],
 
 ];

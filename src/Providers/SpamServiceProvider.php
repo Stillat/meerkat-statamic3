@@ -59,7 +59,13 @@ class SpamServiceProvider extends AddonServiceProvider
                 return app()->make(SpamChecker::class);
             };
 
-            foreach ($this->getConfig('publishing.guards') as $guard) {
+            $guardConfiguration = $this->getConfig('publishing.guards', []);
+
+            if (is_array($guardConfiguration) === false) {
+                $guardConfiguration = [];
+            }
+
+            foreach ($guardConfiguration as $guard) {
                 if (class_exists($guard)) {
                     try {
                         $instance = app()->make($guard);

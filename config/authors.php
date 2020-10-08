@@ -32,6 +32,6 @@ return [
     'form_user_fields' => [
         'name'  => 'first_name',
         'email' => 'email',
-    ]
+    ],
 
 ];

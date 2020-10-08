@@ -28,6 +28,6 @@ return [
         // Indicates if the addon name, vendor, and version of all addons
         // will be submitted with error logs or product crash reports.
         'submit_addon_data' => true
-    ]
+    ],
 
 ];

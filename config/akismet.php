@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Note: Akismet is a third party service, and API access does not
+ * come with Meerkat (only a custom API integration). Meerkat
+ * must share data with the service in order for to use
+ * their API to check your comments for spam/ham.
+ *
+ * Use of this service is completely optional.
+ */
 return [
 
     /*
@@ -11,6 +19,7 @@ return [
     | on your behalf. This is required to use the Akismet spam API.
     |
     | https://docs.akismet.com/getting-started/api-key/
+    |
     */
     'api_key' => '',
 
@@ -21,6 +30,7 @@ return [
     |
     | This value should be the domain name of your site, or your home page,
     | and should match the value you configured in your Akismet account.
+    |
     */
     'front_page' => '',
 
@@ -35,6 +45,7 @@ return [
     |
     | The fields on the left are the Akismet fields; the fields
     | on the right are your blueprint's field names/handles.
+    |
     */
     'fields' => [
         'author'     => 'name',

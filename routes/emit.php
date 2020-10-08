@@ -6,7 +6,7 @@ use Stillat\Meerkat\Statamic\ControlPanel\TranslationEmitter;
 use Stillat\Meerkat\Translation\LanguagePatcher;
 use Stillat\Meerkat\Statamic\ControlPanel\SettingsProvider;
 
-$allowDirectAccess = config('meerkat.internals.allowDirectAccessToCpJsEmissions', false);
+$allowDirectAccess = config('meerkat.internals.allowDirectAccessToCpJsEmissions', true);
 
 if ($allowDirectAccess || RequestHelpers::isControlPanelRequestFromHeaders(request())) {
 

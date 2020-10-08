@@ -28,8 +28,7 @@ return [
     | Akismet Front Page
     |--------------------------------------------------------------------------
     |
-    | This value should be the domain name of your site, or your home page,
-    | and should match the value you configured in your Akismet account.
+    | This value should be the domain name of your site, or your home page.
     |
     */
     'front_page' => '',

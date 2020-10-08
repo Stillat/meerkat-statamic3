@@ -60,7 +60,7 @@ class ErrorLogPresenter
             ]
         ];
 
-        if ($this->getConfig('telemetry.errors.submitAddonData', true) === true) {
+        if ($this->getConfig('telemetry.errors.submit_addon_data', true) === true) {
             $reportAddons = [];
             /**
              * @var string $key

@@ -51667,7 +51667,9 @@ var Blueprints = /*#__PURE__*/function () {
   }, {
     key: "addOtherEntry",
     value: function addOtherEntry(svgIcon, title, url) {
-      this.addTableEntry(this.getTable(Blueprints.TABLE_OTHER), svgIcon, title, url);
+      var allTables = window.jQuery('table.data-table'),
+          otherTable = allTables[allTables.length - 1];
+      this.addTableEntry(otherTable, svgIcon, title, url);
     }
   }, {
     key: "getTable",

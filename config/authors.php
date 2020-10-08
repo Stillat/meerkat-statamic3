@@ -26,7 +26,8 @@ return [
     | This value controls how fields from your blueprint map to author details.
     |
     | The fields on the left are the Meerkat fields; the right is your blueprint's.
-    |*/
+    |
+    */
     'form_user_fields' => [
         'name'  => 'first_name',
         'email' => 'email',

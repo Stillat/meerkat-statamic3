@@ -4,7 +4,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Enable/Disable Telemetry Collection
+    | Enable/Disable Telemetry Submissions
     |--------------------------------------------------------------------------
     |
     | This value controls whether or not Meerkat is allowed to send

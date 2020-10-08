@@ -164,7 +164,7 @@ class ServiceProvider extends AddonServiceProvider
             $globalConfiguration->autoPublishAnonymousPosts = $this->getConfig('publishing.auto_publish', false);
             $globalConfiguration->autoPublishAuthenticatedPosts = $this->getConfig('publishing.auto_publish_authenticated_users', false);
             $globalConfiguration->disableCommentsAfterDays = $this->getConfig('publishing.automatically_close_comments', 0);
-            $globalConfiguration->trackChanges = $this->getConfig('storage.trackChanges', true);
+            $globalConfiguration->trackChanges = $this->getConfig('storage.track_changes', true);
             $globalConfiguration->searchableAttributes = $this->getConfig('search.attributes', []);
 
             $globalConfiguration->storageDirectory = PathProvider::contentPath();

@@ -15,6 +15,7 @@ return [
     |  - gravatar
     |  - identicon
     |  - jdenticon
+    |
     */
     'cp_avatar_driver' => 'initials',
 

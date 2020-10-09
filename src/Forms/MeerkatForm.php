@@ -35,16 +35,13 @@ class MeerkatForm extends MeerkatTag
     const KEY_DATA_FIELDS = 'fields';
     const KEY_FORM_CONFIG_VALIDATE = 'validate';
     const KEY_FORM_CONFIG_DISPLAY_NAME = 'display';
-
+    const HANDLE_PARAM = ['blueprint'];
     /**
      * The blueprint repository implementation.
      *
      * @var BlueprintRepository|null
      */
     protected $blueprints = null;
-
-    const HANDLE_PARAM = ['blueprint'];
-
     protected $hasValuesHandled = [
         MeerkatForm::KEY_MEERKAT_FORM,
         MeerkatForm::KEY_MEERKAT_CONTEXT
@@ -64,6 +61,17 @@ class MeerkatForm extends MeerkatTag
         $this->blueprints = $blueprints;
     }
 
+    /**
+     * Gets a form session handle for the provided blueprint name.
+     *
+     * @param string $blueprintName The name of the blueprint.
+     * @return string
+     */
+    public static function getFormSessionHandle($blueprintName)
+    {
+        return 'meerkat.form' . $blueprintName;
+    }
+
     public function render()
     {
         $bluePrint = $this->getParameterValue(self::KEY_PARAM_BLUEPRINT, Addon::CODE_ADDON_NAME);
@@ -77,13 +85,15 @@ class MeerkatForm extends MeerkatTag
 
         $knownParams = array_merge(static::HANDLE_PARAM, ['redirect', 'error_redirect', 'allow_request_redirect']);
 
-        $this->params['data-meerkat-form'] = 'comment-form';
+        if ($this->hasParameterValue('data-meerkat-form') === false) {
+            $this->params['data-meerkat-form'] = 'comment-form';
+        }
 
         $html = $this->formOpen('/!/Meerkat/socialize', Client::HTTP_POST, $knownParams);
 
-       foreach ($this->getRenderableContextualFields($sessionHandle) as $field) {
-           $html .= $field['field']->__toString();
-       }
+        foreach ($this->getRenderableContextualFields($sessionHandle) as $field) {
+            $html .= $field['field']->__toString();
+        }
 
         $params = [];
 
@@ -102,45 +112,6 @@ class MeerkatForm extends MeerkatTag
         $html .= $this->formClose();
 
         return $html;
-    }
-
-    /**
-     * Gets a form session handle for the provided blueprint name.
-     *
-     * @param string $blueprintName The name of the blueprint.
-     * @return string
-     */
-    public static function getFormSessionHandle($blueprintName)
-    {
-        return 'meerkat.form'.$blueprintName;
-    }
-
-    private function makeHiddenField($name, $value)
-    {
-        $hiddenField = new Field($name, [
-            'type' => 'hidden',
-            'validate' => 'required'
-        ]);
-
-        $hiddenField->setValue($value);
-
-        return $hiddenField;
-    }
-
-    /**
-     * Returns a collection of "hidden" context fields that should be included.
-     *
-     * @return array
-     */
-    private function getContextualFields()
-    {
-        $meerkatBlueprint = $this->makeHiddenField('_meerkat_form', $this->blueprintName);
-        $context = $this->makeHiddenField('_meerkat_context', $this->getHiddenContext());
-
-        return [
-            $meerkatBlueprint,
-            $context
-        ];
     }
 
     /**
@@ -170,6 +141,60 @@ class MeerkatForm extends MeerkatTag
         }
 
         return $data;
+    }
+
+    protected function addToDebugBar($data, $formHandle)
+    {
+        if (!function_exists('debug_bar')) {
+            return;
+        }
+
+        $debug = [];
+        $debug[$formHandle] = $data;
+
+        // TODO: Figure out blink.
+        /*
+        if ($this->blink->exists('debug_bar_data')) {
+            $debug = array_merge($debug, $this->blink->get('debug_bar_data'));
+        }
+
+        $this->blink->put('debug_bar_data', $debug);
+*/
+
+        try {
+            debugbar()->getCollector('Forms')->setData($debug);
+        } catch (DebugBarException $e) {
+            // Collector doesn't exist yet. We'll create it.
+            $collector = debugbar()->addCollector(new ConfigCollector($debug, 'Forms'));
+        }
+    }
+
+    private function makeHiddenField($name, $value)
+    {
+        $hiddenField = new Field($name, [
+            'type' => 'hidden',
+            'validate' => 'required'
+        ]);
+
+        $hiddenField->setValue($value);
+
+        return $hiddenField;
+    }
+
+    /**
+     * Returns a collection of "hidden" context fields that should be included.
+     *
+     * @return array
+     */
+    private function getContextualFields()
+    {
+        $meerkatBlueprint = $this->makeHiddenField('_meerkat_form', $this->blueprintName);
+        $context = $this->makeHiddenField('_meerkat_context', $this->getHiddenContext());
+
+        return [
+            $meerkatBlueprint,
+            $context
+        ];
     }
 
     /**
@@ -220,32 +245,6 @@ class MeerkatForm extends MeerkatTag
         $this->blueprint = $this->blueprints->find($bluePrintHandle);
 
         return $this->blueprint;
-    }
-
-    protected function addToDebugBar($data, $formHandle)
-    {
-        if (!function_exists('debug_bar')) {
-            return;
-        }
-
-        $debug = [];
-        $debug[$formHandle] = $data;
-
-        // TODO: Figure out blink.
-        /*
-        if ($this->blink->exists('debug_bar_data')) {
-            $debug = array_merge($debug, $this->blink->get('debug_bar_data'));
-        }
-
-        $this->blink->put('debug_bar_data', $debug);
-*/
-
-        try {
-            debugbar()->getCollector('Forms')->setData($debug);
-        } catch (DebugBarException $e) {
-            // Collector doesn't exist yet. We'll create it.
-            $collector = debugbar()->addCollector(new ConfigCollector($debug, 'Forms'));
-        }
     }
 
 }

@@ -41,6 +41,10 @@ class Where
             $comparison = $this->get('comparison', null);
             $value = $this->get('value');
 
+            if ($value === 'null') {
+                $value = null;
+            }
+
             if (Str::isNullOrEmpty($propertyToCheck)) {
                 throw new FilterException('`where` filter: $property does not accept `null` values.');
             }

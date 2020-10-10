@@ -7,6 +7,9 @@ use Stillat\Meerkat\Core\Contracts\Data\PaginatorContract;
 use Stillat\Meerkat\Core\Contracts\Data\QueryFactoryContract;
 use Stillat\Meerkat\Core\Data\DataQueryFactory;
 use Stillat\Meerkat\Core\Data\Filters\CommentFilterManager;
+use Stillat\Meerkat\Core\Search\Engine;
+use Stillat\Meerkat\Core\Search\EngineFactory;
+use Stillat\Meerkat\Core\Search\Providers\BitapSearchProvider;
 use Stillat\Meerkat\Data\Export\CsvWriter;
 use Stillat\Meerkat\Data\Paginator;
 use Stillat\Meerkat\Support\Factories\DataQueryBuilderFactory;
@@ -38,6 +41,12 @@ class DataServiceProvider extends AddonServiceProvider
         $this->app->singleton(QueryFactoryContract::class, function ($app) {
             return new DataQueryBuilderFactory();
         });
+
+        $this->app->singleton(Engine::class, function ($app) {
+            return new Engine(new BitapSearchProvider());
+        });
+
+        EngineFactory::$searchEngine = app()->make(Engine::class);
 
         DataQueryFactory::$queryBuilderFactory = app()->make(QueryFactoryContract::class);
 

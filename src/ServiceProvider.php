@@ -20,9 +20,11 @@ use Stillat\Meerkat\Core\GuardConfiguration;
 use Stillat\Meerkat\Core\Http\Client;
 use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
 use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
+use Stillat\Meerkat\Core\Parsing\DateParserFactory;
 use Stillat\Meerkat\Core\Parsing\MarkdownParserFactory;
 use Stillat\Meerkat\Core\Storage\Paths;
 use Stillat\Meerkat\Logging\ExceptionLogger;
+use Stillat\Meerkat\Parsing\CarbonDateParser;
 use Stillat\Meerkat\Parsing\MarkdownParser;
 use Stillat\Meerkat\Parsing\YAMLParser;
 use Stillat\Meerkat\Providers\AddonServiceProvider;
@@ -201,6 +203,7 @@ class ServiceProvider extends AddonServiceProvider
         $this->app->bind(HttpClientContract::class, Client::class);
 
         Statamic::booted(function () {
+            DateParserFactory::$instance = app(CarbonDateParser::class);
             ExceptionLoggerFactory::$instance = app(ExceptionLoggerContract::class);
             MarkdownParserFactory::$instance = app(MarkdownParserContract::class);
         });

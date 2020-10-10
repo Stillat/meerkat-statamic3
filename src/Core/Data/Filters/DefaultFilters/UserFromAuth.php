@@ -34,7 +34,13 @@ class UserFromAuth
     public function register(CommentFilterManager $manager)
     {
         $manager->filter(UserFromAuth::FILTER_FROM_AUTHENTICATED_USER, function ($comments) {
-            $includeUsers = TypeConversions::getBooleanValue($this->get(IsFilters::PARAM_COMPARISON, false));
+            $comparisonFilter = $this->get(IsFilters::PARAM_COMPARISON, false);
+
+            if ($comparisonFilter === IsFilters::FILTER_ANY) {
+                return $comments;
+            }
+
+            $includeUsers = TypeConversions::getBooleanValue($comparisonFilter);
 
             return array_filter($comments, function (CommentContract $comment) use ($includeUsers) {
                 $hasUser = $comment->leftByAuthenticatedUser();

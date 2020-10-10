@@ -4,6 +4,7 @@ namespace Stillat\Meerkat\Core\Data\Filters\DefaultFilters;
 
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Data\Filters\CommentFilterManager;
+use Stillat\Meerkat\Core\Data\Filters\PropertyRedirector;
 use Stillat\Meerkat\Core\Support\TypeConversions;
 /**
  * Class WhereNotIn
@@ -26,7 +27,7 @@ class WhereNotIn
     public function register(CommentFilterManager $manager)
     {
         $manager->filter(WhereNotIn::FILTER_WHERE_NOT_IN, function ($comments) {
-            $propertyToCheck = $this->get('property', null);
+            $propertyToCheck = PropertyRedirector::redirect($this->get('property', null));
             $values = TypeConversions::parseToArray($this->get('values', []));
 
             return array_filter($comments, function (CommentContract $comment) use ($propertyToCheck, $values) {

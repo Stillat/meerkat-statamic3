@@ -6,6 +6,7 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Data\Filters\CommentFilter;
 use Stillat\Meerkat\Core\Data\Filters\CommentFilterManager;
 use Stillat\Meerkat\Core\Exceptions\FilterException;
+use Stillat\Meerkat\Core\Parsing\DateParserFactory;
 use Stillat\Meerkat\Core\Support\TypeConversions;
 
 /**
@@ -38,7 +39,7 @@ class IsFilters
     public function register(CommentFilterManager $manager)
     {
         $manager->filterWithTagContext(IsFilters::FILTER_IS_BEFORE, function ($comments) {
-            $beforeTimestamp = intval($this->get(IsFilters::PARAM_TIMESTAMP));
+            $beforeTimestamp = intval(DateParserFactory::parse($this->get(IsFilters::PARAM_TIMESTAMP)));
 
             return array_filter($comments, function (CommentContract $comment) use ($beforeTimestamp) {
                 return intval($comment->getId()) <= $beforeTimestamp;
@@ -46,7 +47,7 @@ class IsFilters
         }, IsFilters::PARAM_TIMESTAMP);
 
         $manager->filterWithTagContext(IsFilters::FILTER_IS_AFTER, function ($comments) {
-            $sinceTimestamp = intval($this->get(IsFilters::PARAM_TIMESTAMP));
+            $sinceTimestamp = intval(DateParserFactory::parse($this->get(IsFilters::PARAM_TIMESTAMP)));
 
             return array_filter($comments, function (CommentContract $comment) use ($sinceTimestamp) {
                 return intval($comment->getId()) >= $sinceTimestamp;
@@ -57,8 +58,8 @@ class IsFilters
             $range = TypeConversions::parseToArray($this->get(IsFilters::PARAM_RANGE), ',');
 
             if (count($range) === 2) {
-                $sinceTimestamp = intval($range[0]);
-                $beforeTimestamp = intval($range[1]);
+                $sinceTimestamp = intval(DateParserFactory::parse($range[0]));
+                $beforeTimestamp = intval(DateParserFactory::parse($range[1]));
 
                 return array_filter($comments, function (CommentContract $comment) use ($sinceTimestamp, $beforeTimestamp) {
                     $commentDateValue = intval($comment->getId());

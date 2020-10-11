@@ -9,7 +9,7 @@
 ## About Meerkat for Statamic 3
 
 Meerkat 2 is an extremely powerful, yet easy-to-use comment platform for Statamic 3. Meerkat 2 allows designers and
-developers to easily build comment threads into their existing projects, allowing them to retain their user enagement data.
+developers to easily build comment threads into their existing projects, allowing them to retain their user engagement data.
 
 ## Installing
 

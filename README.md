@@ -1,7 +1,10 @@
-<p align="center"><img src="https://stillat.s3.us-east-1.amazonaws.com/2020/meerkat/meerkat_colored.png" width="400" alt="Meerkat" /></p>
-
+<p align="center">
+<a href="https://meerkatcomments.com"><img src="https://stillat.s3.us-east-1.amazonaws.com/2020/meerkat/meerkat_colored.png" width="400" alt="Meerkat" /></a>
+</p>
 
 [https://meerkatcomments.com/](https://meerkatcomments.com/)
+
+
 
 ## About Meerkat for Statamic 3
 

@@ -5,7 +5,6 @@ namespace Stillat\Meerkat\Core\Parsing;
 use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
-use Stillat\Meerkat\Core\Support\TypeConversions;
 
 /**
  * Class AbstractMarkdownParser
@@ -74,13 +73,7 @@ abstract class AbstractMarkdownParser implements MarkdownParserContract
      */
     public function cleanDocument($content)
     {
-        $tagsToKeep = '';
-
-        foreach ($this->configuration->getFormattingConfiguration()->tagsToKeep as $tag) {
-            $tagsToKeep .= '<'.$tag.'>';
-        }
-
-        return strip_tags($content, $tagsToKeep);
+        return strip_tags($content, $this->configuration->getFormattingConfiguration()->tagsToKeep);
     }
 
 }

@@ -37,7 +37,7 @@ class Addon
      */
     public static function getAddon()
     {
-        /** @var \Statamic\Extend\AddonRepository $addonRepository */
+        /** @var AddonRepository $addonRepository */
         $addonRepository = app(AddonRepository::class);
 
         return $addonRepository->get(Addon::ADDON_ID);

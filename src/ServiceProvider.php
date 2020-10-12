@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat;
 
 use Statamic\Statamic;
+use Statamic\Yaml\ParseException;
 use Stillat\Meerkat\Blueprint\BlueprintProvider;
 use Stillat\Meerkat\Concerns\UsesConfig;
 use Stillat\Meerkat\Console\Commands\MigrateCommentsCommand;
@@ -139,7 +140,7 @@ class ServiceProvider extends AddonServiceProvider
         $this->app->singleton(FormattingConfiguration::class, function ($app) {
             $formattingConfig = new FormattingConfiguration();
 
-            $formattingConfig->htmlTagsToClean = $this->getConfig('formatting.remove_tags', '<a><p><ul><li><ol><code><pre>');
+            $formattingConfig->tagsToKeep = $this->getConfig('formatting.keep_tags', '<a><p><ul><li><ol><code><pre>');
             $formattingConfig->commentDateFormat = $this->getConfig('formatting.comment_date_format', 'Y-m-d h:m:s A');
 
             // Register an additional configuration data, if available.
@@ -232,6 +233,11 @@ class ServiceProvider extends AddonServiceProvider
         }
     }
 
+    /**
+     * Checks for the existence of the default Meerkat blueprint.
+     *
+     * @throws ParseException
+     */
     private function checkIntegrationResourcesExist()
     {
         /** @var BlueprintProvider $blueprintProvider */

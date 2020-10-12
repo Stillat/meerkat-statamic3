@@ -230,7 +230,6 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
      * Sets the comment's parent author context, if available.
      *
      * @param AuthorContract $author The author of the parent comment.
-     * @return CommentContract
      */
     public function setParentAuthor($author)
     {

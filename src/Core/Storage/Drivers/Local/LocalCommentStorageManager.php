@@ -289,6 +289,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      *
      * @param string $threadId The identifier of the thread.
      * @return ThreadHierarchy
+     * @throws MutationException
      */
     public function getCommentsForThreadId($threadId)
     {
@@ -832,6 +833,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      * @return bool
      * @throws InvalidArgumentException
      * @throws ConcurrentResourceAccessViolationException
+     * @throws MutationException
      */
     public function save(CommentContract $comment)
     {
@@ -909,6 +911,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      * @param CommentContract $comment The comment to save.
      * @return bool
      * @throws ConcurrentResourceAccessViolationException
+     * @throws MutationException
      */
     public function update(CommentContract $comment)
     {
@@ -993,6 +996,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      *
      * @param CommentContract $comment The comment to check.
      * @return ChangeSet
+     * @throws MutationException
      */
     public function getMutationChangeSet(CommentContract $comment)
     {
@@ -1020,6 +1024,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      *
      * @param string $id The comment's string identifier.
      * @return CommentContract|null
+     * @throws MutationException
      */
     public function findById($id)
     {
@@ -1388,6 +1393,8 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      * @param CommentContract $comment The comment to update.
      * @param bool $isSpam Whether or not the comment is spam.
      * @return bool
+     * @throws ConcurrentResourceAccessViolationException
+     * @throws MutationException
      */
     public function setSpamStatus(CommentContract $comment, $isSpam)
     {
@@ -1401,6 +1408,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      * @param bool $isSpam Whether or not the comment is spam.
      * @return bool
      * @throws ConcurrentResourceAccessViolationException
+     * @throws MutationException
      */
     public function setSpamStatusById($commentId, $isSpam)
     {
@@ -1502,6 +1510,8 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      *
      * @param CommentContract $comment The comment to update.
      * @return bool
+     * @throws ConcurrentResourceAccessViolationException
+     * @throws MutationException
      */
     public function setIsSpam(CommentContract $comment)
     {
@@ -1513,6 +1523,8 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      *
      * @param string $commentId The comment's identifier.
      * @return bool
+     * @throws ConcurrentResourceAccessViolationException
+     * @throws MutationException
      */
     public function setIsSpamById($commentId)
     {
@@ -1524,6 +1536,8 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      *
      * @param CommentContract $comment The comment to update.
      * @return bool
+     * @throws ConcurrentResourceAccessViolationException
+     * @throws MutationException
      */
     public function setIsHam(CommentContract $comment)
     {
@@ -1535,6 +1549,8 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      *
      * @param string $commentId The comment's identifier.
      * @return bool
+     * @throws ConcurrentResourceAccessViolationException
+     * @throws MutationException
      */
     public function setIsHamById($commentId)
     {
@@ -1607,6 +1623,8 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      * @param string $commentId The comment's identifier.
      * @param bool $isApproved Whether the comment is "published".
      * @return bool
+     * @throws ConcurrentResourceAccessViolationException
+     * @throws MutationException
      */
     public function setApprovedStatusById($commentId, $isApproved)
     {
@@ -1649,6 +1667,8 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      * @param CommentContract $comment The comment to update.
      * @param bool $isApproved Whether the comment is "published".
      * @return bool
+     * @throws ConcurrentResourceAccessViolationException
+     * @throws MutationException
      */
     public function setApprovedStatus(CommentContract $comment, $isApproved)
     {
@@ -1660,6 +1680,8 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      *
      * @param CommentContract $comment The comment to update.
      * @return bool
+     * @throws ConcurrentResourceAccessViolationException
+     * @throws MutationException
      */
     public function setIsApproved(CommentContract $comment)
     {
@@ -1671,6 +1693,8 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      *
      * @param string $commentId The comment's identifier.
      * @return bool
+     * @throws ConcurrentResourceAccessViolationException
+     * @throws MutationException
      */
     public function setIsNotApprovedById($commentId)
     {
@@ -1682,6 +1706,8 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      *
      * @param string $commentId The comment's identifier.
      * @return bool
+     * @throws ConcurrentResourceAccessViolationException
+     * @throws MutationException
      */
     public function setIsApprovedById($commentId)
     {
@@ -1693,6 +1719,8 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      *
      * @param CommentContract $comment The comment to update.
      * @return bool
+     * @throws ConcurrentResourceAccessViolationException
+     * @throws MutationException
      */
     public function setIsNotApproved(CommentContract $comment)
     {
@@ -1747,6 +1775,8 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      *
      * @param string $commentId The comment's identifier.
      * @return AffectsCommentsResult
+     * @throws ConcurrentResourceAccessViolationException
+     * @throws MutationException
      */
     public function removeById($commentId)
     {
@@ -1873,6 +1903,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      * @param string $commentId The comment's identifier.
      * @return bool
      * @throws ConcurrentResourceAccessViolationException
+     * @throws MutationException
      */
     public function softDeleteById($commentId)
     {
@@ -1976,6 +2007,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      * @param string $commentId The comment's identifier.
      * @return AffectsCommentsResult
      * @throws ConcurrentResourceAccessViolationException
+     * @throws MutationException
      */
     public function restoreById($commentId)
     {

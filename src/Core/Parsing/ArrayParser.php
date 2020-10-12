@@ -63,7 +63,7 @@ class ArrayParser
                     $parserParts[] = implode('', $charBuffer);
                     continue;
                 } elseif ($inQuotes === true && $thisChar !== self::TOKEN_QUOTE_DELIMITER) {
-                    throw new ParserException('Unmatched quotes at end of sequence');
+                    throw new ParserException('Unmatched quotes at end of sequence: '.$inputString);
                 } else {
                     $charBuffer[] = $thisChar;
                     $parserParts[] = implode('', $charBuffer);
@@ -73,9 +73,12 @@ class ArrayParser
                     throw new ParserException('Unrecognized escape sequence: \\null');
                 }
 
+
                 if ($peek === self::TOKEN_QUOTE_DELIMITER) {
                     $charBuffer[] = self::TOKEN_QUOTE_DELIMITER;
+                    $i += 2;
 
+                    $inQuotes = true;
                     continue;
                 } elseif ($peek === self::TOKEN_ESCAPE) {
                     $charBuffer[] = self::TOKEN_ESCAPE;

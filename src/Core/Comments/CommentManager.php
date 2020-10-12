@@ -157,7 +157,9 @@ class CommentManager implements CommentManagerContract
      */
     public function removeById($id)
     {
-        return $this->commentStorageManager->removeById($id);
+        $result = $this->commentStorageManager->removeById($id);
+
+        return $result->success;
     }
 
     /**

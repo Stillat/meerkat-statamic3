@@ -2,3 +2,4 @@ vendor/*
 src/.idea/*
 /.idea/*
 /.vs/*
+/src/Core/.idea/*

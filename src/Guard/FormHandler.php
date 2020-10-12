@@ -4,6 +4,8 @@ namespace Stillat\Meerkat\Guard;
 
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
+use Stillat\Meerkat\Core\Exceptions\FilterException;
+use Stillat\Meerkat\Core\Guard\SpamChecker;
 use Stillat\Meerkat\Core\Guard\SpamService;
 use Stillat\Meerkat\Core\GuardConfiguration;
 
@@ -29,11 +31,11 @@ class FormHandler
     protected $config = null;
 
     /**
-     * The SpamService instance.
+     * The SpamChecker instance.
      *
-     * @var SpamService
+     * @var SpamChecker
      */
-    protected $spamService = null;
+    protected $spamChecker = null;
 
     /**
      * The CommentStorageManagerContract implementation instance.
@@ -42,10 +44,10 @@ class FormHandler
      */
     protected $storageManager = null;
 
-    public function __construct(GuardConfiguration $config, SpamService $service, CommentStorageManagerContract $commentManager)
+    public function __construct(GuardConfiguration $config, SpamChecker $spamChecker, CommentStorageManagerContract $commentManager)
     {
         $this->config = $config;
-        $this->spamService = $service;
+        $this->spamChecker = $spamChecker;
         $this->storageManager = $commentManager;
     }
 
@@ -53,12 +55,15 @@ class FormHandler
      * Checks the provided comment is spam or not.
      *
      * @param CommentContract $comment The comment to test.
+     * @throws FilterException
      */
     public function checkForSpam(CommentContract $comment)
     {
-        $isSpam = $this->spamService->isSpam($comment);
+        $this->spamChecker->checkSingle($comment);
 
-        if ($this->spamService->hasErrors() === false) {
+        $isSpam = $this->spamChecker->checkCommentsNow();
+
+        if ($this->spamChecker->hasErrors() === false) {
             if ($isSpam === false) {
                 $this->storageManager->setIsHamById($comment->getId());
             } else {

@@ -7,6 +7,7 @@ use Stillat\Meerkat\Core\Contracts\DataObjectContract;
 use Stillat\Meerkat\Core\Contracts\Http\HttpClientContract;
 use Stillat\Meerkat\Core\Contracts\SpamGuardContract;
 use Stillat\Meerkat\Core\Errors;
+use Stillat\Meerkat\Core\Exceptions\GuardException;
 use Stillat\Meerkat\Core\Guard\SpamReason;
 use Stillat\Meerkat\Core\GuardConfiguration;
 use Stillat\Meerkat\Core\Logging\ErrorLog;
@@ -258,12 +259,11 @@ class AkismetSpamGuard implements SpamGuardContract
         if (!$this->checkApiKey()) {
             return false;
         }
-
         if ($this->canMakeRequests) {
             $formData = $this->remapComment($data);
 
             try {
-                $apiResponse = $this->httpClient->post(self::AKISMET_API_CHECK_COMMENT, $formData);
+                $apiResponse = $this->httpClient->post($this->getRequestUrl(self::AKISMET_API_CHECK_COMMENT), $formData);
 
                 if ($apiResponse->content !== null) {
                     $responseBody = $apiResponse->content;
@@ -279,6 +279,8 @@ class AkismetSpamGuard implements SpamGuardContract
                         $this->reasons[] = $reason;
 
                         return true;
+                    } else {
+                        throw new GuardException('Unexpected Akismet response: '.$responseBody);
                     }
                 }
             } catch (Exception $generalException) {
@@ -476,12 +478,12 @@ class AkismetSpamGuard implements SpamGuardContract
 
             // Check if the referrer and user_ip values are available.
             if (array_key_exists('referrer', $formData) == false ||
-                array_key_exists('user_up', $formData) == false) {
+                array_key_exists('user_ip', $formData) == false) {
                 return false;
             }
 
             try {
-                $apiResponse = $this->httpClient->post(self::AKISMET_API_SUBMIT_SPAM, $formData);
+                $apiResponse = $this->httpClient->post($this->getRequestUrl(self::AKISMET_API_SUBMIT_SPAM), $formData);
 
                 if ($apiResponse->content !== null) {
                     if ($apiResponse->content == 'Thanks for making the web a better place.') {
@@ -521,12 +523,12 @@ class AkismetSpamGuard implements SpamGuardContract
 
             // Check if the referrer and user_ip values are available.
             if (array_key_exists('referrer', $formData) == false ||
-                array_key_exists('user_up', $formData) == false) {
+                array_key_exists('user_ip', $formData) == false) {
                 return false;
             }
 
             try {
-                $apiResponse = $this->httpClient->post(self::AKISMET_API_SUBMIT_HAM, $formData);
+                $apiResponse = $this->httpClient->post($this->getRequestUrl(self::AKISMET_API_SUBMIT_HAM), $formData);
 
                 if ($apiResponse->content !== null) {
                     if ($apiResponse->content == 'Thanks for making the web a better place.') {
@@ -585,6 +587,17 @@ class AkismetSpamGuard implements SpamGuardContract
     public function getErrors()
     {
         return $this->errors;
+    }
+
+    /**
+     * Generates an Akismet API request URL.
+     *
+     * @param string $suffix The relative path.
+     * @return string
+     */
+    private function getRequestUrl($suffix)
+    {
+        return 'https://' . $this->config->get(AkismetSpamGuard::AKISMET_API_KEY) . '.rest.akismet.com/1.1/' . $suffix;
     }
 
 }

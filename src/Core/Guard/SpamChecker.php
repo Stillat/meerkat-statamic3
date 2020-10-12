@@ -95,6 +95,27 @@ class SpamChecker
      */
     private $commentFilter = '';
 
+    /**
+     * Indicates if we should check a custom CommentContract.
+     *
+     * @var bool
+     */
+    private $checkSingle = false;
+
+    /**
+     * Indicates if any spam guard failed.
+     *
+     * @var bool
+     */
+    private $hasErrors = false;
+
+    /**
+     * A list of comments to check, provided by a developer/user.
+     *
+     * @var CommentContract
+     */
+    private $explicitComments = [];
+
     public function __construct(SpamService $service, DataQuery $query, UuidGenerator $idGenerator,
                                 ThreadStorageManagerContract $threadManager, CommentStorageManagerContract $commentManager,
                                 GuardReportStorageManagerContract $reportStorageManager, TaskStorageManagerContract $taskManager,
@@ -212,26 +233,73 @@ class SpamChecker
 
     /**
      * Checks the comments for spam immediately.
+     *
+     * @return bool
      * @throws FilterException
      */
     public function checkCommentsNow()
     {
-        $comments = $this->threadManager->getAllSystemComments();
+        $filtered = [];
 
-        $this->onlyCheckNeedingReview();
-        $filtered = $this->query->get($comments)->getData();
+        $spam = false;
+
+        if ($this->checkSingle === true) {
+            $filtered = $this->explicitComments;
+        } else {
+            $comments = $this->threadManager->getAllSystemComments();
+
+            $this->onlyCheckNeedingReview();
+            $filtered = $this->query->get($comments)->getData();
+        }
 
         /** @var CommentContract $comment */
         foreach ($filtered as $comment) {
             $isSpam = $this->service->isSpam($comment);
 
+            if ($this->service->hasErrors()) {
+                $this->hasErrors = true;
+            }
+
             $this->commentManager->setSpamStatus($comment, $isSpam);
             $report = $this->service->getLastReport();
 
             if ($isSpam) {
+                $spam = true;
                 $this->reportStorageManager->addGuardReport($comment, $report);
             }
         }
+
+        return $spam;
+    }
+
+    /**
+     * Indicates if any spam guard failed.
+     *
+     * @return bool
+     */
+    public function hasErrors()
+    {
+        return $this->hasErrors;
+    }
+
+    /**
+     * Informs the checker to only check the provided comment.
+     *
+     * @param CommentContract $comment The comment to check.
+     */
+    public function checkSingle(CommentContract $comment)
+    {
+        $this->checkSingle = true;
+        $this->explicitComments[] = $comment;
+    }
+
+    /**
+     * Resets the spam checker to use the Data Query engine.
+     */
+    public function resetExplicitComments()
+    {
+        $this->checkSingle = false;
+        $this->explicitComments = [];
     }
 
 }

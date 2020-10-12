@@ -7,7 +7,7 @@ use Stillat\Meerkat\Core\Exceptions\ConcurrentResourceAccessViolationException;
 /**
  * Class ResourceLock
  *
- * Provides utilties for creating, and managing resource locks.
+ * Provides utilities for creating, and managing resource locks.
  *
  * @package Stillat\Meerkat\Core
  * @since 2.0.0

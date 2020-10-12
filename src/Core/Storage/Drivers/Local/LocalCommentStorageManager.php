@@ -1006,7 +1006,11 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
 
         $changeSet = AttributeDiff::analyze($persistedStorable, $currentStorable);
 
-        $changeSet->setIdentity($this->identityManager->getIdentityContext());
+        $identity = $this->identityManager->getIdentityContext();
+
+        if ($identity !== null) {
+            $changeSet->setIdentity($this->identityManager->getIdentityContext());
+        }
 
         return $changeSet;
     }

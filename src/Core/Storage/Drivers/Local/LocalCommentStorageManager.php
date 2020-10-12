@@ -1131,7 +1131,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         $directoryName = dirname($storagePath);
 
         if (!file_exists($directoryName)) {
-            mkdir($directoryName, Paths::DIRECTORY_PERMISSIONS, true);
+            mkdir($directoryName, Paths::$directoryPermissions, true);
         }
 
         $result = file_put_contents($storagePath, $contentToSave);

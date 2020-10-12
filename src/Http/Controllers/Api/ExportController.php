@@ -83,7 +83,7 @@ class ExportController extends CpController
             $dir = storage_path('meerkat/tmp/downloads');
 
             if (!file_exists($dir)) {
-                mkdir($dir, Paths::DIRECTORY_PERMISSIONS, true);
+                mkdir($dir, Paths::$directoryPermissions, true);
             }
 
             $path = storage_path('meerkat/tmp/downloads/Comments-' . time() . '.' . $extension);

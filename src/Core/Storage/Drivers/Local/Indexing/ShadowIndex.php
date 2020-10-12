@@ -22,7 +22,7 @@ class ShadowIndex
 
 
         if (!file_exists($this->storageDirectory)) {
-            mkdir($this->storageDirectory, Paths::DIRECTORY_PERMISSIONS, true);
+            mkdir($this->storageDirectory, Paths::$directoryPermissions, true);
         }
     }
 

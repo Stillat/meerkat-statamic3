@@ -163,6 +163,10 @@ class ServiceProvider extends AddonServiceProvider
 
             $globalConfiguration->setFormattingConfiguration($app->make(FormattingConfiguration::class));
 
+            $globalConfiguration->directoryPermissions = $this->getConfig('storage.permissions.directory', 777);
+            $globalConfiguration->filePermissions = $this->getConfig('storage.permissions.file', 644);
+            Paths::$directoryPermissions = $globalConfiguration->directoryPermissions;
+
             $globalConfiguration->autoPublishAnonymousPosts = $this->getConfig('publishing.auto_publish', false);
             $globalConfiguration->autoPublishAuthenticatedPosts = $this->getConfig('publishing.auto_publish_authenticated_users', false);
             $globalConfiguration->disableCommentsAfterDays = $this->getConfig('publishing.automatically_close_comments', 0);
@@ -223,7 +227,7 @@ class ServiceProvider extends AddonServiceProvider
 
         foreach ($paths as $path) {
             if (file_exists($path) === false) {
-                mkdir($path, Paths::DIRECTORY_PERMISSIONS, true);
+                mkdir($path, Paths::$directoryPermissions, true);
             }
         }
     }

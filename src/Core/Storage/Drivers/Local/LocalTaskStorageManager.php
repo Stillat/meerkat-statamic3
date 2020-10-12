@@ -67,7 +67,7 @@ class LocalTaskStorageManager implements TaskStorageManagerContract
     private function prepare()
     {
         if (file_exists($this->taskStoragePath) === false) {
-            mkdir($this->taskStoragePath, Paths::DIRECTORY_PERMISSIONS, true);
+            mkdir($this->taskStoragePath, Paths::$directoryPermissions, true);
         }
     }
 
@@ -117,7 +117,7 @@ class LocalTaskStorageManager implements TaskStorageManagerContract
         $dirName = dirname($taskPath);
 
         if (file_exists($dirName) === false) {
-            mkdir($dirName, Paths::DIRECTORY_PERMISSIONS, true);
+            mkdir($dirName, Paths::$directoryPermissions, true);
         }
     }
 

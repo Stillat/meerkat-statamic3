@@ -22,7 +22,7 @@ class Paths
     /**
      * The default directory permissions to use.
      */
-    const DIRECTORY_PERMISSIONS = 644;
+    public static $directoryPermissions = 777;
 
     /**
      * The directory separator that is used internally.
@@ -127,7 +127,7 @@ class Paths
     public static function recursivelyCopyDirectory($source, $destination, $cleanUpSource)
     {
         if (file_exists($destination) == false) {
-            mkdir($destination, Paths::DIRECTORY_PERMISSIONS, true);
+            mkdir($destination, Paths::$directoryPermissions, true);
         }
 
         if (is_dir($source)) {

@@ -42,7 +42,7 @@ class PathPrivilegeValidator
         $validationResults = new ValidationResult();
 
         if (file_exists($path) == false || is_dir($path) == false) {
-            $wasSuccess = mkdir($path, Paths::DIRECTORY_PERMISSIONS, true);
+            $wasSuccess = mkdir($path, Paths::$directoryPermissions, true);
 
             if ($wasSuccess) {
                 $canUseDirectory = true;
@@ -54,7 +54,7 @@ class PathPrivilegeValidator
             if ($canWrite == false) {
                 // Attempt to adjust Meerkat's permissions over this directory.
                 try {
-                    $couldAdjust = chmod($path, Paths::DIRECTORY_PERMISSIONS);
+                    $couldAdjust = chmod($path, Paths::$directoryPermissions);
 
                     if ($couldAdjust && is_writeable($path)) {
                         $canUseDirectory = true;

@@ -90,6 +90,20 @@ class Configuration extends ConfigurationContainer
     public $directorySeparator = DIRECTORY_SEPARATOR;
 
     /**
+     * The default directory permissions to utilize when creating directories below the web root.
+     *
+     * @var int
+     */
+    public $directoryPermissions = 777;
+
+    /**
+     * The default file permissions to utilize.
+     *
+     * @var int
+     */
+    public $filePermissions = 644;
+
+    /**
      * The comment length limit. If this limit is reached when
      * reading the comment's content data will be truncated.
      *

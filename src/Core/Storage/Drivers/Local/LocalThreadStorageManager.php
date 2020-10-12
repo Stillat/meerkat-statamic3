@@ -781,7 +781,7 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
         $threadMetaData->setCreatedOn(time());
         $threadMetaData->setIsTrashed(false);
 
-        $threadDirectoryCreated = mkdir($path, Paths::DIRECTORY_PERMISSIONS, true);
+        $threadDirectoryCreated = mkdir($path, Paths::$directoryPermissions, true);
 
         if ($threadDirectoryCreated) {
             return $this->saveMetaData($context->getId(), $threadMetaData);

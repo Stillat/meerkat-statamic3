@@ -2,7 +2,6 @@
 
 return [
 
-
     /*
     |--------------------------------------------------------------------------
     | Local Storage Path
@@ -23,6 +22,21 @@ return [
     |
     */
     'track_changes' => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Storage Permissions
+    |--------------------------------------------------------------------------
+    |
+    | The following values control the permissions that will be used when
+    | directories and files are automatically created. The permissions
+    | specified as the defaults assume storage is below the web root.
+    |
+    */
+    'permissions' => [
+        'directory' => 777,
+        'file' => 644
+    ],
 
     /*
     |--------------------------------------------------------------------------

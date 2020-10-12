@@ -876,7 +876,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         $didCommentSave = $this->persistComment($comment);
 
         if ($didCommentSave === true) {
-            $this->commentPipeline->created($comment, false);
+            $this->commentPipeline->created($comment, null);
 
             if ($comment->hasDataAttribute(CommentContract::KEY_SPAM)) {
                 if ($comment->isSpam()) {
@@ -962,7 +962,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         $didCommentSave = $this->persistComment($comment);
 
         if ($didCommentSave === true) {
-            $this->commentPipeline->updated($comment, false);
+            $this->commentPipeline->updated($comment, null);
 
             if ($comment->hasDataAttribute(CommentContract::KEY_SPAM)) {
                 if ($comment->isSpam()) {

@@ -4,6 +4,7 @@ namespace Stillat\Meerkat\Providers;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
+use phpDocumentor\Reflection\DocBlock\StandardTagFactory;
 use Statamic\Providers\AddonServiceProvider as StatamicAddonServiceProvider;
 use Statamic\Statamic;
 use Stillat\Meerkat\Addon;
@@ -351,6 +352,24 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
                 }
             }
         }
+    }
+
+    /**
+     * Attempts to locate the preferred resource path.
+     *
+     * @param string $resourceName The desired resource name.
+     * @return string
+     */
+    public static function getResourceJavaScriptPath($resourceName)
+    {
+        $target = public_path('/vendor/' . Addon::CODE_ADDON_NAME . '/js/' . Addon::VERSION);
+        $minVersion = $resourceName . '.min.js';
+
+        if (file_exists($target . $minVersion)) {
+            return $minVersion;
+        }
+
+        return $resourceName;
     }
 
 }

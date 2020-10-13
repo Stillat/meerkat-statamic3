@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat\Core\Guard\Providers;
 
 use Exception;
+use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\DataObjectContract;
 use Stillat\Meerkat\Core\Contracts\Http\HttpClientContract;
 use Stillat\Meerkat\Core\Contracts\SpamGuardContract;
@@ -478,12 +479,14 @@ class AkismetSpamGuard implements SpamGuardContract
 
             // Check if the referrer and user_ip values are available.
             if (array_key_exists('referrer', $formData) == false ||
-                array_key_exists('user_ip', $formData) == false) {
+                array_key_exists(CommentContract::KEY_USER_IP, $formData) == false) {
+
                 return false;
             }
 
             try {
                 $apiResponse = $this->httpClient->post($this->getRequestUrl(self::AKISMET_API_SUBMIT_SPAM), $formData);
+
 
                 if ($apiResponse->content !== null) {
                     if ($apiResponse->content == 'Thanks for making the web a better place.') {

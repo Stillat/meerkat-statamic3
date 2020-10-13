@@ -45,4 +45,11 @@ class GuardConfiguration extends ConfigurationContainer
      */
     public $bannedWords = [];
 
+    /**
+     * Indicates if comments should be automatically deleted if they are detected to be spam, or marked as spam.
+     *
+     * @var bool
+     */
+    public $autoDeleteSpam = false;
+
 }

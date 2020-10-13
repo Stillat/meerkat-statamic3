@@ -10,6 +10,8 @@ use Stillat\Meerkat\Core\Contracts\Permissions\PermissionsManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Exceptions\CommentNotFoundException;
+use Stillat\Meerkat\Core\Guard\SpamCleaner;
+use Stillat\Meerkat\Core\GuardConfiguration;
 use Stillat\Meerkat\Core\Http\Responses\CommentResponseGenerator;
 use Stillat\Meerkat\Core\Http\Responses\Responses;
 use Stillat\Meerkat\Http\MessageGeneralCommentResponseGenerator;
@@ -62,6 +64,7 @@ class SpamController extends CpController
         PermissionsManagerContract $manager,
         IdentityManagerContract $identityManager,
         MessageGeneralCommentResponseGenerator $resultGenerator,
+        GuardConfiguration $guardConfiguration,
         CommentResponseGenerator $commentResultGenerator)
     {
         $permissions = $manager->getPermissions($identityManager->getIdentityContext());
@@ -89,23 +92,59 @@ class SpamController extends CpController
             $comment = Comment::findOrFail($commentId);
 
             $result = $storageManager->setIsSpam($comment);
+            $autoDeleted = false;
+            $removedComments = [];
 
             if ($result === true) {
                 $comment = Comment::find($commentId);
+
+                if ($guardConfiguration->autoDeleteSpam === true) {
+
+                    $removeResult = $storageManager->removeById($comment->getId());
+
+                    if ($removeResult->success) {
+                        $removedComments = $removeResult->comments;
+                    }
+                }
             }
 
             return Responses::conditionalWithData($result, [
-                ApiParameters::RESULT_COMMENT => $commentResultGenerator->getApiComment($comment->toArray())
+                ApiParameters::RESULT_COMMENT => $commentResultGenerator->getApiComment($comment->toArray()),
+                ApiParameters::RESULT_AUTO_REMOVED => $autoDeleted,
+                ApiParameters::RESULT_COMMENTS => $removedComments
             ]);
         } catch (CommentNotFoundException $notFound) {
             return $resultGenerator->notFound($commentId);
         } catch (Exception $e) {
-            throw $e;
             return Responses::generalFailure();
         }
     }
 
+    public function removeAllSpam(PermissionsManagerContract $manager, IdentityManagerContract $identityManager, SpamCleaner $cleaner)
+    {
+        $permissions = $manager->getPermissions($identityManager->getIdentityContext());
 
+        if ($permissions->canRemoveComments === false) {
+            if ($this->request->ajax()) {
+                return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_REMOVE);
+            } else {
+                abort(403, 'Unauthorized', [
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_REMOVE
+                ]);
+                exit;
+            }
+        }
+
+        try {
+            $result = $cleaner->deleteAllSpam();
+
+            return Responses::conditionalWithData($result->success, [
+                ApiParameters::RESULT_REMOVED_IDS => $result->comments
+            ]);
+        } catch (Exception $e) {
+            return Responses::generalFailure();
+        }
+    }
 
 
 }

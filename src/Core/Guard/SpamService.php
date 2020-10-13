@@ -151,6 +151,8 @@ class SpamService
         $result = new GuardResult();
         $result->success = true;
 
+
+
         foreach ($this->spamGuards as $guard) {
             if ($guard->supportsSubmittingSpam()) {
                 try {

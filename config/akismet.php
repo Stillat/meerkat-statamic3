@@ -54,7 +54,7 @@ return [
         // These values are handled automatically.
         'user_ip'    => 'user_ip',
         'user_agent' => 'user_agent',
-        'referrer'   => 'referrer',
+        'referrer'   => 'referer',
         'permalink'  => 'page_url',
     ],
 

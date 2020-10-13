@@ -186,19 +186,6 @@ trait ProvidesEventHelpers
     }
 
     /**
-     * Called after a comment has been marked as spam.
-     *
-     * Callable arguments:
-     *      0: CommentContract
-     *
-     * @param callable $handler The callback.
-     */
-    public static function onCommentMarkedAsSpam(callable $handler)
-    {
-        self::listenToEvent(CommentMutationPipelineContract::MUTATION_MARKED_AS_SPAM, $handler);
-    }
-
-    /**
      * Called before a comment is marked as not spam.
      *
      * Callable arguments:
@@ -209,6 +196,33 @@ trait ProvidesEventHelpers
     public static function onCommentMarkingAsHam(callable $handler)
     {
         self::listenToEvent(CommentMutationPipelineContract::MUTATION_MARKING_AS_HAM, $handler);
+    }
+
+    /**
+     * Called after a comment has been marked as spam or ham.
+     *
+     * Callable arguments:
+     *      0: CommentContract
+     *
+     * @param callable $handler The callback.
+     */
+    public static function onCommentSpamStatusUpdated(callable $handler)
+    {
+        self::onCommentMarkedAsSpam($handler);
+        self::onCommentMarkedAsHam($handler);
+    }
+
+    /**
+     * Called after a comment has been marked as spam.
+     *
+     * Callable arguments:
+     *      0: CommentContract
+     *
+     * @param callable $handler The callback.
+     */
+    public static function onCommentMarkedAsSpam(callable $handler)
+    {
+        self::listenToEvent(CommentMutationPipelineContract::MUTATION_MARKED_AS_SPAM, $handler);
     }
 
     /**
@@ -414,7 +428,7 @@ trait ProvidesEventHelpers
      *
      * @param callable $handler The callback.
      */
-    public static function onThreadRestoring(callable  $handler)
+    public static function onThreadRestoring(callable $handler)
     {
         self::listenToEvent(ThreadMutationPipelineContract::MUTATION_RESTORING, $handler);
     }
@@ -427,7 +441,7 @@ trait ProvidesEventHelpers
      *
      * @param callable $handler The callback.
      */
-    public static function onThreadRestored(callable  $handler)
+    public static function onThreadRestored(callable $handler)
     {
         self::listenToEvent(ThreadMutationPipelineContract::MUTATION_RESTORED, $handler);
     }
@@ -441,7 +455,7 @@ trait ProvidesEventHelpers
      *
      * @param callable $handler The callback.
      */
-    public static function onPermissionsResolving(callable  $handler)
+    public static function onPermissionsResolving(callable $handler)
     {
         self::listenToEvent(PermissionsMutationPipelineContract::MUTATION_RESOLVING, $handler);
     }

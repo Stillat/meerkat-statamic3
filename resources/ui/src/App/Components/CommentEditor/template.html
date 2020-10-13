@@ -1,0 +1,14 @@
+<div>
+    <div class="meerkat__temp-markdown-editor--wrapper">
+        <markdown-fieldtype ref="markdownEditor" v-model="comment.editProperties.content"></markdown-fieldtype>
+    </div>
+
+    <div class="p-2 bg-grey-20 border-t flex items-center text-sm">
+        <button class="btn-primary mr-2" v-on:click="$emit('update-requested', comment)">{{
+            trans('actions.edit_confirm_button') }}
+        </button>
+        <button class="text-grey hover:text=grey-90"
+                v-on:click="cancel()">{{ trans('actions.cancel') }}
+        </button>
+    </div>
+</div>

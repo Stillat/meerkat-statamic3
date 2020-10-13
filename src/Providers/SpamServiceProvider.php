@@ -19,6 +19,8 @@ use Stillat\Meerkat\Core\Logging\ErrorLogContext;
 use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
 use Stillat\Meerkat\Guard\FormHandler;
 use Stillat\Meerkat\Guard\GuardPipeline;
+use Stillat\Meerkat\Guard\ModeratorHandler;
+use Stillat\Meerkat\Support\Facades\Meerkat;
 
 class SpamServiceProvider extends AddonServiceProvider
 {
@@ -45,6 +47,12 @@ class SpamServiceProvider extends AddonServiceProvider
             $handler->checkForSpam($comment);
         });
 
+        Meerkat::onCommentSpamStatusUpdated(function (CommentContract $comment) {
+            /** @var ModeratorHandler $moderatorHandler */
+            $moderatorHandler = app(ModeratorHandler::class);
+
+            $moderatorHandler->submitToProviders($comment, $comment->isSpam());
+        });
 
         Event::listen('Meerkat.comments.created', function () {
             /** @var FormHandler $guardHandler */

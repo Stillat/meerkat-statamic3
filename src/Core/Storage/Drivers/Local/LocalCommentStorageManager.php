@@ -933,6 +933,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
 
         $comment = $this->runMutablePipeline($originalId, $comment, CommentMutationPipelineContract::METHOD_UPDATING);
 
+
         // Marking as spam/ham.
         if ($changeSet->wasAttributeMutated(CommentContract::KEY_SPAM)) {
             $comment = $this->runConditionalMutablePipeline(
@@ -1824,6 +1825,8 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         Paths::recursivelyRemoveDirectory($storageDirectory);
 
         $this->commentPipeline->removed($commentId, null);
+
+        $descendents[] = $commentId;
 
         return AffectsCommentsResult::successWithComments($descendents);
     }

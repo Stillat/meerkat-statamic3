@@ -67,7 +67,15 @@ class FormHandler
             if ($isSpam === false) {
                 $this->storageManager->setIsHamById($comment->getId());
             } else {
-                $this->storageManager->setIsSpamById($comment->getId());
+                if ($this->config->autoDeleteSpam === true) {
+                    $result = $this->storageManager->removeById($comment->getId());
+
+                    if ($result->success === false) {
+                        $this->storageManager->setIsSpamById($comment->getId());
+                    }
+                } else {
+                    $this->storageManager->setIsSpamById($comment->getId());
+                }
             }
         } else {
             if ($this->config->unpublishOnGuardFailures === true) {

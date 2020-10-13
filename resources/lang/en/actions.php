@@ -14,6 +14,8 @@ return [
     'export_json' => 'JSON',
     'export_csv' => 'CSV',
 
+    'spam' => 'Spam',
+    'remove_all_spam' => 'Delete all Spam',
     'check_for_spam' => 'Check for Spam',
     'check_all_spam_error' => 'There was a problem checking all comments for spam',
     'check_all_spam_task_created' => 'The spam check task has been started',
@@ -144,5 +146,14 @@ return [
     'bulk_mark_ham_confirm_abandoned' => 'The mark as not spam action was abandoned',
     'bulk_mark_ham_error_encountered' => 'An error was encountered while marking the comments as not spam. Would you like to try again?',
     'bulk_mark_ham_success' => 'The comments were marked as not spam',
+
+    'bulk_remove_spam' => 'Remove all Spam',
+    'bulk_remove_spam_confirm_title' => 'Remove all Spam',
+    'bulk_remove_spam_confirm_title_active' => 'Cleaning Up Spam',
+    'bulk_remove_spam_confirm_progress_message' => 'Removing spam comments. Please wait...',
+    'bulk_remove_spam_confirm_message' => 'Are you sure you want to remove all spam comments? This may remove any replies associated with those comments.',
+    'bulk_remove_spam_confirm_abandoned' => 'The spam cleanup action was abandoned',
+    'bulk_remove_spam_error_encountered' => 'An error was encountered while removing the spam comments. Would you like to try again?',
+    'bulk_remove_spam_success' => 'The existing spam comments were removed',
 
 ];

@@ -22430,7 +22430,7 @@ utils.intFromLE = intFromLE;
 /*! exports provided: _args, _development, _from, _id, _inBundle, _integrity, _location, _phantomChildren, _requested, _requiredBy, _resolved, _spec, _where, author, bugs, dependencies, description, devDependencies, files, homepage, keywords, license, main, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"_args\":[[\"elliptic@6.5.3\",\"E:\\\\meerkat\\\\core-ui\"]],\"_development\":true,\"_from\":\"elliptic@6.5.3\",\"_id\":\"elliptic@6.5.3\",\"_inBundle\":false,\"_integrity\":\"sha512-IMqzv5wNQf+E6aHeIqATs0tOLeOTwj1QKbRcS3jBbYkl5oLAserA8yJTT7/VyHUYG91PRmPyeQDObKLPpeS4dw==\",\"_location\":\"/elliptic\",\"_phantomChildren\":{},\"_requested\":{\"type\":\"version\",\"registry\":true,\"raw\":\"elliptic@6.5.3\",\"name\":\"elliptic\",\"escapedName\":\"elliptic\",\"rawSpec\":\"6.5.3\",\"saveSpec\":null,\"fetchSpec\":\"6.5.3\"},\"_requiredBy\":[\"/browserify-sign\",\"/create-ecdh\"],\"_resolved\":\"https://registry.npmjs.org/elliptic/-/elliptic-6.5.3.tgz\",\"_spec\":\"6.5.3\",\"_where\":\"E:\\\\meerkat\\\\core-ui\",\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.4.0\",\"brorand\":\"^1.0.1\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.0\",\"inherits\":\"^2.0.1\",\"minimalistic-assert\":\"^1.0.0\",\"minimalistic-crypto-utils\":\"^1.0.0\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^1.4.3\",\"coveralls\":\"^3.0.8\",\"grunt\":\"^1.0.4\",\"grunt-browserify\":\"^5.0.0\",\"grunt-cli\":\"^1.2.0\",\"grunt-contrib-connect\":\"^1.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^1.0.1\",\"grunt-mocha-istanbul\":\"^3.0.1\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.2\",\"jscs\":\"^3.0.7\",\"jshint\":\"^2.10.3\",\"mocha\":\"^6.2.2\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"jscs\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"jshint\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"lint\":\"npm run jscs && npm run jshint\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.3\"}");
+module.exports = JSON.parse("{\"_args\":[[\"elliptic@6.5.3\",\"C:\\\\apachewsl\\\\v2.local\\\\addons\\\\stillat\\\\meerkat\\\\resources\\\\ui\"]],\"_development\":true,\"_from\":\"elliptic@6.5.3\",\"_id\":\"elliptic@6.5.3\",\"_inBundle\":false,\"_integrity\":\"sha512-IMqzv5wNQf+E6aHeIqATs0tOLeOTwj1QKbRcS3jBbYkl5oLAserA8yJTT7/VyHUYG91PRmPyeQDObKLPpeS4dw==\",\"_location\":\"/elliptic\",\"_phantomChildren\":{},\"_requested\":{\"type\":\"version\",\"registry\":true,\"raw\":\"elliptic@6.5.3\",\"name\":\"elliptic\",\"escapedName\":\"elliptic\",\"rawSpec\":\"6.5.3\",\"saveSpec\":null,\"fetchSpec\":\"6.5.3\"},\"_requiredBy\":[\"/browserify-sign\",\"/create-ecdh\"],\"_resolved\":\"https://registry.npmjs.org/elliptic/-/elliptic-6.5.3.tgz\",\"_spec\":\"6.5.3\",\"_where\":\"C:\\\\apachewsl\\\\v2.local\\\\addons\\\\stillat\\\\meerkat\\\\resources\\\\ui\",\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.4.0\",\"brorand\":\"^1.0.1\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.0\",\"inherits\":\"^2.0.1\",\"minimalistic-assert\":\"^1.0.0\",\"minimalistic-crypto-utils\":\"^1.0.0\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^1.4.3\",\"coveralls\":\"^3.0.8\",\"grunt\":\"^1.0.4\",\"grunt-browserify\":\"^5.0.0\",\"grunt-cli\":\"^1.2.0\",\"grunt-contrib-connect\":\"^1.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^1.0.1\",\"grunt-mocha-istanbul\":\"^3.0.1\",\"grunt-saucelabs\":\"^9.0.1\",\"istanbul\":\"^0.4.2\",\"jscs\":\"^3.0.7\",\"jshint\":\"^2.10.3\",\"mocha\":\"^6.2.2\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"jscs\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"jshint\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"lint\":\"npm run jscs && npm run jshint\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.3\"}");
 
 /***/ }),
 
@@ -41957,6 +41957,9 @@ __webpack_require__(/*! ./style.less */ "./src/App/CommentThread/style.less");
     };
   },
   methods: {
+    removeAllSpam: function removeAllSpam() {
+      this.$refs.commentTable.performBulkAction('remove-spam');
+    },
     hasEditorOpen: function hasEditorOpen() {
       if (this.commentData === null) {
         return false;
@@ -42169,7 +42172,7 @@ __webpack_require__(/*! ./style.less */ "./src/App/CommentThread/style.less");
 /***/ (function(module, exports) {
 
 // Module
-var code = "<div>\r\n    <div class=\"flex items-center justify-between mb-3\">\r\n        <h1 class=\"flex-1\">{{ trans('display.header_comments') }}</h1>\r\n\r\n        <loader v-if=\"state.loadingData\" :display-inline=\"true\" class=\"mr-1\"></loader>\r\n        <dropdown-list class=\"mr-1\">\r\n            <button class=\"btn\" slot=\"trigger\">{{ trans('actions.export') }}</button>\r\n            <dropdown-item :text=\"trans('actions.export_csv')\" :redirect=\"exportLinks.csv\"></dropdown-item>\r\n            <dropdown-item :text=\"trans('actions.export_json')\" :redirect=\"exportLinks.json\"></dropdown-item>\r\n        </dropdown-list>\r\n        <button class=\"btn btn-primary\" :disabled=\"state.isCheckingAllForSpam\" v-if=\"canCheckForSpam\" v-on:click=\"checkForSpam\">{{ trans('actions.check_for_spam') }}</button>\r\n    </div>\r\n\r\n    <div class=\"flex mb-3 meerkat__status--message\" v-if=\"state.showStatusMessage\">\r\n        <p>{{ state.statusMessage }} <a class=\"cursor__pointer\" v-on:click=\"state.showStatusMessage = false\">{{ trans('actions.ok') }}</a> &mdash; <a class=\"cursor__pointer\" v-on:click=\"reloadStateAnyway()\">{{ trans('actions.reload_anyway') }}</a></p>\r\n    </div>\r\n\r\n    <div v-if=\"state.loadingInitial === true\" class=\"card loading\">\r\n        <loader :display-text=\"trans('display.loading')\"></loader>\r\n    </div>\r\n\r\n    <comment-table ref=\"commentTable\" v-on:table-available=\"onTableAvailable\" v-if=\"state.loadingInitial === false\"\r\n                   :comments=\"commentData\" :active-filter-id=\"state.activeFilterId\"\r\n                   v-on:filter-changed=\"onFilterChanged\" v-on:order-changed=\"onOrderUpdated\" v-on:search-updated=\"onSearchUpdated\"\r\n                   v-on:data-update-requested=\"onRefreshRequested\"\r\n                   :loading=\"state.loadingData\"></comment-table>\r\n\r\n    <paginator v-if=\"commentData !== null\" :per-page=\"state.initialPerPage\" :page-data=\"commentData.pages\"\r\n               v-on:page-updated=\"updateQueryWithPage\" v-on:per-page-updated=\"updateQueryWithPerPage\">\r\n    </paginator>\r\n</div>";
+var code = "<div>\n    <div class=\"flex items-center justify-between mb-3\">\n        <h1 class=\"flex-1\">{{ trans('display.header_comments') }}</h1>\n\n        <loader v-if=\"state.loadingData\" :display-inline=\"true\" class=\"mr-1\"></loader>\n        <dropdown-list class=\"mr-1\">\n            <button class=\"btn\" slot=\"trigger\">{{ trans('actions.export') }}</button>\n            <dropdown-item :text=\"trans('actions.export_csv')\" :redirect=\"exportLinks.csv\"></dropdown-item>\n            <dropdown-item :text=\"trans('actions.export_json')\" :redirect=\"exportLinks.json\"></dropdown-item>\n        </dropdown-list>\n        <dropdown-list>\n            <button class=\"btn btn-primary\" slot=\"trigger\">{{ trans('actions.spam') }}</button>\n            <dropdown-item :text=\"trans('actions.check_for_spam')\" :disabled=\"state.isCheckingAllForSpam\" v-if=\"canCheckForSpam\" v-on:click=\"checkForSpam\"></dropdown-item>\n            <dropdown-item :text=\"trans('actions.remove_all_spam')\" v-if=\"permissions.canRemoveComments\" v-on:click=\"removeAllSpam\"></dropdown-item>\n        </dropdown-list>\n    </div>\n\n    <div class=\"flex mb-3 meerkat__status--message\" v-if=\"state.showStatusMessage\">\n        <p>{{ state.statusMessage }} <a class=\"cursor__pointer\" v-on:click=\"state.showStatusMessage = false\">{{ trans('actions.ok') }}</a> &mdash; <a class=\"cursor__pointer\" v-on:click=\"reloadStateAnyway()\">{{ trans('actions.reload_anyway') }}</a></p>\n    </div>\n\n    <div v-if=\"state.loadingInitial === true\" class=\"card loading\">\n        <loader :display-text=\"trans('display.loading')\"></loader>\n    </div>\n\n    <comment-table ref=\"commentTable\" v-on:table-available=\"onTableAvailable\" v-if=\"state.loadingInitial === false\"\n                   :comments=\"commentData\" :active-filter-id=\"state.activeFilterId\"\n                   v-on:filter-changed=\"onFilterChanged\" v-on:order-changed=\"onOrderUpdated\" v-on:search-updated=\"onSearchUpdated\"\n                   v-on:data-update-requested=\"onRefreshRequested\"\n                   :loading=\"state.loadingData\"></comment-table>\n\n    <paginator v-if=\"commentData !== null\" :per-page=\"state.initialPerPage\" :page-data=\"commentData.pages\"\n               v-on:page-updated=\"updateQueryWithPage\" v-on:per-page-updated=\"updateQueryWithPerPage\">\n    </paginator>\n</div>\n";
 // Exports
 module.exports = code;
 
@@ -43417,6 +43420,116 @@ var BulkNotSpamHandler = /*#__PURE__*/function (_ActionState) {
 
 /***/ }),
 
+/***/ "./src/App/Components/CommentTable/Handlers/bulkRemoveAllSpam.js":
+/*!***********************************************************************!*\
+  !*** ./src/App/Components/CommentTable/Handlers/bulkRemoveAllSpam.js ***!
+  \***********************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var core_js_modules_es_symbol__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.symbol */ "./node_modules/core-js/modules/es.symbol.js");
+/* harmony import */ var core_js_modules_es_symbol__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.symbol.description */ "./node_modules/core-js/modules/es.symbol.description.js");
+/* harmony import */ var core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_description__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.symbol.iterator */ "./node_modules/core-js/modules/es.symbol.iterator.js");
+/* harmony import */ var core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.date.to-string */ "./node_modules/core-js/modules/es.date.to-string.js");
+/* harmony import */ var core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.object.create */ "./node_modules/core-js/modules/es.object.create.js");
+/* harmony import */ var core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.object.define-property */ "./node_modules/core-js/modules/es.object.define-property.js");
+/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.object.get-prototype-of */ "./node_modules/core-js/modules/es.object.get-prototype-of.js");
+/* harmony import */ var core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/es.object.set-prototype-of */ "./node_modules/core-js/modules/es.object.set-prototype-of.js");
+/* harmony import */ var core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/es.object.to-string */ "./node_modules/core-js/modules/es.object.to-string.js");
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! core-js/modules/es.reflect.construct */ "./node_modules/core-js/modules/es.reflect.construct.js");
+/* harmony import */ var core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! core-js/modules/es.string.iterator */ "./node_modules/core-js/modules/es.string.iterator.js");
+/* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_12__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_13__);
+/* harmony import */ var _actionState__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../../actionState */ "./src/App/actionState.js");
+/* harmony import */ var _Repositories_commentRepository__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../../../Repositories/commentRepository */ "./src/Repositories/commentRepository.js");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+
+
+
+var BulkRemoveAllSpam = /*#__PURE__*/function (_ActionState) {
+  _inherits(BulkRemoveAllSpam, _ActionState);
+
+  var _super = _createSuper(BulkRemoveAllSpam);
+
+  function BulkRemoveAllSpam() {
+    var _this;
+
+    _classCallCheck(this, BulkRemoveAllSpam);
+
+    _this = _super.call(this);
+
+    _this.setMessages('bulk_remove_spam');
+
+    return _this;
+  }
+
+  _createClass(BulkRemoveAllSpam, [{
+    key: "proceedWith",
+    value: function proceedWith() {
+      return _Repositories_commentRepository__WEBPACK_IMPORTED_MODULE_15__["default"].Instance.removeAllSpam();
+    }
+  }]);
+
+  return BulkRemoveAllSpam;
+}(_actionState__WEBPACK_IMPORTED_MODULE_14__["default"]);
+
+/* harmony default export */ __webpack_exports__["default"] = (BulkRemoveAllSpam);
+
+/***/ }),
+
 /***/ "./src/App/Components/CommentTable/Handlers/bulkSpamHandler.js":
 /*!*********************************************************************!*\
   !*** ./src/App/Components/CommentTable/Handlers/bulkSpamHandler.js ***!
@@ -43754,7 +43867,7 @@ var EditCommentHandler = /*#__PURE__*/function (_ActionState) {
 /*!***********************************************************!*\
   !*** ./src/App/Components/CommentTable/Handlers/index.js ***!
   \***********************************************************/
-/*! exports provided: EditCommentHandler, ReplyCommentHandler, BulkApproveHandler, BulkUnapproveHandler, BulkDeleteHandler, BulkSpamHandler, BulkNotSpamHandler */
+/*! exports provided: EditCommentHandler, ReplyCommentHandler, BulkApproveHandler, BulkUnapproveHandler, BulkDeleteHandler, BulkSpamHandler, BulkNotSpamHandler, BulkRemoveAllSpam */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -43779,6 +43892,10 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony import */ var _bulkNotSpamHandler__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./bulkNotSpamHandler */ "./src/App/Components/CommentTable/Handlers/bulkNotSpamHandler.js");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "BulkNotSpamHandler", function() { return _bulkNotSpamHandler__WEBPACK_IMPORTED_MODULE_6__["default"]; });
+
+/* harmony import */ var _bulkRemoveAllSpam__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./bulkRemoveAllSpam */ "./src/App/Components/CommentTable/Handlers/bulkRemoveAllSpam.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "BulkRemoveAllSpam", function() { return _bulkRemoveAllSpam__WEBPACK_IMPORTED_MODULE_7__["default"]; });
+
 
 
 
@@ -43971,10 +44088,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
 
-__webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style.less"); // TODO: When adjustments to publish/spam, etc are made (even bulk) - must check the active filter and apply again.
-//       If no changes would be required (i.e., on all) - do nothing, but on others remove immediately and then
-//       update the view and trigger an update on the OverviewProvider.
-
+__webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style.less");
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   mixins: [_Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_14__["default"], _Mixins_actionHandler__WEBPACK_IMPORTED_MODULE_18__["default"]],
@@ -44027,7 +44141,8 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style
         'unapprove': _Handlers__WEBPACK_IMPORTED_MODULE_4__["BulkUnapproveHandler"],
         'delete': _Handlers__WEBPACK_IMPORTED_MODULE_4__["BulkDeleteHandler"],
         'mark-spam': _Handlers__WEBPACK_IMPORTED_MODULE_4__["BulkSpamHandler"],
-        'mark-ham': _Handlers__WEBPACK_IMPORTED_MODULE_4__["BulkNotSpamHandler"]
+        'mark-ham': _Handlers__WEBPACK_IMPORTED_MODULE_4__["BulkNotSpamHandler"],
+        'remove-spam': _Handlers__WEBPACK_IMPORTED_MODULE_4__["BulkRemoveAllSpam"]
       }
     };
   },
@@ -44188,7 +44303,6 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style
         this.confirm(new this.handlers[action](comment)).onConfirm(function (state) {
           state.proceed();
         });
-        console.log('from performAction', this.currentAction);
       }
     },
     performActionNow: function performActionNow(action, comment) {
@@ -45277,8 +45391,6 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/StatefulConfirmati
       if (val === true) {
         this.jiggle();
       }
-
-      console.log('isError?', val);
     }
   },
   data: function data() {
@@ -45295,7 +45407,6 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/StatefulConfirmati
       });
     },
     getInteractionProperties: function getInteractionProperties() {
-      console.log('get interaction?', this, this.actionState, this.actionState.comment);
       return {
         state: this.actionState,
         comment: this.actionState.comment
@@ -45978,6 +46089,8 @@ var ActionState = /*#__PURE__*/function (_EventEmitter) {
             this.hasResponse = true;
           }
         }.bind(this))["catch"](function (err) {
+          console.log('eerr', err);
+
           if (_Types_type__WEBPACK_IMPORTED_MODULE_19__["default"].isTypeOf(err, _Http_Responses_errorResponse__WEBPACK_IMPORTED_MODULE_20__["default"])) {
             if (err.authorized === false) {
               this._notAuthorized(err.permission);
@@ -49507,6 +49620,8 @@ var CommentMutationResponse = /*#__PURE__*/function (_BaseResponse) {
     _classCallCheck(this, CommentMutationResponse);
 
     _this = _super.call(this);
+    _this.autoDeleted = false;
+    _this.comments = [];
     _this.comment = null;
     return _this;
   }
@@ -49517,6 +49632,8 @@ var CommentMutationResponse = /*#__PURE__*/function (_BaseResponse) {
       var response = new CommentMutationResponse();
       _baseResponse__WEBPACK_IMPORTED_MODULE_14__["default"].applyResponseToObject(apiResponse, err, response);
       response.comment = _Types_type__WEBPACK_IMPORTED_MODULE_15__["default"].withDefault(apiResponse[CommentMutationResponse.ApiComment], null);
+      response.comments = _Types_type__WEBPACK_IMPORTED_MODULE_15__["default"].withDefault(apiResponse[CommentMutationResponse.ApiComments], []);
+      response.autoDeleted = _Types_type__WEBPACK_IMPORTED_MODULE_15__["default"].withDefault(apiResponse[CommentMutationResponse.ApiAutoDeleted], false);
       return response;
     }
   }]);
@@ -49524,6 +49641,8 @@ var CommentMutationResponse = /*#__PURE__*/function (_BaseResponse) {
   return CommentMutationResponse;
 }(_baseResponse__WEBPACK_IMPORTED_MODULE_14__["default"]);
 
+CommentMutationResponse.ApiComments = 'comments';
+CommentMutationResponse.ApiAutoDeleted = 'auto_deleted';
 CommentMutationResponse.ApiComment = 'comment';
 /* harmony default export */ __webpack_exports__["default"] = (CommentMutationResponse);
 
@@ -49841,12 +49960,14 @@ var ErrorResponse = /*#__PURE__*/function (_BaseResponse) {
       var response = new ErrorResponse();
       response.success = false;
       response.error = err;
-      console.log('ERROR');
-      console.log(err);
 
-      if (err.response.status === 403) {
-        response.authorized = false;
-        response.permission = err.response.headers.get('meerkat-permission');
+      if (_Types_type__WEBPACK_IMPORTED_MODULE_15__["default"].hasValue(err, 'response')) {
+        if (_Types_type__WEBPACK_IMPORTED_MODULE_15__["default"].hasValue(err.response, 'status')) {
+          if (err.response.status === 403) {
+            response.authorized = false;
+            response.permission = err.response.headers.get('meerkat-permission');
+          }
+        }
       }
 
       return response;
@@ -50391,6 +50512,7 @@ Endpoints.CommentsUnapprove = 'comments/unpublish';
 Endpoints.CommentsUnapproveMany = 'comments/unpublish-many';
 Endpoints.CommentsRemove = 'comments/remove';
 Endpoints.CommentsRemoveMany = 'comments/remove-many';
+Endpoints.CommentsRemoveSpam = 'comments/remove-all-spam';
 Endpoints.CommentMarkSpam = 'comments/report-spam';
 Endpoints.CommentMarkManySpam = 'comments/report-many-spam';
 Endpoints.CommentMarkHam = 'comments/report-ham';
@@ -50871,6 +50993,36 @@ var CommentRepository = /*#__PURE__*/function () {
       }.bind(this));
     }
     /**
+     * Attempts to remove all comments currently marked as spam.
+     *
+     * @returns {Promise<AffectedCommentsResponse | ErrorResponse>}
+     */
+
+  }, {
+    key: "removeAllSpam",
+    value: function removeAllSpam() {
+      var request = {
+        actionId: _App_actionState__WEBPACK_IMPORTED_MODULE_13__["default"].CurrentActionId
+      },
+          requestHash = Object(_Data_Concerns_canBeStringOrHash__WEBPACK_IMPORTED_MODULE_12__["hash"])(request);
+      return new Promise(function (resolve, reject) {
+        var requestState = this.shouldProcessRequest(requestHash, 500);
+        this.client.post(_Http_endpoints__WEBPACK_IMPORTED_MODULE_4__["default"].url(_Http_endpoints__WEBPACK_IMPORTED_MODULE_4__["default"].CommentsRemoveSpam), request, requestState).then(function (result) {
+          this.releasePending(requestHash);
+          var deleteResponse = _Http_Responses_AffectedCommentsResponse__WEBPACK_IMPORTED_MODULE_11__["default"].fromApiResponse(result);
+
+          if (deleteResponse.partialSuccess || deleteResponse.success) {
+            syncjs.Hubs.comments().removed(deleteResponse.comments);
+          }
+
+          resolve(deleteResponse);
+        }.bind(this))["catch"](function (err) {
+          this.releasePending(requestHash);
+          reject(_Http_Responses_errorResponse__WEBPACK_IMPORTED_MODULE_7__["default"].fromError(err));
+        }.bind(this));
+      }.bind(this));
+    }
+    /**
      * Attempts to unpublish the provided comments.
      *
      * @param {Array<string>} commentIds The comment identifiers.
@@ -50957,8 +51109,10 @@ var CommentRepository = /*#__PURE__*/function () {
           this.releasePending(requestHash);
           var spamResult = _Http_Responses_commentMutationResponse__WEBPACK_IMPORTED_MODULE_10__["default"].fromApiResponse(result);
 
-          if (spamResult.success) {
+          if (spamResult.success && spamResult.autoDeleted === false) {
             syncjs.Hubs.comments().markedAsSpam([spamResult.comment.id]);
+          } else if (spamResult.success && spamResult.autoDeleted === true) {
+            syncjs.Hubs.comments().removed(spamResult.comments);
           }
 
           resolve(spamResult);
@@ -52811,19 +52965,22 @@ var Range = /*#__PURE__*/function () {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.slice */ "./node_modules/core-js/modules/es.array.slice.js");
 /* harmony import */ var core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.object.define-property */ "./node_modules/core-js/modules/es.object.define-property.js");
-/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.regexp.exec */ "./node_modules/core-js/modules/es.regexp.exec.js");
-/* harmony import */ var core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_string_ends_with__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.string.ends-with */ "./node_modules/core-js/modules/es.string.ends-with.js");
-/* harmony import */ var core_js_modules_es_string_ends_with__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_ends_with__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
-/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_es_string_starts_with__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.string.starts-with */ "./node_modules/core-js/modules/es.string.starts-with.js");
-/* harmony import */ var core_js_modules_es_string_starts_with__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_starts_with__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.string.trim */ "./node_modules/core-js/modules/es.string.trim.js");
-/* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _type__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./type */ "./src/Types/type.js");
+/* harmony import */ var core_js_modules_es_function_name__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.function.name */ "./node_modules/core-js/modules/es.function.name.js");
+/* harmony import */ var core_js_modules_es_function_name__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_function_name__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.object.define-property */ "./node_modules/core-js/modules/es.object.define-property.js");
+/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.regexp.exec */ "./node_modules/core-js/modules/es.regexp.exec.js");
+/* harmony import */ var core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_string_ends_with__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.string.ends-with */ "./node_modules/core-js/modules/es.string.ends-with.js");
+/* harmony import */ var core_js_modules_es_string_ends_with__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_ends_with__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
+/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_es_string_starts_with__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.string.starts-with */ "./node_modules/core-js/modules/es.string.starts-with.js");
+/* harmony import */ var core_js_modules_es_string_starts_with__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_starts_with__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.string.trim */ "./node_modules/core-js/modules/es.string.trim.js");
+/* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _type__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./type */ "./src/Types/type.js");
+
 
 
 
@@ -52857,7 +53014,7 @@ var String = /*#__PURE__*/function () {
      * @returns {string}
      */
     value: function truncate(value, limit, cap) {
-      if (_type__WEBPACK_IMPORTED_MODULE_7__["default"].hasValue(cap) === false) {
+      if (_type__WEBPACK_IMPORTED_MODULE_8__["default"].hasValue(cap) === false) {
         cap = '...';
       }
 
@@ -52877,7 +53034,11 @@ var String = /*#__PURE__*/function () {
   }, {
     key: "hasValue",
     value: function hasValue(value) {
-      if (_type__WEBPACK_IMPORTED_MODULE_7__["default"].hasValue(value) === false) {
+      if (_type__WEBPACK_IMPORTED_MODULE_8__["default"].hasValue(value) === false) {
+        return false;
+      }
+
+      if (value.constructor.name !== 'String') {
         return false;
       }
 
@@ -54222,19 +54383,22 @@ var Guid = /*#__PURE__*/function () {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.slice */ "./node_modules/core-js/modules/es.array.slice.js");
 /* harmony import */ var core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_slice__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.object.define-property */ "./node_modules/core-js/modules/es.object.define-property.js");
-/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.regexp.exec */ "./node_modules/core-js/modules/es.regexp.exec.js");
-/* harmony import */ var core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_string_ends_with__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.string.ends-with */ "./node_modules/core-js/modules/es.string.ends-with.js");
-/* harmony import */ var core_js_modules_es_string_ends_with__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_ends_with__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
-/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_es_string_starts_with__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.string.starts-with */ "./node_modules/core-js/modules/es.string.starts-with.js");
-/* harmony import */ var core_js_modules_es_string_starts_with__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_starts_with__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.string.trim */ "./node_modules/core-js/modules/es.string.trim.js");
-/* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _type__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./type */ "./src/syncjs/Types/type.js");
+/* harmony import */ var core_js_modules_es_function_name__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.function.name */ "./node_modules/core-js/modules/es.function.name.js");
+/* harmony import */ var core_js_modules_es_function_name__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_function_name__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.object.define-property */ "./node_modules/core-js/modules/es.object.define-property.js");
+/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.regexp.exec */ "./node_modules/core-js/modules/es.regexp.exec.js");
+/* harmony import */ var core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var core_js_modules_es_string_ends_with__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.string.ends-with */ "./node_modules/core-js/modules/es.string.ends-with.js");
+/* harmony import */ var core_js_modules_es_string_ends_with__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_ends_with__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
+/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_es_string_starts_with__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.string.starts-with */ "./node_modules/core-js/modules/es.string.starts-with.js");
+/* harmony import */ var core_js_modules_es_string_starts_with__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_starts_with__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.string.trim */ "./node_modules/core-js/modules/es.string.trim.js");
+/* harmony import */ var core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_trim__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var _type__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./type */ "./src/syncjs/Types/type.js");
+
 
 
 
@@ -54268,7 +54432,7 @@ var String = /*#__PURE__*/function () {
      * @returns {string}
      */
     value: function truncate(value, limit, cap) {
-      if (_type__WEBPACK_IMPORTED_MODULE_7__["default"].hasValue(cap) === false) {
+      if (_type__WEBPACK_IMPORTED_MODULE_8__["default"].hasValue(cap) === false) {
         cap = '...';
       }
 
@@ -54288,7 +54452,11 @@ var String = /*#__PURE__*/function () {
   }, {
     key: "hasValue",
     value: function hasValue(value) {
-      if (_type__WEBPACK_IMPORTED_MODULE_7__["default"].hasValue(value) === false) {
+      if (_type__WEBPACK_IMPORTED_MODULE_8__["default"].hasValue(value) === false) {
+        return false;
+      }
+
+      if (value.constructor.name !== 'String') {
         return false;
       }
 

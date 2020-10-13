@@ -66,10 +66,10 @@ class ControlPanelServiceProvider extends AddonServiceProvider
         $this->navigation->create();
 
         Statamic::style('meerkat', Addon::VERSION . '/meerkat');
-        Statamic::script('meerkat', Addon::VERSION . '/meerkatExtend');
+        Statamic::script('meerkat', Addon::VERSION . AddonServiceProvider::getResourceJavaScriptPath('/meerkatExtend'));
         $this->emitEvent(ControlPanelServiceProvider::EVENT_REGISTERING_CONTROL_PANEL, '');
-        Statamic::script('meerkat', Addon::VERSION . '/meerkat');
-        Statamic::script('meerkat', Addon::VERSION . '/bootstrap');
+        Statamic::script('meerkat', Addon::VERSION . AddonServiceProvider::getResourceJavaScriptPath('/meerkat'));
+        Statamic::script('meerkat', Addon::VERSION . AddonServiceProvider::getResourceJavaScriptPath('/bootstrap'));
     }
 
 }

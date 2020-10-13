@@ -1,0 +1,47 @@
+.comment-table__author-column {
+  width: 18rem;
+}
+
+.meerkat__checkbox {
+  width: 17px;
+  height: 17px;
+}
+
+.meerkat__header-checkbox {
+  top: 2px !important;
+}
+
+.meerkat__comment-row {
+  border-left: 2px solid #ffffff;;
+
+  &.meerkat__comment-row--spam {
+    border-left: 2px solid #ff00006e !important;
+  }
+
+  &.meerkat__comment-row--pending {
+    border-left: 2px solid #5ce3ff6e !important;
+  }
+
+  &.meerkat__comment-row--selected {
+  }
+}
+
+.meerkat__comment-table--focus {
+  tr {
+    opacity: 0.5;
+
+    &.meerkat__comment-row--focused {
+      opacity: 1;
+    }
+  }
+}
+
+
+.meerkat__bulk-actions {
+  display: inline-block;
+
+  .select-input-container {
+    display: inherit;
+    position: relative;
+  }
+}

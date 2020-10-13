@@ -26,6 +26,7 @@ Route::middleware('statamic.cp.authenticated')->group(function () {
             Route::post('/remove-many', '\Stillat\Meerkat\Http\Controllers\Api\RemoveCommentController@deleteMany');
             Route::post('/report-spam', '\Stillat\Meerkat\Http\Controllers\Api\SpamController@markAsSpam');
             Route::post('/report-many-spam', '\Stillat\Meerkat\Http\Controllers\Api\SpamController@markManyAsSpam');
+            Route::post('/remove-all-spam', '\Stillat\Meerkat\Http\Controllers\Api\SpamController@removeAllSpam');
             Route::post('/report-ham', '\Stillat\Meerkat\Http\Controllers\Api\NotSpamController@markAsNotSpam');
             Route::post('/report-many-ham', '\Stillat\Meerkat\Http\Controllers\Api\NotSpamController@markManyAsNotSpam');
 

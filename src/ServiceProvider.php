@@ -118,6 +118,7 @@ class ServiceProvider extends AddonServiceProvider
         $this->app->singleton(GuardConfiguration::class, function ($app) {
             $guardConfiguration = new GuardConfiguration();
 
+            $guardConfiguration->autoDeleteSpam = $this->getConfig('publishing.auto_delete_spam', false);
             $guardConfiguration->autoSubmitSpamToThirdParties = $this->getConfig('publishing.auto_submit_results', false);
             $guardConfiguration->checkAgainstAllGuardServices = $this->getConfig('publishing.guard_check_all_providers', false);
             $guardConfiguration->unpublishOnGuardFailures = $this->getConfig('publishing.guard_unpublish_on_guard_failure', false);

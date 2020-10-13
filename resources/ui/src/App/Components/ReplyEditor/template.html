@@ -1,0 +1,14 @@
+<div>
+    <div class="meerkat__temp-markdown-reply-editor--wrapper">
+        <markdown-fieldtype ref="markdownEditor" v-model="comment.state.reply.content"></markdown-fieldtype>
+    </div>
+
+    <div class="p-2 bg-grey-20 border-t flex items-center text-sm">
+        <button class="btn-primary mr-2" v-on:click="$emit('reply-requested', comment)">{{
+            trans('actions.reply_confirm_button') }}
+        </button>
+        <button class="text-grey hover:text=grey-90"
+                v-on:click="cancel()">{{ trans('actions.cancel') }}
+        </button>
+    </div>
+</div>

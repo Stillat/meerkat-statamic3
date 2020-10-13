@@ -236,7 +236,7 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
                 $dirName = dirname($targetConfig);
 
                 if (!file_exists($dirName)) {
-                    mkdir($dirName, 644, true);
+                    mkdir($dirName, 0755, true);
                 }
 
                 copy($sourceConfig, $targetConfig);
@@ -302,7 +302,7 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
         if ($didFindCurrentVersion === false) {
             // First, publish new versions.
             if (file_exists($publicPath) == false) {
-                mkdir($publicPath, 644, true);
+                mkdir($publicPath, 0755, true);
             }
 
             Paths::recursivelyCopyDirectory($sourceDirectory, $publicPath, false);

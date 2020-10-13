@@ -98,7 +98,7 @@ class ServiceProvider extends AddonServiceProvider
         $targetPath = storage_path('meerkat/logs');
 
         if (file_exists($targetPath) == false) {
-            mkdir($targetPath, 644, true);
+            mkdir($targetPath, 0755, true);
         }
 
         $this->app->singleton(ErrorCodeRepositoryContract::class, function ($app) use ($targetPath) {
@@ -221,10 +221,10 @@ class ServiceProvider extends AddonServiceProvider
     private function createPaths()
     {
         $paths = [
-            storage_path('/meerkat/tmp'),
-            storage_path('/meerkat/tasks'),
-            storage_path('/meerkat/logs'),
-            storage_path('/meerkat/index')
+            storage_path('meerkat/tmp'),
+            storage_path('meerkat/tasks'),
+            storage_path('meerkat/logs'),
+            storage_path('meerkat/index')
         ];
 
         foreach ($paths as $path) {

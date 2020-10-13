@@ -22,7 +22,7 @@ class Paths
     /**
      * The default directory permissions to use.
      */
-    public static $directoryPermissions = 777;
+    public static $directoryPermissions = 0755;
 
     /**
      * The directory separator that is used internally.

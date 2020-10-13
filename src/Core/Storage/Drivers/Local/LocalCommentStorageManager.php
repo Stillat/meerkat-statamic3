@@ -399,7 +399,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             $isParent = count($directChildren) > 0;
 
             $commentDate = new DateTime();
-            $commentDate->setTimestamp($commentId);
+            $commentDate->setTimestamp(intval($commentId));
 
             $commentDateFormatted = $commentDate->format($dateFormatToUse);
 
@@ -1475,7 +1475,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             $result->success = true;
         }
 
-        if (count($result->succeeded) > 0 ) {
+        if (count($result->succeeded) > 0) {
             $result->partialSuccess = true;
         }
 
@@ -1609,7 +1609,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             $result->success = true;
         }
 
-        if (count($result->succeeded) > 0 ) {
+        if (count($result->succeeded) > 0) {
             $result->partialSuccess = true;
         }
 
@@ -1762,7 +1762,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             $result->success = true;
         }
 
-        if (count($result->succeeded) > 0 ) {
+        if (count($result->succeeded) > 0) {
             $result->partialSuccess = true;
         }
 
@@ -1956,7 +1956,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             $result->success = true;
         }
 
-        if (count($result->succeeded) > 0 ) {
+        if (count($result->succeeded) > 0) {
             $result->partialSuccess = true;
         }
 
@@ -1995,7 +1995,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             $result->success = true;
         }
 
-        if (count($result->succeeded) > 0 ) {
+        if (count($result->succeeded) > 0) {
             $result->partialSuccess = true;
         }
 

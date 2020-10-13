@@ -49826,27 +49826,30 @@ var CommentResponse = /*#__PURE__*/function (_PagedResponse) {
       var response = new CommentResponse();
       response._originator = originator;
 
-      for (var i = 0; i < result.threads.length; i += 1) {
-        var newThread = _Data_Comments_threadContext__WEBPACK_IMPORTED_MODULE_14__["default"].fromApiObject(result.threads[i]);
-        response._threadMapping[newThread.id] = newThread;
-        response.threads.push(newThread);
+      if (result.success) {
+        for (var i = 0; i < result.threads.length; i += 1) {
+          var newThread = _Data_Comments_threadContext__WEBPACK_IMPORTED_MODULE_14__["default"].fromApiObject(result.threads[i]);
+          response._threadMapping[newThread.id] = newThread;
+          response.threads.push(newThread);
+        }
+
+        for (var _i = 0; _i < result.authors.length; _i += 1) {
+          var newAuthor = _Data_Comments_author__WEBPACK_IMPORTED_MODULE_16__["default"].fromApiObject(result.authors[_i]);
+          response._authorMapping[newAuthor.id] = newAuthor;
+          response.authors.push(newAuthor);
+        }
+
+        for (var _i2 = 0; _i2 < result.comments.length; _i2 += 1) {
+          var newComment = _Data_Comments_comment__WEBPACK_IMPORTED_MODULE_15__["default"].fromApiObject(result.comments[_i2]);
+          newComment._internalCommentResponse = response;
+          response._commentMapping[newComment.id] = newComment;
+          response.comments.push(newComment);
+        }
+
+        response.pages = _Data__WEBPACK_IMPORTED_MODULE_19__["PagedMetaData"].fromApiObject(result.pages);
+        response.sortString = _Types_type__WEBPACK_IMPORTED_MODULE_20__["default"].withDefault(result[CommentResponse.ApiSortString], '');
       }
 
-      for (var _i = 0; _i < result.authors.length; _i += 1) {
-        var newAuthor = _Data_Comments_author__WEBPACK_IMPORTED_MODULE_16__["default"].fromApiObject(result.authors[_i]);
-        response._authorMapping[newAuthor.id] = newAuthor;
-        response.authors.push(newAuthor);
-      }
-
-      for (var _i2 = 0; _i2 < result.comments.length; _i2 += 1) {
-        var newComment = _Data_Comments_comment__WEBPACK_IMPORTED_MODULE_15__["default"].fromApiObject(result.comments[_i2]);
-        newComment._internalCommentResponse = response;
-        response._commentMapping[newComment.id] = newComment;
-        response.comments.push(newComment);
-      }
-
-      response.pages = _Data__WEBPACK_IMPORTED_MODULE_19__["PagedMetaData"].fromApiObject(result.pages);
-      response.sortString = _Types_type__WEBPACK_IMPORTED_MODULE_20__["default"].withDefault(result[CommentResponse.ApiSortString], '');
       return response;
     }
   }]);

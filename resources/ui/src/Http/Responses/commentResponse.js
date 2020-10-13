@@ -44,39 +44,41 @@ class CommentResponse extends PagedResponse {
    * @param {CommentRepository} originator The repository that processed the request.
    * @returns {CommentResponse}
    */
-  static fromApiResponse(result, originator : CommentRepository) {
+  static fromApiResponse(result, originator: CommentRepository) {
     let response = new CommentResponse();
 
     response._originator = originator;
 
-    for (let i = 0; i < result.threads.length; i += 1) {
-      let newThread = ThreadContext.fromApiObject(result.threads[i]);
+    if (result.success) {
+      for (let i = 0; i < result.threads.length; i += 1) {
+        let newThread = ThreadContext.fromApiObject(result.threads[i]);
 
-      response._threadMapping[newThread.id] = newThread;
+        response._threadMapping[newThread.id] = newThread;
 
-      response.threads.push(newThread);
+        response.threads.push(newThread);
+      }
+
+      for (let i = 0; i < result.authors.length; i += 1) {
+        let newAuthor = Author.fromApiObject(result.authors[i]);
+
+        response._authorMapping[newAuthor.id] = newAuthor;
+
+        response.authors.push(newAuthor);
+      }
+
+      for (let i = 0; i < result.comments.length; i += 1) {
+        let newComment = Comment.fromApiObject(result.comments[i]);
+
+        newComment._internalCommentResponse = response;
+
+        response._commentMapping[newComment.id] = newComment;
+
+        response.comments.push(newComment);
+      }
+
+      response.pages = PagedMetaData.fromApiObject(result.pages);
+      response.sortString = Type.withDefault(result[CommentResponse.ApiSortString], '');
     }
-
-    for (let i = 0; i < result.authors.length; i += 1) {
-      let newAuthor = Author.fromApiObject(result.authors[i]);
-
-      response._authorMapping[newAuthor.id] = newAuthor;
-
-      response.authors.push(newAuthor);
-    }
-
-    for (let i = 0; i < result.comments.length; i += 1) {
-      let newComment = Comment.fromApiObject(result.comments[i]);
-
-      newComment._internalCommentResponse = response;
-
-      response._commentMapping[newComment.id] = newComment;
-
-      response.comments.push(newComment);
-    }
-
-    response.pages = PagedMetaData.fromApiObject(result.pages);
-    response.sortString = Type.withDefault(result[CommentResponse.ApiSortString], '');
 
     return response;
   }

@@ -30,6 +30,7 @@ use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Exceptions\ConcurrentResourceAccessViolationException;
 use Stillat\Meerkat\Core\Exceptions\MutationException;
 use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
+use Stillat\Meerkat\Core\Parsing\CommentPrototypeParser;
 use Stillat\Meerkat\Core\Paths\PathUtilities;
 use Stillat\Meerkat\Core\RuntimeStateGuard;
 use Stillat\Meerkat\Core\Storage\Data\CommentAuthorRetriever;
@@ -41,7 +42,6 @@ use Stillat\Meerkat\Core\Storage\Drivers\Local\Indexing\ShadowIndex;
 use Stillat\Meerkat\Core\Storage\Paths;
 use Stillat\Meerkat\Core\Storage\Validators\PathPrivilegeValidator;
 use Stillat\Meerkat\Core\Support\Str;
-use Stillat\Meerkat\Core\Support\TypeConversions;
 use Stillat\Meerkat\Core\Threads\ThreadHierarchy;
 use Stillat\Meerkat\Core\ValidationResult;
 
@@ -216,6 +216,13 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      */
     private $changeSetManager = null;
 
+    /**
+     * The CommentPrototypeParser instance.
+     *
+     * @var CommentPrototypeParser
+     */
+    private $commentParser = null;
+
     public function __construct(
         Configuration $config,
         YAMLParserContract $yamlParser,
@@ -226,6 +233,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         IdentityManagerContract $identityManager,
         CommentChangeSetStorageManagerContract $changeSetManager)
     {
+        $this->commentParser = new CommentPrototypeParser();
         $this->commentShadowIndex = new ShadowIndex($config);
         $this->commentStructureResolver = new LocalCommentStructureResolver();
         $this->authorRetriever = $authorRetriever;
@@ -245,6 +253,10 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
 
         $this->commentShadowIndex->setIsCommentProtoTypeIndexEnabled(false);
         $this->commentShadowIndex->setIsThreadIndexEnabled(false);
+
+        $this->commentParser->setConfig($this->config);
+        $this->commentParser->setPrototypeElements($this->prototypeElements);
+        $this->commentParser->setTruthyElements($this->truthyPrototypeElements);
 
         $this->yamlParser = $yamlParser;
         $this->markdownParser = $markdownParser;
@@ -365,7 +377,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             $comment = new Comment();
 
             $comment->setIsNew(false);
-
+            $comment->setThreadId($threadId);
             // Start: Comment Implementation Specifics (not contract).
             $comment->setStorageManager($this);
             $comment->setAuthorRetriever($this->authorRetriever);
@@ -489,100 +501,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      */
     private function getCommentPrototype($path)
     {
-        $handle = fopen($path, 'r');
-        $headerDelimiterObserved = 0;
-        $headers = [];
-        $headers[CommentContract::INTERNAL_CONTENT_TRUNCATED] = false;
-
-        $rawHeaders = [];
-        $collectHeaders = true;
-        $content = '';
-        $contentLine = -1;
-        $alreadyFoundContent = false;
-
-        if ($handle) {
-
-            while (($line = fgets($handle)) !== false) {
-                $trimLine = trim($line);
-                $doProcessHeaders = true;
-
-                if ($trimLine === '---') {
-                    $headerDelimiterObserved += 1;
-                    $doProcessHeaders = false;
-                }
-
-                if ($headerDelimiterObserved >= 2) {
-                    $collectHeaders = false;
-                    $doProcessHeaders = false;
-                }
-
-                if ($doProcessHeaders) {
-                    if ($collectHeaders) {
-                        $rawHeaders[] = $line;
-                    }
-
-                    $protoParts = explode(': ', $trimLine, 2);
-
-                    if (is_array($protoParts) == true && count($protoParts) == 2) {
-                        if ($protoParts[0] == 'comment') {
-                            if (mb_strlen($protoParts[1]) > $this->config->hardCommentLengthCap) {
-                                $content = mb_substr($protoParts[1], 0, $this->config->hardCommentLengthCap);
-                                $headers[CommentContract::INTERNAL_CONTENT_TRUNCATED] = true;
-                            } else {
-                                $content = $protoParts[1];
-                            }
-
-                            $alreadyFoundContent = true;
-                        }
-
-                        if (in_array($protoParts[0], $this->prototypeElements)) {
-                            $headers[$protoParts[0]] = $this->cleanAttributeValue($protoParts[1]);
-
-                            if (in_array($protoParts[0], $this->truthyPrototypeElements)) {
-                                $headers[$protoParts[0]] = TypeConversions::getBooleanValue($protoParts[1]);
-                            }
-                        }
-                    }
-                }
-
-                if ($doProcessHeaders == false && $collectHeaders == false && $alreadyFoundContent == false) {
-                    $contentLine += 1;
-
-                    if ($contentLine > 0) {
-                        $content .= $line;
-
-                        if (mb_strlen($content) > $this->config->hardCommentLengthCap) {
-                            $content = mb_substr($content, 0, $this->config->hardCommentLengthCap);
-                            $headers[CommentContract::INTERNAL_CONTENT_TRUNCATED] = true;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            fclose($handle);
-        }
-
-        return [
-            LocalCommentStorageManager::KEY_HEADERS => $headers,
-            LocalCommentStorageManager::KEY_RAW_HEADERS => $rawHeaders,
-            LocalCommentStorageManager::KEY_CONTENT => $content,
-            LocalCommentStorageManager::KEY_NEEDS_MIGRATION => $alreadyFoundContent
-        ];
-    }
-
-    /**
-     * Cleans an attribute value to make it consistent and usable.
-     *
-     * @param string $attributeValue The value to clean.
-     * @return string
-     */
-    private function cleanAttributeValue($attributeValue)
-    {
-        $attributeValue = ltrim($attributeValue, '"\'');
-        $attributeValue = rtrim($attributeValue, '"\'');
-
-        return $attributeValue;
+        return $this->commentParser->getCommentPrototype($path);
     }
 
     /**
@@ -1043,7 +962,13 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
                 $simpleHierarchy = $this->getThreadHierarchy($threadPath, $threadId, $commentPaths);
 
                 if ($simpleHierarchy->hasComment($id)) {
-                    return $simpleHierarchy->getComment($id);
+                    $comment =  $simpleHierarchy->getComment($id);
+
+                    if ($comment !== null) {
+                        $comment->setThreadId($threadId);
+                    }
+
+                    return $comment;
                 }
             }
         }
@@ -1060,6 +985,11 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     private function getThreadDetailsFromPath($path)
     {
         $relativePath = $this->paths->makeRelative($path);
+
+        if (Str::startsWith($relativePath, Paths::SYM_FORWARD_SEPARATOR)) {
+            $relativePath = mb_substr($relativePath, 1);
+        }
+
         $parts = explode(Paths::SYM_FORWARD_SEPARATOR, $relativePath);
 
         if (is_array($parts) && count($parts) > 0) {

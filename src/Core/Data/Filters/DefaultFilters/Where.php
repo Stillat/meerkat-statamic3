@@ -6,6 +6,7 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Data\Comparator;
 use Stillat\Meerkat\Core\Data\Filters\CommentFilterManager;
 use Stillat\Meerkat\Core\Data\Filters\PropertyRedirector;
+use Stillat\Meerkat\Core\Data\ValueWrapper;
 use Stillat\Meerkat\Core\Exceptions\FilterException;
 use Stillat\Meerkat\Core\Support\Str;
 
@@ -39,11 +40,7 @@ class Where
         $manager->filter(Where::FILTER_WHERE, function ($comments) {
             $propertyToCheck = PropertyRedirector::redirect($this->get('property', null));
             $comparison = $this->get('comparison', null);
-            $value = $this->get('value');
-
-            if ($value === 'null') {
-                $value = null;
-            }
+            $value = ValueWrapper::unwrap($this->get('value'));
 
             if (Str::isNullOrEmpty($propertyToCheck)) {
                 throw new FilterException('`where` filter: $property does not accept `null` values.');

@@ -307,7 +307,6 @@ class FormHandler
 
             $thread = $this->threadManager->create($thread);
         }
-
         $replyData = IdRetriever::getIdAndValidateExistence($data);
 
         unset($data[IdRetriever::KEY_IDS]);

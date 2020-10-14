@@ -14,6 +14,17 @@ class Str
 {
 
     /**
+     * Breaks the input string into an array by newline character.
+     *
+     * @param string $str The input string.
+     * @return array
+     */
+    public static function toArray($str)
+    {
+        return explode("\n", $str);
+    }
+
+    /**
      * Tests if the input value matches the provided pattern.
      *
      * @param string $pattern The search pattern.

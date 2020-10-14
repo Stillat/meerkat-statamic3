@@ -48,6 +48,18 @@ class ValueWrapper
      */
     public static function unwrap($value)
     {
+        if ($value === 'true') {
+            return true;
+        }
+
+        if ($value === 'false') {
+            return false;
+        }
+
+        if ($value === 'null') {
+            return null;
+        }
+
         if (Str::startsWith($value, 'dq:object{') && Str::endsWith($value, '}')) {
             $temp = mb_substr($value, 10);
             $temp = mb_substr($temp, 0, -1);

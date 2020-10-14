@@ -46,7 +46,8 @@ class PrototypeAttributes
                 CommentContract::KEY_IS_DELETED,
                 CommentContract::KEY_PAGE_URL,
                 CommentContract::KEY_SPAM,
-                AuthorContract::AUTHENTICATED_USER_ID
+                AuthorContract::AUTHENTICATED_USER_ID,
+                CommentContract::INTERNAL_HAS_SUPPLEMENTED_DATA
             ];
         }
 
@@ -73,7 +74,8 @@ class PrototypeAttributes
                 CommentContract::KEY_IS_DELETED => Types::TYPE_BIT,
                 CommentContract::KEY_PAGE_URL => Types::TYPE_STRING,
                 CommentContract::KEY_SPAM => Types::TYPE_BIT,
-                AuthorContract::AUTHENTICATED_USER_ID => Types::TYPE_STRING
+                AuthorContract::AUTHENTICATED_USER_ID => Types::TYPE_STRING,
+                CommentContract::INTERNAL_HAS_SUPPLEMENTED_DATA => Types::TYPE_BIT
             ];
         }
 

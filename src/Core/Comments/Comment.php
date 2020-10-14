@@ -10,6 +10,7 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Search\ProvidesSearchableAttributesContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
+use Stillat\Meerkat\Core\Contracts\Threads\ThreadContract;
 use Stillat\Meerkat\Core\Data\Mutations\ChangeSetCollection;
 use Stillat\Meerkat\Core\Data\Retrievers\PathThreadIdRetriever;
 use Stillat\Meerkat\Core\DataObject;
@@ -18,6 +19,8 @@ use Stillat\Meerkat\Core\Parsing\UsesMarkdownParser;
 use Stillat\Meerkat\Core\Parsing\UsesYAMLParser;
 use Stillat\Meerkat\Core\Storage\Data\CommentAuthorRetriever;
 use Stillat\Meerkat\Core\Support\TypeConversions;
+use Stillat\Meerkat\Core\Threads\ContextResolverFactory;
+use Stillat\Meerkat\Core\Threads\ThreadManagerFactory;
 
 /**
  * Class Comment
@@ -541,7 +544,77 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
      */
     public function getParticipants()
     {
+        if (count($this->commentParticipants) === 0) {
+            $thread = $this->getThread();
+
+            $commentIds[] = $this->getId();
+            $parentId = $this->getDataAttribute(CommentContract::KEY_PARENT_ID, null);
+
+            if ($parentId !== null) {
+                $commentIds[] = $parentId;
+            }
+
+            if ($thread !== null) {
+                $this->commentParticipants = $thread->getParticipantsFor($commentIds);
+            }
+        }
+
         return $this->commentParticipants;
+    }
+
+    /**
+     * Attempts to retrieve the participants for the thread.
+     *
+     * @return AuthorContract[]
+     */
+    public function getThreadParticipants()
+    {
+        $thread = $this->getThread();
+        $participants = [];
+
+        if ($thread !== null) {
+            $participants = $thread->getParticipants();
+        }
+
+        return $participants;
+    }
+
+    /**
+     * Attempts to retrieve the participants for the thread that are not this comment's author.
+     *
+     * @return AuthorContract[]
+     */
+    public function getOtherThreadParticipants()
+    {
+        $allParticipants = $this->getThreadParticipants();
+        $thisEmail = '';
+        $author = $this->getAuthor();
+
+        if ($author !== null) {
+            $thisEmail = $author->getEmailAddress();
+        }
+
+        return array_filter($allParticipants, function (AuthorContract $author) use ($thisEmail) {
+            return $author->getEmailAddress() !== $thisEmail;
+        });
+    }
+
+    /**
+     * Attempts to locate the comment's thread context.
+     *
+     * @return ThreadContract|null
+     */
+    public function getThread()
+    {
+        if ($this->threadId === null) {
+            return null;
+        }
+
+        if (ThreadManagerFactory::hasInstance() === false) {
+            return null;
+        }
+
+        return ThreadManagerFactory::$instance->findById($this->threadId);
     }
 
     /**

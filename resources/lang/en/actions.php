@@ -8,13 +8,15 @@ return [
     'try_again' => 'Try Again',
     'submit_error_try_again' => 'Submit and Try Again',
 
+    'view_entry' => 'View Entry',
+
     'reload_anyway' => 'Reload Anyway',
 
     'export' => 'Export',
     'export_json' => 'JSON',
     'export_csv' => 'CSV',
 
-    'spam' => 'Spam',
+    'spam' => 'Manage Spam',
     'remove_all_spam' => 'Delete all Spam',
     'check_for_spam' => 'Check for Spam',
     'check_all_spam_error' => 'There was a problem checking all comments for spam',

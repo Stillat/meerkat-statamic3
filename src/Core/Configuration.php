@@ -119,6 +119,26 @@ class Configuration extends ConfigurationContainer
     public $trackChanges = true;
 
     /**
+     * The string value to use when a comment's content cannot be found.
+     *
+     * @var string
+     */
+    public $supplementMissingContent = '[Content Missing]';
+
+    /**
+     * The string value to use when a comment's email address cannot be found.
+     * @var string
+     */
+    public $supplementAuthorEmail = '[Email Missing]';
+
+    /**
+     * The string value to use when a comment's name cannot be found.
+     *
+     * @var string
+     */
+    public $supplementAuthorName = '[Name Missing]';
+
+    /**
      * The FormattingConfiguration instance.
      *
      * @var FormattingConfiguration

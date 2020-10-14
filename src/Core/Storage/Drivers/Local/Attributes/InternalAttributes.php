@@ -62,7 +62,11 @@ class InternalAttributes
                 CommentContract::INTERNAL_CONTEXT_ID,
                 CommentContract::KEY_AUTHOR,
                 CommentContract::INTERNAL_PARENT_AUTHOR,
-                CommentContract::INTERNAL_HAS_COLLECTED
+                CommentContract::INTERNAL_HAS_COLLECTED,
+                CommentContract::INTERNAL_HAS_SUPPLEMENTED_DATA,
+                CommentContract::INTERNAL_PARSER_CONTENT_SUPPLEMENTED,
+                CommentContract::INTERNAL_PARSER_AUTHOR_EMAIL_SUPPLEMENTED,
+                CommentContract::INTERNAL_PARSER_AUTHOR_NAME_SUPPLEMENTED
             ];
         }
 

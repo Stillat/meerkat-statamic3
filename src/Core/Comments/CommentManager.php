@@ -75,6 +75,12 @@ class CommentManager implements CommentManagerContract
         $comment->setIsNew(true);
         $comment->setParentId($parentId);
 
+        $parent = $this->findById($parentId);
+
+        if ($parent !== null) {
+            $comment->setThreadId($parent->getThreadId());
+        }
+
         return $comment;
     }
 

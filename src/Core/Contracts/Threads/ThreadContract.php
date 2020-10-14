@@ -8,6 +8,7 @@ use Stillat\Meerkat\Core\Contracts\Data\DataSetContract;
 use Stillat\Meerkat\Core\Contracts\Data\GroupedDataSetContract;
 use Stillat\Meerkat\Core\Contracts\Data\PagedDataSetContract;
 use Stillat\Meerkat\Core\Contracts\DataObjectContract;
+use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\StorableContract;
 use Stillat\Meerkat\Core\Data\DataSet;
 use Stillat\Meerkat\Core\Exceptions\DataQueryException;
@@ -205,6 +206,20 @@ interface ThreadContract extends DataObjectContract, StorableContract, Serializa
      */
     public function attachNewComment(CommentContract $comment);
 
+    /**
+     * Attempts to retrieve the participants for the thread.
+     *
+     * @return AuthorContract[]
+     */
+    public function getParticipants();
+
+    /**
+     * Attempts to retrieve the participants for the thread.
+     *
+     * @param string[] $commentIds The comment identifiers.
+     * @return AuthorContract[]
+     */
+    public function getParticipantsFor($commentIds);
     /**
      * Queries the thread's comments.
      *

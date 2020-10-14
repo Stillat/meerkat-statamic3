@@ -6,6 +6,7 @@ use Statamic\Statamic;
 use Statamic\Yaml\ParseException;
 use Stillat\Meerkat\Blueprint\BlueprintProvider;
 use Stillat\Meerkat\Concerns\UsesConfig;
+use Stillat\Meerkat\Concerns\UsesTranslations;
 use Stillat\Meerkat\Console\Commands\MigrateCommentsCommand;
 use Stillat\Meerkat\Console\Commands\StatisticsCommand;
 use Stillat\Meerkat\Console\Commands\ValidateCommand;
@@ -47,7 +48,7 @@ use Stillat\Meerkat\Support\Facades\Configuration;
  */
 class ServiceProvider extends AddonServiceProvider
 {
-    use UsesConfig;
+    use UsesConfig, UsesTranslations;
 
     protected $defer = false;
 
@@ -178,6 +179,10 @@ class ServiceProvider extends AddonServiceProvider
             $globalConfiguration->storageDirectory = PathProvider::contentPath();
             $globalConfiguration->indexDirectory = storage_path('meerkat/index');
             $globalConfiguration->taskDirectory = storage_path('meerkat/tasks');
+
+            $globalConfiguration->supplementMissingContent = $this->trans('parser.supplement.content');
+            $globalConfiguration->supplementAuthorName = $this->trans('parser.supplement.name');
+            $globalConfiguration->supplementAuthorEmail = $this->trans('parser.supplement.email');
 
             foreach ($this->getConfig('authors', []) as $configSetting => $configValue) {
                 $globalConfiguration->set('author_' . $configSetting, $configValue);

@@ -13,6 +13,7 @@ class PendingFilter extends Filter {
     this.internalName = 'pending';
     this.name = trans('filters.pending');
     this.filters = [
+      'where(spam, !==, true)',
       'is:published(false)'
     ];
   }

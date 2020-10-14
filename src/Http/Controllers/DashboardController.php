@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat\Http\Controllers;
 
+use Statamic\Facades\Entry;
 use Statamic\Http\Controllers\CP\CpController;
 use Stillat\Meerkat\Concerns\UsesTranslations;
 
@@ -24,6 +25,19 @@ class DashboardController extends CpController
         }
 
         return view('meerkat::dashboard');
+    }
+
+    public function redirectToEntry($entryId, $commentId)
+    {
+        $statamicEntry = Entry::find($entryId);
+
+        if ($statamicEntry === null) {
+            abort(404);
+        }
+
+        $path = url($statamicEntry->url().'#comment-'.$commentId);
+
+        return redirect($statamicEntry->url().'#comment-'.$commentId);
     }
 
 }

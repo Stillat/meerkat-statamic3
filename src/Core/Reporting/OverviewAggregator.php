@@ -47,6 +47,12 @@ class OverviewAggregator
 
             /** @var CommentContract $comment */
             foreach ($this->threadManager->getAllCommentsById($thread) as $comment) {
+                if (TypeConversions::getBooleanValue(
+                    $comment->getDataAttribute(CommentContract::INTERNAL_PARSER_CONTENT_SUPPLEMENTED, false)
+                )) {
+                    continue;
+                }
+
                 if ($comment->isDeleted()) {
                     $overviewReport->softDeleted += 1;
                     continue;
@@ -76,7 +82,13 @@ class OverviewAggregator
                 if ($comment->published()) {
                     $overviewReport->isPublished += 1;
                 } else {
-                    $overviewReport->pending += 1;
+                    if ($comment->hasBeenCheckedForSpam()) {
+                        if ($comment->isSpam() === false) {
+                            $overviewReport->pending += 1;
+                        }
+                    } else {
+                        $overviewReport->pending += 1;
+                    }
                 }
             }
         }

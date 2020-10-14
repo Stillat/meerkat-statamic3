@@ -403,12 +403,14 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
 
         $threadContext = $this->contextResolver->findById($contextId);
 
-        if (RuntimeStateGuard::threadLocks()->isLocked() === false) {
-            $lock = RuntimeStateGuard::threadLocks()->lock();
+        if ($threadContext !== null) {
+            if (RuntimeStateGuard::threadLocks()->isLocked() === false) {
+                $lock = RuntimeStateGuard::threadLocks()->lock();
 
-            $this->threadPipeline->creating($threadContext, null);
+                $this->threadPipeline->creating($threadContext, null);
 
-            RuntimeStateGuard::threadLocks()->releaseLock($lock);
+                RuntimeStateGuard::threadLocks()->releaseLock($lock);
+            }
         }
 
         $newMeta = $this->createMetaFromExistingThread($contextId);

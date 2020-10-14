@@ -8,6 +8,7 @@ use Stillat\Meerkat\Core\Contracts\DataObjectContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\ParsesMarkdownContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\ParsesYamlContract;
+use Stillat\Meerkat\Core\Contracts\Threads\ThreadContract;
 use Stillat\Meerkat\Core\Data\Mutations\ChangeSetCollection;
 
 /**
@@ -70,6 +71,10 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     const INTERNAL_RESPONSE_HAS_REPLIES = 'internal_response_has_replies';
     const INTERNAL_STRUCTURE_NEEDS_MIGRATION = 'internal_needs_structure_migration';
     const INTERNAL_HISTORY_REVISION_COUNT = 'revision_count';
+    const INTERNAL_HAS_SUPPLEMENTED_DATA = 'parser_has_supplemented_data';
+    const INTERNAL_PARSER_CONTENT_SUPPLEMENTED = 'parser_content_supplemented';
+    const INTERNAL_PARSER_AUTHOR_NAME_SUPPLEMENTED = 'parser_author_name_supplemented';
+    const INTERNAL_PARSER_AUTHOR_EMAIL_SUPPLEMENTED = 'parser_author_email_supplemented';
 
     const INTERNAL_STRUCTURE_HAS_REPLIES = 'has_replies';
 
@@ -340,6 +345,27 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
      * @return AuthorContract[]
      */
     public function getParticipants();
+
+    /**
+     * Attempts to retrieve the participants for the thread.
+     *
+     * @return AuthorContract[]
+     */
+    public function getThreadParticipants();
+
+    /**
+     * Attempts to retrieve the participants for the thread that are not this comment's author.
+     *
+     * @return AuthorContract[]
+     */
+    public function getOtherThreadParticipants();
+
+    /**
+     * Attempts to locate the comment's thread context.
+     *
+     * @return ThreadContract|null
+     */
+    public function getThread();
 
     /**
      * Sets the comment's participants.

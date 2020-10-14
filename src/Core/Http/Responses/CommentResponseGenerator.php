@@ -159,6 +159,8 @@ class CommentResponseGenerator
             $requestFilters[] = 'is:deleted(false)';
         }
 
+        $requestFilters[] = 'where(parser_has_supplemented_data, !==, true)';
+
         $firstFilter = array_shift($requestFilters);
 
         $this->query->safeFilterBy($firstFilter);
@@ -196,8 +198,6 @@ class CommentResponseGenerator
     {
         $queryResults = $this->manager->queryAll($this->query);
         $commentResults = $queryResults->flattenDataset();
-
-        $propertiesToRemove = $this->getPropertiesToRemove();
 
         $responseAuthors = CommentAuthorRetriever::getAuthorsFromCommentArray($commentResults);
         $threads = [];

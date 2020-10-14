@@ -7,12 +7,14 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Data\DataSetContract;
 use Stillat\Meerkat\Core\Contracts\Data\GroupedDataSetContract;
 use Stillat\Meerkat\Core\Contracts\Data\PagedDataSetContract;
+use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContextContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContract;
 use Stillat\Meerkat\Core\Data\Converters\BaseCollectionConverter;
 use Stillat\Meerkat\Core\Data\DataQuery;
 use Stillat\Meerkat\Core\Data\DataQueryFactory;
 use Stillat\Meerkat\Core\Data\DataSet;
+use Stillat\Meerkat\Core\Data\Retrievers\CommentAuthorRetriever;
 use Stillat\Meerkat\Core\Data\RuntimeContext;
 use Stillat\Meerkat\Core\DataObject;
 use Stillat\Meerkat\Core\Exceptions\DataQueryException;
@@ -311,29 +313,6 @@ class Thread implements ThreadContract, JsonSerializable
     }
 
     /**
-     * Gets the thread's hierarchy.
-     *
-     * @return ThreadHierarchy|null
-     */
-    public function getHierarchy()
-    {
-        return $this->hierarchy;
-    }
-
-    /**
-     * Sets the thread's hierarchy.
-     *
-     * @param ThreadHierarchy $hierarchy The thread's structure.
-     * @return void
-     */
-    public function setHierarchy(ThreadHierarchy $hierarchy)
-    {
-        $this->hierarchy = $hierarchy;
-        $this->totalCommentCount = $hierarchy->getTotalCommentCount();
-        $this->totalRootLevelCommentCount = $hierarchy->getRootLevelCommentCount();
-    }
-
-    /**
      * Converts the thread's comments into an array; sets the comment reply property to the provided name
      *
      * @param string $repliesName The replies data property to use.
@@ -342,7 +321,6 @@ class Thread implements ThreadContract, JsonSerializable
      */
     public function getCommentCollection($repliesName)
     {
-        /** @var CommentContract[] $comments */
         $comments = $this->hierarchy->getComments();
 
         return BaseCollectionConverter::make()->convert($comments, $repliesName);
@@ -435,6 +413,78 @@ class Thread implements ThreadContract, JsonSerializable
     public function jsonSerialize()
     {
         return $this->getDataAttributes();
+    }
+
+    /**
+     * Attempts to retrieve the participants for the thread.
+     *
+     * @return AuthorContract[]
+     */
+    public function getParticipants()
+    {
+        $participants = [];
+
+        $threadHierarchy = $this->getHierarchy();
+
+        if ($threadHierarchy !== null) {
+            $comments = $threadHierarchy->getComments();
+
+            if ($comments !== null && is_array($comments)) {
+                $participants = CommentAuthorRetriever::getAuthors($comments);
+            }
+        }
+
+        return $participants;
+    }
+
+    /**
+     * Gets the thread's hierarchy.
+     *
+     * @return ThreadHierarchy|null
+     */
+    public function getHierarchy()
+    {
+        return $this->hierarchy;
+    }
+
+    /**
+     * Sets the thread's hierarchy.
+     *
+     * @param ThreadHierarchy $hierarchy The thread's structure.
+     * @return void
+     */
+    public function setHierarchy(ThreadHierarchy $hierarchy)
+    {
+        $this->hierarchy = $hierarchy;
+        $this->totalCommentCount = $hierarchy->getTotalCommentCount();
+        $this->totalRootLevelCommentCount = $hierarchy->getRootLevelCommentCount();
+    }
+
+    /**
+     * Attempts to retrieve the participants for the thread.
+     *
+     * @param string[] $commentIds The comment identifiers.
+     * @return AuthorContract[]
+     */
+    public function getParticipantsFor($commentIds)
+    {
+        $participants = [];
+
+        $threadHierarchy = $this->getHierarchy();
+
+        if ($threadHierarchy !== null) {
+            $comments = $threadHierarchy->getComments();
+
+            $comments = array_filter($comments, function (CommentContract $comment) use ($commentIds) {
+                return in_array($comment->getId(), $commentIds);
+            });
+
+            if ($comments !== null && is_array($comments)) {
+                $participants = CommentAuthorRetriever::getAuthors($comments);
+            }
+        }
+
+        return $participants;
     }
 
 }

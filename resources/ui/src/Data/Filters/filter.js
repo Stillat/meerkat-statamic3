@@ -20,8 +20,6 @@ class Filter {
 
     options.query.filter = this.filters.join('|');
 
-    console.log('opts', options);
-
     return options;
   }
 

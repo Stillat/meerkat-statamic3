@@ -51,24 +51,28 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
      * @var array The view composers.
      */
     protected $composers = [];
+
     /**
      * Indicates whether to defer key actions until Statamic has booted.
      *
      * @var bool Whether to wait until Statamic boots.
      */
     protected $defer = true;
+
     /**
      * A collection of configuration items to publish to the Statamic installation.
      *
      * @var array The config entries to publish.
      */
     protected $config = [];
+
     /**
      * Indicates if the context state has resolved.
      *
      * @var bool
      */
     private $hasResoledContext = false;
+
     /**
      * Contains the contexts that were resolved for the current request.
      *
@@ -242,6 +246,7 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
                 copy($sourceConfig, $targetConfig);
             }
         }
+
     }
 
     /**

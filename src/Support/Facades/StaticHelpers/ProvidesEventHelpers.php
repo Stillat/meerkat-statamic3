@@ -91,6 +91,19 @@ trait ProvidesEventHelpers
      */
     public static function onCommentUpdating(callable $handler)
     {
+        self::listenToEvent(CommentMutationPipelineContract::MUTATION_EDITING, $handler);
+    }
+
+    /**
+     * Called when a comment has been updated.
+     *
+     * Callable arguments:
+     *      0: CommentContract
+     *
+     * @param callable $handler The callback.
+     */
+    public static function onCommentUpdated(callable $handler)
+    {
         self::listenToEvent(CommentMutationPipelineContract::MUTATION_EDITED, $handler);
     }
 
@@ -169,7 +182,7 @@ trait ProvidesEventHelpers
      */
     public static function onCommentReplied(callable $handler)
     {
-        self::listenToEvent(CommentMutationPipelineContract::MUTATION_REPLYING, $handler);
+        self::listenToEvent(CommentMutationPipelineContract::MUTATION_REPLIED, $handler);
     }
 
     /**

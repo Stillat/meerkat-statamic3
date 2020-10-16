@@ -4,6 +4,7 @@ namespace Stillat\Meerkat\Core\Storage\Drivers\Local;
 
 use Stillat\Meerkat\Core\Contracts\Storage\StructureResolverInterface;
 use Stillat\Meerkat\Core\Storage\Paths;
+use Stillat\Meerkat\Core\Support\Str;
 use Stillat\Meerkat\Core\Threads\ThreadHierarchy;
 
 /**
@@ -124,9 +125,38 @@ class LocalCommentStructureResolver implements StructureResolverInterface
      */
     private $hierarchyCache = [];
 
+    /**
+     * A mapping between thread paths and their system identifier.
+     *
+     * @var array
+     */
+    private $threadPathIdMapping = [];
+
     public function __construct()
     {
         $this->replyReplacement = Paths::SYM_FORWARD_SEPARATOR . LocalCommentStorageManager::PATH_REPLIES_DIRECTORY;
+    }
+
+    /**
+     * Attempts to clear the resolve hierarchy cache for the provided identifier.
+     *
+     * @param string $threadId The thread's system identifier.
+     * @return bool
+     * @since 2.0.12
+     */
+    public function clearThreadCache($threadId)
+    {
+        if (array_key_exists($threadId, $this->threadPathIdMapping)) {
+            $threadPath = $this->threadPathIdMapping[$threadId];
+
+            if (array_key_exists($threadPath, $this->hierarchyCache)) {
+                unset($this->hierarchyCache[$threadPath]);
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -221,7 +251,7 @@ class LocalCommentStructureResolver implements StructureResolverInterface
                         if ($i === 0) {
                             $subDescendentGraph = $descendentGraph;
                             $graphRoot = array_shift($subDescendentGraph);
-                            
+
                             if (array_key_exists($graphRoot, $this->descendentMapping) == false) {
                                 $this->descendentMapping[$graphRoot] = [];
                             }
@@ -257,6 +287,17 @@ class LocalCommentStructureResolver implements StructureResolverInterface
         $hierarchy->setAncestorMapping($this->ancestorMapping);
 
         $this->hierarchyCache[$threadPath] = $hierarchy;
+
+        $threadPathParts = explode(Paths::SYM_FORWARD_SEPARATOR, $threadPath);
+        $threadId = '';
+
+        if (Str::endsWith(Paths::SYM_FORWARD_SEPARATOR, $threadPath) && count($threadPathParts) >= 2) {
+            $threadId = $threadPathParts[count($threadPathParts) - 2];
+        } else {
+            $threadId = $threadPathParts[count($threadPathParts) - 1];
+        }
+
+        $this->threadPathIdMapping[$threadId] = $threadPath;
 
         $this->reset();
 

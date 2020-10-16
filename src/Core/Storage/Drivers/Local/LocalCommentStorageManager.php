@@ -57,6 +57,8 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
 {
 
     const PATH_REPLIES_DIRECTORY = 'replies';
+    const PATH_COMMENT_FILE = 'comment.md';
+
     const KEY_HEADERS = 'headers';
     const KEY_RAW_HEADERS = 'raw_headers';
     const KEY_CONTENT = 'content';
@@ -322,7 +324,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         $commentPaths = [];
 
         if ($this->commentShadowIndex->hasIndex($threadId) === false) {
-            $threadFilter = $this->paths->combine([$threadPath, '*comment.md']);
+            $threadFilter = $this->paths->combine([$threadPath, '*'.LocalCommentStorageManager::PATH_COMMENT_FILE]);
             $commentPaths = $this->paths->getFilesRecursively($threadFilter);
 
             $this->commentShadowIndex->buildIndex($threadId, $commentPaths);
@@ -710,7 +712,9 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     public function getPathById($commentId)
     {
         $threadFilter = $this->paths->combine([$this->storagePath, '*' . $commentId . '*']);
-        $commentPath = $this->paths->searchForFile($threadFilter, $this->paths->combine([$commentId, 'comment.md']), 'comment.md');
+        $commentPath = $this->paths->searchForFile($threadFilter, $this->paths->combine(
+            [$commentId, LocalCommentStorageManager::PATH_COMMENT_FILE]),
+            LocalCommentStorageManager::PATH_COMMENT_FILE);
 
         if (is_string($commentPath)) {
             return $commentPath;
@@ -797,26 +801,30 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         $didCommentSave = $this->persistComment($comment);
 
         if ($didCommentSave === true) {
-            $this->commentPipeline->created($comment, null);
+            $this->commentStructureResolver->clearThreadCache($comment->getThreadId());
+            // Reload the comment to supply the full comment details.
+            $savedComment = $this->findById($comment->getId());
+
+            $this->commentPipeline->created($savedComment, null);
 
             if ($comment->hasDataAttribute(CommentContract::KEY_SPAM)) {
                 if ($comment->isSpam()) {
-                    $this->commentPipeline->markedAsSpam($comment, null);
+                    $this->commentPipeline->markedAsSpam($savedComment, null);
                 } else {
-                    $this->commentPipeline->markedAsHam($comment, null);
+                    $this->commentPipeline->markedAsHam($savedComment, null);
                 }
             }
 
             if ($comment->hasDataAttribute(CommentContract::KEY_PUBLISHED)) {
                 if ($comment->published()) {
-                    $this->commentPipeline->approved($comment, null);
+                    $this->commentPipeline->approved($savedComment, null);
                 } else {
-                    $this->commentPipeline->unapproved($comment, null);
+                    $this->commentPipeline->unapproved($savedComment, null);
                 }
             }
 
             if ($comment->isReply()) {
-                $this->commentPipeline->replied($comment, null);
+                $this->commentPipeline->replied($savedComment, null);
             }
 
         }
@@ -885,21 +893,25 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         $didCommentSave = $this->persistComment($comment);
 
         if ($didCommentSave === true) {
-            $this->commentPipeline->updated($comment, null);
+            $this->commentStructureResolver->clearThreadCache($comment->getThreadId());
+            // Reload the comment to supply the full comment details.
+            $updatedComment = $this->findById($comment->getId());
+
+            $this->commentPipeline->updated($updatedComment, null);
 
             if ($comment->hasDataAttribute(CommentContract::KEY_SPAM)) {
                 if ($comment->isSpam()) {
-                    $this->commentPipeline->markedAsSpam($comment, null);
+                    $this->commentPipeline->markedAsSpam($updatedComment, null);
                 } else {
-                    $this->commentPipeline->markedAsHam($comment, null);
+                    $this->commentPipeline->markedAsHam($updatedComment, null);
                 }
             }
 
             if ($comment->hasDataAttribute(CommentContract::KEY_PUBLISHED)) {
                 if ($comment->published()) {
-                    $this->commentPipeline->approved($comment, null);
+                    $this->commentPipeline->approved($updatedComment, null);
                 } else {
-                    $this->commentPipeline->unapproved($comment, null);
+                    $this->commentPipeline->unapproved($updatedComment, null);
                 }
             }
 
@@ -957,7 +969,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
                 $threadId = $threadDetails[self::KEY_ID];
                 $threadPath = $threadDetails[self::KEY_PATH];
                 // Convert the path to an array.
-                $commentPaths = [$path];
+                $commentPaths = $this->inferRelationshipsFromPath($id, $path);
 
                 $simpleHierarchy = $this->getThreadHierarchy($threadPath, $threadId, $commentPaths);
 
@@ -974,6 +986,39 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         }
 
         return null;
+    }
+
+    /**
+     * Infers ancestor relationships from the comment path, to assist with lazy-loading.
+     *
+     * @param string $id The known comment identifier.
+     * @param string $path The comment path.
+     * @return string[]
+     * @since 2.0.12
+     */
+    private function inferRelationshipsFromPath($id, $path)
+    {
+        $resolvedPaths = [];
+        $subStructurePath = $this->paths->combine([
+            LocalCommentStorageManager::PATH_REPLIES_DIRECTORY,
+            $id,
+            LocalCommentStorageManager::PATH_COMMENT_FILE
+        ]);
+
+        if (Str::endsWith($path, $subStructurePath)) {
+            $parentPath = $this->paths->combine([
+                mb_substr($path, 0, mb_strlen($path) - mb_strlen($subStructurePath)),
+                LocalCommentStorageManager::PATH_COMMENT_FILE
+            ]);
+
+            if (file_exists($parentPath)) {
+                $resolvedPaths[] = $parentPath;
+            }
+        }
+
+        $resolvedPaths[] = $path;
+
+        return $resolvedPaths;
     }
 
     /**

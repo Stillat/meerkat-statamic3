@@ -52,9 +52,14 @@ class DataServiceProvider extends AddonServiceProvider
 
         // Automatically include helpers, if available.
         $filtersPath = base_path('meerkat/filters.php');
+        $eventsPath = base_path('meerkat/events.php');
 
         if (file_exists($filtersPath)) {
             include_once $filtersPath;
+        }
+
+        if (file_exists($eventsPath)) {
+            include_once $eventsPath;
         }
     }
 

@@ -16,6 +16,7 @@ use Stillat\Meerkat\Core\Data\Filters\CommentFilterManager;
  *
  * @method static string getFilterMap($filter)
  * @method static void filter($filterName, $callback, $params = '')
+ * @method static void filterGroup($groupName, $filters);
  * @method static void filterWithTagContext($filterName, $callback, $params = '', $supportedTags= [])
  * @method static void resolve($variableName, $callback);
  * @method static void restrictFilter($filterName, $tagContexts)

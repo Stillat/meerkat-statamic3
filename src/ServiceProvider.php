@@ -229,12 +229,26 @@ class ServiceProvider extends AddonServiceProvider
             storage_path('meerkat/tmp'),
             storage_path('meerkat/tasks'),
             storage_path('meerkat/logs'),
-            storage_path('meerkat/index')
+            storage_path('meerkat/index'),
+            base_path('meerkat')
         ];
 
         foreach ($paths as $path) {
             if (file_exists($path) === false) {
                 mkdir($path, Paths::$directoryPermissions, true);
+            }
+        }
+
+        // Create the helper files, if they don't exist.
+        $helperFiles = [];
+        $helperFiles[PathProvider::getStub('filters.php')] = 'filters.php';
+        $helperFiles[PathProvider::getStub('events.php')] = 'events.php';
+
+        foreach ($helperFiles as $source => $fileName) {
+            $targetPath = base_path('meerkat/'.$fileName);
+
+            if (!file_exists($targetPath)) {
+                copy($source, $targetPath);
             }
         }
     }

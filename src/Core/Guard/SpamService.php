@@ -20,6 +20,8 @@ use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
  */
 class SpamService
 {
+    const KEY_NAME = 'name';
+    const KEY_CLASS = 'class';
 
     /**
      * The settings to control Guard behavior.
@@ -44,6 +46,13 @@ class SpamService
      * @var array
      */
     protected $errors = [];
+
+    /**
+     * A collection of all available spam guards.
+     *
+     * @var array
+     */
+    protected $discoveredGuards = [];
 
     /**
      * The SpamGuardPipelineContract implementation instance.
@@ -85,6 +94,23 @@ class SpamService
     public function registerGuard(SpamGuardContract $guard)
     {
         $this->spamGuards[] = $guard;
+    }
+
+    /**
+     * Lets the spam service that a spam guard is available.
+     *
+     * This method does not automatically add the guard to the utilized guard list.
+     *
+     * @param string $guardName The guard's friendly name.
+     * @param string $guardClass The fully-qualified class for the guard.
+     * @since 2.0.12
+     */
+    public function makeAvailable($guardName, $guardClass)
+    {
+        $this->discoveredGuards[] = [
+            self::KEY_NAME => $guardName,
+            self::KEY_CLASS => $guardClass
+        ];
     }
 
     /**
@@ -150,8 +176,6 @@ class SpamService
     {
         $result = new GuardResult();
         $result->success = true;
-
-
 
         foreach ($this->spamGuards as $guard) {
             if ($guard->supportsSubmittingSpam()) {

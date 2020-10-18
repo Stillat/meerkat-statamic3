@@ -3,9 +3,9 @@
 namespace Stillat\Meerkat\Http\Controllers;
 
 use Illuminate\Http\Concerns\InteractsWithInput;
+use Illuminate\Http\Request;
 use Statamic\Http\Controllers\CP\CpController;
 use Statamic\Statamic;
-use Illuminate\Http\Request;
 use Stillat\Meerkat\Core\Contracts\Logging\ErrorCodeRepositoryContract;
 use Stillat\Meerkat\Feedback\SolutionProvider;
 
@@ -72,7 +72,7 @@ class ErrorLogsController extends CpController
         }
 
         return [
-          'logs' => $logsToReturn
+            'logs' => $logsToReturn
         ];
     }
 
@@ -116,7 +116,7 @@ class ErrorLogsController extends CpController
         }
 
         return [
-          'success' => false
+            'success' => false
         ];
     }
 

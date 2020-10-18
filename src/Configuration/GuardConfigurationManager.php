@@ -5,6 +5,14 @@ namespace Stillat\Meerkat\Configuration;
 use Stillat\Meerkat\Concerns\UsesConfig;
 use Stillat\Meerkat\Core\Guard\SpamService;
 
+/**
+ * Class GuardConfigurationManager
+ *
+ * Manages the supplemental guard configuration storage
+ *
+ * @package Stillat\Meerkat\Configuration
+ * @since 2.1.0
+ */
 class GuardConfigurationManager
 {
     use UsesConfig;
@@ -25,6 +33,11 @@ class GuardConfigurationManager
         $this->spamService = $spamService;
     }
 
+    /**
+     * Returns all manually registered, and dynamically discovered spam guards.
+     *
+     * @return array
+     */
     public function getConfiguration()
     {
         $configuredGuards = $this->getConfig('publishing.guards', []);

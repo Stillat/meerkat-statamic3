@@ -5,7 +5,6 @@ namespace Stillat\Meerkat\Configuration;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
-use Statamic\Contracts\Auth\UserGroupRepository;
 use Statamic\Facades\YAML;
 use Stillat\Meerkat\Addon;
 use Stillat\Meerkat\Concerns\UsesConfig;
@@ -247,27 +246,24 @@ class Manager
         ],
 
     ];
-
-    /**
-     * A cache of all the observed configuration behaviors.
-     *
-     * @var array
-     */
-    private $behaviorCache = [];
-
-    /**
-     * Indicates if Control Panel configuration was enabled.
-     *
-     * @var bool
-     */
-    private $cpConfigEnabled = false;
-
     /**
      * A collection of valid user groups.
      *
      * @var string[]
      */
     protected $userGroups = null;
+    /**
+     * A cache of all the observed configuration behaviors.
+     *
+     * @var array
+     */
+    private $behaviorCache = [];
+    /**
+     * Indicates if Control Panel configuration was enabled.
+     *
+     * @var bool
+     */
+    private $cpConfigEnabled = false;
 
     public function __construct()
     {
@@ -284,16 +280,6 @@ class Manager
     }
 
     /**
-     * Sets the collection of valid user groups.
-     *
-     * @param string[] $groups The valid user groups.
-     */
-    public function setValidGroups($groups)
-    {
-        $this->userGroups = $groups;
-    }
-
-    /**
      * Determines if the shared configuration Manager was set.
      *
      * @return bool
@@ -305,6 +291,16 @@ class Manager
         }
 
         return true;
+    }
+
+    /**
+     * Sets the collection of valid user groups.
+     *
+     * @param string[] $groups The valid user groups.
+     */
+    public function setValidGroups($groups)
+    {
+        $this->userGroups = $groups;
     }
 
     /**
@@ -327,11 +323,53 @@ class Manager
 
             if (!in_array($namespace, $this->alwaysManaged) &&
                 file_exists($supplementalConfigPath) && is_readable($supplementalConfigPath)) {
-                $valueToHash .= 'h'.filemtime($supplementalConfigPath);
+                $valueToHash .= 'h' . filemtime($supplementalConfigPath);
             }
         }
 
         return md5($valueToHash);
+    }
+
+    /**
+     * Gets the addon's configuration items.
+     *
+     * @return array
+     */
+    public function getConfigurationMap()
+    {
+        $configDirectory = PathProvider::getAddonDirectory('config');
+
+        if (file_exists($configDirectory) == false || is_dir($configDirectory) == false) {
+            return [];
+        }
+
+        if (Str::endsWith($configDirectory, '/') == false) {
+            $configDirectory .= '/';
+        }
+
+        $configDirectory .= '*.php';
+
+        $configFiles = glob($configDirectory);
+        $configMapping = [];
+
+        foreach ($configFiles as $filePath) {
+            $configName = basename($filePath);
+            $targetConfigPath = config_path(Addon::CODE_ADDON_NAME . '/' . $configName);
+
+            $configMapping[$filePath] = $targetConfigPath;
+        }
+
+        return $configMapping;
+    }
+
+    private function getSupplementPath($namespace)
+    {
+        $configDirectory = config_path(Addon::CODE_ADDON_NAME . '/');
+        if (Str::endsWith($configDirectory, '/') == false) {
+            $configDirectory .= '/';
+        }
+
+        return $configDirectory . self::PATH_SUPPLEMENT . '/' . $namespace . '.yaml';
     }
 
     /**
@@ -352,6 +390,11 @@ class Manager
         return $this->hasManagedItems;
     }
 
+    /**
+     * Converts the current configuration items to arrays.
+     *
+     * @return array
+     */
     public function getConfigurationItemArray()
     {
         $items = [];
@@ -436,11 +479,20 @@ class Manager
         return $returnItems;
     }
 
+    /**
+     * Converts the provided configuration sub-namespace to a storage path.
+     *
+     * @param string $namespace The config namespace.
+     * @return string
+     */
     private function getSupplementalConfigurationPath($namespace)
     {
         return config_path('meerkat/supplement/' . $namespace . '.yaml');
     }
 
+    /**
+     * Reloads all dynamic configuration values.
+     */
     public function loadConfiguration()
     {
         if ($this->hasLoaded === true) {
@@ -591,47 +643,10 @@ class Manager
     }
 
     /**
-     * Gets the addon's configuration items.
+     * Returns a mapping between configuration namespaces and supplemental storage paths.
      *
      * @return array
      */
-    public function getConfigurationMap()
-    {
-        $configDirectory = PathProvider::getAddonDirectory('config');
-
-        if (file_exists($configDirectory) == false || is_dir($configDirectory) == false) {
-            return [];
-        }
-
-        if (Str::endsWith($configDirectory, '/') == false) {
-            $configDirectory .= '/';
-        }
-
-        $configDirectory .= '*.php';
-
-        $configFiles = glob($configDirectory);
-        $configMapping = [];
-
-        foreach ($configFiles as $filePath) {
-            $configName = basename($filePath);
-            $targetConfigPath = config_path(Addon::CODE_ADDON_NAME . '/' . $configName);
-
-            $configMapping[$filePath] = $targetConfigPath;
-        }
-
-        return $configMapping;
-    }
-
-    private function getSupplementPath($namespace)
-    {
-        $configDirectory = config_path(Addon::CODE_ADDON_NAME . '/');
-        if (Str::endsWith($configDirectory, '/') == false) {
-            $configDirectory .= '/';
-        }
-
-        return $configDirectory . self::PATH_SUPPLEMENT . '/' . $namespace . '.yaml';
-    }
-
     public function getSupplementalConfigurationMap()
     {
         $configurationMap = $this->getConfigurationMap();

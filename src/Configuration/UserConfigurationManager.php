@@ -222,5 +222,4 @@ class UserConfigurationManager
         return $this->currentUser->email();
     }
 
-
 }

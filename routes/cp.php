@@ -3,10 +3,17 @@
 use Illuminate\Support\Facades\Route;
 use Stillat\Meerkat\Addon;
 
+Route::group(['prefix' => 'addons'], function () {
+    Route::group(['prefix' => Addon::ROUTE_PREFIX], function () {
+        Route::get('settings', '\Stillat\Meerkat\Http\Controllers\ConfigureController@index')->name('cp.meerkat.settings');
+    });
+});
+
 Route::group(['prefix' => Addon::ROUTE_PREFIX], function () {
     Route::get('/', '\Stillat\Meerkat\Http\Controllers\DashboardController@index')->name('cp.meerkat.dashboard');
-    Route::get('redirect/{entryId}/{commentId}', '\Stillat\Meerkat\Http\Controllers\DashboardController@redirectToEntry');
 
+
+    Route::get('redirect/{entryId}/{commentId}', '\Stillat\Meerkat\Http\Controllers\DashboardController@redirectToEntry');
 
     Route::get('blueprint', '\Stillat\Meerkat\Http\Controllers\MeerkatBlueprintController@edit')->name('cp.meerkat.blueprint');
     Route::patch('blueprint', '\Stillat\Meerkat\Http\Controllers\MeerkatBlueprintController@update')->name('cp.meerkat.blueprint.update');

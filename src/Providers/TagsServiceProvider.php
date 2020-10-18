@@ -18,7 +18,7 @@ class TagsServiceProvider extends AddonServiceProvider
     protected $defer = false;
 
     protected $tags = [
-      Meerkat::class
+        Meerkat::class
     ];
 
 }

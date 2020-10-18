@@ -1,1 +1,1 @@
-(function () {/* Provides the Meerkat CoreJS runtime with server-side settings.*//*usercontext*//*settings*/})();
+(function () {/* Provides the Meerkat CoreJS runtime with server-side settings.*//*user-settings*//*usercontext*//*settings*/})();

@@ -16,22 +16,10 @@ class UserSettings {
     return userPreferences;
   }
 
-  getPerPage(): Number {
-    return this.getSettings().perPage;
-  }
-
   getDisplayTableFilters(): Boolean {
     let settings = this.getSettings();
 
     return Type.withDefault(settings[UserSettings.SettingDisplayTableFilter], false);
-  }
-
-  updatePerPage(perPage: Number) {
-    let preferences = this.getSettings();
-
-    preferences.perPage = perPage;
-
-    this._saveSettings(preferences);
   }
 
   updateDisplayTableFilters(display: Boolean) {
@@ -48,7 +36,6 @@ class UserSettings {
 
   _getDefaultSettings() {
     return {
-      perPage: 10,
       displayTableFilter: false
     };
   }

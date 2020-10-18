@@ -109,7 +109,8 @@ export default {
       this.$emit('page-updated', pageNumber);
     },
     updatePerPage(event) {
-      this.$emit('per-page-updated', this.instancePerPage);
+      this.$emit('per-page-updated', event.target.value);
+      event.preventDefault();
     },
     movePrevious() {
       if (this.pageData === null) {

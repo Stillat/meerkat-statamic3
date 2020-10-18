@@ -27,5 +27,15 @@ return [
     'missing_permission_can_edit' => 'Cannot edit comments.',
     'missing_permission_can_report_spam' => 'Cannot report comments as spam.',
     'missing_permission_can_report_ham' => 'Cannot report comments as not spam.',
-    'missing_permission_can_remove' => 'Cannot delete comments.'
+    'missing_permission_can_remove' => 'Cannot delete comments.',
+    'missing_permission_sys_admin' => 'You are not a super user.',
+    'missing_permission_cp_config' => 'Control Panel configuration has been disabled for this site.',
+
+    'config_missing_parameters' => 'Missing or invalid parameters were supplied.',
+    'const_preferences_unknown_failure' => 'There was a problem trying to update your settings; please try again.',
+    'config_preferences_failure' => 'Your preferences couldn\'t be updated; please try again.',
+    'config_settings_failure' => 'The site settings couldn\'t be updated; please try again.',
+    'config_both_failure' => 'Your preferences or site settings couldn\'t be updated; please try again.',
+
+
 ];

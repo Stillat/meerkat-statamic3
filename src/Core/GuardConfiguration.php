@@ -46,6 +46,13 @@ class GuardConfiguration extends ConfigurationContainer
     public $bannedWords = [];
 
     /**
+     * A list of IP Addresses to reject comments from.
+     *
+     * @var array
+     */
+    public $blockedIpAddresses = [];
+
+    /**
      * Indicates if comments should be automatically deleted if they are detected to be spam, or marked as spam.
      *
      * @var bool

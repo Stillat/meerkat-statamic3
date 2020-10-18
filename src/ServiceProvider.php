@@ -2,11 +2,13 @@
 
 namespace Stillat\Meerkat;
 
+use Statamic\Contracts\Auth\UserGroupRepository;
 use Statamic\Statamic;
 use Statamic\Yaml\ParseException;
 use Stillat\Meerkat\Blueprint\BlueprintProvider;
 use Stillat\Meerkat\Concerns\UsesConfig;
 use Stillat\Meerkat\Concerns\UsesTranslations;
+use Stillat\Meerkat\Configuration\Manager;
 use Stillat\Meerkat\Console\Commands\MigrateCommentsCommand;
 use Stillat\Meerkat\Console\Commands\StatisticsCommand;
 use Stillat\Meerkat\Console\Commands\ValidateCommand;
@@ -36,7 +38,6 @@ use Stillat\Meerkat\Providers\IdentityServiceProvider;
 use Stillat\Meerkat\Providers\SpamServiceProvider;
 use Stillat\Meerkat\Providers\TagsServiceProvider;
 use Stillat\Meerkat\Providers\ThreadServiceProvider;
-use Stillat\Meerkat\Support\Facades\Configuration;
 
 /**
  * Class ServiceProvider
@@ -81,6 +82,12 @@ class ServiceProvider extends AddonServiceProvider
     public function register()
     {
         $this->createPaths();
+
+        $this->app->singleton(Manager::class, function ($app) {
+            return new Manager();
+        });
+
+        Manager::$instance = app(Manager::class);
 
         // Registers the error log repository utilized by many Meerkat services and features.
         $this->registerMeerkatCoreErrorLogRepository();
@@ -268,9 +275,13 @@ class ServiceProvider extends AddonServiceProvider
 
     protected function beforeBoot()
     {
+        /** @var Manager $configurationManager */
+        $configurationManager = app(Manager::class);
+
         // Indicate which configuration entries should be
         // made available to the Statamic installation.
-        $this->config = Configuration::getConfigurationMap();
+        $this->config = $configurationManager->getConfigurationMap();
+        $this->supplementalConfiguration = $configurationManager->getSupplementalConfigurationMap();
     }
 
 }

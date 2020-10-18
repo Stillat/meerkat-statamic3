@@ -182,6 +182,16 @@ export default {
     updateStateFromOrder() {
       this.$emit('order-changed', this.sortManager);
     },
+    onConfigAvatarUpdated(config) {
+      if (Type.hasValue(config)) {
+        if (config.length > 0) {
+          let driverName = AvatarDriverRegistry.getDriverName(config[0]);
+
+          console.log('setting driver', driverName);
+          this.avatarDriver = driverName;
+        }
+      }
+    },
     onFilterChange(filter) {
       this.$emit('filter-changed', filter);
     },
@@ -280,6 +290,7 @@ export default {
     }.bind(this));
   },
   created() {
+    syncjs.Hubs.config().handledBy(this);
     syncjs.Hubs.comments().handledBy(this)
       .reactsToInstance(false)
       .redirectTo(this.closeAllActionDialogs);
@@ -307,8 +318,8 @@ export default {
       this.canUseBulkActions = true;
     }
 
-    if (AvatarDriverRegistry.hasDriver(Environment.Settings.avatarDriver)) {
-      this.avatarDriver = AvatarDriverRegistry.getDriverName(Environment.Settings.avatarDriver);
+    if (AvatarDriverRegistry.hasDriver(Environment.UserPreferences.cp_avatar_driver)) {
+      this.avatarDriver = AvatarDriverRegistry.getDriverName(Environment.UserPreferences.cp_avatar_driver);
     } else {
       this.avatarDriver = AvatarDriverRegistry.getDriverName(AvatarDriverRegistry.DefaultDriverName);
     }

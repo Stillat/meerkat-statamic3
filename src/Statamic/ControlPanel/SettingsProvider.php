@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat\Statamic\ControlPanel;
 
 use Stillat\Meerkat\Concerns\UsesConfig;
+use Stillat\Meerkat\Configuration\UserConfigurationManager;
 use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
 use Stillat\Meerkat\PathProvider;
@@ -20,6 +21,7 @@ class SettingsProvider
     use UsesConfig;
 
     const JS_NAME_AVATAR_DRIVER = 'avatarDriver';
+    const JS_NAME_CP_CONFIG_ENABLED = 'controlPanelConfigurationEnabled';
     const JS_NAME_TELEMETRY_ENABLED = 'telemetryEnabled';
 
     /**
@@ -36,10 +38,20 @@ class SettingsProvider
      */
     protected $identityManager = null;
 
-    public function __construct(SanitationManagerContract $sanitationManager, IdentityManagerContract $identityManager)
+    /**
+     * The UserConfigurationManager instance.
+     *
+     * @var UserConfigurationManager
+     */
+    protected $userConfigurationManager = null;
+
+    public function __construct(SanitationManagerContract $sanitationManager,
+                                IdentityManagerContract $identityManager,
+                                UserConfigurationManager $userConfigurationManager)
     {
         $this->sanitationManager = $sanitationManager;
         $this->identityManager = $identityManager;
+        $this->userConfigurationManager = $userConfigurationManager;
     }
 
     /**
@@ -49,6 +61,14 @@ class SettingsProvider
      */
     public function emitStatements()
     {
+        $userSettings = $this->userConfigurationManager->getConfiguration();
+
+        // Add the user's email address to the user settings information.
+        $userSettings['email'] = $this->userConfigurationManager->getEmailAddress();
+        $userSettings['isSuper'] = $this->userConfigurationManager->isSysAdmin();
+
+        $userSettings = json_encode($userSettings);
+
         $jsonPermissionSet = json_encode($this->identityManager->getIdentityContext()->getPermissionSet());
 
         $javaScriptStub = file_get_contents(PathProvider::getStub('settings.js'));
@@ -60,8 +80,9 @@ class SettingsProvider
 
         $settings = join(';', $settingAssignments);
 
+        $javaScriptStub = str_replace('/*user-settings*/', 'window.meerkat.Config.Environment.UserPreferences = ' . $userSettings . ';', $javaScriptStub);
         $javaScriptStub = str_replace('/*settings*/', $settings, $javaScriptStub);
-        $javaScriptStub = str_replace('/*usercontext*/', 'window.meerkat.Config.Environment.UserContext = '.$jsonPermissionSet.';', $javaScriptStub);
+        $javaScriptStub = str_replace('/*usercontext*/', 'window.meerkat.Config.Environment.UserContext = ' . $jsonPermissionSet . ';', $javaScriptStub);
 
         return $javaScriptStub;
     }
@@ -77,8 +98,8 @@ class SettingsProvider
             $this->getConfig('authors.cp_avatar_driver', 'initials')
         );
 
-
         return [
+            SettingsProvider::JS_NAME_CP_CONFIG_ENABLED => $this->getConfig('permissions.control_panel_config', true),
             SettingsProvider::JS_NAME_AVATAR_DRIVER => $avatarDriver,
             SettingsProvider::JS_NAME_TELEMETRY_ENABLED => $this->getConfig('telemetry.enabled')
         ];

@@ -35,6 +35,7 @@ class Bootstrapper {
 
       AvatarDriverRegistry.setDisplayNames(existingDisplayNames);
       AvatarDriverRegistry.setDrivers(existingDrivers);
+      AvatarDriverRegistry.DriverMapping = extendInstance.Avatars.DriverMapping;
 
       delete window[Bootstrapper.ExtensibilityInstance];
 

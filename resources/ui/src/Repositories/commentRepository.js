@@ -15,7 +15,7 @@ const syncjs = require('syncjs');
 /**
  * Provides a wrapper around Meerkat's comment-related HTTP API endpoints.
  *
- * @property {function(request, waitTime) : RequestState} shouldProcessRequest()
+ * @property {function(request) : RequestState} shouldProcessRequest()
  * @property {function(request)} releasePending()
  */
 class CommentRepository {

@@ -281,7 +281,7 @@ class AkismetSpamGuard implements SpamGuardContract
 
                         return true;
                     } else {
-                        throw new GuardException('Unexpected Akismet response: '.$responseBody);
+                        throw new GuardException('Unexpected Akismet response: ' . $responseBody);
                     }
                 }
             } catch (Exception $generalException) {
@@ -458,6 +458,54 @@ class AkismetSpamGuard implements SpamGuardContract
     }
 
     /**
+     * Generates an Akismet API request URL.
+     *
+     * @param string $suffix The relative path.
+     * @return string
+     */
+    private function getRequestUrl($suffix)
+    {
+        return 'https://' . $this->config->get(AkismetSpamGuard::AKISMET_API_KEY) . '.rest.akismet.com/1.1/' . $suffix;
+    }
+
+    /**
+     * Validates the configuration values against the Akismet API.
+     *
+     * @param string $apiKey The Akismet API key.
+     * @param string $homeUrl The Akismet front page.
+     * @return bool
+     */
+    public function checkConfigurationKey($apiKey, $homeUrl)
+    {
+        $this->success = false;
+        $this->validateAkismetSettings();
+
+        if ($this->hasBeenValidated || $this->canMakeRequests == false) {
+            return false;
+        }
+
+        if ($this->hasBeenValidated == false && $this->canMakeRequests) {
+            $validationResults = $this->validateAkismetAPIKey(
+                $apiKey,
+                $homeUrl);
+
+            if (!$validationResults->isValid) {
+                $this->canMakeRequests = false;
+                $this->hasBeenValidated = true;
+
+                return false;
+            }
+
+            $this->canMakeRequests = true;
+            $this->hasBeenValidated = true;
+        }
+
+        $this->success = true;
+
+        return true;
+    }
+
+    /**
      * Marks a comment as a spam, and communicates this
      * to third-party vendors if configured to do so.
      *
@@ -590,17 +638,6 @@ class AkismetSpamGuard implements SpamGuardContract
     public function getErrors()
     {
         return $this->errors;
-    }
-
-    /**
-     * Generates an Akismet API request URL.
-     *
-     * @param string $suffix The relative path.
-     * @return string
-     */
-    private function getRequestUrl($suffix)
-    {
-        return 'https://' . $this->config->get(AkismetSpamGuard::AKISMET_API_KEY) . '.rest.akismet.com/1.1/' . $suffix;
     }
 
 }

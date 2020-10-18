@@ -7,6 +7,8 @@ return [
     'confirm' => 'Confirm',
     'try_again' => 'Try Again',
     'submit_error_try_again' => 'Submit and Try Again',
+    'manage' => 'Manage',
+    'meerkat_settings' => 'Meerkat Configuration',
 
     'view_entry' => 'View Entry',
 

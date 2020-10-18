@@ -114,6 +114,16 @@ class SpamService
     }
 
     /**
+     * Returns all spam guards that have registered themselves for configuration access.
+     *
+     * @return array
+     */
+    public function getDiscoveredGuards()
+    {
+        return $this->discoveredGuards;
+    }
+
+    /**
      * Returns a collection of Exceptions thrown during
      * communication with third-party spam providers.
      *

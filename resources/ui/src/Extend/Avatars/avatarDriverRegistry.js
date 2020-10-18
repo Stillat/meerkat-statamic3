@@ -34,6 +34,7 @@ class AvatarDriverRegistry {
   static registerDriver(driverName, displayName, driverComponent) {
     let newDriverName = AvatarDriverRegistry.getDriverName(driverName);
 
+    AvatarDriverRegistry.DriverMapping[driverName] = displayName;
     AvatarDriverRegistry.Drivers[newDriverName] = driverComponent;
     AvatarDriverRegistry.DisplayNames[newDriverName] = displayName;
   }
@@ -89,5 +90,6 @@ class AvatarDriverRegistry {
 AvatarDriverRegistry.DefaultDriverName = 'initials';
 AvatarDriverRegistry.DisplayNames = {};
 AvatarDriverRegistry.Drivers = {};
+AvatarDriverRegistry.DriverMapping = {};
 
 export default AvatarDriverRegistry;

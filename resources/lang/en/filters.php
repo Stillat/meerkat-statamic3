@@ -9,8 +9,8 @@ return [
     'spam' => 'Spam',
     'pending' => 'Pending',
 
-    'no_data' => 'There are no comments to display',
-    'no_data_filter' => 'This is most likely due to the applied filters',
+    'no_data' => 'We\'ve searched everywhere and found nothing',
+    'no_data_filter' => 'This is most likely due to the current filters',
     'search_placeholder' => 'Search within comments...'
 
 ];

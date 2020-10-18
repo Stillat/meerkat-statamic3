@@ -29,6 +29,10 @@ class ControlPanelApplication {
     }
   }
 
+  url(relativePath) {
+    return ControlPanel.cpUrl(relativePath);
+  }
+
   /**
    * Returns the global Control Panel application.
    *

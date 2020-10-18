@@ -12,7 +12,6 @@ return [
     */
     'guards' => [
         \Stillat\Meerkat\Core\Guard\Providers\AkismetSpamGuard::class,
-        \Stillat\Meerkat\Core\Guard\Providers\GTUBESpamGuard::class,
         \Stillat\Meerkat\Core\Guard\Providers\WordFilterSpamGuard::class
     ],
 

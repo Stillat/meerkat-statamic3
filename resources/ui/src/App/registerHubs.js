@@ -7,4 +7,5 @@ const syncjs = require('syncjs');
 
 export function registerHubs() {
   syncjs.Hubs.make('comments', Type.typeOf(Comment));
+  syncjs.Hubs.make('config', Type.typeOf({}));
 }

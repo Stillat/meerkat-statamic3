@@ -14,6 +14,8 @@ import Endpoints from '../../Http/endpoints';
 import OverviewProvider from '../../Reporting/overviewProvider';
 import ControlPanelApplication from '../controlPanelApplication';
 import TaskObserver from '../../Tasks/taskObserver';
+import Type from '../../Types/type';
+import SettingsRepository from '../../Repositories/settingsRepository';
 
 const syncjs = require('syncjs');
 
@@ -44,10 +46,12 @@ export default {
         statusMessage: '',
         showStatusMessage: false
       },
+      silentPreferenceUpdate: true,
       defaultFilters: ['all', 'pending', 'published', 'spam'],
       searchOptions: new SearchOptions(),
       commentRepo: new CommentRepository(),
       commentData: null,
+      configUrl: ControlPanelApplication.current().url('addons/meerkat/settings'),
       exportLinks: {
         csv: Endpoints.url(Endpoints.ExportCsv) + '?download=true',
         json: Endpoints.url(Endpoints.ExportJson) + '?download=true'
@@ -182,7 +186,20 @@ export default {
       this.loadCommentData();
     },
     updateQueryWithPerPage(perPageCount) {
-      Environment.Preferences.updatePerPage(perPageCount);
+      SettingsRepository.Instance.updatePerPage(perPageCount).then(function (response) {
+        if (this.silentPreferenceUpdate === false) {
+          ControlPanelApplication.current().controlPanel.message().success(
+            this.trans('config.preferences_updated')
+          );
+        }
+      }.bind(this))
+        .catch(function () {
+          if (this.silentPreferenceUpdate === false) {
+            ControlPanelApplication.current().controlPanel.message().error(
+              this.trans('errors.config_preferences_failure')
+            );
+          }
+        }.bind(this));
 
       if (this.state.lastPerPageRequest > -1 && this.state.lastPerPageRequest === perPageCount) {
         return;
@@ -264,15 +281,18 @@ export default {
     this.applyFromDefaultFilter(currentUrlRequest);
 
     window.onpopstate = function (event) {
-      let poppedValue = Url.lastValue(event.state.urlPath);
+      if (event.state !== null && event.state.urlPath !== null) {
+        let poppedValue = Url.lastValue(event.state.urlPath);
 
-      this.applyFromDefaultFilter(poppedValue);
+        this.applyFromDefaultFilter(poppedValue);
+      }
     }.bind(this);
 
     syncjs.Hubs.comments().handledBy(this);
+
     this.loadCommentData();
 
-    this.state.initialPerPage = Environment.Preferences.getPerPage();
+    this.state.initialPerPage = Environment.UserPreferences.cp_per_page;
     this.searchOptions.resultsPerPage = this.state.initialPerPage;
   }
 };

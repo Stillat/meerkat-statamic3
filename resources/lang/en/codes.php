@@ -11,4 +11,9 @@ return [
     '05-006' => 'errors.missing_permission_can_report_spam',
     '05-007' => 'errors.missing_permission_can_report_ham',
     '05-008' => 'errors.missing_permission_can_remove',
+    '05-009' => 'errors.missing_permission_sys_admin',
+    '05-010' => 'errors.missing_permission_cp_config',
+
+    '09-001' => 'errors.config_missing_parameters',
+
 ];

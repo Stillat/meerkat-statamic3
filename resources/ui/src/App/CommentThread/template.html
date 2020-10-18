@@ -4,6 +4,11 @@
 
         <loader v-if="state.loadingData" :display-inline="true" class="mr-1"></loader>
         <dropdown-list class="mr-2">
+          <button class="flex items-center" slot="trigger">{{ trans('actions.manage') }} <svg-icon name="chevron-down-xs" class="w-2 ml-1"></svg-icon></button>
+          <dropdown-item :text="trans('actions.meerkat_settings')" :redirect="configUrl"></dropdown-item>
+        </dropdown-list>
+
+        <dropdown-list class="mr-2">
             <button class="flex items-center" slot="trigger">{{ trans('actions.export') }} <svg-icon name="chevron-down-xs" class="w-2 ml-1"></svg-icon></button>
             <dropdown-item :text="trans('actions.export_csv')" :redirect="exportLinks.csv"></dropdown-item>
             <dropdown-item :text="trans('actions.export_json')" :redirect="exportLinks.json"></dropdown-item>

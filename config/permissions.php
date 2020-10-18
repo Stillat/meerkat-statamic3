@@ -4,12 +4,22 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Statamic Control Panel Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Controls whether Meerkat can be configured in the Statamic Control Panel.
+    |
+    */
+    'control_panel_config' => true,
+
+    /*
+    |--------------------------------------------------------------------------
     | All Permissions User Groups
     |--------------------------------------------------------------------------
     |
     | A list user group identifiers whose members have all permissions granted.
     |
-   */
+    */
     'all_permissions' => [
 
     ],
@@ -21,7 +31,7 @@ return [
     |
     | A list user group identifiers whose members can view comments.
     |
-   */
+    */
     'can_view_comments' => [
 
     ],
@@ -34,7 +44,7 @@ return [
     | The user groups, whose members can approve
     | comments from within the Control Panel.
     |
-   */
+    */
     'can_approve_comments' => [
 
     ],
@@ -47,7 +57,7 @@ return [
     | The user groups, whose members can unapprove
     | comments from within the Control Panel.
     |
-   */
+    */
     'can_unapprove_comments' => [
 
     ],
@@ -59,7 +69,7 @@ return [
     | The user groups, whose members can reply to
     | comments from within the Control Panel.
     |
-   */
+    */
     'can_reply_to_comments' => [
 
     ],

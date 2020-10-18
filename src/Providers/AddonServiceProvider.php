@@ -8,6 +8,7 @@ use phpDocumentor\Reflection\DocBlock\StandardTagFactory;
 use Statamic\Providers\AddonServiceProvider as StatamicAddonServiceProvider;
 use Statamic\Statamic;
 use Stillat\Meerkat\Addon;
+use Stillat\Meerkat\Configuration\Manager;
 use Stillat\Meerkat\Core\Storage\Paths;
 use Stillat\Meerkat\Core\Support\Str;
 use Stillat\Meerkat\Http\RequestHelpers;
@@ -67,6 +68,13 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
     protected $config = [];
 
     /**
+     * A collection of supplemental configuration items to publish to the Statamic installation.
+     *
+     * @var array
+     */
+    protected $supplementalConfiguration = [];
+
+    /**
      * Indicates if the context state has resolved.
      *
      * @var bool
@@ -119,6 +127,9 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
 
         Statamic::booted(function () {
             $this->publishAddonConfiguration();
+            /** @var Manager $configManager */
+            $configManager = app(Manager::class);
+            $configManager->loadConfiguration();
             $this->publishAddonControlPanelAssets();
         });
 
@@ -247,6 +258,27 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
             }
         }
 
+        foreach ($this->supplementalConfiguration as $configFile) {
+            $dirname = dirname($configFile);
+
+            if (Str::endsWith($dirname, '/') === false) {
+                $dirname .= '/';
+            }
+
+            if (!file_exists($dirname)) {
+                mkdir($dirname, 0755, true);
+            }
+
+            if (!file_exists($configFile)) {
+                file_put_contents($configFile, '');
+            }
+        }
+
+        $userConfigDirectory = config_path('meerkat/users/');
+
+        if (!file_exists($userConfigDirectory)) {
+            mkdir($userConfigDirectory);
+        }
     }
 
     /**

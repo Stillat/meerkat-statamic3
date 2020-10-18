@@ -14,6 +14,15 @@ Route::middleware('statamic.cp.authenticated')->group(function () {
             Route::post('submit', '\Stillat\Meerkat\Http\Controllers\Api\TelemetryController@submitReport');
         });
 
+        Route::group(['prefix' => 'settings'], function () {
+            Route::get('/fetch','\Stillat\Meerkat\Http\Controllers\ConfigureController@getConfiguration');
+            Route::post('/save','\Stillat\Meerkat\Http\Controllers\ConfigureController@save');
+            Route::get('/current-change-set','\Stillat\Meerkat\Http\Controllers\ConfigureController@getCurrentConfigHash');
+            Route::post('/validate-akismet', '\Stillat\Meerkat\Http\Controllers\ConfigureController@validateAkismetApiKey');
+            Route::post('/update-per-page', '\Stillat\Meerkat\Http\Controllers\ConfigureController@updateUserPerPage');
+
+        });
+
         Route::group(['prefix' => 'comments'], function () {
             Route::post('/search', '\Stillat\Meerkat\Http\Controllers\Api\CommentsController@search');
             Route::post('/update', '\Stillat\Meerkat\Http\Controllers\Api\UpdateCommentController@updateComment');

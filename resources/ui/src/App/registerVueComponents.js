@@ -3,6 +3,7 @@ import CommentEditor from '../App/Components/CommentEditor';
 import StatefulConfirmationDialog from '../App/Components/StatefulConfirmationDialog';
 import Loader from '../App/Components/Loader';
 import CommentThread from '../App/CommentThread';
+import Configurator from '../App/Configurator';
 import Environment from '../Config/environment';
 
 import Type from '../Types/type';
@@ -17,6 +18,7 @@ export function registerVueComponents(vue) {
   registerCallback('meerkat-nav-badge', NavigationBadge);
   registerCallback('meerkat-comment-editor', CommentEditor);
   registerCallback('meerkat-comment-thread', CommentThread);
+  registerCallback('meerkat-configurator', Configurator);
   registerCallback('meerkat-loader', Loader);
   registerCallback('meerkat-stateful-confirm-dialog', StatefulConfirmationDialog);
 

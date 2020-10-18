@@ -35,6 +35,17 @@ class Environment {
   }
 
   /**
+   * Tests if Control Panel configuration has been enabled.
+   *
+   * @returns {boolean}
+   */
+  static isControlPanelConfigEnabled():  Boolean {
+    let curValue = Type.withDefault(Environment.Settings['controlPanelConfigurationEnabled'], '1');
+
+    return (curValue === '1');
+  }
+
+  /**
    * Tests if telemetry has been enabled.
    *
    * @returns {Boolean}
@@ -62,6 +73,7 @@ class Environment {
 Environment.MarkdownHandler = null;
 Environment.Settings = new Settings();
 Environment.UserContext = null;
+Environment.UserPreferences = null;
 Environment.Preferences = null;
 
 Environment.StatamicApiRoot = '';

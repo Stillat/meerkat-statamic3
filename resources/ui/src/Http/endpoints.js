@@ -31,6 +31,12 @@ Endpoints.CommentsCheckForSpam = 'comments/check-for-spam';
 
 Endpoints.TaskGetStatus = 'tasks/status';
 
+Endpoints.SettingsFetch = 'settings/fetch';
+Endpoints.SettingsSave = 'settings/save';
+Endpoints.SettingsGetCurrentChangeSet = 'settings/current-change-set';
+Endpoints.SettingsValidateAkismet = 'settings/validate-akismet';
+Endpoints.SettingsUpdatePerPage = 'settings/update-per-page';
+
 Endpoints.ExportCsv = 'export/csv';
 Endpoints.ExportJson = 'export/json';
 

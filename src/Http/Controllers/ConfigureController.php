@@ -12,6 +12,8 @@ use Stillat\Meerkat\Configuration\ConfigurationItem;
 use Stillat\Meerkat\Configuration\GuardConfigurationManager;
 use Stillat\Meerkat\Configuration\Manager;
 use Stillat\Meerkat\Configuration\UserConfigurationManager;
+use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
+use Stillat\Meerkat\Core\Contracts\Permissions\PermissionsManagerContract;
 use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Guard\Providers\AkismetSpamGuard;
 use Stillat\Meerkat\Core\Http\Responses\Responses;
@@ -54,8 +56,22 @@ class ConfigureController extends CpController
         ]);
     }
 
-    public function updateUserPerPage(UserConfigurationManager $userConfigurationManager)
+    public function updateUserPerPage(PermissionsManagerContract $permissionsManager, IdentityManagerContract $identityManager,
+                                      UserConfigurationManager $userConfigurationManager)
     {
+        $permissions = $permissionsManager->getPermissions($identityManager->getIdentityContext());
+
+        if ($permissions->canViewComments === false) {
+            if ($this->request->ajax()) {
+                return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_VIEW);
+            } else {
+                abort(403, 'Unauthorized', [
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_VIEW
+                ]);
+                exit;
+            }
+        }
+
         $options = [10, 25, 50, 100];
         $perPage = intval(request()->get(self::KEY_PARAM_PER_PAGE, 25));
 
@@ -72,8 +88,21 @@ class ConfigureController extends CpController
         return Responses::generalFailure();
     }
 
-    public function getCurrentConfigHash(Manager $configurationManager)
+    public function getCurrentConfigHash(PermissionsManagerContract $permissionsManager, IdentityManagerContract $identityManager, Manager $configurationManager)
     {
+        $permissions = $permissionsManager->getPermissions($identityManager->getIdentityContext());
+
+        if ($permissions->canViewComments === false) {
+            if ($this->request->ajax()) {
+                return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_VIEW);
+            } else {
+                abort(403, 'Unauthorized', [
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_VIEW
+                ]);
+                exit;
+            }
+        }
+
         try {
             return Responses::successWithData([
                 self::KEY_CONFIG_HASH => $configurationManager->getConfigurationHash()
@@ -84,8 +113,21 @@ class ConfigureController extends CpController
         }
     }
 
-    public function validateAkismetApiKey(AkismetSpamGuard $guard)
+    public function validateAkismetApiKey(PermissionsManagerContract $permissionsManager, IdentityManagerContract $identityManager, AkismetSpamGuard $guard)
     {
+        $permissions = $permissionsManager->getPermissions($identityManager->getIdentityContext());
+
+        if ($permissions->canViewComments === false) {
+            if ($this->request->ajax()) {
+                return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_VIEW);
+            } else {
+                abort(403, 'Unauthorized', [
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_VIEW
+                ]);
+                exit;
+            }
+        }
+
         $apiKey = request()->get(self::KEY_PARAM_API_KEY, null);
         $frontPage = request()->get(self::KEY_PARAM_FRONT_PAGE, null);
 
@@ -117,8 +159,21 @@ class ConfigureController extends CpController
         ]);
     }
 
-    public function save(Manager $configManager, UserConfigurationManager $userConfigurationManager, UserGroupRepository $userGroups)
+    public function save(PermissionsManagerContract $permissionsManager, IdentityManagerContract $identityManager, Manager $configManager, UserConfigurationManager $userConfigurationManager, UserGroupRepository $userGroups)
     {
+        $permissions = $permissionsManager->getPermissions($identityManager->getIdentityContext());
+
+        if ($permissions->canViewComments === false) {
+            if ($this->request->ajax()) {
+                return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_VIEW);
+            } else {
+                abort(403, 'Unauthorized', [
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_VIEW
+                ]);
+                exit;
+            }
+        }
+
         RequestHelpers::setActionFromRequest($this->request);
         $requestData = request()->all();
 
@@ -183,8 +238,21 @@ class ConfigureController extends CpController
         ]);
     }
 
-    public function getConfiguration(Manager $configManager, GroupPermissionsManager $permissionsManager, GuardConfigurationManager $guardConfig)
+    public function getConfiguration(PermissionsManagerContract $sitePermissionsManager, IdentityManagerContract $identityManager, Manager $configManager, GroupPermissionsManager $permissionsManager, GuardConfigurationManager $guardConfig)
     {
+        $permissions = $sitePermissionsManager->getPermissions($identityManager->getIdentityContext());
+
+        if ($permissions->canViewComments === false) {
+            if ($this->request->ajax()) {
+                return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_VIEW);
+            } else {
+                abort(403, 'Unauthorized', [
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_VIEW
+                ]);
+                exit;
+            }
+        }
+
         return Responses::successWithData([
             self::KEY_CONFIG_HASH => $configManager->getConfigurationHash(),
             self::KEY_CONFIG_ITEMS => $configManager->getConfigurationItemArray(),

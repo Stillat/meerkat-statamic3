@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Support\Facades\Event;
 use Statamic\Statamic;
 use Stillat\Meerkat\Concerns\UsesConfig;
+use Stillat\Meerkat\Configuration\Manager;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\SpamGuardContract;
 use Stillat\Meerkat\Core\Contracts\SpamGuardPipelineContract;
@@ -66,6 +67,10 @@ class SpamServiceProvider extends AddonServiceProvider
             SpamCheckerFactory::$factoryMethod = function () {
                 return app()->make(SpamChecker::class);
             };
+
+            /** @var Manager $configManager */
+            $configManager = app(Manager::class);
+            $configManager->loadConfiguration();
 
             $guardConfiguration = $this->getConfig('publishing.guards', []);
 

@@ -113,7 +113,7 @@
       <text-fieldtype name="akismet_front_page" v-model="settings.items['akismet.front_page'].value" :read-only="settings.items['akismet.front_page'].behavior === 0" :config="{'handle':'akismet_front_page'}"></text-fieldtype>
     </div>
 
-    <div class="field-w-full p-4">
+    <div class="field-w-full p-4"  v-if="hasAkismetSettings && $parent.akismetFilterEnabled === true">
       <p><button class="btn btn-primary" v-on:click="validateConfiguration" v-if="state.isValidating === false">{{ trans('config.validate_akismet_prompt') }}</button> <span style="position: relative; display: inline-block"><loader v-if="state.isValidating" :display-inline="true" class="mr-1"></loader> {{ state.currentMessage }}</span></p>
     </div>
   </div>

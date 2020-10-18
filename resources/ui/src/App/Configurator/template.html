@@ -6,7 +6,7 @@
     <button class="btn btn-primary flex items-center" v-on:click="saveSettings">{{ trans('config.save') }}</button>
   </div>
 
-  <div class="flex relative mb-3 p-4" style="background-color: #ffffe9" v-if="state.serverDiffers">
+  <div class="flex relative mb-3 p-4" style="background-color: #ffffe9" v-if="state.loading === false && state.serverDiffers">
     <div class="w-full">
       <h3 class="mb-2">{{ trans('config.server_changes_warning_title') }}</h3>
       <p>{{ trans('config.server_changes_warning_message') }} <a v-on:click="reloadSettings()"><strong>{{ trans('config.server_changes_warning_reload_prompt') }}</strong></a></p>

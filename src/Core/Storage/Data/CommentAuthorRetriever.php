@@ -79,7 +79,8 @@ class CommentAuthorRetriever
 
         // Guard against empty/missing email address entries.
         if ($emailAddress === null || mb_strlen(trim($emailAddress)) === 0) {
-            return null;
+            $emailAddress = 'no-email@example.oprg';
+            $comment->setDataAttribute(AuthorContract::KEY_EMAIL_ADDRESS, $emailAddress);
         }
 
         // Locate author details, if available.
@@ -108,6 +109,11 @@ class CommentAuthorRetriever
     public function getCommentAuthor(CommentContract $comment)
     {
         $emailAddress = $comment->getDataAttribute(AuthorContract::KEY_EMAIL_ADDRESS, null);
+
+        if ($emailAddress === null || mb_strlen(trim($emailAddress)) === 0) {
+            $emailAddress = 'no-email@example.org';
+            $comment->setDataAttribute(AuthorContract::KEY_EMAIL_ADDRESS, $emailAddress);
+        }
 
         if ($emailAddress !== null && mb_strlen(trim($emailAddress)) > 0) {
             $authorKey = trim($emailAddress);

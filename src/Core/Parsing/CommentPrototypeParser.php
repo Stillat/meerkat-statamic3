@@ -255,6 +255,8 @@ class CommentPrototypeParser
 
         $this->fillSupplementalDataIfRequired($path);
 
+        $this->content = str_replace('\r\n', "\n", $this->content);
+
         return [
             LocalCommentStorageManager::KEY_HEADERS => $this->headers,
             LocalCommentStorageManager::KEY_RAW_HEADERS => $this->rawHeaders,
@@ -382,6 +384,13 @@ class CommentPrototypeParser
     private function convertWithEncoding($path, $encoding)
     {
         $contents = file_get_contents($path);
+
+        if (Str::startsWith($contents, '---') === false) {
+            $contents = "---\n".$contents;
+        }
+        if (Str::endsWith($contents, '---') === false) {
+            $contents = $contents."\n---";
+        }
 
         $encoding = $this->getFormatEncoding($contents, $encoding);
 

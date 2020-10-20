@@ -5,6 +5,7 @@ namespace Stillat\Meerkat\Core\Data\Retrievers;
 use Stillat\Meerkat\Core\Authoring\TransientIdGenerator;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
+use Stillat\Meerkat\Core\UuidGenerator;
 
 /**
  * Class CommentAuthorRetriever
@@ -28,9 +29,11 @@ class CommentAuthorRetriever
         $authorsToReturn = [];
 
         foreach ($data as $commentArray) {
+
             if (array_key_exists(CommentContract::KEY_AUTHOR, $commentArray) === false) {
                 if (array_key_exists(CommentContract::INTERNAL_PARENT_AUTHOR, $commentArray) === false ||
                     $commentArray[CommentContract::INTERNAL_PARENT_AUTHOR] === null) {
+
                     continue;
                 }
             }
@@ -51,7 +54,12 @@ class CommentAuthorRetriever
             if (array_key_exists(CommentContract::KEY_AUTHOR, $commentArray)) {
                 $primaryAuthorDetails = $commentArray[CommentContract::KEY_AUTHOR];
                 $primaryAuthorDetails = CommentAuthorRetriever::getAuthorFromArray($primaryAuthorDetails);
-                $primaryAuthorId = $primaryAuthorDetails[AuthorContract::KEY_USER_ID];
+
+                $primaryAuthorId = UuidGenerator::getInstance()->newId();
+
+                if (array_key_exists(AuthorContract::KEY_USER_ID, $primaryAuthorDetails)) {
+                    $primaryAuthorId = $primaryAuthorDetails[AuthorContract::KEY_USER_ID];
+                }
 
                 if (array_key_exists($primaryAuthorId, $authorsToReturn) === false) {
                     $authorsToReturn[$primaryAuthorId] = $primaryAuthorDetails;

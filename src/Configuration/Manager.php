@@ -531,6 +531,10 @@ class Manager
                 continue;
             }
 
+            if (!is_array($configValues)) {
+                continue;
+            }
+
             $supplements = [];
 
             if (array_key_exists($namespace, $supplementalConfiguration)) {

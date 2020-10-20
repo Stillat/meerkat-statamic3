@@ -285,7 +285,7 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
             return true;
         }
 
-        return false;
+        return is_string($threadPath);
     }
 
     /**

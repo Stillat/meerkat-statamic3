@@ -1,7 +1,11 @@
 <div class="w-full">
-  <div class="p-4 w-full bg-grey-20  meerkat__config-section">
-    <h3>{{ trans('config.preferences_title') }}</h3>
-    <p class="mt-1">{{ trans('config.preferences_desc') }}</p>
+  <div class="form-group publish-field section-fieldtype field-w-full">
+    <div class="field-inner">
+      <label class="publish-field-label"><span>{{ trans('config.preferences_title') }}</span></label>
+      <div class="help-block">
+        <p>{{ trans('config.preferences_desc') }}</p>
+      </div>
+    </div>
   </div>
 
   <div class="publish-fields w-full" v-if="settings != null">
@@ -49,9 +53,13 @@
     </div>
   </div>
 
-  <div class="p-4 w-full bg-grey-20  meerkat__config-section" v-if="$parent.canChangeConfig">
-    <h3>{{ trans('config.publishing_title') }}</h3>
-    <p class="mt-1">{{ trans('config.publishing_desc') }}</p>
+  <div class="form-group publish-field section-fieldtype field-w-full" v-if="$parent.canChangeConfig">
+    <div class="field-inner">
+      <label class="publish-field-label"><span>{{ trans('config.publishing_title') }}</span></label>
+      <div class="help-block">
+        <p>{{ trans('config.publishing_desc') }}</p>
+      </div>
+    </div>
   </div>
 
   <div class="publish-fields w-full" v-if="settings != null && $parent.canChangeConfig">

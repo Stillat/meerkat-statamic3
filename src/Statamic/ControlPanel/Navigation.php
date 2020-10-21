@@ -23,6 +23,14 @@ class Navigation
     public function create()
     {
         Nav::extend(function ($nav) {
+            $nav->create($this->trans('general.meerkat'))
+                ->section('Tools')
+                ->view('meerkat::nav.settings')
+                ->route('cp.meerkat.settings');
+
+        });
+
+        Nav::extend(function ($nav) {
             $nav->create($this->trans('display.nav_comments'))
                 ->section('Content')
                 ->icon('addons/meerkat/meerkat-nav')

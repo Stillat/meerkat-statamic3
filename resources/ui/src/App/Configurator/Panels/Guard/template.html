@@ -1,8 +1,13 @@
 <div class="w-full">
   <div class="publish-fields w-full" v-if="settings != null">
-    <div class="p-4 w-full bg-grey-20  meerkat__config-section">
-      <h3>{{ trans('config.spam_general_title') }}</h3>
-      <p class="mt-1">{{ trans('config.spam_general_desc') }}</p>
+
+    <div class="form-group publish-field section-fieldtype field-w-full">
+      <div class="field-inner">
+        <label class="publish-field-label"><span>{{ trans('config.spam_general_title') }}</span></label>
+        <div class="help-block -mt-1">
+          <p>{{ trans('config.spam_general_desc') }}</p>
+        </div>
+      </div>
     </div>
 
     <div class="form-group publish-field toggle-fieldtype field-w-1/2">
@@ -19,7 +24,7 @@
     <div class="form-group publish-field toggle-fieldtype field-w-1/2">
       <div class="field-inner">
         <label for="field_auto_delete_spam"><span>{{ trans('config.auto_delete_spam') }}</span></label>
-        <div class="help-block -mt-1">
+        <div class="help-block">
           <p>{{ trans('config.auto_delete_spam_desc') }}</p>
         </div>
       </div>
@@ -60,10 +65,13 @@
                         :read-only="settings.items['publishing.auto_submit_results'].behavior === 0"></toggle-fieldtype>
     </div>
 
-
-    <div class="p-4 w-full bg-grey-20  meerkat__config-section">
-      <h3>{{ trans('config.spam_guards_title') }}</h3>
-      <p class="mt-1">{{ trans('config.spam_guards_desc') }}</p>
+    <div class="form-group publish-field section-fieldtype field-w-full">
+      <div class="field-inner">
+        <label class="publish-field-label"><span>{{ trans('config.spam_guards_title') }}</span></label>
+        <div class="help-block -mt-1">
+          <p>{{ trans('config.spam_guards_desc') }}</p>
+        </div>
+      </div>
     </div>
 
     <div class="form-group w-full pt-0">
@@ -87,10 +95,13 @@
       </table>
     </div>
 
-
-    <div class="p-4 w-full bg-grey-20  meerkat__config-section" v-if="$parent.akismetFilterEnabled === true">
-      <h3>{{ trans('config.akismet_title') }}</h3>
-      <p class="mt-1">{{ trans('config.akismet_desc') }} <a href="https://akismet.com/" target="_blank">{{ trans('config.akismet_link_text') }}</a> </p>
+    <div class="form-group publish-field section-fieldtype field-w-full" v-if="$parent.akismetFilterEnabled === true">
+      <div class="field-inner">
+        <label class="publish-field-label"><span>{{ trans('config.akismet_title') }}</span></label>
+        <div class="help-block -mt-1">
+          <p>{{ trans('config.akismet_desc') }}</p>
+        </div>
+      </div>
     </div>
 
     <div class="form-group publish-field text-fieldtype field-w-1/2" v-if="$parent.akismetFilterEnabled === true">

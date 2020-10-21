@@ -1,7 +1,12 @@
 <div class="w-full publish-fields">
-  <div class="p-4 w-full bg-grey-20 meerkat__config-section">
-    <h3 class="text-lg leading-6 font-medium text-gray-900">{{ trans('config.word_filter_title') }}</h3>
-    <p class="mt-1 text-sm leading-5 text-gray-500">{{ trans('config.word_filter_desc') }}</p>
+
+  <div class="form-group publish-field section-fieldtype field-w-full">
+    <div class="field-inner">
+      <label class="publish-field-label"><span>{{ trans('config.word_filter_title') }}</span></label>
+      <div class="help-block -mt-1">
+        <p>{{ trans('config.word_filter_desc') }}</p>
+      </div>
+    </div>
   </div>
 
   <div class="form-group publish-field list-fieldtype field-w-full">

@@ -15,6 +15,7 @@ use Stillat\Meerkat\Core\Guard\SpamChecker;
 use Stillat\Meerkat\Core\Guard\SpamCheckerFactory;
 use Stillat\Meerkat\Core\Guard\SpamService;
 use Stillat\Meerkat\Core\GuardConfiguration;
+use Stillat\Meerkat\Core\Handlers\SpamServiceHandler;
 use Stillat\Meerkat\Core\Logging\ErrorLog;
 use Stillat\Meerkat\Core\Logging\ErrorLogContext;
 use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
@@ -38,14 +39,6 @@ class SpamServiceProvider extends AddonServiceProvider
             $pipeline = app(SpamGuardPipelineContract::class);
 
             return new SpamService($guardConfig, $pipeline);
-        });
-
-        // TODO: Deprecated. Use Core Handlers.
-        Event::listen(['Meerkat.comments.created', 'Meerkat.comments.updated'], function (CommentContract $comment) {
-            /** @var FormHandler $handler */
-            $handler = app(FormHandler::class);
-
-            $handler->checkForSpam($comment);
         });
 
         Meerkat::onCommentSpamStatusUpdated(function (CommentContract $comment) {

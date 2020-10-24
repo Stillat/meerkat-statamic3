@@ -473,4 +473,9 @@ trait ProvidesEventHelpers
         self::listenToEvent(PermissionsMutationPipelineContract::MUTATION_RESOLVING, $handler);
     }
 
+    public static function onShouldHandle(callable $handler)
+    {
+        Event::listen(['Meerkat.comments.created', 'Meerkat.comments.updated'], $handler);
+    }
+
 }

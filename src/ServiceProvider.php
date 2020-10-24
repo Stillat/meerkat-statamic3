@@ -14,6 +14,7 @@ use Stillat\Meerkat\Console\Commands\StatisticsCommand;
 use Stillat\Meerkat\Console\Commands\ValidateCommand;
 use Stillat\Meerkat\Core\Configuration as GlobalConfiguration;
 use Stillat\Meerkat\Core\ConfigurationFactories;
+use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Http\HttpClientContract;
 use Stillat\Meerkat\Core\Contracts\Logging\ErrorCodeRepositoryContract;
 use Stillat\Meerkat\Core\Contracts\Logging\ExceptionLoggerContract;
@@ -21,6 +22,8 @@ use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\YAMLParserContract;
 use Stillat\Meerkat\Core\FormattingConfiguration;
 use Stillat\Meerkat\Core\GuardConfiguration;
+use Stillat\Meerkat\Core\Handlers\HandlerManager;
+use Stillat\Meerkat\Core\Handlers\SpamServiceHandler;
 use Stillat\Meerkat\Core\Http\Client;
 use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
 use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
@@ -38,6 +41,7 @@ use Stillat\Meerkat\Providers\IdentityServiceProvider;
 use Stillat\Meerkat\Providers\SpamServiceProvider;
 use Stillat\Meerkat\Providers\TagsServiceProvider;
 use Stillat\Meerkat\Providers\ThreadServiceProvider;
+use Stillat\Meerkat\Support\Facades\Meerkat;
 
 /**
  * Class ServiceProvider
@@ -97,6 +101,7 @@ class ServiceProvider extends AddonServiceProvider
         $this->registerMeerkatGlobalConfiguration();
         $this->registerCoreDependencies();
         $this->checkIntegrationResourcesExist();
+        $this->registerSubmissionHandler();
 
         parent::register();
     }
@@ -220,10 +225,32 @@ class ServiceProvider extends AddonServiceProvider
 
         $this->app->bind(HttpClientContract::class, Client::class);
 
+        $this->app->singleton(HandlerManager::class, function ($app) {
+            $manager = new HandlerManager();
+
+            $manager->registerHandler('Meerkat.spamHandler', app(SpamServiceHandler::class));
+
+            return $manager;
+        });
+
         Statamic::booted(function () {
             DateParserFactory::$instance = app(CarbonDateParser::class);
             ExceptionLoggerFactory::$instance = app(ExceptionLoggerContract::class);
             MarkdownParserFactory::$instance = app(MarkdownParserContract::class);
+        });
+    }
+
+    /**
+     * Registers the Core submission handler.
+     */
+    private function registerSubmissionHandler()
+    {
+        // Invokes the submission handler on new comments, or updates.
+        Meerkat::onShouldHandle(function (CommentContract $comment) {
+            /** @var HandlerManager $handler */
+            $manager = app(HandlerManager::class);
+
+            $manager->handle($comment);
         });
     }
 

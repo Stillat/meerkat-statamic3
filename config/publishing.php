@@ -40,6 +40,16 @@ return [
     */
     'auto_publish_authenticated_users' => true,
 
+    /*
+    |--------------------------------------------------------------------------
+    | Only Accept Comments from Authenticated Users
+    |--------------------------------------------------------------------------
+    |
+    | This value controls whether comment submissions will
+    | only be accepted from authenticated user sessions.
+    |
+    */
+    'only_accept_comments_from_authenticated_users' => false,
 
     /*
     |--------------------------------------------------------------------------

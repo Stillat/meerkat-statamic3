@@ -76,6 +76,17 @@
 
     <div class="form-group publish-field toggle-fieldtype field-w-1/2">
       <div class="field-inner">
+        <label for="field_only_accept_comments_from_authenticated_users"><span>{{ trans('config.only_accept_comments_from_authenticated_users') }}</span></label>
+        <div class="help-block -mt-1">
+          <p>{{ trans('config.only_accept_comments_from_authenticated_users_desc') }}</p>
+        </div>
+      </div>
+      <toggle-fieldtype v-model="settings.items['publishing.only_accept_comments_from_authenticated_users'].value" name="only_accept_comments_from_authenticated_users" :config="{'handle':'only_accept_comments_from_authenticated_users'}"
+                        :read-only="settings.items['publishing.only_accept_comments_from_authenticated_users'].behavior === 0"></toggle-fieldtype>
+    </div>
+
+    <div class="form-group publish-field toggle-fieldtype field-w-1/2">
+      <div class="field-inner">
         <label for="field_auto_publish_authenticated_users"><span>{{ trans('config.publish_user_auto') }}</span></label>
         <div class="help-block -mt-1">
           <p>{{ trans('config.publish_user_auto_desc') }}</p>
@@ -84,6 +95,8 @@
       <toggle-fieldtype v-model="settings.items['publishing.auto_publish_authenticated_users'].value" name="auto_publish_authenticated_users" :config="{'handle':'auto_publish_authenticated_users'}"
                         :read-only="settings.items['publishing.auto_publish_authenticated_users'].behavior === 0"></toggle-fieldtype>
     </div>
+
+
 
     <div class="form-group publish-field toggle-fieldtype field-w-1/2">
       <div class="field-inner">

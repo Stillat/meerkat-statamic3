@@ -4,6 +4,7 @@ namespace Stillat\Meerkat\Http\Controllers;
 
 use Illuminate\Http\Concerns\InteractsWithInput;
 use Illuminate\Support\MessageBag;
+use Statamic\Contracts\Auth\UserRepository;
 use Statamic\Http\Controllers\Controller;
 use Statamic\Support\Arr;
 use Stillat\Meerkat\Core\Configuration;
@@ -72,6 +73,20 @@ class SocializeController extends Controller
      */
     public function postSocialize()
     {
+        if ($this->coreConfig->onlyAcceptCommentsFromAuthenticatedUser === true) {
+            /** @var UserRepository $statamicUserRepository */
+            $statamicUserRepository = app(UserRepository::class);
+
+            if ($statamicUserRepository->current() === null) {
+                if (request()->ajax()) {
+                    abort(response('Unauthorized', 401));
+                    exit;
+                } else {
+                    return redirect()->back();
+                }
+            }
+        }
+
         $this->formHandler->setData(collect(request()->all()));
 
         if ($this->manager->areCommentsEnabledForContext($this->formHandler->getThreadId()) === false) {

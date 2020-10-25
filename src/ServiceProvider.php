@@ -226,6 +226,7 @@ class ServiceProvider extends AddonServiceProvider
             $globalConfiguration->disableCommentsAfterDays = $this->getConfig('publishing.automatically_close_comments', 0);
             $globalConfiguration->trackChanges = $this->getConfig('storage.track_changes', true);
             $globalConfiguration->searchableAttributes = $this->getConfig('search.attributes', []);
+            $globalConfiguration->onlyAcceptCommentsFromAuthenticatedUser = $this->getConfig('publishing.only_accept_comments_from_authenticated_users', false);
 
             // Storage directories.
             $globalConfiguration->storageDirectory = PathProvider::contentPath();

@@ -67,6 +67,13 @@ class Configuration extends ConfigurationContainer
     public $taskDirectory = '';
 
     /**
+     * Indicates if only comments from authenticated users will be accepted.
+     *
+     * @var bool
+     */
+    public $onlyAcceptCommentsFromAuthenticatedUser = false;
+
+    /**
      * Indicates if Meerkat Core should run in debug mode.
      *
      * @var bool

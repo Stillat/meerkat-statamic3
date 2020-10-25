@@ -22,6 +22,9 @@ return [
     'publishing_title' => 'Comment Publishing',
     'publishing_desc' => 'The publish settings allow you to control various automated aspects of the comment submission process.',
 
+    'only_accept_comments_from_authenticated_users' => 'Only Accept Authenticated Comments',
+    'only_accept_comments_from_authenticated_users_desc' => 'Only accept comments from authenticated user sessions; anonymous, or guest, comments will be rejected.',
+
     'publish_auto' => 'Publish Comments Automatically',
     'publish_auto_desc' => 'All comments from anonymous users will be published automatically when enabled. Disable this to review comments before they are listed on your site.',
 

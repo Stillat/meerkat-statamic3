@@ -222,6 +222,12 @@ class Manager
             Types::TYPE_INTEGER
         ],
 
+        'publishing.only_accept_comments_from_authenticated_users' => [
+            self::BEHAVIOR_REPLACE,
+            [self::BEHAVIOR_MANAGED, self::BEHAVIOR_REPLACE],
+            Types::TYPE_INTEGER
+        ],
+
         'publishing.guard_check_all_providers' => [
             self::BEHAVIOR_REPLACE,
             [self::BEHAVIOR_MANAGED, self::BEHAVIOR_REPLACE],

@@ -215,6 +215,18 @@ class Meerkat extends MeerkatTag
     }
 
     /**
+     * {{ meerkat:thread }}
+     *
+     * @return string|string[]
+     * @throws BindingResolutionException
+     * @throws TemplateTagsException
+     */
+    public function thread()
+    {
+        return $this->responses();
+    }
+
+    /**
      * Creates an anchor link for the current comment context.
      *
      * {{ meerkat:cp-link }}

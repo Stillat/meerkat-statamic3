@@ -185,9 +185,7 @@ export default {
     onConfigAvatarUpdated(config) {
       if (Type.hasValue(config)) {
         if (config.length > 0) {
-          let driverName = AvatarDriverRegistry.getDriverName(config[0]);
-
-          this.avatarDriver = driverName;
+          this.avatarDriver = AvatarDriverRegistry.getDriverName(config[0]);
         }
       }
     },

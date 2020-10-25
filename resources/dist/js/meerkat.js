@@ -44262,7 +44262,6 @@ __webpack_require__(/*! ./style.less */ "./src/App/Components/CommentTable/style
       if (_Types_type__WEBPACK_IMPORTED_MODULE_15__["default"].hasValue(config)) {
         if (config.length > 0) {
           var driverName = _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_8__["default"].getDriverName(config[0]);
-          console.log('setting driver', driverName);
           this.avatarDriver = driverName;
         }
       }
@@ -46727,8 +46726,6 @@ var ActionState = /*#__PURE__*/function (_EventEmitter) {
             this.hasResponse = true;
           }
         }.bind(this))["catch"](function (err) {
-          console.log('eerr', err);
-
           if (_Types_type__WEBPACK_IMPORTED_MODULE_19__["default"].isTypeOf(err, _Http_Responses_errorResponse__WEBPACK_IMPORTED_MODULE_20__["default"])) {
             if (err.authorized === false) {
               this._notAuthorized(err.permission);
@@ -53201,7 +53198,6 @@ var SettingsRepository = /*#__PURE__*/function () {
         var requestState = this.shouldProcessRequest(requestHash, 500);
         this.client.get(_Http_endpoints__WEBPACK_IMPORTED_MODULE_9__["default"].url(_Http_endpoints__WEBPACK_IMPORTED_MODULE_9__["default"].SettingsFetch), {}, requestState).then(function (result) {
           this.releasePending(requestHash);
-          console.log('get settings', result);
           resolve(_Http_Responses_settingsResponse__WEBPACK_IMPORTED_MODULE_6__["default"].fromApiResponse(result, null));
         }.bind(this))["catch"](function (err) {
           this.releasePending(requestHash);

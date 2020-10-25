@@ -93,7 +93,8 @@ class SpamServiceHandler extends BaseHandler
             if ($isSpam === false) {
                 $this->storageManager->setIsHamById($comment->getId());
 
-                if ($this->coreConfig->sendEmails === true && $this->coreConfig->onlySendEmailIfNotSpam === true) {
+                if ($this->coreConfig->sendEmails === true &&
+                    ($this->coreConfig->onlySendEmailIfNotSpam === true || $this->config->autoDeleteSpam === true)) {
                     // The normal mail handler may have skipped sending an email until
                     // the spam service was able to fully check the submission.
                     $comment->setDataAttribute(CommentContract::KEY_HAS_CHECKED_FOR_SPAM, true);

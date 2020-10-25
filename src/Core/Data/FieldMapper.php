@@ -28,6 +28,49 @@ class FieldMapper
     ];
 
     /**
+     * Indicates if values should be transformed for text output, or data output.
+     *
+     * @var bool
+     */
+    private $transformForText = false;
+
+    /**
+     * The text to use for true values.
+     *
+     * @var string
+     */
+    private $trueText = 'true';
+
+    /**
+     * The text to use for false values.
+     *
+     * @var string
+     */
+    private $falseText = 'false';
+
+    /**
+     * Sets the text to use for transformation values.
+     *
+     * @param string $trueText The text to use for true values.
+     * @param string $falseText The text to use for false values.
+     */
+    public function setTextTransformValues($trueText, $falseText)
+    {
+        $this->trueText = $trueText;
+        $this->falseText = $falseText;
+    }
+
+    /**
+     * Sets whether to use text transformations.
+     *
+     * @param bool $doTextTransform Whether to use text transformations.
+     */
+    public function setUseTextTransform($doTextTransform)
+    {
+        $this->transformForText = $doTextTransform;
+    }
+
+    /**
      * Retrieves the requested fields from the comment data.
      *
      * @param array $comment The comment data.
@@ -43,7 +86,11 @@ class FieldMapper
             $value = Arr::getValue($field, $comment, null);
 
             if ($transform) {
-                $props[] = ValueTransformer::transform($value);
+                if ($this->transformForText === false) {
+                    $props[] = ValueTransformer::transform($value);
+                } else {
+                    $props[] = ValueTransformer::transformText($value, $this->trueText, $this->falseText);
+                }
             } else {
                 $props[] = $value;
             }

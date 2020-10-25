@@ -31,6 +31,22 @@ return [
     'close_threads' => 'When to Close Comment Threads',
     'close_threads_desc' => 'Enter the number of days after which comments will no longer be accepted; entering a value of "0" will disable this feature.',
 
+    'tab_email' => 'Email',
+    'email_general_title' => 'Email Settings',
+    'email_general_desc' => 'These settings control the automated submission email system.',
+
+    'email_send_mail' => 'Send Mail',
+    'email_send_mail_desc' => 'Controls if emails are automatically sent.',
+    'email_check_spam_guard' => 'Check Spam',
+    'email_check_spam_guard_desc' => 'If enabled, only comments not marked as spam will send an email.',
+
+    'email_addresses' => 'Addresses to Send Emails',
+    'email_addresses_desc' => 'The list of email addresses to send emails to.',
+    'email_addresses_notice' => 'Your site administrator has configured default email addresses.',
+    'email_addresses_view_defaults' => 'Click here to view them.',
+    'email_addresses_default_title' => 'Email Address Defaults',
+    'email_addresses_default_desc' => 'Your site administrator has configured default email addresses that will be sent to in addition to the ones configured in the Control Panel.',
+
     'tab_spam' => 'Spam',
 
     'spam_general_title' => 'General Spam Settings',

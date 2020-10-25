@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat\Http\Controllers\Api;
 
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Statamic\Http\Controllers\CP\CpController;
 use Stillat\Meerkat\Concerns\UsesTranslations;
@@ -16,6 +17,7 @@ use Stillat\Meerkat\Core\Http\Responses\CommentResponseGenerator;
 use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
 use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
 use Stillat\Meerkat\Core\Storage\Paths;
+use Stillat\Meerkat\ExportFields;
 
 class ExportController extends CpController
 {
@@ -31,17 +33,14 @@ class ExportController extends CpController
      *
      * @var string[]
      */
-    protected $exportFields = [
-        'comment.date',
-        'author.name',
-        'author.email',
-        'author.user_agent',
-        'author.user_ip',
-        'author.referer',
-        'comment.content',
-        'comment.is_spam',
-        'comment.published'
-    ];
+    protected $exportFields = [];
+
+    public function __construct(Request $request)
+    {
+        parent::__construct($request);
+
+        $this->exportFields = ExportFields::getExportFields();
+    }
 
     public function json(JsonExporter $jsonExporter, PermissionsManagerContract $manager, IdentityManagerContract $identityManager,
                          CommentResponseGenerator $resultGenerator)

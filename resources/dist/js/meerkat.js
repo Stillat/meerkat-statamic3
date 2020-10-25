@@ -45663,6 +45663,54 @@ module.exports = code;
 
 /***/ }),
 
+/***/ "./src/App/Configurator/Panels/Email/index.js":
+/*!****************************************************!*\
+  !*** ./src/App/Configurator/Panels/Email/index.js ***!
+  \****************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./template.html */ "./src/App/Configurator/Panels/Email/template.html");
+/* harmony import */ var _template_html__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_template_html__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _Http_Responses_settingsResponse__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../Http/Responses/settingsResponse */ "./src/Http/Responses/settingsResponse.js");
+/* harmony import */ var _Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../Mixins/usesTranslator */ "./src/App/Mixins/usesTranslator.js");
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  mixins: [_Mixins_usesTranslator__WEBPACK_IMPORTED_MODULE_2__["default"]],
+  template: _template_html__WEBPACK_IMPORTED_MODULE_0___default.a,
+  data: function data() {
+    return {
+      showDefaults: false
+    };
+  },
+  props: {
+    settings: {
+      type: _Http_Responses_settingsResponse__WEBPACK_IMPORTED_MODULE_1__["default"],
+      "default": null
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./src/App/Configurator/Panels/Email/template.html":
+/*!*********************************************************!*\
+  !*** ./src/App/Configurator/Panels/Email/template.html ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// Module
+var code = "<div class=\"w-full publish-fields\" v-if=\"settings != null\">\n  <div class=\"form-group publish-field section-fieldtype field-w-full\">\n    <div class=\"field-inner\">\n      <label class=\"publish-field-label\"><span>{{ trans('config.email_general_title') }}</span></label>\n      <div class=\"help-block -mt-1\">\n        <p>{{ trans('config.email_general_desc') }}</p>\n      </div>\n    </div>\n  </div>\n\n  <div class=\"form-group publish-field toggle-fieldtype field-w-1/2\">\n    <div class=\"field-inner\">\n      <label for=\"field_send_mail\"><span>{{ trans('config.email_send_mail') }}</span></label>\n      <div class=\"help-block -mt-1\">\n        <p>{{ trans('config.email_send_mail_desc') }}</p>\n      </div>\n    </div>\n    <toggle-fieldtype v-model=\"settings.items['email.send_mail'].value\" :config=\"{'handle':'send_mail'}\"\n                      :read-only=\"settings.items['email.send_mail'].behavior === 0\"></toggle-fieldtype>\n  </div>\n\n  <div class=\"form-group publish-field toggle-fieldtype field-w-1/2\">\n    <div class=\"field-inner\">\n      <label for=\"field_check_with_spam_guard\"><span>{{ trans('config.email_check_spam_guard') }}</span></label>\n      <div class=\"help-block\">\n        <p>{{ trans('config.email_check_spam_guard_desc') }}</p>\n      </div>\n    </div>\n    <toggle-fieldtype v-model=\"settings.items['email.check_with_spam_guard'].value\" name=\"auto_delete_spam\" :config=\"{'handle':'check_with_spam_guard'}\"\n                      :read-only=\"settings.items['email.check_with_spam_guard'].behavior === 0\"></toggle-fieldtype>\n  </div>\n\n  <div class=\"form-group publish-field list-fieldtype field-w-full\">\n    <div class=\"field-inner\">\n      <label><span>{{ trans('config.email_addresses') }}</span></label>\n      <div class=\"help-block -mt-1\">\n        <p>{{ trans('config.email_addresses_desc') }} <span v-if=\"settings.items['email.addresses'].defaults != null && settings.items['email.addresses'].defaults.length > 0\">{{ trans('config.email_addresses_notice') }} <a class=\"cursor\" v-on:click=\"showDefaults = true\" v-if=\"showDefaults === false\">{{ trans('config.email_addresses_view_defaults') }}</a></span></p>\n      </div>\n    </div>\n    <list-fieldtype v-model=\"settings.items['email.addresses'].value\"\n                    :read-only=\"settings.items['email.addresses'].behavior === 0\"></list-fieldtype>\n  </div>\n\n  <pane name=\"meerkat-email-filter\" v-if=\"showDefaults\" @closed=\"showDefaults = false\">\n    <div class=\"flex w-full pt-6\">\n      <div class=\"flex w-full justify-between items-center\">\n        <div class=\"flex-shrink flex items-center\">\n          <h3 class=\"pl-2\">{{ trans('config.email_addresses_default_title') }}</h3>\n\n        </div>\n        <div class=\"flex flex-shrink-0 items-center mr-2\">\n          <a class=\"block h-6 w-6\" v-on:click=\"showDefaults = false\">\n            <svg style=\"width:12px;\" viewBox=\"0 0 20 20\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">\n              <g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"#000000\" fill-rule=\"evenodd\">\n                <g id=\"icon-shape\">\n                  <polygon id=\"Combined-Shape\" points=\"10 8.58578644 2.92893219 1.51471863 1.51471863 2.92893219 8.58578644 10 1.51471863 17.0710678 2.92893219 18.4852814 10 11.4142136 17.0710678 18.4852814 18.4852814 17.0710678 11.4142136 10 18.4852814 2.92893219 17.0710678 1.51471863 10 8.58578644\"></polygon>\n                </g>\n              </g>\n            </svg>\n          </a>\n        </div>\n      </div>\n    </div>\n\n    <div class=\"w-full\">\n      <p class=\"p-2\">{{ trans('config.email_addresses_default_desc') }}</p>\n\n      <ul class=\"pl-2 pt-3 pb-3 border-t border-b\" v-if=\"$parent.settings != null\" style=\"max-height: calc(60vh);overflow-y:auto\">\n        <li v-for=\"(address, i) in $parent.settings.items['email.addresses'].defaults\">{{ address }}</li>\n      </ul>\n    </div>\n  </pane>\n\n</div>\n";
+// Exports
+module.exports = code;
+
+/***/ }),
+
 /***/ "./src/App/Configurator/Panels/Guard/index.js":
 /*!****************************************************!*\
   !*** ./src/App/Configurator/Panels/Guard/index.js ***!
@@ -45993,15 +46041,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Panels_IpFilter__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./Panels/IpFilter */ "./src/App/Configurator/Panels/IpFilter/index.js");
 /* harmony import */ var _Panels_Permissions__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./Panels/Permissions */ "./src/App/Configurator/Panels/Permissions/index.js");
 /* harmony import */ var _Panels_WordFilter__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./Panels/WordFilter */ "./src/App/Configurator/Panels/WordFilter/index.js");
-/* harmony import */ var _Repositories_settingsRepository__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../Repositories/settingsRepository */ "./src/Repositories/settingsRepository.js");
-/* harmony import */ var _controlPanelApplication__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../controlPanelApplication */ "./src/App/controlPanelApplication.js");
-/* harmony import */ var _Types_string__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../../Types/string */ "./src/Types/string.js");
-/* harmony import */ var _Types_type__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../Types/type */ "./src/Types/type.js");
-/* harmony import */ var _Config_environment__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../Config/environment */ "./src/Config/environment.js");
-/* harmony import */ var _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../Extend/Avatars/avatarDriverRegistry */ "./src/Extend/Avatars/avatarDriverRegistry.js");
-/* harmony import */ var _Data_Configuration_permissionsMapper__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../../Data/Configuration/permissionsMapper */ "./src/Data/Configuration/permissionsMapper.js");
-/* harmony import */ var _Components_Loader__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../Components/Loader */ "./src/App/Components/Loader/index.js");
-/* harmony import */ var _Data_Configuration_guardMapper__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../../Data/Configuration/guardMapper */ "./src/Data/Configuration/guardMapper.js");
+/* harmony import */ var _Panels_Email__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./Panels/Email */ "./src/App/Configurator/Panels/Email/index.js");
+/* harmony import */ var _Repositories_settingsRepository__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../../Repositories/settingsRepository */ "./src/Repositories/settingsRepository.js");
+/* harmony import */ var _controlPanelApplication__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ../controlPanelApplication */ "./src/App/controlPanelApplication.js");
+/* harmony import */ var _Types_string__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../Types/string */ "./src/Types/string.js");
+/* harmony import */ var _Types_type__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../Types/type */ "./src/Types/type.js");
+/* harmony import */ var _Config_environment__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../Config/environment */ "./src/Config/environment.js");
+/* harmony import */ var _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../../Extend/Avatars/avatarDriverRegistry */ "./src/Extend/Avatars/avatarDriverRegistry.js");
+/* harmony import */ var _Data_Configuration_permissionsMapper__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../../Data/Configuration/permissionsMapper */ "./src/Data/Configuration/permissionsMapper.js");
+/* harmony import */ var _Components_Loader__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../Components/Loader */ "./src/App/Components/Loader/index.js");
+/* harmony import */ var _Data_Configuration_guardMapper__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ../../Data/Configuration/guardMapper */ "./src/Data/Configuration/guardMapper.js");
+
 
 
 
@@ -46036,7 +46086,8 @@ var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
     'ip-filter': _Panels_IpFilter__WEBPACK_IMPORTED_MODULE_8__["default"],
     'permissions': _Panels_Permissions__WEBPACK_IMPORTED_MODULE_9__["default"],
     'word-filter': _Panels_WordFilter__WEBPACK_IMPORTED_MODULE_10__["default"],
-    'loader': _Components_Loader__WEBPACK_IMPORTED_MODULE_18__["default"]
+    'email': _Panels_Email__WEBPACK_IMPORTED_MODULE_11__["default"],
+    'loader': _Components_Loader__WEBPACK_IMPORTED_MODULE_19__["default"]
   },
   data: function data() {
     return {
@@ -46069,13 +46120,13 @@ var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
   methods: {
     watchForServerConfigChanges: function watchForServerConfigChanges() {
       window.setInterval(function () {
-        _Repositories_settingsRepository__WEBPACK_IMPORTED_MODULE_11__["default"].Instance.getCurrentChangeSet().then(function (response) {
+        _Repositories_settingsRepository__WEBPACK_IMPORTED_MODULE_12__["default"].Instance.getCurrentChangeSet().then(function (response) {
           this.state.serverDiffers = response.changeSet !== this.settings.changeSet;
         }.bind(this));
       }.bind(this), 5000);
     },
     refreshAvatarDrivers: function refreshAvatarDrivers() {
-      var currentDriverMapping = _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_16__["default"].DriverMapping,
+      var currentDriverMapping = _Extend_Avatars_avatarDriverRegistry__WEBPACK_IMPORTED_MODULE_17__["default"].DriverMapping,
           newOptions = [];
 
       for (var prop in currentDriverMapping) {
@@ -46103,7 +46154,7 @@ var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
       }
 
       for (var i = 0; i < this.settings.guards.length; i++) {
-        if (_Types_string__WEBPACK_IMPORTED_MODULE_13__["default"].endsWith(this.settings.guards[i]["class"], '\\' + relativeClassName)) {
+        if (_Types_string__WEBPACK_IMPORTED_MODULE_14__["default"].endsWith(this.settings.guards[i]["class"], '\\' + relativeClassName)) {
           return this.settings.guards[i].enabled;
         }
       }
@@ -46121,18 +46172,18 @@ var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
         }
       }
 
-      returnItems[_Data_Configuration_guardMapper__WEBPACK_IMPORTED_MODULE_19__["default"].SpamGuards].value = [];
-      returnItems[_Data_Configuration_permissionsMapper__WEBPACK_IMPORTED_MODULE_17__["default"].AllPermissions].value = [];
-      returnItems[_Data_Configuration_permissionsMapper__WEBPACK_IMPORTED_MODULE_17__["default"].CanApprove].value = [];
-      returnItems[_Data_Configuration_permissionsMapper__WEBPACK_IMPORTED_MODULE_17__["default"].CanEdit].value = [];
-      returnItems[_Data_Configuration_permissionsMapper__WEBPACK_IMPORTED_MODULE_17__["default"].CanEdit].value = [];
-      returnItems[_Data_Configuration_permissionsMapper__WEBPACK_IMPORTED_MODULE_17__["default"].CanReplyToComments].value = [];
-      returnItems[_Data_Configuration_permissionsMapper__WEBPACK_IMPORTED_MODULE_17__["default"].CanReportAsSpam].value = [];
-      returnItems[_Data_Configuration_permissionsMapper__WEBPACK_IMPORTED_MODULE_17__["default"].CanReportAsHam].value = [];
-      returnItems[_Data_Configuration_permissionsMapper__WEBPACK_IMPORTED_MODULE_17__["default"].CanUnApproveComments].value = [];
-      returnItems[_Data_Configuration_permissionsMapper__WEBPACK_IMPORTED_MODULE_17__["default"].CanViewComments].value = [];
-      returnItems = _Data_Configuration_guardMapper__WEBPACK_IMPORTED_MODULE_19__["default"].mapGuards(returnItems, this.settings.guards);
-      returnItems = _Data_Configuration_permissionsMapper__WEBPACK_IMPORTED_MODULE_17__["default"].mapPermissions(returnItems, this.settings.permissions);
+      returnItems[_Data_Configuration_guardMapper__WEBPACK_IMPORTED_MODULE_20__["default"].SpamGuards].value = [];
+      returnItems[_Data_Configuration_permissionsMapper__WEBPACK_IMPORTED_MODULE_18__["default"].AllPermissions].value = [];
+      returnItems[_Data_Configuration_permissionsMapper__WEBPACK_IMPORTED_MODULE_18__["default"].CanApprove].value = [];
+      returnItems[_Data_Configuration_permissionsMapper__WEBPACK_IMPORTED_MODULE_18__["default"].CanEdit].value = [];
+      returnItems[_Data_Configuration_permissionsMapper__WEBPACK_IMPORTED_MODULE_18__["default"].CanEdit].value = [];
+      returnItems[_Data_Configuration_permissionsMapper__WEBPACK_IMPORTED_MODULE_18__["default"].CanReplyToComments].value = [];
+      returnItems[_Data_Configuration_permissionsMapper__WEBPACK_IMPORTED_MODULE_18__["default"].CanReportAsSpam].value = [];
+      returnItems[_Data_Configuration_permissionsMapper__WEBPACK_IMPORTED_MODULE_18__["default"].CanReportAsHam].value = [];
+      returnItems[_Data_Configuration_permissionsMapper__WEBPACK_IMPORTED_MODULE_18__["default"].CanUnApproveComments].value = [];
+      returnItems[_Data_Configuration_permissionsMapper__WEBPACK_IMPORTED_MODULE_18__["default"].CanViewComments].value = [];
+      returnItems = _Data_Configuration_guardMapper__WEBPACK_IMPORTED_MODULE_20__["default"].mapGuards(returnItems, this.settings.guards);
+      returnItems = _Data_Configuration_permissionsMapper__WEBPACK_IMPORTED_MODULE_18__["default"].mapPermissions(returnItems, this.settings.permissions);
       return {
         items: returnItems,
         user: {
@@ -46142,18 +46193,18 @@ var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
       };
     },
     saveSettings: function saveSettings() {
-      _Repositories_settingsRepository__WEBPACK_IMPORTED_MODULE_11__["default"].Instance.saveSettings(this.getSettings()).then(function (response) {
+      _Repositories_settingsRepository__WEBPACK_IMPORTED_MODULE_12__["default"].Instance.saveSettings(this.getSettings()).then(function (response) {
         if (response.success) {
           syncjs.Hubs.config().avatarUpdated([this.userPreferences.avatarDriver]);
-          _controlPanelApplication__WEBPACK_IMPORTED_MODULE_12__["default"].current().controlPanel.message().success(this.trans('config.updated'));
+          _controlPanelApplication__WEBPACK_IMPORTED_MODULE_13__["default"].current().controlPanel.message().success(this.trans('config.updated'));
         } else {
           if (response.settingsUpdated === false && response.preferencesUpdated === false) {
-            _controlPanelApplication__WEBPACK_IMPORTED_MODULE_12__["default"].current().controlPanel.message().error(this.trans('errors.config_both_failure'));
+            _controlPanelApplication__WEBPACK_IMPORTED_MODULE_13__["default"].current().controlPanel.message().error(this.trans('errors.config_both_failure'));
           } else {
             if (response.settingsUpdated === false) {
-              _controlPanelApplication__WEBPACK_IMPORTED_MODULE_12__["default"].current().controlPanel.message().error(this.trans('errors.config_settings_failure'));
+              _controlPanelApplication__WEBPACK_IMPORTED_MODULE_13__["default"].current().controlPanel.message().error(this.trans('errors.config_settings_failure'));
             } else {
-              _controlPanelApplication__WEBPACK_IMPORTED_MODULE_12__["default"].current().controlPanel.message().error(this.trans('errors.config_preferences_failure'));
+              _controlPanelApplication__WEBPACK_IMPORTED_MODULE_13__["default"].current().controlPanel.message().error(this.trans('errors.config_preferences_failure'));
             }
           }
         }
@@ -46161,12 +46212,12 @@ var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
         this.reloadSettings();
       }.bind(this))["catch"](function (err) {
         this.state.lastError = err;
-        _controlPanelApplication__WEBPACK_IMPORTED_MODULE_12__["default"].current().controlPanel.message().error(this.trans('errors.const_preferences_unknown_failure'));
+        _controlPanelApplication__WEBPACK_IMPORTED_MODULE_13__["default"].current().controlPanel.message().error(this.trans('errors.const_preferences_unknown_failure'));
       }.bind(this));
     },
     reloadSettings: function reloadSettings() {
       this.state.loading = true;
-      _Repositories_settingsRepository__WEBPACK_IMPORTED_MODULE_11__["default"].Instance.getSettings().then(function (settings) {
+      _Repositories_settingsRepository__WEBPACK_IMPORTED_MODULE_12__["default"].Instance.getSettings().then(function (settings) {
         this.settings = settings;
         this.state.loading = false;
         this.state.serverDiffers = false;
@@ -46177,8 +46228,8 @@ var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
     }
   },
   created: function created() {
-    if (_Config_environment__WEBPACK_IMPORTED_MODULE_15__["default"].isControlPanelConfigEnabled()) {
-      if (_Config_environment__WEBPACK_IMPORTED_MODULE_15__["default"].UserPreferences.isSuper === true) {
+    if (_Config_environment__WEBPACK_IMPORTED_MODULE_16__["default"].isControlPanelConfigEnabled()) {
+      if (_Config_environment__WEBPACK_IMPORTED_MODULE_16__["default"].UserPreferences.isSuper === true) {
         this.watchForServerConfigChanges();
         this.canChangeConfig = true;
       }
@@ -46186,10 +46237,10 @@ var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
 
     this.refreshAvatarDrivers();
 
-    if (_Types_type__WEBPACK_IMPORTED_MODULE_14__["default"].hasValue(_Config_environment__WEBPACK_IMPORTED_MODULE_15__["default"].UserPreferences)) {
-      this.userPreferences.avatarDriver = _Config_environment__WEBPACK_IMPORTED_MODULE_15__["default"].UserPreferences.cp_avatar_driver;
-      this.userPreferences.perPage = _Config_environment__WEBPACK_IMPORTED_MODULE_15__["default"].UserPreferences.cp_per_page;
-      this.userEmail = _Config_environment__WEBPACK_IMPORTED_MODULE_15__["default"].UserPreferences.email;
+    if (_Types_type__WEBPACK_IMPORTED_MODULE_15__["default"].hasValue(_Config_environment__WEBPACK_IMPORTED_MODULE_16__["default"].UserPreferences)) {
+      this.userPreferences.avatarDriver = _Config_environment__WEBPACK_IMPORTED_MODULE_16__["default"].UserPreferences.cp_avatar_driver;
+      this.userPreferences.perPage = _Config_environment__WEBPACK_IMPORTED_MODULE_16__["default"].UserPreferences.cp_per_page;
+      this.userEmail = _Config_environment__WEBPACK_IMPORTED_MODULE_16__["default"].UserPreferences.email;
     }
 
     this.reloadSettings();
@@ -46217,7 +46268,7 @@ var syncjs = __webpack_require__(/*! syncjs */ "./src/syncjs/index.js");
 /***/ (function(module, exports) {
 
 // Module
-var code = "<div>\n  <div class=\"flex items-center justify-between mb-3\">\n    <h1 class=\"flex-1\">{{ trans('display.header_configure') }}</h1>\n\n    <loader v-if=\"state.loading\" :display-inline=\"true\" class=\"mr-1\"></loader>\n    <button class=\"btn btn-primary flex items-center\" v-on:click=\"saveSettings\">{{ trans('config.save') }}</button>\n  </div>\n\n  <div class=\"flex relative mb-3 p-4\" style=\"background-color: #ffffe9\" v-if=\"state.loading === false && state.serverDiffers\">\n    <div class=\"w-full\">\n      <h3 class=\"mb-2\">{{ trans('config.server_changes_warning_title') }}</h3>\n      <p>{{ trans('config.server_changes_warning_message') }} <a v-on:click=\"reloadSettings()\"><strong>{{ trans('config.server_changes_warning_reload_prompt') }}</strong></a></p>\n    </div>\n  </div>\n\n  <div class=\"flex relative\">\n\n    <div class=\"w-full\">\n      <div class=\"publish-tabs tabs\">\n        <a :class=\"{'active': activePage == 'publishing'}\" v-on:click=\"activePage = 'publishing'\">{{ trans('config.tab_general') }}</a>\n        <a :class=\"{'active': activePage == 'guard'}\" v-on:click=\"activePage = 'guard'\" v-if=\"canChangeConfig === true\">{{ trans('config.tab_spam') }}</a>\n        <a :class=\"{'active': activePage == 'ip-filter'}\" v-on:click=\"activePage = 'ip-filter'\" v-if=\"ipFilterEnabled === true && canChangeConfig === true\" >{{ trans('config.tab_ip_address_filter') }}</a>\n        <a :class=\"{'active': activePage == 'word-filter'}\" v-on:click=\"activePage = 'word-filter'\" v-if=\"wordFilterEnabled === true && canChangeConfig === true\">{{ trans('config.tab_word_filter') }}</a>\n        <a :class=\"{'active': activePage == 'permissions'}\" v-on:click=\"activePage = 'permissions'\" v-if=\"canChangeConfig === true\">{{ trans('config.tab_permissions') }}</a>\n      </div>\n\n      <div class=\"flex justify-between\">\n        <div class=\"publish-section rounded-tl-none\">\n          <component :is=\"activePage\" :settings=\"settings\"></component>\n        </div>\n      </div>\n    </div>\n  </div>\n\n  <p class=\"mt-3 text-sm text-gray-500\">{{ trans('config.managed_notice') }}</p>\n</div>\n";
+var code = "<div>\n  <div class=\"flex items-center justify-between mb-3\">\n    <h1 class=\"flex-1\">{{ trans('display.header_configure') }}</h1>\n\n    <loader v-if=\"state.loading\" :display-inline=\"true\" class=\"mr-1\"></loader>\n    <button class=\"btn btn-primary flex items-center\" v-on:click=\"saveSettings\">{{ trans('config.save') }}</button>\n  </div>\n\n  <div class=\"flex relative mb-3 p-4\" style=\"background-color: #ffffe9\" v-if=\"state.loading === false && state.serverDiffers\">\n    <div class=\"w-full\">\n      <h3 class=\"mb-2\">{{ trans('config.server_changes_warning_title') }}</h3>\n      <p>{{ trans('config.server_changes_warning_message') }} <a v-on:click=\"reloadSettings()\"><strong>{{ trans('config.server_changes_warning_reload_prompt') }}</strong></a></p>\n    </div>\n  </div>\n\n  <div class=\"flex relative\">\n\n    <div class=\"w-full\">\n      <div class=\"publish-tabs tabs\">\n        <a :class=\"{'active': activePage == 'publishing'}\" v-on:click=\"activePage = 'publishing'\">{{ trans('config.tab_general') }}</a>\n        <a :class=\"{'active': activePage == 'guard'}\" v-on:click=\"activePage = 'guard'\" v-if=\"canChangeConfig === true\">{{ trans('config.tab_spam') }}</a>\n        <a :class=\"{'active': activePage == 'ip-filter'}\" v-on:click=\"activePage = 'ip-filter'\" v-if=\"ipFilterEnabled === true && canChangeConfig === true\" >{{ trans('config.tab_ip_address_filter') }}</a>\n        <a :class=\"{'active': activePage == 'word-filter'}\" v-on:click=\"activePage = 'word-filter'\" v-if=\"wordFilterEnabled === true && canChangeConfig === true\">{{ trans('config.tab_word_filter') }}</a>\n        <a :class=\"{'active': activePage == 'permissions'}\" v-on:click=\"activePage = 'permissions'\" v-if=\"canChangeConfig === true\">{{ trans('config.tab_permissions') }}</a>\n        <a :class=\"{'active': activePage == 'email'}\" v-on:click=\"activePage = 'email'\" v-if=\"canChangeConfig === true\">{{ trans('config.tab_email') }}</a>\n\n      </div>\n\n      <div class=\"flex justify-between\">\n        <div class=\"publish-section rounded-tl-none\">\n          <component :is=\"activePage\" :settings=\"settings\"></component>\n        </div>\n      </div>\n    </div>\n  </div>\n\n  <p class=\"mt-3 text-sm text-gray-500\">{{ trans('config.managed_notice') }}</p>\n</div>\n";
 // Exports
 module.exports = code;
 
@@ -53150,6 +53201,7 @@ var SettingsRepository = /*#__PURE__*/function () {
         var requestState = this.shouldProcessRequest(requestHash, 500);
         this.client.get(_Http_endpoints__WEBPACK_IMPORTED_MODULE_9__["default"].url(_Http_endpoints__WEBPACK_IMPORTED_MODULE_9__["default"].SettingsFetch), {}, requestState).then(function (result) {
           this.releasePending(requestHash);
+          console.log('get settings', result);
           resolve(_Http_Responses_settingsResponse__WEBPACK_IMPORTED_MODULE_6__["default"].fromApiResponse(result, null));
         }.bind(this))["catch"](function (err) {
           this.releasePending(requestHash);

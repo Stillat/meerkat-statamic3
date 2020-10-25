@@ -95,10 +95,29 @@ class Manager
             [self::BEHAVIOR_MANAGED, self::BEHAVIOR_REPLACE],
             Types::TYPE_STRING
         ],
+
         'akismet.front_page' => [
             self::BEHAVIOR_REPLACE,
             [self::BEHAVIOR_MANAGED, self::BEHAVIOR_REPLACE],
             Types::TYPE_STRING
+        ],
+
+        'email.send_mail' => [
+            self::BEHAVIOR_REPLACE,
+            [self::BEHAVIOR_MANAGED, self::BEHAVIOR_REPLACE],
+            Types::TYPE_BIT
+        ],
+
+        'email.addresses' => [
+            self::BEHAVIOR_MERGE,
+            [self::BEHAVIOR_MANAGED, self::BEHAVIOR_MERGE, self::BEHAVIOR_REPLACE],
+            Types::TYPE_LIST
+        ],
+
+        'email.check_with_spam_guard' => [
+            self::BEHAVIOR_REPLACE,
+            [self::BEHAVIOR_MANAGED, self::BEHAVIOR_REPLACE],
+            Types::TYPE_BIT
         ],
 
         'authors.cp_avatar_driver' => [

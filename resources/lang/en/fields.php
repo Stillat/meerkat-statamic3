@@ -2,6 +2,11 @@
 
 return [
 
+    'transform' => [
+        'true' => 'Yes',
+        'false' => 'No'
+    ],
+
     'author' => [
         'name' => 'Name',
         'email' => 'Email',

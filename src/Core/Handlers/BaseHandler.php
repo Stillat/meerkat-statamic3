@@ -12,6 +12,11 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 abstract class BaseHandler
 {
 
+    /**
+     * Performs some action after a comment submission was received.
+     *
+     * @param CommentContract $comment The comment.
+     */
     public abstract function handle(CommentContract $comment);
 
 }

@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat\Core\Handlers;
 
+use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Exceptions\FilterException;
@@ -18,6 +19,13 @@ use Stillat\Meerkat\Core\GuardConfiguration;
  */
 class SpamServiceHandler extends BaseHandler
 {
+
+    /**
+     * The Meerkat Core Configuration container.
+     *
+     * @var Configuration
+     */
+    protected $coreConfig = null;
 
     /**
      * The Meerkat Core guard configuration container.
@@ -40,11 +48,33 @@ class SpamServiceHandler extends BaseHandler
      */
     protected $storageManager = null;
 
-    public function __construct(GuardConfiguration $config, SpamChecker $spamChecker, CommentStorageManagerContract $commentManager)
+    /**
+     * The EmailHandler instance.
+     *
+     * @var EmailHandler
+     */
+    private $emailHandler = null;
+
+    public function __construct(Configuration $configuration,
+                                GuardConfiguration $config,
+                                SpamChecker $spamChecker,
+                                CommentStorageManagerContract $commentManager,
+                                EmailHandler $mailHandler)
     {
+        $this->coreConfig = $configuration;
         $this->config = $config;
         $this->spamChecker = $spamChecker;
         $this->storageManager = $commentManager;
+        $this->emailHandler = $mailHandler;
+    }
+
+    /**
+     * @param CommentContract $comment The comment to check.
+     * @throws FilterException
+     */
+    public function handle(CommentContract $comment)
+    {
+        $this->checkForSpam($comment);
     }
 
     /**
@@ -62,6 +92,14 @@ class SpamServiceHandler extends BaseHandler
         if ($this->spamChecker->hasErrors() === false) {
             if ($isSpam === false) {
                 $this->storageManager->setIsHamById($comment->getId());
+
+                if ($this->coreConfig->sendEmails === true && $this->coreConfig->onlySendEmailIfNotSpam === true) {
+                    // The normal mail handler may have skipped sending an email until
+                    // the spam service was able to fully check the submission.
+                    $comment->setDataAttribute(CommentContract::KEY_HAS_CHECKED_FOR_SPAM, true);
+                    $comment->setDataAttribute(CommentContract::KEY_SPAM, false);
+                    $this->emailHandler->handle($comment);
+                }
             } else {
                 if ($this->config->autoDeleteSpam === true) {
                     $result = $this->storageManager->removeById($comment->getId());
@@ -78,16 +116,6 @@ class SpamServiceHandler extends BaseHandler
                 $this->storageManager->setIsNotApprovedById($comment->getId());
             }
         }
-    }
-
-
-    /**
-     * @param CommentContract $comment The comment to check.
-     * @throws FilterException
-     */
-    public function handle(CommentContract $comment)
-    {
-        $this->checkForSpam($comment);
     }
 
 }

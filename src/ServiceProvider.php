@@ -2,7 +2,6 @@
 
 namespace Stillat\Meerkat;
 
-use Statamic\Contracts\Auth\UserGroupRepository;
 use Statamic\Statamic;
 use Statamic\Yaml\ParseException;
 use Stillat\Meerkat\Blueprint\BlueprintProvider;
@@ -18,10 +17,12 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Http\HttpClientContract;
 use Stillat\Meerkat\Core\Contracts\Logging\ErrorCodeRepositoryContract;
 use Stillat\Meerkat\Core\Contracts\Logging\ExceptionLoggerContract;
+use Stillat\Meerkat\Core\Contracts\Mail\MailerContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\YAMLParserContract;
 use Stillat\Meerkat\Core\FormattingConfiguration;
 use Stillat\Meerkat\Core\GuardConfiguration;
+use Stillat\Meerkat\Core\Handlers\EmailHandler;
 use Stillat\Meerkat\Core\Handlers\HandlerManager;
 use Stillat\Meerkat\Core\Handlers\SpamServiceHandler;
 use Stillat\Meerkat\Core\Http\Client;
@@ -31,6 +32,7 @@ use Stillat\Meerkat\Core\Parsing\DateParserFactory;
 use Stillat\Meerkat\Core\Parsing\MarkdownParserFactory;
 use Stillat\Meerkat\Core\Storage\Paths;
 use Stillat\Meerkat\Logging\ExceptionLogger;
+use Stillat\Meerkat\Mail\MeerkatMailer;
 use Stillat\Meerkat\Parsing\CarbonDateParser;
 use Stillat\Meerkat\Parsing\MarkdownParser;
 use Stillat\Meerkat\Parsing\YAMLParser;
@@ -93,6 +95,8 @@ class ServiceProvider extends AddonServiceProvider
 
         Manager::$instance = app(Manager::class);
 
+        Manager::$instance->loadConfiguration();
+
         // Registers the error log repository utilized by many Meerkat services and features.
         $this->registerMeerkatCoreErrorLogRepository();
         // Register Meerkat Core configuration containers.
@@ -104,6 +108,39 @@ class ServiceProvider extends AddonServiceProvider
         $this->registerSubmissionHandler();
 
         parent::register();
+    }
+
+    /**
+     * Creates the required storage paths for Meerkat.
+     */
+    private function createPaths()
+    {
+        $paths = [
+            storage_path('meerkat/tmp'),
+            storage_path('meerkat/tasks'),
+            storage_path('meerkat/logs'),
+            storage_path('meerkat/index'),
+            base_path('meerkat')
+        ];
+
+        foreach ($paths as $path) {
+            if (file_exists($path) === false) {
+                mkdir($path, Paths::$directoryPermissions, true);
+            }
+        }
+
+        // Create the helper files, if they don't exist.
+        $helperFiles = [];
+        $helperFiles[PathProvider::getStub('filters.php')] = 'filters.php';
+        $helperFiles[PathProvider::getStub('events.php')] = 'events.php';
+
+        foreach ($helperFiles as $source => $fileName) {
+            $targetPath = base_path('meerkat/' . $fileName);
+
+            if (!file_exists($targetPath)) {
+                copy($source, $targetPath);
+            }
+        }
     }
 
     private function registerMeerkatCoreErrorLogRepository()
@@ -178,23 +215,32 @@ class ServiceProvider extends AddonServiceProvider
 
             $globalConfiguration->setFormattingConfiguration($app->make(FormattingConfiguration::class));
 
+            // Permissions.
             $globalConfiguration->directoryPermissions = $this->getConfig('storage.permissions.directory', 777);
             $globalConfiguration->filePermissions = $this->getConfig('storage.permissions.file', 644);
             Paths::$directoryPermissions = $globalConfiguration->directoryPermissions;
 
+            // General publishing settings.
             $globalConfiguration->autoPublishAnonymousPosts = $this->getConfig('publishing.auto_publish', false);
             $globalConfiguration->autoPublishAuthenticatedPosts = $this->getConfig('publishing.auto_publish_authenticated_users', false);
             $globalConfiguration->disableCommentsAfterDays = $this->getConfig('publishing.automatically_close_comments', 0);
             $globalConfiguration->trackChanges = $this->getConfig('storage.track_changes', true);
             $globalConfiguration->searchableAttributes = $this->getConfig('search.attributes', []);
 
+            // Storage directories.
             $globalConfiguration->storageDirectory = PathProvider::contentPath();
             $globalConfiguration->indexDirectory = storage_path('meerkat/index');
             $globalConfiguration->taskDirectory = storage_path('meerkat/tasks');
 
+            // Supplemental configuration.
             $globalConfiguration->supplementMissingContent = $this->trans('parser.supplement.content');
             $globalConfiguration->supplementAuthorName = $this->trans('parser.supplement.name');
             $globalConfiguration->supplementAuthorEmail = $this->trans('parser.supplement.email');
+
+            // Email.
+            $globalConfiguration->sendEmails = $this->getConfig('email.send_mail', false);
+            $globalConfiguration->onlySendEmailIfNotSpam = $this->getConfig('email.check_with_spam_guard', true);
+            $globalConfiguration->addressToSendEmailTo = $this->getConfig('email.addresses', []);
 
             foreach ($this->getConfig('authors', []) as $configSetting => $configValue) {
                 $globalConfiguration->set('author_' . $configSetting, $configValue);
@@ -224,11 +270,13 @@ class ServiceProvider extends AddonServiceProvider
         });
 
         $this->app->bind(HttpClientContract::class, Client::class);
+        $this->app->bind(MailerContract::class, MeerkatMailer::class);
 
         $this->app->singleton(HandlerManager::class, function ($app) {
             $manager = new HandlerManager();
 
             $manager->registerHandler('Meerkat.spamHandler', app(SpamServiceHandler::class));
+            $manager->registerHandler('Meerkat.emailHandler', app(EmailHandler::class));
 
             return $manager;
         });
@@ -238,53 +286,6 @@ class ServiceProvider extends AddonServiceProvider
             ExceptionLoggerFactory::$instance = app(ExceptionLoggerContract::class);
             MarkdownParserFactory::$instance = app(MarkdownParserContract::class);
         });
-    }
-
-    /**
-     * Registers the Core submission handler.
-     */
-    private function registerSubmissionHandler()
-    {
-        // Invokes the submission handler on new comments, or updates.
-        Meerkat::onShouldHandle(function (CommentContract $comment) {
-            /** @var HandlerManager $handler */
-            $manager = app(HandlerManager::class);
-
-            $manager->handle($comment);
-        });
-    }
-
-    /**
-     * Creates the required storage paths for Meerkat.
-     */
-    private function createPaths()
-    {
-        $paths = [
-            storage_path('meerkat/tmp'),
-            storage_path('meerkat/tasks'),
-            storage_path('meerkat/logs'),
-            storage_path('meerkat/index'),
-            base_path('meerkat')
-        ];
-
-        foreach ($paths as $path) {
-            if (file_exists($path) === false) {
-                mkdir($path, Paths::$directoryPermissions, true);
-            }
-        }
-
-        // Create the helper files, if they don't exist.
-        $helperFiles = [];
-        $helperFiles[PathProvider::getStub('filters.php')] = 'filters.php';
-        $helperFiles[PathProvider::getStub('events.php')] = 'events.php';
-
-        foreach ($helperFiles as $source => $fileName) {
-            $targetPath = base_path('meerkat/'.$fileName);
-
-            if (!file_exists($targetPath)) {
-                copy($source, $targetPath);
-            }
-        }
     }
 
     /**
@@ -298,6 +299,20 @@ class ServiceProvider extends AddonServiceProvider
         $blueprintProvider = app(BlueprintProvider::class);
 
         $blueprintProvider->ensureExistence();
+    }
+
+    /**
+     * Registers the Core submission handler.
+     */
+    private function registerSubmissionHandler()
+    {
+        // Invokes the submission handler on new comments, or updates.
+        Meerkat::onShouldHandle(function (CommentContract $comment) {
+            /** @var HandlerManager $manager */
+            $manager = app(HandlerManager::class);
+
+            $manager->handle($comment);
+        });
     }
 
     protected function beforeBoot()

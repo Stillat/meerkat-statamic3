@@ -104,6 +104,27 @@ class Configuration extends ConfigurationContainer
     public $filePermissions = 644;
 
     /**
+     * Indicates if Meerkat should attempt to automatically send emails on new comment submissions.
+     *
+     * @var bool
+     */
+    public $sendEmails = false;
+
+    /**
+     * Indicates if Meerkat should only send emails not identified as spam.
+     *
+     * @var bool
+     */
+    public $onlySendEmailIfNotSpam = true;
+
+    /**
+     * A list of emails to send automated submission emails to.
+     *
+     * @var array
+     */
+    public $addressToSendEmailTo = [];
+
+    /**
      * The comment length limit. If this limit is reached when
      * reading the comment's content data will be truncated.
      *

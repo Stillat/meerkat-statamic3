@@ -5,6 +5,7 @@ import Guard from './Panels/Guard';
 import IpFilter from './Panels/IpFilter';
 import Permissions from './Panels/Permissions';
 import WordFilter from './Panels/WordFilter';
+import Email from './Panels/Email';
 import SettingsRepository from '../../Repositories/settingsRepository';
 import ControlPanelApplication from '../controlPanelApplication';
 import String from '../../Types/string';
@@ -27,6 +28,7 @@ export default {
     'ip-filter': IpFilter,
     'permissions': Permissions,
     'word-filter': WordFilter,
+    'email': Email,
     'loader': Loader
   },
   data() {

@@ -115,6 +115,7 @@ class SettingsRepository {
       this.client.get(Endpoints.url(Endpoints.SettingsFetch), {}, requestState)
         .then(function (result) {
           this.releasePending(requestHash);
+          console.log('get settings', result);
           resolve(SettingsResponse.fromApiResponse(result, null));
         }.bind(this))
         .catch(function (err) {

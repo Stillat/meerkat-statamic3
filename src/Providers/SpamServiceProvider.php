@@ -48,11 +48,6 @@ class SpamServiceProvider extends AddonServiceProvider
             $moderatorHandler->submitToProviders($comment, $comment->isSpam());
         });
 
-        Event::listen('Meerkat.comments.created', function () {
-            /** @var FormHandler $guardHandler */
-            $guardHandler = app(FormHandler::class);
-        });
-
         Statamic::booted(function () {
             /** @var SpamService $spamService */
             $spamService = app(SpamService::class);

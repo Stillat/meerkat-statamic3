@@ -15,6 +15,7 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentMutationPipelineContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentChangeSetStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
+use Stillat\Meerkat\Core\Contracts\Storage\EmailReportStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\GuardReportStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\TaskStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\ThreadStorageManagerContract;
@@ -23,12 +24,13 @@ use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadMutationPipelineContract;
 use Stillat\Meerkat\Core\Parsing\SanitationManager;
 use Stillat\Meerkat\Core\Parsing\SanitationManagerFactory;
-use Stillat\Meerkat\Core\Tasks\TaskManagerFactory;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalCommentChangeSetStorageManager;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalCommentStorageManager;
+use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalEmailReportStorageManager;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalGuardReportStorageManager;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalTaskStorageManager;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalThreadStorageManager;
+use Stillat\Meerkat\Core\Tasks\TaskManagerFactory;
 use Stillat\Meerkat\Core\Threads\ContextResolverFactory;
 use Stillat\Meerkat\Core\Threads\ThreadManager;
 use Stillat\Meerkat\Core\Threads\ThreadManagerFactory;
@@ -51,24 +53,29 @@ class ThreadServiceProvider extends AddonServiceProvider
     use UsesConfig;
 
     /**
-     * The configuration key that represents the thread storage driver.
+     * The configuration key that identifies the thread storage driver.
      */
     const CONFIG_THREAD_DRIVER = 'threads';
 
     /**
-     * The configuration key that represents the comment storage driver.
+     * The configuration key that identifies the comment storage driver.
      */
     const CONFIG_COMMENT_DRIVER = 'comments';
 
     /**
-     * The configuration key that represents the spam guard report storage driver.
+     * The configuration key that identifies the spam guard report storage driver.
      */
     const CONFIG_SPAM_REPORT_DRIVER = 'spam_reports';
 
     /**
-     * The configuration key that represents the tasks manager storage driver.
+     * The configuration key that identifies the tasks manager storage driver.
      */
     const CONFIG_TASKS_DRIVER = 'tasks';
+
+    /**
+     * The configuration key that identifies the mail storage driver.
+     */
+    const CONFIG_MAIL_STORAGE_DRIVER = 'mail';
 
     public function register()
     {
@@ -95,6 +102,10 @@ class ThreadServiceProvider extends AddonServiceProvider
             $driverConfiguration[self::CONFIG_TASKS_DRIVER] = LocalTaskStorageManager::class;
         }
 
+        if (array_key_exists(self::CONFIG_MAIL_STORAGE_DRIVER, $driverConfiguration) === false) {
+            $driverConfiguration[self::CONFIG_MAIL_STORAGE_DRIVER] = LocalEmailReportStorageManager::class;
+        }
+
         // If for some reason the specified driver does not exist, fallback to local defaults.
         if (class_exists($driverConfiguration[self::CONFIG_COMMENT_DRIVER]) === false) {
             $driverConfiguration[self::CONFIG_COMMENT_DRIVER] = LocalCommentStorageManager::class;
@@ -102,6 +113,18 @@ class ThreadServiceProvider extends AddonServiceProvider
 
         if (class_exists($driverConfiguration[self::CONFIG_THREAD_DRIVER]) === false) {
             $driverConfiguration[self::CONFIG_THREAD_DRIVER] = LocalThreadStorageManager::class;
+        }
+
+        if (class_exists($driverConfiguration[self::CONFIG_SPAM_REPORT_DRIVER]) === false) {
+            $driverConfiguration[self::CONFIG_SPAM_REPORT_DRIVER] = LocalGuardReportStorageManager::class;
+        }
+
+        if (class_exists($driverConfiguration[self::CONFIG_TASKS_DRIVER]) === false) {
+            $driverConfiguration[self::CONFIG_TASKS_DRIVER] = LocalTaskStorageManager::class;
+        }
+
+        if (class_exists($driverConfiguration[self::CONFIG_MAIL_STORAGE_DRIVER]) === false) {
+            $driverConfiguration[self::CONFIG_MAIL_STORAGE_DRIVER] = LocalEmailReportStorageManager::class;
         }
 
         $this->app->singleton(SanitationManagerContract::class, function ($app) {
@@ -170,6 +193,10 @@ class ThreadServiceProvider extends AddonServiceProvider
 
         $this->app->singleton(CommentManagerContract::class, function ($app) {
             return $app->make(CommentManager::class);
+        });
+
+        $this->app->singleton(EmailReportStorageManagerContract::class, function ($app) use ($driverConfiguration) {
+            return $app->make($driverConfiguration[self::CONFIG_MAIL_STORAGE_DRIVER]);
         });
 
         Statamic::booted(function () {

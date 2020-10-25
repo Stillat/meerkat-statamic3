@@ -51,6 +51,7 @@ return [
         'spam_reports' => \Stillat\Meerkat\Core\Storage\Drivers\Local\LocalGuardReportStorageManager::class,
         'threads' => \Stillat\Meerkat\Core\Storage\Drivers\Local\LocalThreadStorageManager::class,
         'tasks' => \Stillat\Meerkat\Core\Storage\Drivers\Local\LocalTaskStorageManager::class,
+        'mail' => \Stillat\Meerkat\Core\Storage\Drivers\Local\LocalEmailReportStorageManager::class,
     ],
 
 ];

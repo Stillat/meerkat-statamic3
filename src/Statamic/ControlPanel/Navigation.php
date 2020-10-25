@@ -27,7 +27,6 @@ class Navigation
                 ->section('Tools')
                 ->view('meerkat::nav.settings')
                 ->route('cp.meerkat.settings');
-
         });
 
         Nav::extend(function ($nav) {
@@ -38,7 +37,6 @@ class Navigation
                 ->route('cp.meerkat.filteredDashboard', [
                     'filter' => 'pending'
                 ]);
-
         });
     }
 

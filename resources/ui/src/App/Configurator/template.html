@@ -22,6 +22,8 @@
         <a :class="{'active': activePage == 'ip-filter'}" v-on:click="activePage = 'ip-filter'" v-if="ipFilterEnabled === true && canChangeConfig === true" >{{ trans('config.tab_ip_address_filter') }}</a>
         <a :class="{'active': activePage == 'word-filter'}" v-on:click="activePage = 'word-filter'" v-if="wordFilterEnabled === true && canChangeConfig === true">{{ trans('config.tab_word_filter') }}</a>
         <a :class="{'active': activePage == 'permissions'}" v-on:click="activePage = 'permissions'" v-if="canChangeConfig === true">{{ trans('config.tab_permissions') }}</a>
+        <a :class="{'active': activePage == 'email'}" v-on:click="activePage = 'email'" v-if="canChangeConfig === true">{{ trans('config.tab_email') }}</a>
+
       </div>
 
       <div class="flex justify-between">

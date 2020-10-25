@@ -187,7 +187,6 @@ export default {
         if (config.length > 0) {
           let driverName = AvatarDriverRegistry.getDriverName(config[0]);
 
-          console.log('setting driver', driverName);
           this.avatarDriver = driverName;
         }
       }

@@ -214,7 +214,6 @@ class ActionState extends EventEmitter {
           }
         }.bind(this))
         .catch(function (err) {
-          console.log('eerr', err);
           if (Type.isTypeOf(err, ErrorResponse)) {
             if (err.authorized === false) {
               this._notAuthorized(err.permission);

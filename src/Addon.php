@@ -18,7 +18,7 @@ class Addon
     public const CODE_ADDON_NAME = 'meerkat';
     public const ROUTE_PREFIX = 'meerkat';
     public const ADDON_ID = 'stillat/meerkat';
-    public const VERSION = '2.1.5-beta2';
+    public const VERSION = '2.1.6-beta2';
 
     /**
      * Gets the addon API prefix.

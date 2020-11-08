@@ -19,6 +19,7 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentFactoryContract;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentMutationPipelineContract;
 use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
+use Stillat\Meerkat\Core\Contracts\Parsing\PrototypeParserContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\YAMLParserContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentChangeSetStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
@@ -31,6 +32,7 @@ use Stillat\Meerkat\Core\Exceptions\ConcurrentResourceAccessViolationException;
 use Stillat\Meerkat\Core\Exceptions\MutationException;
 use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
 use Stillat\Meerkat\Core\Parsing\CommentPrototypeParser;
+use Stillat\Meerkat\Core\Parsing\FullCommentPrototypeParser;
 use Stillat\Meerkat\Core\Paths\PathUtilities;
 use Stillat\Meerkat\Core\RuntimeStateGuard;
 use Stillat\Meerkat\Core\Storage\Data\CommentAuthorRetriever;
@@ -219,9 +221,9 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     private $changeSetManager = null;
 
     /**
-     * The CommentPrototypeParser instance.
+     * The PrototypeParserContract implementation instance.
      *
-     * @var CommentPrototypeParser
+     * @var PrototypeParserContract
      */
     private $commentParser = null;
 
@@ -235,7 +237,13 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         IdentityManagerContract $identityManager,
         CommentChangeSetStorageManagerContract $changeSetManager)
     {
-        $this->commentParser = new CommentPrototypeParser();
+
+        if ($config->useSlimCommentPrototypeParser === false) {
+            $this->commentParser = new FullCommentPrototypeParser($yamlParser);
+        } else {
+            $this->commentParser = new CommentPrototypeParser();
+        }
+
         $this->commentShadowIndex = new ShadowIndex($config);
         $this->commentStructureResolver = new LocalCommentStructureResolver();
         $this->authorRetriever = $authorRetriever;
@@ -393,6 +401,10 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
 
             if ($commentPrototype[LocalCommentStorageManager::KEY_NEEDS_MIGRATION]) {
                 $comment->setDataAttribute(CommentContract::INTERNAL_STRUCTURE_NEEDS_MIGRATION, true);
+            }
+
+            if ($this->config->useSlimCommentPrototypeParser === false) {
+                $comment->flagRuntimeAttributesResolved();
             }
 
             $commentPrototypes[$commentId] = $comment;

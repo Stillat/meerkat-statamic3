@@ -228,6 +228,9 @@ class ServiceProvider extends AddonServiceProvider
             $globalConfiguration->searchableAttributes = $this->getConfig('search.attributes', []);
             $globalConfiguration->onlyAcceptCommentsFromAuthenticatedUser = $this->getConfig('publishing.only_accept_comments_from_authenticated_users', false);
 
+            // Internal parser configuration.
+            $globalConfiguration->useSlimCommentPrototypeParser = $this->getConfig('internals.useFasterSlimCommentParser', false);
+
             // Storage directories.
             $globalConfiguration->storageDirectory = PathProvider::contentPath();
             $globalConfiguration->indexDirectory = storage_path('meerkat/index');

@@ -656,6 +656,17 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     }
 
     /**
+     * Indicates that runtime attributes should already be considered resolved.
+     *
+     * @internal
+     * @since 2.1.6
+     */
+    public function flagRuntimeAttributesResolved()
+    {
+        $this->runTimeAttributesResolved = true;
+    }
+
+    /**
      * Parses the raw attributes and reloads the current attributes.
      *
      * Note: This method incurs a performance penalty, and should only be used when necessary!

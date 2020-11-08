@@ -132,6 +132,20 @@ class Configuration extends ConfigurationContainer
     public $addressToSendEmailTo = [];
 
     /**
+     * Indicates if a full, or off-spec, parser should be used for comment prototype parsing.
+     *
+     * If all comments of a site adhere to Meerkat's recommended structure, this can be
+     * set to `true` to receive comment parsing and loading performance improvements.
+     *
+     * Leave this set to `false` if you are doing weird things with your data,
+     * or are having issues with migrating comments from old Meerkat versions.
+     *
+     * @since 2.1.6
+     * @var bool
+     */
+    public $useSlimCommentPrototypeParser = false;
+
+    /**
      * The comment length limit. If this limit is reached when
      * reading the comment's content data will be truncated.
      *

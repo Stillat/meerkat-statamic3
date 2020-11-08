@@ -5,6 +5,7 @@ namespace Stillat\Meerkat\Core\Parsing;
 use Exception;
 use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
+use Stillat\Meerkat\Core\Contracts\Parsing\PrototypeParserContract;
 use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
 use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
@@ -20,7 +21,7 @@ use Stillat\Meerkat\Core\Support\TypeConversions;
  * @package Stillat\Meerkat\Core\Parsing
  * @since 2.0.11
  */
-class CommentPrototypeParser
+class CommentPrototypeParser implements PrototypeParserContract
 {
     const UNIX_EPOCH_ID = '0000000000';
 

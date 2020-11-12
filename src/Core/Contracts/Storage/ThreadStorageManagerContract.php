@@ -87,6 +87,13 @@ interface ThreadStorageManagerContract
     public function getAllSystemComments();
 
     /**
+     * Returns all comments across all threads, for the currently authenticated user.
+     *
+     * @return CommentContract[]
+     */
+    public function getAllSystemCommentsForCurrentUser();
+
+    /**
      * Attempts to locate a thread by its identifier.
      *
      * @param string $id The thread's identifier.

@@ -5,6 +5,7 @@ namespace Stillat\Meerkat\Core\Storage\Drivers\Local;
 use DirectoryIterator;
 use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
+use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\YAMLParserContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\ThreadStorageManagerContract;
@@ -12,7 +13,11 @@ use Stillat\Meerkat\Core\Contracts\Threads\ContextResolverContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContextContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadMutationPipelineContract;
+use Stillat\Meerkat\Core\Data\DataQueryFactory;
+use Stillat\Meerkat\Core\Data\RuntimeContext;
 use Stillat\Meerkat\Core\Errors;
+use Stillat\Meerkat\Core\Exceptions\FilterException;
+use Stillat\Meerkat\Core\Identity\IdentityManagerFactory;
 use Stillat\Meerkat\Core\Logging\ErrorLog;
 use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
 use Stillat\Meerkat\Core\Paths\PathUtilities;
@@ -514,6 +519,33 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
         }
 
         return $comments;
+    }
+
+    /**
+     * Returns all comments across all threads, for the currently authenticated user.
+     *
+     * @return CommentContract[]
+     * @throws FilterException
+     */
+    public function getAllSystemCommentsForCurrentUser()
+    {
+        $builder = DataQueryFactory::newQuery();
+
+        if ($builder === null) {
+            return [];
+        }
+
+        $builder->withContext(new RuntimeContext());
+        $identityManager = IdentityManagerFactory::$instance;
+        $currentIdentity = $identityManager->getIdentityContext();
+
+        if ($currentIdentity === null) {
+            return [];
+        }
+
+        $builder->where(AuthorContract::AUTHENTICATED_USER_ID, '=', $currentIdentity->getId());
+
+        return $builder->get($this->getAllSystemComments())->flattenDataset();
     }
 
     /**

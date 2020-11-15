@@ -73,6 +73,34 @@ class Meerkat extends MeerkatTag
     }
 
     /**
+     * {{ meerkat:gravatar }}
+     *
+     * @return string
+     */
+    public function gravatar()
+    {
+        $gravatarValue = $this->gravatarValue();
+
+        return '//www.gravatar.com/avatar/' . $gravatarValue . '?';
+    }
+
+    /**
+     * {{ meerkat:gravatar_value }}
+     *
+     * @return string
+     */
+    public function gravatarValue()
+    {
+        $email = '';
+
+        if ($this->context !== null) {
+            $email = $this->context->get('email');
+        }
+
+        return md5($email);
+    }
+
+    /**
      * Renders a Meerkat form.
      *
      * Maps to {{ meerkat:create }}
@@ -191,6 +219,18 @@ class Meerkat extends MeerkatTag
     }
 
     /**
+     * {{ meerkat:thread }}
+     *
+     * @return string|string[]
+     * @throws BindingResolutionException
+     * @throws TemplateTagsException
+     */
+    public function thread()
+    {
+        return $this->responses();
+    }
+
+    /**
      * {{ meerkat:responses }}
      *
      * @return string|string[]
@@ -212,18 +252,6 @@ class Meerkat extends MeerkatTag
 
             return $render;
         });
-    }
-
-    /**
-     * {{ meerkat:thread }}
-     *
-     * @return string|string[]
-     * @throws BindingResolutionException
-     * @throws TemplateTagsException
-     */
-    public function thread()
-    {
-        return $this->responses();
     }
 
     /**

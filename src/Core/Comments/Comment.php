@@ -819,6 +819,10 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
             $data[CommentContract::KEY_CONTENT] = $data[CommentContract::INTERNAL_CONTENT_RAW];
         }
 
+        // Create some useful aliases, mainly for templating purposes.
+        $data[CommentContract::KEY_ALIAS_DATE] = $this->getDataAttribute(CommentContract::KEY_COMMENT_DATE);
+        $data[CommentContract::KEY_ALIAS_DATE_FORMATTED] = $this->getDataAttribute(CommentContract::KEY_COMMENT_DATE_FORMATTED);
+
         return $data;
     }
 

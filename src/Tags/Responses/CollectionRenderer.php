@@ -172,7 +172,11 @@ class CollectionRenderer extends MeerkatTag
 
         $thread = $this->threadManager->findById($this->threadId);
 
-        $comments = $thread->getComments();
+        $comments = [];
+
+        if ($thread !== null) {
+            $comments = $thread->getComments();
+        }
 
         $this->query->limit($this->pageLimit)->skip($this->pageOffset);
 

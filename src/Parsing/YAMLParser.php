@@ -54,6 +54,12 @@ class YAMLParser extends AbstractYAMLParser implements YAMLParserContract
      */
     public function parseDocument($content)
     {
+        $bom = pack("CCC", 0xef, 0xbb, 0xbf);
+
+        if (strncmp(trim($content), $bom, 3) === 0) {
+            $content = substr(trim($content), 3);
+        }
+
         if ($content === null || mb_strlen(trim($content)) === 0) {
             return [];
         }

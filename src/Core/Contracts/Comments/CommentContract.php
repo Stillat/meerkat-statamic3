@@ -30,6 +30,8 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     const KEY_COMMENT_MARKDOWN = 'comment_markdown';
     const KEY_ID = 'id';
     const KEY_COMMENT_DATE = 'comment_date';
+    const KEY_ALIAS_DATE = 'date';
+    const KEY_ALIAS_DATE_FORMATTED = 'date_formatted';
     const KEY_IS_REPLY = 'is_reply';
     const KEY_DEPTH = 'depth';
     const KEY_ANCESTORS = 'ancestors';

@@ -13,6 +13,7 @@ use Stillat\Meerkat\Core\Contracts\Threads\ContextResolverContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContextContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadMutationPipelineContract;
+use Stillat\Meerkat\Core\Data\DataQuery;
 use Stillat\Meerkat\Core\Data\DataQueryFactory;
 use Stillat\Meerkat\Core\Data\RuntimeContext;
 use Stillat\Meerkat\Core\Errors;
@@ -519,6 +520,49 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
         }
 
         return $comments;
+    }
+
+    /**
+     * Returns all comments across all threads, for the provided user.
+     *
+     * @param string $userId The user's identifier.
+     * @return CommentContract[]
+     * @throws FilterException
+     */
+    public function getAllCommentsForUserId($userId)
+    {
+        $builder = DataQueryFactory::newQuery();
+
+        if ($builder === null) {
+            return [];
+        }
+
+        $builder->withContext(new RuntimeContext());
+        $builder->where(AuthorContract::AUTHENTICATED_USER_ID, '=', $userId);
+
+        return $builder->get($this->getAllSystemComments())->flattenDataset();
+    }
+
+    /**
+     * Queries all system comments using the provided query builder.
+     *
+     * @param callable $builderCallback The builder callback.
+     * @return CommentContract[]
+     * @throws FilterException
+     */
+    public function query($builderCallback)
+    {
+        $builder = DataQueryFactory::newQuery();
+
+        /** @var DataQuery $builder */
+        $tempBuilder = $builderCallback($builder);
+
+        if ($tempBuilder !== null && $tempBuilder instanceof DataQuery) {
+            $builder = $tempBuilder;
+        }
+
+        $builder->withContext(new RuntimeContext());
+        return $builder->get($this->getAllSystemComments())->flattenDataset();
     }
 
     /**

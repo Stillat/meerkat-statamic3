@@ -13,6 +13,7 @@ use Statamic\Tags\Concerns\GetsRedirects;
 use Statamic\Tags\Concerns\RendersForms;
 use Stillat\Meerkat\Addon;
 use Stillat\Meerkat\Concerns\GetsHiddenContext;
+use Stillat\Meerkat\Core\Data\Filters\CommentFilterManager;
 use Stillat\Meerkat\Core\Http\Client;
 use Stillat\Meerkat\Tags\MeerkatTag;
 
@@ -56,8 +57,10 @@ class MeerkatForm extends MeerkatTag
 
     protected $blueprintName = '';
 
-    public function __construct(BlueprintRepository $blueprints)
+    public function __construct(BlueprintRepository $blueprints, CommentFilterManager $manager)
     {
+        parent::__construct($manager);
+
         $this->blueprints = $blueprints;
     }
 

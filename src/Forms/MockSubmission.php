@@ -18,7 +18,9 @@ class MockSubmission extends Submission
 
     public function __construct()
     {
-        $this->form = null;
+        parent::__construct();
+
+        $this->form = new MockForm();
     }
 
     public function data($data = null)

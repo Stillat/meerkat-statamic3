@@ -4,7 +4,10 @@ namespace Stillat\Meerkat\Http\Controllers;
 
 use Illuminate\Http\Concerns\InteractsWithInput;
 use Illuminate\Support\MessageBag;
+use Illuminate\Validation\UnauthorizedException;
+use Illuminate\Validation\ValidationException;
 use Statamic\Contracts\Auth\UserRepository;
+use Statamic\Events\FormSubmitted;
 use Statamic\Http\Controllers\Controller;
 use Statamic\Support\Arr;
 use Stillat\Meerkat\Core\Configuration;
@@ -121,6 +124,12 @@ class SocializeController extends Controller
                     }
                 }
             }
+        } catch (ValidationException $validationException) {
+            return $this->formFailure(
+                $this->formHandler->getSubmissionParameters(),
+                $validationException->errors(),
+                $this->formHandler->blueprintName()
+            );
         } catch (FormValidationException $validationException) {
             return $this->formFailure(
                 $this->formHandler->getSubmissionParameters(),
@@ -199,20 +208,7 @@ class SocializeController extends Controller
 
         $mockedSubmission->data($data);
 
-        $responses = event('Form.submission.creating', $mockedSubmission);
-
-        foreach ($responses as $response) {
-            if (!is_array($response)) {
-                continue;
-            }
-
-            if ($responseErrors = array_get($response, self::KEY_ERRORS)) {
-                $errors = array_merge($responseErrors, $errors);
-                continue;
-            }
-
-            $mockedSubmission = array_get($response, self::KEY_SUBMISSION);
-        }
+        FormSubmitted::dispatch($mockedSubmission);
 
         return [
             self::KEY_ERRORS => $errors,

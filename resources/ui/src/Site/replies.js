@@ -63,10 +63,31 @@
         return v.toString(16);
       });
     },
+    findElementWithClass: function (node, classRegex) {
+      let matches = [];
+
+      function traverse(childNode) {
+        for (let i = 0; i < childNode.childNodes.length; i++) {
+          if (childNode.childNodes[i].getAttribute && childNode.childNodes[i].getAttribute('class')) {
+            if (childNode.childNodes[i].getAttribute('class').match(classRegex)) {
+              matches.push(childNode.childNodes[i]);
+            }
+          }
+
+          if (childNode.childNodes[i].childNodes.length > 0) {
+            traverse(childNode.childNodes[i]);
+          }
+        }
+      }
+
+      traverse(node);
+
+      return matches;
+    },
     getReplyForm: function () {
       let form = document.querySelectorAll('[data-meerkat-form="comment-reply-form"]');
 
-      if (form.length == 0) {
+      if (form.length === 0) {
         form = document.querySelectorAll('[data-meerkat-form="comment-form"]');
       }
 
@@ -77,23 +98,25 @@
           if (typeof window['grecaptcha'] !== 'undefined') {
             this.data.IsGoogleRecaptchaInUse = true;
 
-            for (let i = 0; i < meerkatReplyForm.childNodes.length; i += 1) {
-              if (typeof meerkatReplyForm.childNodes[i].className !== 'undefined') {
-                if (meerkatReplyForm.childNodes[i].className.match('\s*g-recaptcha\s*')) {
-                  this.data.CaptchaElementId = 'meerkat_c-' + this.generateId();
-                  meerkatReplyForm.childNodes[i].setAttribute('id', this.data.CaptchaElementId);
+            let captchaElements = this.findElementWithClass(meerkatReplyForm, '\s*g-recaptcha\s*');
 
-                  if (typeof meerkatReplyForm.childNodes[i].dataset !== 'undefined') {
-                    let captchaDataSet = meerkatReplyForm.childNodes[i].dataset;
+            if (typeof captchaElements !== 'undefined' && captchaElements.length > 0) {
+              let captchaEle = captchaElements[0];
 
-                    if (typeof captchaDataSet.sitekey !== 'undefined') {
-                      this.data.GoogleRecaptchaSiteKey = captchaDataSet.sitekey;
-                    }
+              this.data.CaptchaElementId = 'meerkat_c-' + this.generateId();
+              captchaEle.setAttribute('id', this.data.CaptchaElementId);
 
-                    if (typeof captchaDataSet.theme !== 'undefined') {
-                      this.data.GoogleRecaptchaTheme = captchaDataSet.theme;
-                    }
-                  }
+              if (typeof captchaEle.dataset !== 'undefined') {
+                let captchaDataSet = captchaEle.dataset;
+
+                if (typeof captchaDataSet.sitekey !== 'undefined') {
+                  this.data.GoogleRecaptchaSiteKey = captchaDataSet.sitekey;
+                }
+
+                if (typeof captchaDataSet.theme !== 'undefined') {
+                  this.data.GoogleRecaptchaTheme = captchaDataSet.theme;
+                } else {
+                  this.data.GoogleRecaptchaTheme = 'light';
                 }
               }
             }
@@ -104,30 +127,6 @@
       }
 
       return form;
-    },
-    resetCaptchaId: function () {
-      if (this.data.ReplyForm !== null) {
-        for (let i = 0; i < this.data.ReplyForm.childNodes.length; i += 1) {
-          if (typeof this.data.ReplyForm.childNodes[i].className !== 'undefined') {
-            if (this.data.ReplyForm.childNodes[i].className.match('\s*g-recaptcha\s*')) {
-              this.data.CaptchaElementId = 'meerkat_c-' + this.generateId();
-              this.data.ReplyForm.childNodes[i].setAttribute('id', this.data.CaptchaElementId);
-
-              if (typeof this.data.ReplyForm.childNodes[i].dataset !== 'undefined') {
-                var captchaDataSet = this.data.ReplyForm.childNodes[i].dataset;
-
-                if (typeof captchaDataSet.sitekey !== 'undefined') {
-                  this.data.GoogleRecaptchaSiteKey = captchaDataSet.sitekey;
-                }
-
-                if (typeof captchaDataSet.theme !== 'undefined') {
-                  this.data.GoogleRecaptchaTheme = captchaDataSet.theme;
-                }
-              }
-            }
-          }
-        }
-      }
     },
     makeReplyInput: function (replyingTo) {
       let replyInput = document.createElement('input');

@@ -226,7 +226,17 @@ class Paths
     {
         $files = glob($pattern, $flags);
 
-        foreach (glob(dirname($pattern) . '/*', GLOB_NOSORT) as $dir) {
+        if ($files === false || is_array($files) === false) {
+            $files = [];
+        }
+
+        $dirs = glob(dirname($pattern) . '/*', GLOB_NOSORT);
+
+        if ($dirs === false || is_array($dirs) === false) {
+            $dirs = [];
+        }
+
+        foreach ($dirs as $dir) {
             $files = array_merge($files, $this->getFilesRecursively($dir . '/' . basename($pattern), $flags));
         }
 
@@ -245,6 +255,10 @@ class Paths
     {
         $files = glob($pattern, 0);
 
+        if ($files === false || is_array($files) === false) {
+            $files = [];
+        }
+
         if (Str::startsWith($pattern, Paths::SYM_FORWARD_SEPARATOR) === false) {
             $pattern = Paths::SYM_FORWARD_SEPARATOR . $pattern;
         }
@@ -259,7 +273,13 @@ class Paths
             }
         }
 
-        foreach (glob(dirname($pattern) . '/*', GLOB_NOSORT) as $dir) {
+        $dirs = glob(dirname($pattern) . '/*', GLOB_NOSORT);
+
+        if ($dirs === false || is_array($dirs) === false) {
+            $dirs = [];
+        }
+
+        foreach ($dirs as $dir) {
             $temp = $this->searchForFile($dir . '/' . basename($pattern), $subPattern, $fileName);
 
             if (is_array($temp) && count($temp) > 0) {

@@ -377,6 +377,10 @@ class Manager
         $configFiles = glob($configDirectory);
         $configMapping = [];
 
+        if ($configFiles === false || is_array($configFiles) === false) {
+            $configFiles = [];
+        }
+
         foreach ($configFiles as $filePath) {
             $configName = basename($filePath);
             $targetConfigPath = config_path(Addon::CODE_ADDON_NAME . '/' . $configName);

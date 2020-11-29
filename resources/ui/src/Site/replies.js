@@ -24,11 +24,14 @@
     data: {
       ReplyForm: null,
       Extend: null,
+      IsHCaptchaInUse: false,
       IsGoogleRecaptchaInUse: false,
       CaptchaElementId: null,
       GoogleRecaptchaInstance: null,
+      HCaptchaInstance: null,
       GoogleRecaptchaTheme: null,
-      GoogleRecaptchaSiteKey: null
+      GoogleRecaptchaSiteKey: null,
+      HCaptchaSiteKey: null
     },
     findClosest: function (el, selector) {
       let matchesFn;
@@ -94,9 +97,28 @@
       if (form.length > 0) {
         let meerkatReplyForm = form[0].cloneNode(true);
 
-        if (meerkatReplyForm.innerHTML.indexOf('g-recaptcha') > -1) {
+        if (meerkatReplyForm.innerHTML.indexOf('h-captcha') > -1) {
+          this.data.IsHCaptchaInUse = true;
+          this.data.IsGoogleRecaptchaInUse = false;
+
+          let captchaElements = this.findElementWithClass(meerkatReplyForm, '\s*h-captcha\s*');
+
+          if (typeof captchaElements !== 'undefined' && captchaElements.length > 0) {
+            let captchaEle = captchaElements[0];
+
+            this.data.CaptchaElementId = 'meerkat_c-' + this.generateId();
+            captchaEle.setAttribute('id', this.data.CaptchaElementId);
+
+            if (typeof  captchaEle.dataset !== 'undefined') {
+              let captchaDataSet = captchaEle.dataset;
+
+              this.data.HCaptchaSiteKey = captchaDataSet.sitekey;
+            }
+          }
+        } else if (meerkatReplyForm.innerHTML.indexOf('g-recaptcha') > -1) {
           if (typeof window['grecaptcha'] !== 'undefined') {
             this.data.IsGoogleRecaptchaInUse = true;
+            this.data.IsHCaptchaInUse = false;
 
             let captchaElements = this.findElementWithClass(meerkatReplyForm, '\s*g-recaptcha\s*');
 
@@ -173,6 +195,23 @@
                   _this.data.GoogleRecaptchaInstance = window.grecaptcha.render(_this.data.CaptchaElementId, {
                     'sitekey': _this.data.GoogleRecaptchaSiteKey,
                     'theme': _this.data.GoogleRecaptchaTheme
+                  });
+                } catch (err) {
+                }
+              }, 250);
+            }
+          }
+
+          if (_this.data.IsHCaptchaInUse === true && _this.data.CaptchaElementId !== null) {
+            if (_this.data.HCaptchaSiteKey !== null) {
+              window.setTimeout(function () {
+                let captchaElement = window.document.getElementById(_this.data.CaptchaElementId);
+
+                captchaElement.innerHTML = '';
+
+                try {
+                  _this.data.HCaptchaInstance = window.hcaptcha.render(_this.data.CaptchaElementId, {
+                    'sitekey': _this.data.HCaptchaSiteKey
                   });
                 } catch (err) {
                 }

@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat\Tags;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Statamic\Modifiers\CoreModifiers;
 use Stillat\Meerkat\Addon as MeerkatAddon;
 use Stillat\Meerkat\Concerns\GetsHiddenContext;
 use Stillat\Meerkat\Core\Configuration;
@@ -195,17 +196,27 @@ class Meerkat extends MeerkatTag
         $this->setFromContext($this);
         $thread = $this->threadManager->findById($contextId);
 
-        if ($thread === null) {
-            return 0;
+        $count = 0;
+
+        if ($thread !== null) {
+            /** @var DataSetContract $queryResults */
+            $queryResults = $thread->query(function (DataQuery $builder) {
+                $this->applyParamFiltersToQuery($builder);
+                return $builder;
+            });
+
+            $count = $queryResults->count();
         }
 
-        /** @var DataSetContract $queryResults */
-        $queryResults = $thread->query(function (DataQuery $builder) {
-            $this->applyParamFiltersToQuery($builder);
-            return $builder;
-        });
+        if ($this->hasParameterValue('format_number')) {
+            $numberFormat = explode('|', $this->getParameterValue('format_number', '1|.|,'));
 
-        return $queryResults->count();
+            $modifiers = new CoreModifiers();
+
+            return $modifiers->formatNumber($count, $numberFormat);
+        }
+
+        return $count;
     }
 
     /**

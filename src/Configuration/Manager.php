@@ -270,6 +270,23 @@ class Manager
             Types::TYPE_LIST
         ],
 
+        'privacy.store_user_agent' => [
+            self::BEHAVIOR_REPLACE,
+            [self::BEHAVIOR_MANAGED, self::BEHAVIOR_REPLACE],
+            Types::TYPE_BIT
+        ],
+
+        'privacy.store_user_ip' => [
+            self::BEHAVIOR_REPLACE,
+            [self::BEHAVIOR_MANAGED, self::BEHAVIOR_REPLACE],
+            Types::TYPE_BIT
+        ],
+
+        'privacy.store_referrer' => [
+            self::BEHAVIOR_REPLACE,
+            [self::BEHAVIOR_MANAGED, self::BEHAVIOR_REPLACE],
+            Types::TYPE_BIT
+        ],
     ];
     /**
      * A collection of valid user groups.

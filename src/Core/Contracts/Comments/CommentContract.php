@@ -77,6 +77,8 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     const INTERNAL_PARSER_CONTENT_SUPPLEMENTED = 'parser_content_supplemented';
     const INTERNAL_PARSER_AUTHOR_NAME_SUPPLEMENTED = 'parser_author_name_supplemented';
     const INTERNAL_PARSER_AUTHOR_EMAIL_SUPPLEMENTED = 'parser_author_email_supplemented';
+    const INTERNAL_AUTHOR_HAS_EMAIL = 'internal_author_has_email';
+    const INTERNAL_AUTHOR_HAS_NAME = 'internal_author_has_name';
 
     const INTERNAL_STRUCTURE_HAS_REPLIES = 'has_replies';
 
@@ -340,6 +342,22 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
      * @return AuthorContract|null
      */
     public function getParentAuthor();
+
+    /**
+     * Indicates if the comment's author has a name.
+     *
+     * @since 2.1.14
+     * @return bool
+     */
+    public function hasAuthorName();
+
+    /**
+     * Indicates if the comment's author has an email address.
+     *
+     * @since 2.1.14
+     * @return bool
+     */
+    public function hasAuthorEmailAddress();
 
     /**
      * Gets the comment's participants.

@@ -50,6 +50,8 @@ class Comment {
     this.published = false;
     this.revisionCount = 0;
     this.isDeleted = false;
+    this.hasAuthorEmail = false;
+    this.hasAuthorName = false;
 
     this.hasBeenCheckedForSpam = false;
     this.isSpam = null;
@@ -292,6 +294,8 @@ class Comment {
     comment.published = Type.withDefault(apiObject[Comment.ApiPublished], false);
     comment.revisionCount = Type.withDefault(apiObject[Comment.ApiRevisionCount], 0);
     comment.hasBeenCheckedForSpam = Type.withDefault(apiObject[Comment.ApiHasCheckedForSpam], false);
+    comment.hasAuthorEmail = Type.withDefault(apiObject[Comment.ApiCommentHasAuthorEmail], false);
+    comment.hasAuthorName = Type.withDefault(apiObject[Comment.ApiCommentHasAuthorName], false);
 
     if (comment.hasBeenCheckedForSpam) {
       comment.isSpam = Type.withDefault(apiObject[Comment.ApiSpam], true);
@@ -439,6 +443,8 @@ Comment.ApiDepth = 'depth';
 Comment.ApiDescendents = 'descendents';
 Comment.ApiHasReplies = 'has_replies';
 Comment.ApiId = 'id';
+Comment.ApiCommentHasAuthorEmail = 'internal_author_has_email';
+Comment.ApiCommentHasAuthorName = 'internal_author_has_name';
 Comment.ApiInternalContentTruncated = 'internal_content_truncated';
 Comment.ApiInternalContextId = 'internal_context_id';
 Comment.ApiInternalRoot = 'internal_root';

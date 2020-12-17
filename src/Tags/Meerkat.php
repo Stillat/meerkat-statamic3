@@ -184,6 +184,11 @@ class Meerkat extends MeerkatTag
         return $this->threadManager->areCommentsEnabledForContext($this->getHiddenContext());
     }
 
+    public function commentCount()
+    {
+        return $this->count();
+    }
+
     /**
      * Returns the number of published, not-spam comments.
      *

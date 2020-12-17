@@ -17,5 +17,7 @@ return [
     'thread_multiple_response' => 'In response to:',
     'author_in_reply_to' => 'Replying to:',
 
+    'anonymous_email' => 'no-email@example.org',
+    'anonymous_author' => 'Anonymous User',
 ];
 

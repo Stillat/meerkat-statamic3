@@ -188,6 +188,13 @@ class Configuration extends ConfigurationContainer
     private $formatConfiguration = null;
 
     /**
+     * The DataPrivacyConfiguration instance.
+     *
+     * @var DataPrivacyConfiguration
+     */
+    private $dataPrivacyConfiguration = null;
+
+    /**
      * A list of searchable comment attributes.
      *
      * @var string[]
@@ -199,6 +206,29 @@ class Configuration extends ConfigurationContainer
     public function __construct()
     {
         $this->formatConfiguration = new FormattingConfiguration;
+        $this->dataPrivacyConfiguration = new DataPrivacyConfiguration;
+    }
+
+    /**
+     * Sets the active data privacy configuration.
+     *
+     * @param DataPrivacyConfiguration $config The configuration.
+     * @since 2.1.14
+     */
+    public function setDataPrivacyConfiguration(DataPrivacyConfiguration $config)
+    {
+        $this->dataPrivacyConfiguration = $config;
+    }
+
+    /**
+     * Returns access to the active data privacy configuration.
+     *
+     * @return DataPrivacyConfiguration
+     * @since 2.1.14
+     */
+    public function getDataPrivacyConfiguration()
+    {
+        return $this->dataPrivacyConfiguration;
     }
 
     /**

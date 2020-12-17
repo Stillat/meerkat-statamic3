@@ -23,6 +23,7 @@
         <a :class="{'active': activePage == 'word-filter'}" v-on:click="activePage = 'word-filter'" v-if="wordFilterEnabled === true && canChangeConfig === true">{{ trans('config.tab_word_filter') }}</a>
         <a :class="{'active': activePage == 'permissions'}" v-on:click="activePage = 'permissions'" v-if="canChangeConfig === true">{{ trans('config.tab_permissions') }}</a>
         <a :class="{'active': activePage == 'email'}" v-on:click="activePage = 'email'" v-if="canChangeConfig === true">{{ trans('config.tab_email') }}</a>
+        <a :class="{'active': activePage == 'privacy'}" v-on:click="activePage = 'privacy'" v-if="canChangeConfig === true">{{ trans('config.tab_privacy') }}</a>
 
       </div>
 

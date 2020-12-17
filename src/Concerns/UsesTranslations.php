@@ -15,7 +15,6 @@ use Stillat\Meerkat\Addon;
 trait UsesTranslations
 {
 
-
     /**
      * Translate the given message.
      *

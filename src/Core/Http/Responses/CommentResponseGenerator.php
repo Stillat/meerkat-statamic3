@@ -272,7 +272,6 @@ class CommentResponseGenerator
             }
         }
 
-
         if (array_key_exists(CommentContract::KEY_PARENT, $comment) && $comment[CommentContract::KEY_PARENT] !== null) {
             if ($comment[CommentContract::KEY_PARENT] instanceof CommentContract) {
                 $comment[CommentContract::KEY_PARENT] = $comment[CommentContract::KEY_PARENT]->getId();
@@ -352,11 +351,6 @@ class CommentResponseGenerator
         $results = $this->manager->queryAll($this->query);
 
         return $results->getData();
-        if (array_key_exists(CommentResponseGenerator::KEY_PARAM_RESULTS_PER_PAGE, $parameters)) {
-            $this->query->limit(intval($parameters[CommentResponseGenerator::KEY_PARAM_RESULTS_PER_PAGE]));
-        } else {
-            $this->query->limit(CommentResponseGenerator::VALUE_DEFAULT_PER_PAGE);
-        }
     }
 
 }

@@ -133,4 +133,19 @@ return [
     'server_changes_warning_message' => 'Changes to your site\'s configuration were detected since you last loaded this page; any changes you save will overwrite those changes.',
     'server_changes_warning_reload_prompt' => 'Click here to reload your settings.',
 
+    'tab_privacy' => 'User Privacy',
+    'privacy_title' => 'Visitor Submission Data Privacy',
+    'privacy_desc' => 'Meerkat may be configured to selectively collect the following data about your site visitors when they submit a comment. Some data may be used by some spam guards to improve spam detection accuracy.',
+
+    'privacy_table_data' => 'User Data',
+    'privacy_table_enabled' => 'Collect',
+
+    'privacy_store_user_agent_title' => 'Browser User Agent',
+    'privacy_store_user_agent_desc' => 'Controls whether browser and operating system information is collected',
+
+    'privacy_store_user_ip_title' => 'User IP Address',
+    'privacy_store_user_ip_desc' => 'Controls whether visitor IP Address information is collected',
+
+    'privacy_store_referrer_title' => 'HTTP Referrer Header',
+    'privacy_store_referrer_desc' => 'Controls whether visitor HTTP Referrer information is collected',
 ];

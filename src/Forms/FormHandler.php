@@ -156,11 +156,20 @@ class FormHandler
     {
         $rules = [];
         $attributes = [];
+        $submissionData = $this->getSubmissionData();
 
         // Merge in field rules
         foreach ($this->getFields() as $field_name => $field_config) {
-            if ($field_rules = array_get($field_config, MeerkatForm::KEY_FORM_CONFIG_VALIDATE)) {
-                $rules[$field_name] = $field_rules;
+            $field_rules = array_get($field_config, MeerkatForm::KEY_FORM_CONFIG_VALIDATE);
+
+            if ($field_rules) {
+                $partialRules = explode('|', $field_rules);
+
+                if (in_array('sometimes', $partialRules)) {
+                    if (array_key_exists($field_name, $submissionData)&& $submissionData[$field_name] !== null) {
+                        $rules[$field_name] = $field_rules;
+                    }
+                }
             }
 
             // Makes the names prettier.
@@ -172,8 +181,6 @@ class FormHandler
 
         /** @var Factory $validatorFactory */
         $validatorFactory = app('validator');
-
-        $submissionData = $this->getSubmissionData();
 
         $validator = $validatorFactory->make($submissionData, $rules, [], $attributes);
 

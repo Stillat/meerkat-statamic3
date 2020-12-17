@@ -20,6 +20,7 @@ use Stillat\Meerkat\Core\Contracts\Logging\ExceptionLoggerContract;
 use Stillat\Meerkat\Core\Contracts\Mail\MailerContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\YAMLParserContract;
+use Stillat\Meerkat\Core\DataPrivacyConfiguration;
 use Stillat\Meerkat\Core\FormattingConfiguration;
 use Stillat\Meerkat\Core\GuardConfiguration;
 use Stillat\Meerkat\Core\Handlers\EmailHandler;
@@ -101,6 +102,7 @@ class ServiceProvider extends AddonServiceProvider
         $this->registerMeerkatCoreErrorLogRepository();
         // Register Meerkat Core configuration containers.
         $this->registerMeerkatSpamGuardConfiguration();
+        $this->registerMeerkatDataPrivacyConfiguration(); // Global Configuration relies on this.
         $this->registerMeerkatFormattingConfiguration(); // Global Configuration relies on the formatting config.
         $this->registerMeerkatGlobalConfiguration();
         $this->registerCoreDependencies();
@@ -160,6 +162,26 @@ class ServiceProvider extends AddonServiceProvider
     }
 
     /**
+     * Creates the Meerkat Core data privacy configuration object.
+     *
+     * @since 2.1.14
+     */
+    private function registerMeerkatDataPrivacyConfiguration()
+    {
+        $this->app->singleton(DataPrivacyConfiguration::class, function ($app) {
+            $privacyConfiguration = new DataPrivacyConfiguration();
+
+            $privacyConfiguration->collectReferrer = $this->getConfig('privacy.store_referrer', true);
+            $privacyConfiguration->collectUserAgent = $this->getConfig('privacy.store_user_agent', true);
+            $privacyConfiguration->collectUserIp = $this->getConfig('privacy.store_user_ip', true);
+            $privacyConfiguration->emptyName = $this->getConfig('privacy.anonymous_author', $this->trans('display.anonymous_author'));
+            $privacyConfiguration->emptyEmailAddress = $this->getConfig('privacy.anonymous_email', $this->trans('display.anonymous_email'));
+
+            return $privacyConfiguration;
+        });
+    }
+
+    /**
      * Creates the Meerkat Core spam service and guard configuration object.
      */
     private function registerMeerkatSpamGuardConfiguration()
@@ -214,6 +236,7 @@ class ServiceProvider extends AddonServiceProvider
             $globalConfiguration = new GlobalConfiguration();
 
             $globalConfiguration->setFormattingConfiguration($app->make(FormattingConfiguration::class));
+            $globalConfiguration->setDataPrivacyConfiguration($app->make(DataPrivacyConfiguration::class));
 
             // Permissions.
             $globalConfiguration->directoryPermissions = $this->getConfig('storage.permissions.directory', 777);

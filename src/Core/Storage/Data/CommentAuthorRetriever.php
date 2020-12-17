@@ -5,6 +5,7 @@ namespace Stillat\Meerkat\Core\Storage\Data;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorFactoryContract;
+use Stillat\Meerkat\Core\DataPrivacyConfiguration;
 
 /**
  * Class CommentAuthorRetriever
@@ -34,9 +35,17 @@ class CommentAuthorRetriever
      */
     protected $authEmailMappings = [];
 
-    public function __construct(AuthorFactoryContract $authorFactory)
+    /**
+     * The DataPrivacyConfiguration instance.
+     *
+     * @var DataPrivacyConfiguration
+     */
+    protected $config = null;
+
+    public function __construct(DataPrivacyConfiguration $config, AuthorFactoryContract $authorFactory)
     {
         $this->authorFactory = $authorFactory;
+        $this->config = $config;
     }
 
     /**
@@ -79,7 +88,7 @@ class CommentAuthorRetriever
 
         // Guard against empty/missing email address entries.
         if ($emailAddress === null || mb_strlen(trim($emailAddress)) === 0) {
-            $emailAddress = 'no-email@example.oprg';
+            $emailAddress = $this->config->emptyEmailAddress;
             $comment->setDataAttribute(AuthorContract::KEY_EMAIL_ADDRESS, $emailAddress);
         }
 
@@ -89,6 +98,10 @@ class CommentAuthorRetriever
         $name = $comment->getDataAttribute(AuthorContract::KEY_NAME);
         $userId = $comment->getDataAttribute(AuthorContract::AUTHENTICATED_USER_ID);
         $webUrl = $comment->getDataAttribute(AuthorContract::KEY_AUTHOR_URL);
+
+        if ($name === null || mb_strlen(trim($name)) === 0) {
+            $name = $this->config->emptyName;
+        }
 
         return [
             AuthorContract::KEY_EMAIL_ADDRESS => $emailAddress,

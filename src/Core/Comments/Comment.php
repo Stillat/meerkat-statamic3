@@ -230,6 +230,28 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     }
 
     /**
+     * Indicates if the comment's author has a name.
+     *
+     * @since 2.1.14
+     * @return bool
+     */
+    public function hasAuthorName()
+    {
+        return $this->getDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_NAME, true);
+    }
+
+    /**
+     * Indicates if the comment's author has an email address.
+     *
+     * @since 2.1.14
+     * @return bool
+     */
+    public function hasAuthorEmailAddress()
+    {
+        return $this->getDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_EMAIL, true);
+    }
+
+    /**
      * Sets the comment's parent author context, if available.
      *
      * @param AuthorContract $author The author of the parent comment.

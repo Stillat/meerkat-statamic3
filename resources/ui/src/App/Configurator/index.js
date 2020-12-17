@@ -5,6 +5,7 @@ import Guard from './Panels/Guard';
 import IpFilter from './Panels/IpFilter';
 import Permissions from './Panels/Permissions';
 import WordFilter from './Panels/WordFilter';
+import Privacy from './Panels/Privacy';
 import Email from './Panels/Email';
 import SettingsRepository from '../../Repositories/settingsRepository';
 import ControlPanelApplication from '../controlPanelApplication';
@@ -28,6 +29,7 @@ export default {
     'ip-filter': IpFilter,
     'permissions': Permissions,
     'word-filter': WordFilter,
+    'privacy': Privacy,
     'email': Email,
     'loader': Loader
   },

@@ -28,9 +28,14 @@ class PrototypeAttributeValidator
     public static function validateAttributes($attributes)
     {
         $internalAttributes = PrototypeAttributes::getPrototypeExpectedTypes();
+        $nullableTypes = PrototypeAttributes::getNullablePrototypeAttributes();
 
         foreach ($attributes as $attributeName => $attributeValue) {
             if (array_key_exists($attributeName, $internalAttributes)) {
+                if ($attributeValue === null && in_array($attributeName, $nullableTypes)) {
+                    continue;
+                }
+
                 $type = intval($internalAttributes[$attributeName]);
 
                 if ($type === Types::TYPE_STRING && StringValidator::check($attributeValue) === false) {

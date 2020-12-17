@@ -137,6 +137,7 @@ class SocializeController extends Controller
                 $this->formHandler->blueprintName()
             );
         } catch (RejectSubmissionException $rejectSubmissionException) {
+            dd($rejectSubmissionException);
             return $this->formSuccess(
                 $this->formHandler->getSubmissionParameters(),
                 $this->formHandler->getSubmissionData(),
@@ -246,11 +247,22 @@ class SocializeController extends Controller
      */
     private function fillWithRequestData($data)
     {
-        $requestData = [
-            AuthorContract::KEY_USER_AGENT => request()->header('User-Agent'),
-            AuthorContract::KEY_USER_IP => request()->getClientIp(),
-            CommentContract::KEY_REFERRER => request()->server('HTTP_REFERER'),
-        ];
+        $requestData = [];
+
+        // Only collect potentially identifying information if configured to do so.
+        $privacyConfig = $this->coreConfig->getDataPrivacyConfiguration();
+
+        if ($privacyConfig->collectUserIp) {
+            $requestData[AuthorContract::KEY_USER_IP] = request()->getClientIp();
+        }
+
+        if ($privacyConfig->collectUserAgent) {
+            $requestData[AuthorContract::KEY_USER_AGENT] = request()->header('User-Agent');
+        }
+
+        if ($privacyConfig->collectReferrer) {
+            $requestData[CommentContract::KEY_REFERRER] = request()->server('HTTP_REFERER');
+        }
 
         return array_merge($data, $requestData);
     }

@@ -24,7 +24,19 @@ class PrototypeAttributes
      */
     protected static $prototypeAttributes = null;
 
+    /**
+     * A cache of each prototype attribute's expected runtime type.
+     *
+     * @var array
+     */
     protected static $prototypeExpectedTypes = null;
+
+    /**
+     * A cache of nullable prototype attributes.
+     *
+     * @var array
+     */
+    protected static $nullablePrototypeAttributes = null;
 
     /**
      * A list of comment prototype elements when parsing comment data.
@@ -52,6 +64,28 @@ class PrototypeAttributes
         }
 
         return self::$prototypeAttributes;
+    }
+
+    /**
+     * Returns a list of prototype attributes that can be `null`.
+     *
+     * @since 2.1.14
+     * @return array
+     */
+    public static function getNullablePrototypeAttributes()
+    {
+        if (self::$nullablePrototypeAttributes === null) {
+            self::$nullablePrototypeAttributes = [
+                AuthorContract::KEY_NAME,
+                AuthorContract::KEY_EMAIL_ADDRESS,
+                AuthorContract::KEY_USER_IP,
+                AuthorContract::KEY_USER_AGENT,
+                AuthorContract::KEY_AUTHOR_URL,
+                CommentContract::KEY_REFERRER,
+            ];
+        }
+
+        return self::$nullablePrototypeAttributes;
     }
 
     /**

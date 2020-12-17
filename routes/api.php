@@ -47,7 +47,6 @@ Route::middleware('statamic.cp.authenticated')->group(function () {
         });
 
         Route::group(['prefix' => 'export'], function () {
-
             Route::get('csv', '\Stillat\Meerkat\Http\Controllers\Api\ExportController@csv');
             Route::get('json', '\Stillat\Meerkat\Http\Controllers\Api\ExportController@json');
         });

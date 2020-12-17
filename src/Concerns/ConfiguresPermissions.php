@@ -8,7 +8,6 @@ trait ConfiguresPermissions
 {
     use UsesConfig;
 
-
     /**
      * Sets the role-based permission rules from the current runtime configuration.
      */
@@ -98,6 +97,5 @@ trait ConfiguresPermissions
 
         $this->permissionsConfigured = true;
     }
-
 
 }

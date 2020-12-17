@@ -17,6 +17,7 @@ use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentFactoryContract;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentMutationPipelineContract;
+use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\PrototypeParserContract;
@@ -398,6 +399,28 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             $comment->setRawContent($commentPrototype[LocalCommentStorageManager::KEY_CONTENT]);
             $comment->setYamlParser($this->yamlParser);
             $comment->setMarkdownParser($this->markdownParser);
+
+            $hasAuthorEmail = false;
+            $hasAuthorName = false;
+
+            if (array_key_exists(AuthorContract::KEY_EMAIL_ADDRESS, $commentPrototype)) {
+                $authorEmailCandidate = $commentPrototype[AuthorContract::KEY_EMAIL_ADDRESS];
+
+                if ($authorEmailCandidate !== null && mb_strlen(trim($authorEmailCandidate)) > 0) {
+                    $hasAuthorEmail = true;
+                }
+            }
+
+            if (array_key_exists(AuthorContract::KEY_NAME, $commentPrototype)) {
+                $authorNameCandidate = $commentPrototype[AuthorContract::KEY_NAME];
+
+                if ($authorNameCandidate !== null && mb_strlen(trim($authorNameCandidate)) > 0) {
+                    $hasAuthorName = true;
+                }
+            }
+
+            $comment->setDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_NAME, $hasAuthorName);
+            $comment->setDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_EMAIL, $hasAuthorEmail);
 
             if ($commentPrototype[LocalCommentStorageManager::KEY_NEEDS_MIGRATION]) {
                 $comment->setDataAttribute(CommentContract::INTERNAL_STRUCTURE_NEEDS_MIGRATION, true);

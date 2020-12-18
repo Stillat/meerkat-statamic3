@@ -445,7 +445,7 @@ class CollectionRenderer extends MeerkatTag
 
         return $this->parseComments([
             $collectionName => $displayComments
-        ], [], $collectionName);
+        ], $this->context->toArray(), $collectionName);
     }
 
     /**

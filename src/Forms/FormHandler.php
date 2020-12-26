@@ -169,6 +169,8 @@ class FormHandler
                     if (array_key_exists($field_name, $submissionData)&& $submissionData[$field_name] !== null) {
                         $rules[$field_name] = $field_rules;
                     }
+                } else {
+                    $rules[$field_name] = $field_rules;
                 }
             }
 

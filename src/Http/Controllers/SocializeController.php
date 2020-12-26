@@ -284,7 +284,7 @@ class SocializeController extends Controller
         }
 
         if (method_exists($currentUser, 'email')) {
-            if ($data[AuthorContract::KEY_EMAIL_ADDRESS] === $currentUser->email()) {
+            if (array_key_exists(AuthorContract::KEY_EMAIL_ADDRESS, $data) && $data[AuthorContract::KEY_EMAIL_ADDRESS] === $currentUser->email()) {
                 $this->currentUserIsPublishingComment = true;
                 $data[AuthorContract::AUTHENTICATED_USER_ID] = $currentUser->getAuthIdentifier();
             }

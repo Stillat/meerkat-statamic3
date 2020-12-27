@@ -144,8 +144,13 @@ class BaseCollectionConverter
 
             if ($parentAuthor !== null) {
                 $parentCommentAuthor = $this->sanitationManager->sanitizeArrayValues($parentAuthor->toArray());
-                $parentCommentAuthor[AuthorContract::KEY_HAS_NAME] = $comment->getParentComment()->getDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_NAME, false);
-                $parentCommentAuthor[AuthorContract::KEY_HAS_EMAIL] = $comment->getParentComment()->getDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_EMAIL, false);
+                $parentComment = $comment->getParentComment();
+
+                if ($parentComment !== null) {
+                    $parentCommentAuthor[AuthorContract::KEY_HAS_NAME] = $parentComment->getDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_NAME, false);
+                    $parentCommentAuthor[AuthorContract::KEY_HAS_EMAIL] = $parentComment->getDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_EMAIL, false);
+
+                }
 
                 $commentArray[CommentContract::INTERNAL_PARENT_AUTHOR] = $parentCommentAuthor;
             } else {

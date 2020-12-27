@@ -17,6 +17,7 @@ use Stillat\Meerkat\Core\Support\TypeConversions;
 use Stillat\Meerkat\Exceptions\TemplateTagsException;
 use Stillat\Meerkat\Forms\MeerkatForm;
 use Stillat\Meerkat\PathProvider;
+use Stillat\Meerkat\Tags\Authors\InitialsTag;
 use Stillat\Meerkat\Tags\Responses\CollectionRenderer;
 use Stillat\Meerkat\Tags\Testing\OutputThreadDebugInformation;
 
@@ -307,6 +308,20 @@ class Meerkat extends MeerkatTag
     public function version()
     {
         return MeerkatAddon::VERSION;
+    }
+
+    /**
+     * Provides simpler access to the underlying initials system.
+     *
+     * {{ meerkat:initials }}
+     *
+     * @return string
+     * @throws BindingResolutionException
+     * @throws TemplateTagsException
+     */
+    public function initials()
+    {
+        return $this->renderDynamic(InitialsTag::class);
     }
 
     /**

@@ -109,7 +109,9 @@ class CommentAuthorRetriever
             AuthorContract::KEY_USER_IP => $userIp,
             AuthorContract::KEY_NAME => $name,
             AuthorContract::AUTHENTICATED_USER_ID => $userId,
-            AuthorContract::KEY_AUTHOR_URL => $webUrl
+            AuthorContract::KEY_AUTHOR_URL => $webUrl,
+            CommentContract::INTERNAL_AUTHOR_HAS_EMAIL => $comment->getDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_EMAIL, false),
+            CommentContract::INTERNAL_AUTHOR_HAS_NAME => $comment->getDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_EMAIL, false)
         ];
     }
 

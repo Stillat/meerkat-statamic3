@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat\Identity;
 
 use Statamic\Contracts\Auth\User;
+use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\DataObject;
 use Stillat\Meerkat\Core\Permissions\PermissionsSet;
@@ -103,7 +104,9 @@ class StatamicIdentity implements AuthorContract
             AuthorContract::KEY_NAME => $this->getDisplayName(),
             AuthorContract::KEY_EMAIL_ADDRESS => $this->getEmailAddress(),
             AuthorContract::KEY_HAS_USER => $this->getIsTransient() === false,
-            AuthorContract::KEY_PERMISSIONS => $this->getPermissionSet()->toArray()
+            AuthorContract::KEY_PERMISSIONS => $this->getPermissionSet()->toArray(),
+            AuthorContract::KEY_HAS_EMAIL => $this->getDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_EMAIL, false),
+            AuthorContract::KEY_HAS_NAME => $this->getDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_NAME, false),
         ];
     }
 

@@ -48,6 +48,8 @@ interface AuthorContract extends DataObjectContract, Serializable
     const KEY_HAS_USER = 'has_user';
     const KEY_PERMISSIONS = 'permissions';
     const KEY_AUTHOR_URL = 'url';
+    const KEY_HAS_NAME = 'has_name';
+    const KEY_HAS_EMAIL = 'has_email';
 
     const KEY_INITIALS = 'initials';
 

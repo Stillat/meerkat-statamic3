@@ -394,7 +394,9 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             $comment->setAuthorRetriever($this->authorRetriever);
             // End:   Comment Implementation Specifics
 
-            $comment->setDataAttributes($commentPrototype[LocalCommentStorageManager::KEY_HEADERS]);
+            $dataAttributes = $commentPrototype[LocalCommentStorageManager::KEY_HEADERS];
+
+            $comment->setDataAttributes($dataAttributes);
             $comment->setRawAttributes($commentPrototype[LocalCommentStorageManager::KEY_RAW_HEADERS]);
             $comment->setRawContent($commentPrototype[LocalCommentStorageManager::KEY_CONTENT]);
             $comment->setYamlParser($this->yamlParser);
@@ -403,16 +405,16 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             $hasAuthorEmail = false;
             $hasAuthorName = false;
 
-            if (array_key_exists(AuthorContract::KEY_EMAIL_ADDRESS, $commentPrototype)) {
-                $authorEmailCandidate = $commentPrototype[AuthorContract::KEY_EMAIL_ADDRESS];
+            if (array_key_exists(AuthorContract::KEY_EMAIL_ADDRESS, $dataAttributes)) {
+                $authorEmailCandidate = $dataAttributes[AuthorContract::KEY_EMAIL_ADDRESS];
 
                 if ($authorEmailCandidate !== null && mb_strlen(trim($authorEmailCandidate)) > 0) {
                     $hasAuthorEmail = true;
                 }
             }
 
-            if (array_key_exists(AuthorContract::KEY_NAME, $commentPrototype)) {
-                $authorNameCandidate = $commentPrototype[AuthorContract::KEY_NAME];
+            if (array_key_exists(AuthorContract::KEY_NAME, $dataAttributes)) {
+                $authorNameCandidate = $dataAttributes[AuthorContract::KEY_NAME];
 
                 if ($authorNameCandidate !== null && mb_strlen(trim($authorNameCandidate)) > 0) {
                     $hasAuthorName = true;

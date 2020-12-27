@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat\Core\Data\Converters;
 
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
+use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
 use Stillat\Meerkat\Core\Exceptions\InconsistentCompositionException;
 use Stillat\Meerkat\Core\Parsing\SanitationManagerFactory;
@@ -131,15 +132,20 @@ class BaseCollectionConverter
             $commentAuthor = $comment->getAuthor();
             $parentAuthor = $comment->getParentAuthor();
 
+
             if ($commentAuthor === null) {
                 $commentAuthor = [];
             } else {
                 $commentAuthor = $this->sanitationManager->sanitizeArrayValues($commentAuthor->toArray());
+                $commentAuthor[AuthorContract::KEY_HAS_NAME] = $comment->getDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_NAME, false);
+                $commentAuthor[AuthorContract::KEY_HAS_EMAIL] = $comment->getDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_EMAIL, false);
             }
 
 
             if ($parentAuthor !== null) {
                 $parentCommentAuthor = $this->sanitationManager->sanitizeArrayValues($parentAuthor->toArray());
+                $parentCommentAuthor[AuthorContract::KEY_HAS_NAME] = $comment->getParentComment()->getDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_NAME, false);
+                $parentCommentAuthor[AuthorContract::KEY_HAS_EMAIL] = $comment->getParentComment()->getDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_EMAIL, false);
 
                 $commentArray[CommentContract::INTERNAL_PARENT_AUTHOR] = $parentCommentAuthor;
             } else {

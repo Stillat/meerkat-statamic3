@@ -131,7 +131,13 @@ class CommentAuthorRetriever
         }
 
         if ($emailAddress !== null && mb_strlen(trim($emailAddress)) > 0) {
-            $authorKey = trim($emailAddress);
+            $authName = $comment->getDataAttribute(AuthorContract::KEY_NAME, null);
+
+            if ($authName === null || mb_strlen(trim($authName)) === 0) {
+                $authName = md5(time());
+            }
+
+            $authorKey = trim($emailAddress.$authName);
 
             if (!array_key_exists($authorKey, $this->authEmailMappings)) {
                 $authorPrototype = $this->getAuthorDataPrototype($comment);

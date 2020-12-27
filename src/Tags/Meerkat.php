@@ -6,6 +6,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Statamic\Modifiers\CoreModifiers;
 use Stillat\Meerkat\Addon as MeerkatAddon;
 use Stillat\Meerkat\Concerns\GetsHiddenContext;
+use Stillat\Meerkat\Core\Authoring\InitialsGenerator;
 use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Data\DataSetContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
@@ -17,13 +18,19 @@ use Stillat\Meerkat\Core\Support\TypeConversions;
 use Stillat\Meerkat\Exceptions\TemplateTagsException;
 use Stillat\Meerkat\Forms\MeerkatForm;
 use Stillat\Meerkat\PathProvider;
+use Stillat\Meerkat\Tags\Authors\InitialsColors;
 use Stillat\Meerkat\Tags\Authors\InitialsTag;
 use Stillat\Meerkat\Tags\Responses\CollectionRenderer;
 use Stillat\Meerkat\Tags\Testing\OutputThreadDebugInformation;
 
-// TODO: Apply query from params.
-// TODO: Ensure that trashed comments are correctly filtered.
-// TODO: Ensure that trashed threads are correctly ignored.
+/**
+ * Class Meerkat
+ *
+ * The main Meerkat Antlers tags integration.
+ *
+ * @package Stillat\Meerkat\Tags
+ * @since 2.0.0
+ */
 class Meerkat extends MeerkatTag
 {
     use GetsHiddenContext;
@@ -100,6 +107,122 @@ class Meerkat extends MeerkatTag
         }
 
         return md5($email);
+    }
+
+    /**
+     * {{ meerkat:identicon }}
+     *
+     * @return string
+     */
+    public function identicon()
+    {
+        $value = $this->identiconValue();
+
+        return 'https://avatars.dicebear.com/v2/identicon/' . $value . '.svg';
+    }
+
+    /**
+     * {{ meerkat:identicon_value }}
+     *
+     * @return string
+     */
+    public function identiconValue()
+    {
+        return $this->gravatarValue();
+    }
+
+    /**
+     * {{ meerkat:jdenticon }}
+     */
+    public function jdenticon()
+    {
+        $value = $this->jdenticonValue();
+
+        return 'https://avatars.dicebear.com/v2/jdenticon/' . $value . '.svg';
+    }
+
+    /**
+     * {{ meerkat:jdenticon_value }}
+     *
+     * @return string
+     */
+    public function jdenticonValue()
+    {
+        return $this->gravatarValue();
+    }
+
+    /**
+     * {{ meerkat:simple_background_color }}
+     *
+     * @return string
+     */
+    public function simpleBackgroundColor()
+    {
+        return 'rgb(142,142,147)';
+    }
+
+    /**
+     * {{ meerkat:simple_foreground_color }}
+     *
+     * @return string
+     */
+    public function simpleForegroundColor()
+    {
+        return '#ffffff';
+    }
+
+    /**
+     * {{ meerkat:initials_background_color }}
+     *
+     * @return string
+     */
+    public function initialsBackgroundColor()
+    {
+        $value = $this->getParameterValue('value', null);
+
+        if ($value === null) {
+            if ($this->context !== null) {
+                $value = $this->context->get('name');
+                $value = InitialsGenerator::getInitials($value);
+            }
+        }
+
+        if (mb_strlen(trim($value)) > 0) {
+            $colors = InitialsColors::getColors($value[0]);
+
+            if ($colors !== null && is_array($colors) && count($colors) === 2) {
+                return $colors[0];
+            }
+        }
+
+        return InitialsColors::$defaultBackgroundColor;
+    }
+
+    /**
+     * {{ meerkat:initials_foreground_color }}
+     *
+     * @return string
+     */
+    public function initialsForegroundColor()
+    {
+        $value = $this->getParameterValue('value', null);
+
+        if ($value === null) {
+            if ($this->context !== null) {
+                $value = $this->context->get('name');
+                $value = InitialsGenerator::getInitials($value);
+            }
+        }
+
+        if (mb_strlen(trim($value)) > 0) {
+            $colors = InitialsColors::getColors($value[0]);
+
+            if ($colors !== null && is_array($colors) && count($colors) === 2) {
+                return $colors[1];
+            }
+        }
+
+        return InitialsColors::$defaultForegroundColor;
     }
 
     /**

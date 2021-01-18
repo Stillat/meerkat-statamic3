@@ -14,7 +14,6 @@ use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\Where;
 use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\WhereIn;
 use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\WhereNotIn;
 use Stillat\Meerkat\Core\Exceptions\FilterException;
-use Stillat\Meerkat\Core\Exceptions\ParserException;
 use Stillat\Meerkat\Core\Parsing\ExpressionParser;
 use Stillat\Meerkat\Core\Support\Str;
 
@@ -224,26 +223,6 @@ class CommentFilterManager
     }
 
     /**
-     * Parses the provided filter string and returns a mapping of the filter name and filter.
-     *
-     * @param string $filterString The delimited filter string.
-     * @param string $delimiter The filter separating character.
-     * @return array
-     * @deprecated Deprecated in favor of ExpressionParser
-     */
-    public function parseFilterString($filterString, $delimiter = '|')
-    {
-        $filterParts = explode($delimiter, $filterString);
-        $filterMapping = [];
-
-        foreach ($filterParts as $filter) {
-            $filterMapping[$this->getFilterName($filter)] = $filter;
-        }
-
-        return $filterMapping;
-    }
-
-    /**
      * Runs the requested filter against the comments within context.
      *
      * @param array $queryFilter The name of the filter.
@@ -252,9 +231,7 @@ class CommentFilterManager
      * @param string $tagContext The tag context.
      * @return mixed|null
      * @throws FilterException
-     * @throws ParserException
      */
-    // TODO: FIND ALL REFERENCES AND FIND THE RUNTIME PARAM AND UPDATE.
     public function runFilter($queryFilter, $comments, $context = null, $tagContext = '')
     {
         $filterName = $queryFilter[ExpressionParser::KEY_NAME];

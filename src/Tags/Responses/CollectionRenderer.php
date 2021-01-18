@@ -15,6 +15,8 @@ use Stillat\Meerkat\Core\Data\PagedDataSet;
 use Stillat\Meerkat\Core\Data\PredicateBuilder;
 use Stillat\Meerkat\Core\Data\RuntimeContext;
 use Stillat\Meerkat\Core\Exceptions\FilterException;
+use Stillat\Meerkat\Core\Exceptions\FilterParserException;
+use Stillat\Meerkat\Core\Exceptions\ParserException;
 use Stillat\Meerkat\Core\Parsing\ExpressionParser;
 use Stillat\Meerkat\Tags\MeerkatTag;
 use Stillat\Meerkat\Tags\Output\RecursiveThreadRenderer;
@@ -150,6 +152,8 @@ class CollectionRenderer extends MeerkatTag
      *
      * @return string|array
      * @throws FilterException
+     * @throws FilterParserException
+     * @throws ParserException
      */
     public function render()
     {
@@ -312,7 +316,6 @@ class CollectionRenderer extends MeerkatTag
             }
         }
     }
-
 
     /**
      * Prepares a paginated, grouped dataset for rendering.

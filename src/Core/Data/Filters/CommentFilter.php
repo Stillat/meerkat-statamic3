@@ -3,7 +3,6 @@
 namespace Stillat\Meerkat\Core\Data\Filters;
 
 use Closure;
-use Stillat\Meerkat\Core\Exceptions\FilterException;
 
 /**
  * Class CommentFilter
@@ -58,18 +57,6 @@ class CommentFilter
      * @var array
      */
     protected $supportedTags = [];
-
-    /**
-     * The ParameterParser instance.
-     *
-     * @var ParameterParser
-     */
-    protected $parser = null;
-
-    public function __construct()
-    {
-        $this->parser = new ParameterParser();
-    }
 
     /**
      * Gets the user context.
@@ -175,7 +162,6 @@ class CommentFilter
      * Sets the filter's parameters.
      *
      * @param array $parameters The parameters.
-     * @throws FilterException
      */
     public function setParameters($parameters)
     {

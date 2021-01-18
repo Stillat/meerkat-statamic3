@@ -5,7 +5,6 @@ namespace Stillat\Meerkat\Core\Data\Filters;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
 use Stillat\Meerkat\Core\Exceptions\FilterException;
-use Stillat\Meerkat\Core\Exceptions\ParserException;
 use Stillat\Meerkat\Core\Parsing\ExpressionParser;
 
 /**
@@ -58,7 +57,6 @@ class FilterRunner
      * @param string $tagContext The run-time templating context, if any.
      * @return array
      * @throws FilterException
-     * @throws ParserException
      */
     public function processFilters($comments, $filters, $context = null, $tagContext = '')
     {

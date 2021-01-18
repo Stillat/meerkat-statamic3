@@ -766,6 +766,15 @@ class DataQuery
         if (count($this->filters) > 0 && $this->runtimeContext === null) {
             throw new FilterException('Filters cannot be executed without a run-time context. Supply a runtime context by calling withContext($context).');
         } elseif (count($this->filters) > 0 && $this->runtimeContext !== null) {
+
+            foreach ($this->filters as $filter) {
+                $filterManager = $this->filterRunner->getFilterManager();
+
+                if (!$filterManager->hasFilter($filter[ExpressionParser::KEY_NAME])) {
+                    throw new FilterException('Could not locate filter: '.$filter[ExpressionParser::KEY_NAME]);
+                }
+            }
+
             $data = $this->filterRunner->processFilters(
                 $data,
                 $this->filters,

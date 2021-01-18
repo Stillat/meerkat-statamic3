@@ -31,21 +31,93 @@ class ExpressionParser
     const TYPE_DYNAMIC = 0;
     const TYPE_STRING = 1;
 
+    /**
+     * The parsed filters.
+     *
+     * @var array
+     */
     protected $filters = [];
+
+    /**
+     * Contains the details of the current filter name.
+     *
+     * @var string
+     */
     protected $filterName = '';
+
+    /**
+     * Retains all characters for the current parsing segment.
+     *
+     * @var string
+     */
     protected $currentSegment = '';
+
+    /**
+     * Indicates the analyzed type for the current filter input value.
+     *
+     * @var int
+     */
     protected $currentType = self::TYPE_DYNAMIC;
+
+    /**
+     * A list of all parsed filter expression inputs.
+     *
+     * @var array
+     */
     protected $filterInputs = [];
 
+    /**
+     * Indicates if the parser is parsing input values.
+     *
+     * @var bool
+     */
     protected $isParsingInput = false;
+
+    /**
+     * Indicates if the parser is parsing a string input value.
+     *
+     * @var bool
+     */
     protected $isParsingString = false;
 
+    /**
+     * A collection of all individual characters from the input string.
+     *
+     * @var array
+     */
     protected $tokens = [];
+
+    /**
+     * The total number of individual characters from the input string.
+     *
+     * @var int
+     */
     protected $inputLength = 0;
+
+    /**
+     * A list of all valid string escape sequences.
+     *
+     * @var string[]
+     */
     protected $validEscapeCharacters = ['\'', '\\'];
+
+    /**
+     * The index within $tokens that the current string started.
+     *
+     * @var int
+     */
     protected $stringStartPosition = -1;
+
+    /**
+     * The index within $tokens that the current input list started.
+     *
+     * @var int
+     */
     protected $inputListStartPosition = -1;
 
+    /**
+     * Resets the internal parser state.
+     */
     private function reset()
     {
         $this->filters = [];
@@ -63,11 +135,23 @@ class ExpressionParser
         $this->inputListStartPosition = -1;
     }
 
+    /**
+     * Converts an array of parsed filters back into a valid expression string.
+     *
+     * @param array $filters An array of parsed filters.
+     * @return string
+     */
     public static function convertToString($filters)
     {
         return implode(self::TOKEN_FILTER_DELIMITER, self::convertToFilterStrings($filters));
     }
 
+    /**
+     * Converts the parsed filters into an array of strings representing each filter value.
+     *
+     * @param array $filters The parsed filters.
+     * @return string[]
+     */
     public static function convertToFilterStrings($filters)
     {
         $filterStrings = [];
@@ -79,11 +163,23 @@ class ExpressionParser
         return $filterStrings;
     }
 
+    /**
+     * Returns a string filter expression representation of a previously parsed filter.
+     *
+     * @param array $singleFilter The parsed filter.
+     * @return string
+     */
     public static function convertFilterToString($singleFilter)
     {
         return self::convertFilterToStringWithName($singleFilter)['expression'];
     }
 
+    /**
+     * Converts a parsed filter into an array containing the filter's string representation and name.
+     *
+     * @param array $singleFilter The parsed filter.
+     * @return array
+     */
     public static function convertFilterToStringWithName($singleFilter)
     {
         $filterName = $singleFilter['name'];
@@ -104,6 +200,12 @@ class ExpressionParser
         ];
     }
 
+    /**
+     * Escapes strings and backslash characters for filter expressions.
+     *
+     * @param string $string The input string.
+     * @return string
+     */
     public static function escapeFilterString($string)
     {
         $string = str_replace('\\', '\\\\', $string);
@@ -112,6 +214,14 @@ class ExpressionParser
         return $string;
     }
 
+    /**
+     * Maps the input parameters to their corresponding required parameters.
+     *
+     * @param array $requiredParameters The filter's required parameters.
+     * @param array $inputParameters The input parameters.
+     * @return array
+     * @throws FilterException
+     */
     public static function mapParameters($requiredParameters, $inputParameters)
     {
         if (count($requiredParameters) === 0 && count($inputParameters) === 0) {
@@ -119,7 +229,6 @@ class ExpressionParser
         }
 
         if (count($requiredParameters) > count($inputParameters)) {
-            // TODO: Better error message.
             throw new FilterException('Unmatched parameter count.');
         }
 
@@ -159,6 +268,13 @@ class ExpressionParser
         return $mappedParameters;
     }
 
+    /**
+     * Converts the details of a single filter into a valid filter expression string.
+     *
+     * @param string $filterName The filter name.
+     * @param array $inputs The input values.
+     * @return string
+     */
     public static function build($filterName, $inputs)
     {
         $processedInputs = [];
@@ -174,6 +290,13 @@ class ExpressionParser
         return $filterName . self::TOKEN_INPUT_START . implode(self::TOKEN_INPUT_DELIMITER, $processedInputs) . self::TOKEN_INPUT_END;
     }
 
+    /**
+     * Builds an array that matches parser return values from the filter details.
+     *
+     * @param string $filterName The filter name.
+     * @param array $inputs The input values.
+     * @return array
+     */
     public static function buildFilterArray($filterName, $inputs)
     {
         $processedInputs = [];
@@ -384,6 +507,13 @@ class ExpressionParser
         return $this->filters;
     }
 
+    /**
+     * Determines if the parsed filters contains a filter with the provided name.
+     *
+     * @param string $filterName The filter name.
+     * @param array $filters The parsed filters.
+     * @return bool
+     */
     public static function hasFilter($filterName, $filters)
     {
         foreach ($filters as $filter) {

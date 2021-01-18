@@ -413,6 +413,7 @@ class DataQuery
 
     /**
      * Attempts to filter the query by the provided filter string.
+     *
      * @param string $filterString The filter string.
      * @return $this
      * @throws FilterParserException
@@ -428,6 +429,7 @@ class DataQuery
 
     /**
      * Attempts to filter the query by the provided filter string.
+     *
      * @param string $filterString The filter string.
      * @return $this
      * @throws FilterParserException
@@ -453,8 +455,10 @@ class DataQuery
     }
 
     /**
-     * @param $property
-     * @param $value
+     * Constructs a "where not in" filter expression from the provided values.
+     *
+     * @param string $property The property name to check.
+     * @param string|mixed $value The comparison value.
      * @return $this
      * @throws FilterParserException
      */
@@ -466,8 +470,10 @@ class DataQuery
     }
 
     /**
-     * @param $property
-     * @param $value
+     * Constructs a "where in" filter expression from the provided values.
+     *
+     * @param string $property The property name to check.
+     * @param string|mixed $value The comparison value.
      * @return $this
      * @throws FilterParserException
      */
@@ -479,8 +485,10 @@ class DataQuery
     }
 
     /**
-     * @param $property
-     * @param $value
+     * Constructs a "where like" filter expression from the provided values.
+     *
+     * @param string $property The property name to check.
+     * @param string $value The comparison string pattern.
      * @return $this
      * @throws FilterParserException
      */
@@ -493,8 +501,10 @@ class DataQuery
     }
 
     /**
-     * @param $property
-     * @param $value
+     * Constructs a "where not like" filter expression from the provided values.
+     *
+     * @param string $property The property name to check.
+     * @param string|mixed $value The comparison string pattern.
      * @return $this
      * @throws FilterParserException
      */

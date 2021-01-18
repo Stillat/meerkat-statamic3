@@ -87,6 +87,17 @@ class CommentFilterManager
     }
 
     /**
+     * Returns all registered filter groups.
+     *
+     * @return array
+     * @since 2.1.20
+     */
+    public function getFilterGroups()
+    {
+        return $this->groups;
+    }
+
+    /**
      * Registers the default Meerkat filters.
      */
     public function registerDefaultFilters()

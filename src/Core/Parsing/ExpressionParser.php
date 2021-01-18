@@ -12,7 +12,7 @@ use Stillat\Meerkat\Core\Support\Str;
  * Parsers Query filter input expressions.
  *
  * @package Stillat\Meerkat\Core\Parsing
- * @sicne 2.1.20
+ * @since 2.1.20
  */
 class ExpressionParser
 {
@@ -22,6 +22,7 @@ class ExpressionParser
     const TOKEN_INPUT_DELIMITER = ',';
     const TOKEN_STR_DELIMITER = '\'';
     const TOKEN_STR_ESCAPE = '\\';
+    const TOKEN_GROUP_START = '@';
 
     const KEY_NAME = 'name';
     const KEY_INPUT = 'input';
@@ -80,6 +81,8 @@ class ExpressionParser
      */
     protected $isParsingString = false;
 
+    protected $isParsingGroupName = false;
+
     /**
      * A collection of all individual characters from the input string.
      *
@@ -116,24 +119,11 @@ class ExpressionParser
     protected $inputListStartPosition = -1;
 
     /**
-     * Resets the internal parser state.
+     * A list of all filter group aliases.
+     *
+     * @var array
      */
-    private function reset()
-    {
-        $this->filters = [];
-        $this->filterName = '';
-        $this->currentSegment = '';
-        $this->currentType = self::TYPE_DYNAMIC;
-        $this->filterInputs = [];
-
-        $this->isParsingInput = false;
-        $this->isParsingString = false;
-
-        $this->tokens = [];
-        $this->inputLength = 0;
-        $this->stringStartPosition = -1;
-        $this->inputListStartPosition = -1;
-    }
+    protected $filterGroups = [];
 
     /**
      * Converts an array of parsed filters back into a valid expression string.
@@ -237,7 +227,6 @@ class ExpressionParser
 
         $mappedParameters = [];
 
-
         for ($i = 0; $i < $reqParamLen; $i++) {
             $paramName = trim($requiredParameters[$i]);
             $paramValue = null;
@@ -281,7 +270,7 @@ class ExpressionParser
 
         foreach ($inputs as $input) {
             if (Str::contains($input, ['\\', '\''])) {
-                $processedInputs[] = self::TOKEN_STR_DELIMITER.self::escapeFilterString($input).self::TOKEN_STR_DELIMITER;
+                $processedInputs[] = self::TOKEN_STR_DELIMITER . self::escapeFilterString($input) . self::TOKEN_STR_DELIMITER;
             } else {
                 $processedInputs[] = $input;
             }
@@ -304,7 +293,7 @@ class ExpressionParser
         foreach ($inputs as $input) {
             if (Str::contains($input, ['\\', '\''])) {
                 $processedInputs[] = [
-                    self::KEY_VALUE => self::TOKEN_STR_DELIMITER.self::escapeFilterString($input).self::TOKEN_STR_DELIMITER,
+                    self::KEY_VALUE => self::TOKEN_STR_DELIMITER . self::escapeFilterString($input) . self::TOKEN_STR_DELIMITER,
                     self::KEY_TYPE => self::TYPE_STRING
                 ];
             } else {
@@ -322,6 +311,31 @@ class ExpressionParser
     }
 
     /**
+     * Determines if the parsed filters contains a filter with the provided name.
+     *
+     * @param string $filterName The filter name.
+     * @param array $filters The parsed filters.
+     * @return bool
+     */
+    public static function hasFilter($filterName, $filters)
+    {
+        foreach ($filters as $filter) {
+            if (array_key_exists(self::KEY_NAME, $filter)) {
+                if ($filter[self::KEY_NAME] === $filterName) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public function setFilterGroups($filterGroups)
+    {
+        $this->filterGroups = $filterGroups;
+    }
+
+    /**
      * Parses the filter expression and returns an array of query filters.
      *
      * @param string $inputString The filter expression to parse.
@@ -330,6 +344,7 @@ class ExpressionParser
      */
     public function parse($inputString)
     {
+        // TODO: Do a pre-processing step to replace the @gorups with their actual values...
         $this->reset();
 
         $this->tokens = mb_str_split($inputString);
@@ -352,7 +367,24 @@ class ExpressionParser
                 if ($previous === null) {
                     throw new FilterParserException('Cannot start expression with TOKEN_FILTER_DELIMITER');
                 } else if ($previous !== self::TOKEN_INPUT_END && !$this->isParsingString) {
-                    throw new FilterParserException('Unexpected TOKEN_FILTER_DELIMITER at character: ' . ($i + 1));
+                    if ($this->isParsingGroupName) {
+                        if (array_key_exists($this->currentSegment, $this->filterGroups)) {
+                            $referenceInput = $inputString;
+                            $currentEnd = $i;
+                            $refStart = $currentEnd - mb_strlen($this->currentSegment);
+                            $newStart = mb_substr($referenceInput, 0, $refStart);
+                            $newEnd = mb_substr($referenceInput, $currentEnd, $this->inputLength);
+
+                            $newInput = $newStart . $this->filterGroups[$this->currentSegment] . $newEnd;
+
+                            $this->reset();
+                            return $this->parse($newInput);
+                        } else {
+                            throw new FilterParserException('Invalid filter group "' . $this->currentSegment . '" near position: ' . ($i + 1));
+                        }
+                    } else {
+                        throw new FilterParserException('Unexpected TOKEN_FILTER_DELIMITER at character: ' . ($i + 1));
+                    }
                 }
             } else if ($current === self::TOKEN_INPUT_END && $previous === null) {
                 throw new FilterParserException('Cannot start expression with TOKEN_INPUT_END');
@@ -372,7 +404,9 @@ class ExpressionParser
 
             if ($next === null) {
                 if ($current !== self::TOKEN_INPUT_END && $previous !== self::TOKEN_INPUT_END) {
-                    throw new FilterParserException('Reached end of input string without input list.');
+                    if ($this->isParsingGroupName === false) {
+                        throw new FilterParserException('Reached end of input string without input list.');
+                    }
                 }
 
                 if ($this->isParsingInput && $current !== self::TOKEN_INPUT_END) {
@@ -384,7 +418,20 @@ class ExpressionParser
                 }
             }
 
-            if ($current === self::TOKEN_STR_ESCAPE) {
+            if ($current === self::TOKEN_GROUP_START) {
+                if (!$this->isParsingInput) {
+                    if ($this->isParsingGroupName) {
+                        throw new FilterParserException('Unexpected @ while parsing group name at position: ' . ($i + 1));
+                    } else {
+                        $this->isParsingGroupName = true;
+                        $this->currentSegment .= $current;
+                    }
+                } else {
+                    $this->currentSegment .= $current;
+                }
+
+                continue;
+            } else if ($current === self::TOKEN_STR_ESCAPE) {
                 if ($this->isParsingString && $next !== null) {
                     if (in_array($next, $this->validEscapeCharacters)) {
                         // Handles case of: where(property, =, '\'
@@ -502,29 +549,49 @@ class ExpressionParser
             }
 
             $this->currentSegment .= $current;
+
+            if ($next === null) {
+                if ($this->isParsingGroupName) {
+                    if (array_key_exists($this->currentSegment, $this->filterGroups)) {
+                        $referenceInput = $inputString;
+                        $currentEnd = $i + 1;
+                        $refStart = $currentEnd - mb_strlen($this->currentSegment);
+                        $newStart = mb_substr($referenceInput, 0, $refStart);
+                        $newEnd = mb_substr($referenceInput, $currentEnd, $this->inputLength);
+
+                        $newInput = $newStart . $this->filterGroups[$this->currentSegment] . $newEnd;
+
+                        $this->reset();
+                        return $this->parse($newInput);
+                    } else {
+                        throw new FilterParserException('Invalid filter group "' . $this->currentSegment . '" at end of input.');
+                    }
+                }
+            }
         }
 
         return $this->filters;
     }
 
     /**
-     * Determines if the parsed filters contains a filter with the provided name.
-     *
-     * @param string $filterName The filter name.
-     * @param array $filters The parsed filters.
-     * @return bool
+     * Resets the internal parser state.
      */
-    public static function hasFilter($filterName, $filters)
+    private function reset()
     {
-        foreach ($filters as $filter) {
-            if (array_key_exists(self::KEY_NAME, $filter)) {
-                if ($filter[self::KEY_NAME] === $filterName) {
-                    return true;
-                }
-            }
-        }
+        $this->filters = [];
+        $this->filterName = '';
+        $this->currentSegment = '';
+        $this->currentType = self::TYPE_DYNAMIC;
+        $this->filterInputs = [];
 
-        return false;
+        $this->isParsingInput = false;
+        $this->isParsingString = false;
+        $this->isParsingGroupName = false;
+
+        $this->tokens = [];
+        $this->inputLength = 0;
+        $this->stringStartPosition = -1;
+        $this->inputListStartPosition = -1;
     }
 
 }

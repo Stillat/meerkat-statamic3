@@ -85,6 +85,9 @@ abstract class MeerkatTag extends Tags
      */
     protected function applyParamFiltersToQuery($dataQuery)
     {
+        // TODO: NEED to set the filter groups in other places ExpressionParser is used. :)
+        $this->expressionParser->setFilterGroups($this->filterManager->getFilterGroups());
+
         $paramFilters = $this->getFiltersFromParams();
         $filterString = $this->getParameterValue(CollectionRenderer::PARAM_FILTER, null);
 
@@ -188,7 +191,6 @@ abstract class MeerkatTag extends Tags
      */
     public function hasParameterValue($key)
     {
-
         if ($this->params instanceof Parameters) {
             return $this->params->has($key);
         }

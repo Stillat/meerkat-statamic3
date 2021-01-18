@@ -254,6 +254,8 @@ class DataQuery
             InternalAttributes::getInternalAttributes(),
             $config->searchableAttributes
         ));
+
+        $this->expressionParser->setFilterGroups($this->filterRunner->getFilterManager()->getFilterGroups());
     }
 
     /**

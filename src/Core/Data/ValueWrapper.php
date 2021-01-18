@@ -56,6 +56,10 @@ class ValueWrapper
             return false;
         }
 
+        if (is_array($value)) {
+            return $value;
+        }
+
         if ($value === 'null') {
             return null;
         }

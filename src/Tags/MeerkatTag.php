@@ -8,6 +8,8 @@ use Statamic\Tags\Tags;
 use Stillat\Meerkat\Core\Data\DataQuery;
 use Stillat\Meerkat\Core\Data\Filters\CommentFilterManager;
 use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\IsFilters;
+use Stillat\Meerkat\Core\Exceptions\FilterParserException;
+use Stillat\Meerkat\Core\Parsing\ExpressionParser;
 use Stillat\Meerkat\Core\Support\TypeConversions;
 use Stillat\Meerkat\Tags\Responses\CollectionRenderer;
 
@@ -30,9 +32,12 @@ abstract class MeerkatTag extends Tags
      */
     protected $filterManager = null;
 
-    public function __construct(CommentFilterManager $manager)
+    protected $expressionParser = null;
+
+    public function __construct(CommentFilterManager $manager, ExpressionParser $expressionParser)
     {
         $this->filterManager = $manager;
+        $this->expressionParser = $expressionParser;
     }
 
     /**
@@ -49,22 +54,6 @@ abstract class MeerkatTag extends Tags
         $this->method = $tags->method;
         $this->isPair = $tags->isPair;
         $this->parser = $tags->parser;
-    }
-
-    /**
-     * Checks if a parameter exists in the parameter collection.
-     *
-     * @param string $key The parameter name.
-     * @return bool
-     */
-    public function hasParameterValue($key)
-    {
-
-        if ($this->params instanceof Parameters) {
-            return $this->params->has($key);
-        }
-
-        return array_key_exists($key, $this->params);
     }
 
     /**
@@ -92,6 +81,7 @@ abstract class MeerkatTag extends Tags
      * Parses the provided tag parameters and applies any filters to the current data query.
      *
      * @param DataQuery $dataQuery The data query instance.
+     * @throws FilterParserException
      */
     protected function applyParamFiltersToQuery($dataQuery)
     {
@@ -99,17 +89,21 @@ abstract class MeerkatTag extends Tags
         $filterString = $this->getParameterValue(CollectionRenderer::PARAM_FILTER, null);
 
         if ($filterString !== null && mb_strlen(trim($filterString)) > 0) {
-            $parsedFilters = $this->filterManager->parseFilterString($filterString);
+            $filters = $this->expressionParser->parse($filterString);
 
-            if ($parsedFilters !== null && is_array($parsedFilters)) {
-                $paramFilters = array_merge($paramFilters, $parsedFilters);
+            if ($filters !== null && is_array($filters)) {
+                $paramFilters = array_merge($paramFilters, $filters);
             }
         }
 
-        $hasTrashedFilter = array_key_exists(IsFilters::FILTER_IS_DELETED, $paramFilters);
+        $hasTrashedFilter = ExpressionParser::hasFilter(IsFilters::FILTER_IS_DELETED, $paramFilters);
 
         if ($hasTrashedFilter === false) {
-            $paramFilters[IsFilters::FILTER_IS_DELETED] = 'is:deleted(false)';
+            $trashedFilter = $this->expressionParser->parse(ExpressionParser::build(IsFilters::FILTER_IS_DELETED, ['false']));
+
+            if ($trashedFilter !== null && is_array($trashedFilter) && count($trashedFilter) === 1) {
+                $paramFilters[] = array_pop($trashedFilter);
+            }
         }
 
         unset($filterString);
@@ -129,30 +123,37 @@ abstract class MeerkatTag extends Tags
      * Parses the Antlers parameters and converts them to filter expressions.
      *
      * @return array
+     * @throws FilterParserException
      */
     protected function getFiltersFromParams()
     {
         $filters = [];
 
-        if (TypeConversions::getBooleanValue(
-                $this->getParameterValue(CollectionRenderer::PARAM_WITH_TRASHED, false)
-            ) === true) {
-            // We are using the wild-card filter here to allow any value.
-            // `true` will match only those comments that are deleted
-            // `false` will match only those comments that are not deleted
-            $filters['is:deleted'] = 'is:deleted(*)';
+        if ($this->hasParameterValue(CollectionRenderer::PARAM_WITH_TRASHED)) {
+            if (TypeConversions::getBooleanValue(
+                    $this->getParameterValue(CollectionRenderer::PARAM_WITH_TRASHED, false)
+                ) === true) {
+                // We are using the wild-card filter here to allow any value.
+                // `true` will match only those comments that are deleted
+                // `false` will match only those comments that are not deleted
+                $filters[] = ExpressionParser::build(IsFilters::FILTER_IS_DELETED, ['*']);
+            }
         }
 
-        if (TypeConversions::getBooleanValue(
-                $this->getParameterValue(CollectionRenderer::PARAM_INCLUDE_SPAM, false)
-            ) === false) {
-            $filters['is:spam'] = 'is:spam(false)';
+        if ($this->hasParameterValue(CollectionRenderer::PARAM_INCLUDE_SPAM)) {
+            if (TypeConversions::getBooleanValue(
+                    $this->getParameterValue(CollectionRenderer::PARAM_INCLUDE_SPAM, false)
+                ) === false) {
+                $filters[] = ExpressionParser::build(IsFilters::FILTER_IS_SPAM, ['false']);
+            }
         }
 
-        if (TypeConversions::getBooleanValue(
-                $this->getParameterValue(CollectionRenderer::PARAM_UNAPPROVED, false)
-            ) === false) {
-            $filters['is:published'] = 'is:published(true)';
+        if ($this->hasParameterValue(CollectionRenderer::PARAM_UNAPPROVED)) {
+            if (TypeConversions::getBooleanValue(
+                    $this->getParameterValue(CollectionRenderer::PARAM_UNAPPROVED, false)
+                ) === false) {
+                $filters[] = ExpressionParser::build(IsFilters::FILTER_IS_PUBLISHED, ['true']);
+            }
         }
 
         $untilFilter = $this->getParameterValue(CollectionRenderer::PARAM_UNTIL, null);
@@ -162,18 +163,37 @@ abstract class MeerkatTag extends Tags
             $sinceDate = $this->getDateTimeTimestamp($sinceFilter);
             $untilDate = $this->getDateTimeTimestamp($untilFilter);
 
-            $filters['is:between'] = 'is:between(' . $sinceDate . ',' . $untilDate . ')';
+            $filters[] = ExpressionParser::build(IsFilters::FILTER_IS_BETWEEN, [$sinceDate, $untilDate]);
         } elseif ($untilFilter === null && $sinceFilter !== null) {
             $sinceDate = $this->getDateTimeTimestamp($sinceFilter);
 
-            $filters['is:after'] = 'is:after(' . $sinceDate . ')';
+            $filters[] = ExpressionParser::build(IsFilters::FILTER_IS_AFTER, [$sinceDate]);
         } elseif ($untilFilter !== null && $sinceFilter === null) {
             $untilDate = $this->getDateTimeTimestamp($untilFilter);
 
-            $filters['is:before'] = 'is:before(' . $untilDate . ')';
+            $filters[] = ExpressionParser::build(IsFilters::FILTER_IS_BEFORE, [$untilDate]);
         }
 
-        return $filters;
+        // Convert our temporary filters into a filter expression string.
+        $filterString = implode(ExpressionParser::TOKEN_FILTER_DELIMITER, $filters);
+
+        return $this->expressionParser->parse($filterString);
+    }
+
+    /**
+     * Checks if a parameter exists in the parameter collection.
+     *
+     * @param string $key The parameter name.
+     * @return bool
+     */
+    public function hasParameterValue($key)
+    {
+
+        if ($this->params instanceof Parameters) {
+            return $this->params->has($key);
+        }
+
+        return array_key_exists($key, $this->params);
     }
 
     /**

@@ -22,7 +22,9 @@ use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\WhereNotIn;
 use Stillat\Meerkat\Core\Data\Filters\FilterRunner;
 use Stillat\Meerkat\Core\Data\Retrievers\CommentIdRetriever;
 use Stillat\Meerkat\Core\Exceptions\FilterException;
-use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
+use Stillat\Meerkat\Core\Exceptions\FilterParserException;
+use Stillat\Meerkat\Core\Exceptions\ParserException;
+use Stillat\Meerkat\Core\Parsing\ExpressionParser;
 use Stillat\Meerkat\Core\Parsing\MarkdownParserFactory;
 use Stillat\Meerkat\Core\Search\Engine;
 use Stillat\Meerkat\Core\Search\Providers\BitapSearchProvider;
@@ -66,132 +68,154 @@ class DataQuery
      * @var PredicateBuilder
      */
     private $sortPredicateBuilder = null;
+
     /**
      * The PaginatorContract implementation instance.
      *
      * @var PaginatorContract
      */
     private $paginator = null;
+
     /**
      * Indicates if the result set will be paginated.
      *
      * @var bool
      */
     private $isPaged = false;
+
     /**
      * Indicates if the result set will be grouped.
      *
      * @var bool
      */
     private $isGrouped = false;
+
     /**
      * The name of pages, in a paged result set.
      *
      * @var string
      */
     private $pageName = 'page';
+
     /**
      * The current page, in a paged result set.
      *
      * @var int
      */
     private $currentPage = 0;
+
     /**
      * The number of records to skip when processing data.
      *
      * @var int
      */
     private $dataOffset = 0;
+
     /**
      * The number of records to restrict the result set to.
      *
      * @var int|null
      */
     private $dataLimit = null;
+
     /**
      * The property name to group the dataset by.
      *
      * @var null|string
      */
     private $groupBy = null;
+
     /**
      * An optional callback used to generate a dynamic group property.
      *
      * @var null|callable
      */
     private $groupCallback = null;
+
     /**
      * The name of an individual group's dataset.
      *
      * @var null|string
      */
     private $groupCollectionName = null;
+
     /**
      * The name of an individual group.
      *
      * @var null|string
      */
     private $groupName = null;
+
     /**
      * The name given to a collection of groups.
      *
      * @var null|string
      */
     private $groupCollectiveName = null;
+
     /**
      * Indicates if empty groups should be included in a grouped dataset.
      *
      * @var bool
      */
     private $groupKeepEmptyResults = false;
+
     /**
      * Indicates if meta data should be collected before paging takes place.
      *
      * @var bool
      */
     private $pagesGetMetaDataBeforePaging = false;
+
     /**
      * A search Engine implementation instance.
      *
      * @var Engine
      */
     private $searchEngine = null;
+
     /**
      * The SanitationManagerContract implementation instance.
      *
      * @var SanitationManagerContract
      */
     private $sanitationManager = null;
+
     /**
      * The GroupedCollectionConverter instance.
      *
      * @var GroupedCollectionConverter
      */
     private $groupedCollectionConverter = null;
+
     /**
      * The PagedGroupedCollectionConverter instance.
      *
      * @var PagedGroupedCollectionConverter
      */
     private $pagedGroupedCollectionConverter = null;
+
     /**
      * The PagedCollectionConverter instance.
      *
      * @var PagedCollectionConverter
      */
     private $pagedCollectionConverter = null;
+
     /**
      * The DataSetCollectionConverter instance.
      *
      * @var DataSetCollectionConverter
      */
     private $basicDataSetConverter = null;
+
     /**
      * Indicates if content should be parsed as Markdown automatically.
      *
      * @var bool
      */
     private $returnWithMarkdown = false;
+
     /**
      * Optional search terms.
      *
@@ -201,16 +225,25 @@ class DataQuery
      */
     private $searchTerms = null;
 
+    /**
+     * The ExpressionParser instance.
+     *
+     * @var ExpressionParser
+     */
+    private $expressionParser = null;
+
     public function __construct(
         Configuration $config,
         PaginatorContract $paginator,
         FilterRunner $filterRunner,
-        SanitationManagerContract $sanitationManager)
+        SanitationManagerContract $sanitationManager,
+        ExpressionParser $expressionParser)
     {
         $this->filterRunner = $filterRunner;
         $this->sortPredicateBuilder = new PredicateBuilder();
         $this->paginator = $paginator;
         $this->sanitationManager = $sanitationManager;
+        $this->expressionParser = $expressionParser;
         $this->groupedCollectionConverter = new GroupedCollectionConverter($this->sanitationManager);
         $this->pagedCollectionConverter = new PagedCollectionConverter($this->sanitationManager);
         $this->pagedGroupedCollectionConverter = new PagedGroupedCollectionConverter($this->sanitationManager);
@@ -221,7 +254,6 @@ class DataQuery
             InternalAttributes::getInternalAttributes(),
             $config->searchableAttributes
         ));
-
     }
 
     /**
@@ -316,22 +348,16 @@ class DataQuery
      * @param string $filter The filter name.
      * @param array $parameters The filter parameters.
      * @return $this
+     * @throws FilterParserException
      */
     private function createWrappedFilter($filter, $parameters)
     {
-        $paramLen = count($parameters);
-
-        if ($paramLen > 1) {
-            $lastParam = $paramLen - 1;
-            $parameters[$lastParam] = ValueWrapper::wrap($parameters[$lastParam]);
-        }
-
-        $filterString = $filter . '(' . implode(',', $parameters) . ')';
+        $wrappedFilter = ExpressionParser::buildFilterArray($filter, $parameters);
 
         if (count($this->filters) > 0) {
-            $this->filterBy($filterString);
+            $this->filterBy($wrappedFilter);
         } else {
-            $this->thenFilterBy($filterString);
+            $this->thenFilterBy($wrappedFilter);
         }
 
         return $this;
@@ -340,8 +366,9 @@ class DataQuery
     /**
      * Filters the comment collection using the provided filter.
      *
-     * @param string $filterString The filter input.
+     * @param string|array $filterString The filter input.
      * @return $this
+     * @throws FilterParserException
      */
     public function filterBy($filterString)
     {
@@ -351,12 +378,23 @@ class DataQuery
     /**
      * Filters the comment collection using the provided filter.
      *
-     * @param string $filterString The filter input.
+     * @param string|array $filterString The filter input.
      * @return $this
+     * @throws FilterParserException
      */
     public function thenFilterBy($filterString)
     {
-        $this->filters[] = $filterString;
+        if (is_array($filterString)) {
+            $this->filters[] = $filterString;
+        } else if (is_string($filterString)) {
+            $processedFilter = $this->expressionParser->parse($filterString);
+
+            if ($processedFilter !== null && is_array($processedFilter)) {
+                foreach ($processedFilter as $filterToAdd) {
+                    $this->filters[] = $filterToAdd;
+                }
+            }
+        }
 
         return $this;
     }
@@ -377,15 +415,11 @@ class DataQuery
      * Attempts to filter the query by the provided filter string.
      * @param string $filterString The filter string.
      * @return $this
+     * @throws FilterParserException
      */
     public function safeThenFilterBy($filterString)
     {
-        try {
-            if ($this->filterRunner->getFilterManager()->hasFilter($filterString) === false) {
-                return $this;
-            }
-        } catch (FilterException $e) {
-            ExceptionLoggerFactory::log($e);
+        if ($this->filterRunner->getFilterManager()->hasFilter($filterString) === false) {
             return $this;
         }
 
@@ -396,17 +430,14 @@ class DataQuery
      * Attempts to filter the query by the provided filter string.
      * @param string $filterString The filter string.
      * @return $this
+     * @throws FilterParserException
      */
     public function safeFilterBy($filterString)
     {
-        try {
-            if ($this->filterRunner->getFilterManager()->hasFilter($filterString) === false) {
-                return $this;
-            }
-        } catch (FilterException $e) {
-            ExceptionLoggerFactory::log($e);
+        if ($this->filterRunner->getFilterManager()->hasFilter($filterString) === false) {
             return $this;
         }
+
 
         return $this->filterBy($filterString);
     }
@@ -425,6 +456,7 @@ class DataQuery
      * @param $property
      * @param $value
      * @return $this
+     * @throws FilterParserException
      */
     public function whereNotIn($property, $value)
     {
@@ -437,6 +469,7 @@ class DataQuery
      * @param $property
      * @param $value
      * @return $this
+     * @throws FilterParserException
      */
     public function whereIn($property, $value)
     {
@@ -449,6 +482,7 @@ class DataQuery
      * @param $property
      * @param $value
      * @return $this
+     * @throws FilterParserException
      */
     public function whereLike($property, $value)
     {
@@ -462,6 +496,7 @@ class DataQuery
      * @param $property
      * @param $value
      * @return $this
+     * @throws FilterParserException
      */
     public function whereNotLike($property, $value)
     {
@@ -683,7 +718,7 @@ class DataQuery
      * @param CommentContract[] $sourceComments The comments to analyze.
      * @param string $repliesName The name of the nested dataset collection.
      * @return GroupedDataSetContract|PagedDataSetContract|PagedGroupedDataSetContract|DataSetContract
-     * @throws FilterException
+     * @throws FilterException|ParserException
      */
     public function getCollection($sourceComments, $repliesName)
     {
@@ -713,19 +748,17 @@ class DataQuery
      *
      * @param CommentContract[] $data
      * @return array|PagedDataSetContract|DataSetContract|GroupedDataSetContract
-     * @throws FilterException
+     * @throws FilterException|ParserException
      */
     public function get($data)
     {
-
         // Filter
         if (count($this->filters) > 0 && $this->runtimeContext === null) {
             throw new FilterException('Filters cannot be executed without a run-time context. Supply a runtime context by calling withContext($context).');
         } elseif (count($this->filters) > 0 && $this->runtimeContext !== null) {
             $data = $this->filterRunner->processFilters(
                 $data,
-                $this->runtimeContext->parameters,
-                implode('|', $this->filters),
+                $this->filters,
                 $this->runtimeContext->context,
                 $this->runtimeContext->templateTagContext
             );
@@ -815,6 +848,7 @@ class DataQuery
      *
      * @param bool $trashed If false, soft deleted comments will be removed.
      * @return $this
+     * @throws FilterParserException
      */
     public function withTrashed($trashed = false)
     {

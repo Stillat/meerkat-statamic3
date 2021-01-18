@@ -14,6 +14,7 @@ use Stillat\Meerkat\Core\Contracts\Threads\ContextResolverContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
 use Stillat\Meerkat\Core\Data\DataQuery;
 use Stillat\Meerkat\Core\Data\Filters\CommentFilterManager;
+use Stillat\Meerkat\Core\Parsing\ExpressionParser;
 use Stillat\Meerkat\Core\Support\TypeConversions;
 use Stillat\Meerkat\Exceptions\TemplateTagsException;
 use Stillat\Meerkat\Forms\MeerkatForm;
@@ -62,9 +63,10 @@ class Meerkat extends MeerkatTag
     public function __construct(Configuration $config,
                                 CommentFilterManager $filterManager,
                                 ThreadManagerContract $threadManager,
-                                SanitationManagerContract $sanitizer)
+                                SanitationManagerContract $sanitizer,
+                                ExpressionParser $expressionParser)
     {
-        parent::__construct($filterManager);
+        parent::__construct($filterManager, $expressionParser);
 
         $this->config = $config;
         $this->threadManager = $threadManager;

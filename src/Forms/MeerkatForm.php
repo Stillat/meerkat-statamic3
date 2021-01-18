@@ -15,6 +15,7 @@ use Stillat\Meerkat\Addon;
 use Stillat\Meerkat\Concerns\GetsHiddenContext;
 use Stillat\Meerkat\Core\Data\Filters\CommentFilterManager;
 use Stillat\Meerkat\Core\Http\Client;
+use Stillat\Meerkat\Core\Parsing\ExpressionParser;
 use Stillat\Meerkat\Tags\MeerkatTag;
 
 /**
@@ -57,9 +58,9 @@ class MeerkatForm extends MeerkatTag
 
     protected $blueprintName = '';
 
-    public function __construct(BlueprintRepository $blueprints, CommentFilterManager $manager)
+    public function __construct(BlueprintRepository $blueprints, CommentFilterManager $manager, ExpressionParser $expressionParser)
     {
-        parent::__construct($manager);
+        parent::__construct($manager, $expressionParser);
 
         $this->blueprints = $blueprints;
     }

@@ -15,7 +15,7 @@ use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\WhereIn;
 use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\WhereNotIn;
 use Stillat\Meerkat\Core\Exceptions\FilterException;
 use Stillat\Meerkat\Core\Exceptions\ParserException;
-use Stillat\Meerkat\Core\Parsing\ArrayParser;
+use Stillat\Meerkat\Core\Parsing\ExpressionParser;
 use Stillat\Meerkat\Core\Support\Str;
 
 /**
@@ -229,6 +229,7 @@ class CommentFilterManager
      * @param string $filterString The delimited filter string.
      * @param string $delimiter The filter separating character.
      * @return array
+     * @deprecated Deprecated in favor of ExpressionParser
      */
     public function parseFilterString($filterString, $delimiter = '|')
     {
@@ -245,105 +246,63 @@ class CommentFilterManager
     /**
      * Runs the requested filter against the comments within context.
      *
-     * @param string $filterName The name of the filter.
+     * @param array $queryFilter The name of the filter.
      * @param array $comments The comments to filter.
-     * @param array $parameters The run-time parameters.
      * @param null $context The parser context.
      * @param string $tagContext The tag context.
      * @return mixed|null
      * @throws FilterException
      * @throws ParserException
      */
-    public function runFilter($filterName, $comments, $parameters, $context = null, $tagContext = '')
+    // TODO: FIND ALL REFERENCES AND FIND THE RUNTIME PARAM AND UPDATE.
+    public function runFilter($queryFilter, $comments, $context = null, $tagContext = '')
     {
-        $originalName = $filterName;
-        if (Str::contains($filterName, '(')) {
-            $filterParts = explode('(', $filterName);
+        $filterName = $queryFilter[ExpressionParser::KEY_NAME];
+        $runtimeParameters = $queryFilter[ExpressionParser::KEY_INPUT];
 
-            if (count($filterParts) == 2) {
-                $filterName = trim($filterParts[0]);
-                $filterParamMapping = trim($filterParts[1]);
+        $parameters = [];
 
-                if (Str::endsWith($filterParamMapping, ')') === false) {
-                    throw new FilterException('Unmatched "(" in: ' . $originalName);
-                }
+        // Iterate all runtime parameters and convert any resolvable values to their actual values.
+        foreach ($runtimeParameters as $param) {
+            $paramValueName = $param[ExpressionParser::KEY_VALUE];
 
-                $filterParamMapping = mb_substr($filterParamMapping, 0, -1);
+            if (Str::startsWith($paramValueName, '$')) {
+                if (array_key_exists($paramValueName, $this->resolvableItems)) {
+                    if (array_key_exists($paramValueName, $this->resolvedCache) === false) {
+                        /** @var FilterVariable $resolver */
+                        $resolver = $this->resolvableItems[$paramValueName];
 
-                if ($this->hasFilter($filterName)) {
-                    // Remap the parameters.
-                    if (array_key_exists($filterParamMapping, $parameters)) {
-                        $parameters[$this->filterRequiredParamMapping[$filterName]] = $parameters[$filterParamMapping];
+                        $resolver->setContext($context);
+                        $resolver->setParameters([]);
+                        $resolver->setUser($this->getUser());
 
-                    } else {
-
-                        if (Str::contains($filterParamMapping, '$')) {
-                            $variableParameters = [];
-                            $mergeParameters = [];
-
-                            if (Str::contains($filterParamMapping, ',')) {
-                                $expandedParameters = ArrayParser::getValues($filterParamMapping);
-
-                                foreach ($expandedParameters as $param) {
-                                    if (Str::startsWith($param, '$')) {
-                                        $variableParameters[] = $param;
-                                    } else {
-                                        $mergeParameters[] = $param;
-                                    }
-                                }
-                            }
-
-                            foreach ($variableParameters as $filterParam) {
-                                if (array_key_exists($filterParam, $this->resolvableItems)) {
-                                    if (array_key_exists($filterParam, $this->resolvedCache) == false) {
-                                        /** @var FilterVariable $resolver */
-                                        $resolver = $this->resolvableItems[$filterParam];
-                                        $resolver->setContext($context);
-                                        $resolver->setParameters($parameters);
-                                        $resolver->setUser($this->getUser());
-
-                                        $this->resolvedCache[$filterParam] = $resolver->getValue();
-                                    }
-
-                                    $parameters[$filterParam] = $this->resolvedCache[$filterParam];
-                                } else {
-                                    throw new FilterException('Cannot resolve Meerkat filter variable ' . $filterParam . ' in filter ' . $filterName);
-                                }
-                            }
-
-                            $resolvedParameters = [];
-
-                            if (count($mergeParameters) > 0) {
-                                $resolvedParameters = $mergeParameters;
-                            }
-
-                            if (count($variableParameters) > 0) {
-                                foreach ($variableParameters as $variableParameter) {
-                                    if (array_key_exists($variableParameter, $parameters)) {
-                                        $tempVar = $parameters[$variableParameter];
-
-                                        if (is_array($tempVar)) {
-                                            $resolvedParameters = array_merge($resolvedParameters, $tempVar);
-                                        } else {
-                                            $resolvedParameters[] = $tempVar;
-                                        }
-                                    }
-                                }
-                            }
-
-                            $parameters[$this->filterRequiredParamMapping[$filterName]] = $resolvedParameters;
-
-                        } else {
-                            $parameters[$this->filterRequiredParamMapping[$filterName]] = $filterParamMapping;
-                        }
+                        $this->resolvedCache[$paramValueName] = $resolver->getValue();
                     }
+
+                    $resolvedValue = $this->resolvedCache[$paramValueName];
+                    $currentType = $param[ExpressionParser::KEY_TYPE];
+
+                    $parameters[] = [
+                        ExpressionParser::KEY_VALUE => $resolvedValue,
+                        ExpressionParser::KEY_TYPE => $currentType
+                    ];
+                } else {
+                    throw new FilterException('Could not find resolvable item: ' . $paramValueName);
                 }
             } else {
-                throw new FilterException($filterName . ' Meerkat filter not found.');
+                $parameters[] = $param;
             }
         }
 
-        if (array_key_exists($filterName, $this->filters)) {
+        if ($this->hasFilter($filterName)) {
+            $requiredParameters = [];
+
+            if (array_key_exists($filterName, $this->filterRequiredParamMapping)) {
+                $requiredParameters = explode(ExpressionParser::TOKEN_INPUT_DELIMITER, $this->filterRequiredParamMapping[$filterName]);
+            }
+
+            $parameters = ExpressionParser::mapParameters($requiredParameters, $parameters);
+
             $filter = $this->filters[$filterName];
             $filter->setContext($context);
             $filter->setName($filterName);
@@ -354,53 +313,14 @@ class CommentFilterManager
 
             if (count($filterTags) > 0) {
                 if (in_array($tagContext, $filterTags) == false) {
-                    throw new FilterException($filterName . ' is not supported by ' . $tagContext);
+                    throw new FilterException($queryFilter . ' is not supported by ' . $tagContext);
                 }
             }
 
             return $filter->runFilter($comments);
         }
 
-        throw new FilterException($filterName . ' Meerkat filter not found.');
-    }
-
-    /**
-     * Checks if a filter exists.
-     *
-     * @param string $filterName The filter name.
-     * @return bool
-     * @throws FilterException
-     */
-    public function hasFilter($filterName)
-    {
-        $originalName = $filterName;
-
-        if (Str::contains($filterName, '(')) {
-            $filterParts = explode('(', $filterName);
-
-            if (count($filterParts) == 2) {
-                $filterName = trim($filterParts[0]);
-                $filterParamMapping = trim($filterParts[1]);
-
-                if (Str::endsWith($filterParamMapping, ')') === false) {
-                    throw new FilterException('Unmatched "(" in: ' . $originalName);
-                }
-
-                $filterParamMapping = mb_substr($filterParamMapping, 0, -1);
-
-                $hasFilter = array_key_exists($filterName, $this->filters);
-
-                if ($hasFilter) {
-                    $this->paramMapping[$filterName] = $filterParamMapping;
-                }
-
-                return $hasFilter;
-            } else {
-                return false;
-            }
-        }
-
-        return array_key_exists($filterName, $this->filters);
+        throw new FilterException($queryFilter . ' Meerkat filter not found.');
     }
 
     /**
@@ -420,6 +340,17 @@ class CommentFilterManager
     public function setUser(AuthorContract $identity)
     {
         $this->user = $identity;
+    }
+
+    /**
+     * Checks if a filter exists.
+     *
+     * @param string $filterName The filter name.
+     * @return bool
+     */
+    public function hasFilter($filterName)
+    {
+        return array_key_exists($filterName, $this->filters);
     }
 
 }

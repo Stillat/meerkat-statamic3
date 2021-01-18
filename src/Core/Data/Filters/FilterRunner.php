@@ -6,6 +6,7 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
 use Stillat\Meerkat\Core\Exceptions\FilterException;
 use Stillat\Meerkat\Core\Exceptions\ParserException;
+use Stillat\Meerkat\Core\Parsing\ExpressionParser;
 
 /**
  * Class FilterRunner
@@ -52,19 +53,15 @@ class FilterRunner
      * Processes the provided filters within the surrounding context.
      *
      * @param CommentContract[] $comments The comments to filter.
-     * @param array $params The run-time parameters, if any.
-     * @param string $filters The Meerkat filters string.
+     * @param array $filters The Meerkat filter input.
      * @param mixed|null $context The Meerkat run-time context, if any.
      * @param string $tagContext The run-time templating context, if any.
      * @return array
      * @throws FilterException
      * @throws ParserException
      */
-    public function processFilters($comments, $params, $filters, $context = null, $tagContext = '')
+    public function processFilters($comments, $filters, $context = null, $tagContext = '')
     {
-        $filters = $this->filterManager->getFilterMap($filters);
-        $filters = explode('|', $filters);
-
         $currentIdentity = $this->identityManager->getIdentityContext();
 
         if ($currentIdentity !== null) {
@@ -76,11 +73,10 @@ class FilterRunner
         $commentIdsToKeep = [];
 
         foreach ($filters as $filter) {
-            if ($this->filterManager->hasFilter(trim($filter))) {
+            if ($this->filterManager->hasFilter($filter[ExpressionParser::KEY_NAME])) {
                 $filterResults = $this->filterManager->runFilter(
                     $filter,
                     $themeFilterComments,
-                    $params,
                     $context,
                     $tagContext
                 );

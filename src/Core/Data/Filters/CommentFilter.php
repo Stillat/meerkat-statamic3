@@ -179,36 +179,7 @@ class CommentFilter
      */
     public function setParameters($parameters)
     {
-        $constructedParameters = [];
-        foreach ($parameters as $nameMapping => $valueMapping) {
-            $paramNames = $this->parser->parseParameterString($nameMapping);
-            $paramValues = $this->parser->parseParameterValues($valueMapping);
-
-            if (count($paramNames) === 1) {
-                $constructedParameters[$paramNames[0]] = $valueMapping;
-                continue;
-            }
-
-            if (count($paramNames) === count($paramValues)) {
-                for ($i = 0; $i < count($paramNames); $i++) {
-                    $constructedParameters[$paramNames[$i]] = $paramValues[$i];
-                }
-            } else {
-                if (count($paramNames) == 2 && count($paramValues) > 2) {
-                    $firstValue = array_shift($paramValues);
-                    $secondValue = implode(',', $paramValues);
-
-                    $constructedParameters[$paramNames[0]] = $firstValue;
-                    $constructedParameters[$paramNames[1]] = $secondValue;
-
-                    continue;
-                } else {
-                    throw new FilterException('Unmatched argument and value count supplied to: ' . $this->getName());
-                }
-            }
-        }
-
-        $this->parameters = $constructedParameters;
+        $this->parameters = $parameters;
     }
 
     /**

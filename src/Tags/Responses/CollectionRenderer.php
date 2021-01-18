@@ -15,6 +15,7 @@ use Stillat\Meerkat\Core\Data\PagedDataSet;
 use Stillat\Meerkat\Core\Data\PredicateBuilder;
 use Stillat\Meerkat\Core\Data\RuntimeContext;
 use Stillat\Meerkat\Core\Exceptions\FilterException;
+use Stillat\Meerkat\Core\Parsing\ExpressionParser;
 use Stillat\Meerkat\Tags\MeerkatTag;
 use Stillat\Meerkat\Tags\Output\RecursiveThreadRenderer;
 
@@ -125,9 +126,9 @@ class CollectionRenderer extends MeerkatTag
         ThreadManagerContract $threadManager,
         CommentFilterManager $filterManager,
         SanitationManagerContract $sanitizer,
-        DataQuery $query)
+        DataQuery $query, ExpressionParser $expressionParser)
     {
-        parent::__construct($filterManager);
+        parent::__construct($filterManager, $expressionParser);
 
         $this->query = $query;
         $this->threadManager = $threadManager;

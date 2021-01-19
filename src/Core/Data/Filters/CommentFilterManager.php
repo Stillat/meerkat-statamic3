@@ -90,7 +90,7 @@ class CommentFilterManager
      * Returns all registered filter groups.
      *
      * @return array
-     * @since 2.1.20
+     * @since 2.1.21
      */
     public function getFilterGroups()
     {

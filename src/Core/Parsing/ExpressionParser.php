@@ -12,7 +12,7 @@ use Stillat\Meerkat\Core\Support\Str;
  * Parsers Query filter input expressions.
  *
  * @package Stillat\Meerkat\Core\Parsing
- * @since 2.1.20
+ * @since 2.1.21
  */
 class ExpressionParser
 {

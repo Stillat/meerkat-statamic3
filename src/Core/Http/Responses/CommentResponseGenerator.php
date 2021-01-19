@@ -9,9 +9,13 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentManagerContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ContextResolverContract;
 use Stillat\Meerkat\Core\Data\DataQuery;
+use Stillat\Meerkat\Core\Data\Filters\CommentFilterManager;
+use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\IsFilters;
+use Stillat\Meerkat\Core\Data\Filters\DefaultFilters\Where;
 use Stillat\Meerkat\Core\Data\Retrievers\CommentAuthorRetriever;
 use Stillat\Meerkat\Core\Data\RuntimeContext;
 use Stillat\Meerkat\Core\Exceptions\FilterException;
+use Stillat\Meerkat\Core\Parsing\ExpressionParser;
 
 /**
  * Class CommentResponseGenerator
@@ -64,6 +68,13 @@ class CommentResponseGenerator
     protected $runtimeContext = null;
 
     /**
+     * The ExpressionParser instance.
+     *
+     * @var ExpressionParser
+     */
+    protected $expressionParser = null;
+
+    /**
      * The properties to remove from the API response.
      *
      * @var array
@@ -72,13 +83,18 @@ class CommentResponseGenerator
 
     public function __construct(CommentManagerContract $manager,
                                 DataQuery $query,
-                                ContextResolverContract $resolver)
+                                ContextResolverContract $resolver,
+                                CommentFilterManager $filterManager,
+                                ExpressionParser $expressionParser)
     {
         $this->manager = $manager;
         $this->query = $query;
         $this->resolver = $resolver;
         $this->runtimeContext = new RuntimeContext();
         $this->propertiesToRemove = $this->getPropertiesToRemove();
+        $this->expressionParser = $expressionParser;
+
+        $this->expressionParser->setFilterGroups($filterManager->getFilterGroups());
     }
 
     /**
@@ -149,19 +165,26 @@ class CommentResponseGenerator
             }
         }
 
-        $requestFilters = [];
+        $filterString = '';
 
         if (array_key_exists('filter', $parameters) && mb_strlen(trim($parameters['filter'])) > 0) {
-            $requestFilters = explode('|', $parameters['filter']);
+            $filterString = $parameters['filter'];
         }
+
+        $requestFilters = [];
+        $requestFilters = $this->expressionParser->parse($filterString);
+
 
         if (count($requestFilters) === 0) {
-            $requestFilters[] = 'is:deleted(false)';
+            $requestFilters[] = ExpressionParser::buildFilterArray(IsFilters::FILTER_IS_DELETED, ['false']);
         }
 
-        $requestFilters[] = 'where(parser_has_supplemented_data, !==, true)';
+        $requestFilters[] = ExpressionParser::buildFilterArray(Where::FILTER_WHERE, [
+            'parser_has_supplemented_data', '!==', 'true'
+        ]);
 
         $firstFilter = array_shift($requestFilters);
+        $this->query->withContext($this->runtimeContext);
 
         $this->query->safeFilterBy($firstFilter);
 
@@ -170,8 +193,6 @@ class CommentResponseGenerator
                 $this->query->safeThenFilterBy($filter);
             }
         }
-
-        $this->query->withContext($this->runtimeContext);
 
         $this->query->pageBy('page');
 
@@ -233,7 +254,8 @@ class CommentResponseGenerator
         }
 
         $pageMetaData = PaginationMetaDataResponseGenerator::getApiResponse($queryResults->getMetaData());
-        $filterString = implode('|', $this->query->getFilters());
+
+        $filterString = ExpressionParser::convertToString($this->query->getFilters());
 
         return [
             CommentResponseGenerator::KEY_API_AUTHOR_COLLECTION => $responseAuthors,

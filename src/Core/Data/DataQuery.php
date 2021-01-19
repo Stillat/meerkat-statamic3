@@ -422,7 +422,15 @@ class DataQuery
      */
     public function safeThenFilterBy($filterString)
     {
-        if ($this->filterRunner->getFilterManager()->hasFilter($filterString) === false) {
+        $filterName = '';
+
+        if (is_array($filterString)) {
+            $filterName = $filterString[ExpressionParser::KEY_NAME];
+        } else if (is_string($filterString)) {
+            $filterName = $filterString;
+        }
+
+        if ($this->filterRunner->getFilterManager()->hasFilter($filterName) === false) {
             return $this;
         }
 
@@ -438,10 +446,17 @@ class DataQuery
      */
     public function safeFilterBy($filterString)
     {
-        if ($this->filterRunner->getFilterManager()->hasFilter($filterString) === false) {
-            return $this;
+        $filterName = '';
+
+        if (is_array($filterString)) {
+            $filterName = $filterString[ExpressionParser::KEY_NAME];
+        } else if (is_string($filterString)) {
+            $filterName = $filterString;
         }
 
+        if ($this->filterRunner->getFilterManager()->hasFilter($filterName) === false) {
+            return $this;
+        }
 
         return $this->filterBy($filterString);
     }
@@ -773,7 +788,7 @@ class DataQuery
                 $filterManager = $this->filterRunner->getFilterManager();
 
                 if (!$filterManager->hasFilter($filter[ExpressionParser::KEY_NAME])) {
-                    throw new FilterException('Could not locate filter: '.$filter[ExpressionParser::KEY_NAME]);
+                    throw new FilterException('Could not locate filter: ' . $filter[ExpressionParser::KEY_NAME]);
                 }
             }
 

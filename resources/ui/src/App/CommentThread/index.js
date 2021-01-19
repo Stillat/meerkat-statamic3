@@ -108,6 +108,8 @@ export default {
       }.bind(this));
     },
     onCommentsGlobalSpamCheckComplete() {
+      OverviewProvider.Instance.refresh();
+
       if (this.hasEditorOpen() === false) {
         this.loadCommentData();
       } else {
@@ -166,6 +168,8 @@ export default {
       this.checkFilters(comments);
     },
     onCommentsRemoved(comments) {
+      OverviewProvider.Instance.refresh();
+
       this.loadCommentData();
     },
     onFilterChanged(filter: Filter) {

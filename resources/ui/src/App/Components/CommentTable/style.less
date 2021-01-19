@@ -36,12 +36,38 @@
   }
 }
 
-
 .meerkat__bulk-actions {
   display: inline-block;
 
   .select-input-container {
     display: inherit;
     position: relative;
+  }
+}
+
+.meerkat__comment-header-row--responsive {
+  display: none;
+}
+
+@media screen and (max-width: 990px) {
+  .meerkat__comment-header-row {
+    display: none !important;
+  }
+
+  .meerkat__comment-checkbox-label {
+    margin-top: 10px;
+  }
+
+  .meerkat__comment-header-row--responsive {
+    display: flex;;
+  }
+
+  .meerkat__sort-response--primary {
+    display: inline-block;
+    max-width: 145px;
+  }
+
+  .meerkat__sort-response--secondary {
+    display: inline-block;
   }
 }

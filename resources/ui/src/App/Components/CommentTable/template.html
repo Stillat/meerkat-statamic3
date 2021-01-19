@@ -55,7 +55,7 @@
                         </div>
                     </th>
                 </tr>
-                <tr>
+                <tr class="meerkat__comment-header-row">
                     <th class="comment-table__author-column sortable-column" v-on:click="updateSortFromHeader('id')">
                         <label class="text-gray-500 font-bold inline cursor-pointer" :title="singleSelectTranslation"
                                v-if="hasCommentResponse && canUseBulkActions && hasSelection === false"
@@ -77,6 +77,30 @@
                         </sort-indicator>
                     </th>
                 </tr>
+                <tr class="meerkat__comment-header-row--responsive">
+                  <th colspan="2">
+                    <div class="comment-table__author-column sortable-column meerkat__sort-response--primary" v-on:click="updateSortFromHeader('id')">
+                      <label class="text-gray-500 font-bold inline cursor-pointer" :title="singleSelectTranslation"
+                             v-if="hasCommentResponse && canUseBulkActions && hasSelection === false"
+                             v-on:click.stop>
+                        <input class="mr-2 leading-tight cursor-pointer meerkat__checkbox  meerkat__header-checkbox" type="checkbox"
+                               :title="trans('actions.select_all_comments')"
+                               v-model="comments.comments.allSelected"
+                               v-on:click.stop="comments.comments.toggleSelections()">
+                      </label>
+                      <sort-indicator :column="'id'" :manager="sortManager" :respond-to-click="false"
+                                      v-on:order-changed="updateStateFromOrder">
+                        {{ trans('display.header_author') }}
+                      </sort-indicator>
+                    </div>
+                    <div class="sortable-column meerkat__sort-response--secondary" v-on:click="updateSortFromHeader('comment')">
+                      <sort-indicator :column="'comment'" :manager="sortManager" :manager="sortManager" style="display: inline-block;padding-top:2px;"
+                                      :respond-to-click="false" v-on:order-changed="updateStateFromOrder">
+                        {{ trans('display.header_comment') }}
+                      </sort-indicator>
+                    </div>
+                  </th>
+                </tr>
                 </thead>
                 <tbody v-if="hasCommentResponse">
                 <tr v-if="comments.threads.length === 1">
@@ -84,17 +108,17 @@
                         <p :title="comments.threads[0].name"><span class="meerkat__inline-callout"><strong>{{ trans('display.thread_single_response') }}</strong></span> {{ comments.threads[0].name | meerkatTruncate(75) }}</p>
                     </td>
                 </tr>
-                <tr v-for="(comment, i) in comments.comments" class="meerkat__comment-row"
+                <tr v-for="(comment, i) in comments.comments" class="meerkat__comment-row flex lg:table-row flex-row lg:flex-row flex-wrap lg:flex-no-wrap mb-10 lg:mb-0"
                     v-bind:class="getCommentClasses(comment)" v-if="comment.isDeleted === false">
-                    <td class="author-display__container">
-                        <label class="text-gray-500 font-bold cursor-pointer" :title="singleSelectTranslation"
+                    <td class="author-display__container w-full lg:w-auto lg:table-cell relative lg:static">
+                        <label class="text-gray-500 font-bold cursor-pointer meerkat__comment-checkbox-label" :title="singleSelectTranslation"
                                v-if="canUseBulkActions">
                             <input class="mr-2 leading-tight cursor-pointer meerkat__checkbox" type="checkbox"
                                    v-model="comment.isSelected">
                         </label>
                         <author-display :comment="comment" :author="comment.getAuthor()" :avatar-driver="avatarDriver"></author-display>
                     </td>
-                    <td>
+                    <td class="w-full lg:w-auto lg:table-cell relative lg:static">
                         <comment-display ref="commentDisplay"
                                          v-if="comment.isSelected === true || comment.state.isEditing === false"
                                          :comment="comment" :display-thread="shouldDisplayThread"

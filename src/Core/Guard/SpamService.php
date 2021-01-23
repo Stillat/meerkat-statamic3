@@ -276,11 +276,12 @@ class SpamService
     /**
      * Checks the provided comment against any registered spam guards.
      *
-     * @param CommentContract $comment
+     * @param CommentContract $comment The comment to check.
+     * @param bool $runAutomation Whether to run comment mutation automation.
      *
      * @return boolean
      */
-    public function isSpam(CommentContract $comment)
+    public function isSpam(CommentContract $comment, $runAutomation = true)
     {
         $this->lastReport = null;
 
@@ -299,6 +300,7 @@ class SpamService
         $spamCount = 0;
 
         $this->lastReport = new SpamCheckReport();
+
         /** @var SpamGuardContract $guard */
         foreach ($this->spamGuards as $guard) {
             try {
@@ -320,7 +322,7 @@ class SpamService
                     if ($guard->hasErrors()) {
                         $this->errors = array_merge($this->errors, $guard->getErrors());
 
-                        if ($this->config->unpublishOnGuardFailures) {
+                        if ($runAutomation && $this->config->unpublishOnGuardFailures) {
                             $comment->unpublish();
                         }
                     }
@@ -339,7 +341,7 @@ class SpamService
                 // If we could not connect to the remote service, check if we
                 // should unpublish any comments automatically that we could
                 // not check reliably with the third-party spam service.
-                if ($this->config->unpublishOnGuardFailures) {
+                if ($runAutomation && $this->config->unpublishOnGuardFailures) {
                     $comment->unpublish();
                 }
             }

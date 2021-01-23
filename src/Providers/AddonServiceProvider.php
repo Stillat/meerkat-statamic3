@@ -4,7 +4,6 @@ namespace Stillat\Meerkat\Providers;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
-use phpDocumentor\Reflection\DocBlock\StandardTagFactory;
 use Statamic\Providers\AddonServiceProvider as StatamicAddonServiceProvider;
 use Statamic\Statamic;
 use Stillat\Meerkat\Addon;

@@ -3,11 +3,8 @@
 namespace Stillat\Meerkat\Console\Commands;
 
 use Illuminate\Console\Command;
-use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
-use Stillat\Meerkat\Core\Contracts\Storage\ThreadStorageManagerContract;
+use Stillat\Meerkat\Concerns\UsesTranslations;
 use Stillat\Meerkat\Core\Reporting\OverviewAggregator;
-use Stillat\Meerkat\Core\Reporting\OverviewReport;
-use Stillat\Meerkat\Core\Support\TypeConversions;
 
 /**
  * Class StatisticsCommand
@@ -19,6 +16,7 @@ use Stillat\Meerkat\Core\Support\TypeConversions;
  */
 class StatisticsCommand extends Command
 {
+    use UsesTranslations;
 
     protected $signature = 'meerkat:statistics';
 
@@ -40,8 +38,6 @@ class StatisticsCommand extends Command
 
     public function handle()
     {
-        // TODO: Translation support.
-
         $startTime = microtime(true);
 
         $report = $this->overviewAggregator->getReport();
@@ -49,13 +45,13 @@ class StatisticsCommand extends Command
         $secondsToGenerate = microtime(true) - $startTime;
 
         $this->table([
-            'Threads',
-            'Total Comments',
-            'Spam',
-            'Spam & Published',
-            'Published',
-            'Pending',
-            'Requires Migration'
+            $this->trans('commands.stat_threads'),
+            $this->trans('commands.stat_total_comments'),
+            $this->trans('commands.stat_spam'),
+            $this->trans('commands.stat_spam_and_published'),
+            $this->trans('commands.stat_published'),
+            $this->trans('commands.stat_pending'),
+            $this->trans('commands.stat_requires_migration')
         ], [[
             $report->totalThreads,
             $report->total,
@@ -66,7 +62,9 @@ class StatisticsCommand extends Command
             $report->needsMigration
         ]]);
 
-        $this->line('Statistics gathered in: ' . $secondsToGenerate . ' seconds.');
+        $this->line($this->trans('commands.stat_generated_in', [
+            'seconds' => $secondsToGenerate
+        ]));
     }
 
 }

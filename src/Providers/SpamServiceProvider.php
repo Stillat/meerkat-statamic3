@@ -19,7 +19,6 @@ use Stillat\Meerkat\Core\Handlers\SpamServiceHandler;
 use Stillat\Meerkat\Core\Logging\ErrorLog;
 use Stillat\Meerkat\Core\Logging\ErrorLogContext;
 use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
-use Stillat\Meerkat\Guard\FormHandler;
 use Stillat\Meerkat\Guard\GuardPipeline;
 use Stillat\Meerkat\Guard\ModeratorHandler;
 use Stillat\Meerkat\Support\Facades\Meerkat;

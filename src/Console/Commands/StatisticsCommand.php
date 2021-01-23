@@ -5,6 +5,8 @@ namespace Stillat\Meerkat\Console\Commands;
 use Illuminate\Console\Command;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Storage\ThreadStorageManagerContract;
+use Stillat\Meerkat\Core\Reporting\OverviewAggregator;
+use Stillat\Meerkat\Core\Reporting\OverviewReport;
 use Stillat\Meerkat\Core\Support\TypeConversions;
 
 /**
@@ -23,60 +25,26 @@ class StatisticsCommand extends Command
     protected $description = 'Gathers Meerkat comment statistics.';
 
     /**
-     * The thread storage manager implementation instance.
+     * The OverviewAggregator instance.
      *
-     * @var ThreadStorageManagerContract|null
+     * @var OverviewAggregator
      */
-    protected $threadManager = null;
+    protected $overviewAggregator = null;
 
-    public function __construct(ThreadStorageManagerContract $threadManager)
+    public function __construct(OverviewAggregator $aggregator)
     {
         parent::__construct();
 
-        $this->threadManager = $threadManager;
+        $this->overviewAggregator = $aggregator;
     }
 
     public function handle()
     {
         // TODO: Translation support.
-        $threadIds = $this->threadManager->getAllThreadIds();
-
-        $this->line('Discovered ' . count($threadIds) . ' thread(s) that will be analyzed.');
-
-        $commentCount = 0;
-        $needsMigration = 0;
-        $isSpam = 0;
-        $isPublished = 0;
-        $publishedAndSpam = 0;
-        $pendingCount = 0;
 
         $startTime = microtime(true);
 
-        foreach ($threadIds as $thread) {
-            foreach ($this->threadManager->getAllCommentsById($thread) as $comment) {
-                if (TypeConversions::getBooleanValue(
-                    $comment->getDataAttribute(CommentContract::INTERNAL_STRUCTURE_NEEDS_MIGRATION, false)
-                )) {
-                    $needsMigration += 1;
-                }
-
-                if ($comment->isSpam()) {
-                    $isSpam += 1;
-                }
-
-                if ($comment->published()) {
-                    $isPublished += 1;
-                } else {
-                    $pendingCount += 1;
-                }
-
-                if ($comment->isSpam() && $comment->published()) {
-                    $publishedAndSpam += 1;
-                }
-
-                $commentCount += 1;
-            }
-        }
+        $report = $this->overviewAggregator->getReport();
 
         $secondsToGenerate = microtime(true) - $startTime;
 
@@ -89,13 +57,13 @@ class StatisticsCommand extends Command
             'Pending',
             'Requires Migration'
         ], [[
-            count($threadIds),
-            $commentCount,
-            $isSpam,
-            $publishedAndSpam,
-            $isPublished,
-            $pendingCount,
-            $needsMigration
+            $report->totalThreads,
+            $report->total,
+            $report->isSpam,
+            $report->publishedAndSpam,
+            $report->isPublished,
+            $report->pending,
+            $report->needsMigration
         ]]);
 
         $this->line('Statistics gathered in: ' . $secondsToGenerate . ' seconds.');

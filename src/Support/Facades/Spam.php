@@ -10,6 +10,7 @@ use Stillat\Meerkat\Core\Guard\GuardResult;
 /**
  * Class Spam
  * @package Stillat\Meerkat\Support\Facades
+ * @since 2.2.0
  *
  * @method static bool isSpam(Specimen $specimen)
  * @method static GuardResult submitSpam(Specimen $specimen)

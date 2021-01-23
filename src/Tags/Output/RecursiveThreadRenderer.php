@@ -17,6 +17,7 @@ use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
 class RecursiveThreadRenderer
 {
     const TEMPLATE_SUB_KEY = 'meerkat_comment_tags_';
+    const RECURSIVE_SHORTCUT = '{{ *responses* }}';
 
     /**
      * Recursively renders a comment thread.
@@ -30,6 +31,10 @@ class RecursiveThreadRenderer
      */
     public static function renderRecursiveThread(SanitationManagerContract $sanitizer, $template, $data, $context, $collectionName)
     {
+        if (Str::contains($template, self::RECURSIVE_SHORTCUT)) {
+            $template = str_replace(self::RECURSIVE_SHORTCUT, '{{ *recursive '.$collectionName.'* }}', $template);
+        }
+
         $nestedTagRegex = '/\{\{\s*' . $collectionName . '\s*\}\}.*?\{\{\s*\/' . $collectionName . '\s*\}\}/ms';
         preg_match($nestedTagRegex, $template, $match);
 
@@ -67,7 +72,6 @@ class RecursiveThreadRenderer
             // We need to remove the opening and closing tag pairs from the template.
             $nestedCommentsString = preg_replace($openingTagRegex, '', $nestedCommentsString);
             $nestedCommentsString = preg_replace($closingTagRegex, '', $nestedCommentsString);
-
 
             $commentData = $data[$collectionName];
 

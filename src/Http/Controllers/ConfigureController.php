@@ -262,5 +262,4 @@ class ConfigureController extends CpController
         ]);
     }
 
-
 }

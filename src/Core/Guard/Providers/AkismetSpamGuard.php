@@ -30,6 +30,14 @@ class AkismetSpamGuard implements SpamGuardContract
     const AKISMET_MATCH_REASON = 'AKS-01-001';
     const AKISMET_MATCH_DEFAULT_MESSAGE = 'The Akismet service has identified the message as spam.';
 
+    const TYPE_COMMENT = 'comment';
+    const TYPE_FORUM_POST = 'forum-post';
+    const TYPE_REPLY = 'reply';
+    const TYPE_BLOG_POST = 'blog-post';
+    const TYPE_CONTACT_FORM = 'contact-form';
+    const TYPE_SIGN_UP = 'signup';
+    const TYPE_MESSAGE = 'message';
+
     /**
      * The configuration entry key for the Akismet API key.
      */
@@ -79,36 +87,112 @@ class AkismetSpamGuard implements SpamGuardContract
      * The Akismet API property to specify that the request is being made as a test.
      */
     const AKISMET_API_IS_TEST_MODE = 'is_test';
+
+    /**
+     * The submission type to check.
+     */
+    const AKISMET_PARAM_COMMENT_TYPE = 'comment_type';
+
+    const AKISMET_PARAM_BLOG = 'blog';
+    const AKISMET_PARAM_USER_IP = 'user_ip';
+    const AKISMET_PARAM_USER_AGENT = 'user_agent';
+    const AKISMET_PARAM_REFERRER = 'referrer';
+    const AKISMET_PARAM_PERMALINK = 'permalink';
+    const AKISMET_PARAM_COMMENT_AUTHOR = 'comment_author';
+    const AKISMET_PARAM_AUTHOR_EMAIL = 'comment_author_email';
+    const AKISMET_PARAM_AUTHOR_URL = 'comment_author_url';
+    const AKISMET_PARAM_COMMENT_CONTENT = 'comment_content';
+    const AKISMET_PARAM_COMMENT_DATE_GMT = 'comment_date_gmt';
+    const AKISMET_PARAM_COMMENT_POST_MODIFIED_GMT = 'comment_post_modified_gmt';
+    const AKISMET_PARAM_BLOG_LANGUAGE = 'blog_lang';
+    const AKISMET_PARAM_BLOG_CHARSET = 'blog_charset';
+    const AKISMET_PARAM_USER_ROLE = 'user_role';
+    const AKISMET_PARAM_IS_TEST = 'is_test';
+    const AKISMET_PARAM_RECHECK_REASON = 'recheck_reason';
+    const AKISMET_PARAM_HONEYPOT_FIELD_NAME = 'honeypot_field_name';
+
+    /**
+     * A list of all valid submission types.
+     *
+     * @var string[]
+     */
+    protected $validSubmissionTypes = [
+        self::TYPE_COMMENT,
+        self::TYPE_FORUM_POST,
+        self::TYPE_REPLY,
+        self::TYPE_BLOG_POST,
+        self::TYPE_CONTACT_FORM,
+        self::TYPE_SIGN_UP,
+        self::TYPE_MESSAGE
+    ];
+
+    /**
+     * A list of all data attributes that can be dynamically added
+     * if they do not have any specific field configuration map.
+     *
+     * @var string[]
+     */
+    protected $validApiParameters = [
+        self::AKISMET_PARAM_BLOG,
+        self::AKISMET_PARAM_USER_IP,
+        self::AKISMET_PARAM_USER_AGENT,
+        self::AKISMET_PARAM_REFERRER,
+        self::AKISMET_PARAM_PERMALINK,
+        self::AKISMET_PARAM_COMMENT_AUTHOR,
+        self::AKISMET_PARAM_AUTHOR_EMAIL,
+        self::AKISMET_PARAM_AUTHOR_URL,
+        self::AKISMET_PARAM_COMMENT_CONTENT,
+        self::AKISMET_PARAM_COMMENT_DATE_GMT,
+        self::AKISMET_PARAM_COMMENT_POST_MODIFIED_GMT,
+        self::AKISMET_PARAM_BLOG_LANGUAGE,
+        self::AKISMET_PARAM_BLOG_CHARSET,
+        self::AKISMET_PARAM_USER_ROLE,
+        self::AKISMET_PARAM_IS_TEST,
+        self::AKISMET_PARAM_RECHECK_REASON,
+        self::AKISMET_PARAM_HONEYPOT_FIELD_NAME
+    ];
+
     /**
      * Indicates if last operation was a success.
      *
      * @var bool
      */
     protected $success = false;
+
     /**
      * The reasons the item was marked as spam.
      *
      * @var SpamReason[]
      */
     protected $reasons = [];
+
+    /**
+     * The submission type to check.
+     * @var string
+     */
+    protected $type = self::TYPE_COMMENT;
+
     /**
      * Indicates if requests to the API should use HTTP or HTTPS.
      *
      * @var boolean
      */
     private $useSsl = true;
+
     /**
      * The Meerkat configuration instance.
      *
      * @var GuardConfiguration
      */
     private $config = null;
+
     /**
      * The HTTP Client used to make external web requests.
      *
      * @var HttpClientContract
      */
     private $httpClient = null;
+
     /**
      * Indicates if the spam guard can make external web requests.
      *
@@ -117,12 +201,14 @@ class AkismetSpamGuard implements SpamGuardContract
      * @var boolean
      */
     private $canMakeRequests = false;
+
     /**
      * Indicates if the API keys have been validated and connections configured.
      *
      * @var boolean
      */
     private $hasBeenValidated = false;
+
     /**
      * The default value that should be returned when a COMMENT-CHECK API request fails for any reason.
      *
@@ -132,12 +218,14 @@ class AkismetSpamGuard implements SpamGuardContract
      * @var boolean
      */
     private $defaultValueOnApiFailure = true;
+
     /**
      * A mapping of Meerkat form fields to Akismet API fields.
      *
      * @var array
      */
     private $fieldMappings = [];
+
     /**
      * Determines if API requests will be made using the `is_test` flag.
      *
@@ -148,6 +236,7 @@ class AkismetSpamGuard implements SpamGuardContract
      * @var boolean
      */
     private $isApiTestMode = false;
+
     /**
      * A collection of errors, if encountered.
      *
@@ -199,6 +288,7 @@ class AkismetSpamGuard implements SpamGuardContract
         }
 
         $results->updateValidity();
+
         $this->canMakeRequests = $results->isValid;
 
         return $results;
@@ -212,6 +302,16 @@ class AkismetSpamGuard implements SpamGuardContract
     public static function getConfigName()
     {
         return 'Akismet';
+    }
+
+    /**
+     * Sets the submission type to check.
+     *
+     * @param string $type The submission type.
+     */
+    public function setType($type)
+    {
+        $this->type = $this;
     }
 
     /**
@@ -260,8 +360,13 @@ class AkismetSpamGuard implements SpamGuardContract
         if (!$this->checkApiKey()) {
             return false;
         }
+
         if ($this->canMakeRequests) {
             $formData = $this->remapComment($data);
+
+            if (!array_key_exists(self::AKISMET_PARAM_USER_IP, $formData)) {
+                $formData[self::AKISMET_PARAM_USER_IP] = '';
+            }
 
             try {
                 $apiResponse = $this->httpClient->post($this->getRequestUrl(self::AKISMET_API_CHECK_COMMENT), $formData);
@@ -303,7 +408,7 @@ class AkismetSpamGuard implements SpamGuardContract
         $this->success = false;
         $this->validateAkismetSettings();
 
-        if ($this->hasBeenValidated || $this->canMakeRequests == false) {
+        if ($this->hasBeenValidated && $this->canMakeRequests == false) {
             return false;
         }
 
@@ -435,6 +540,24 @@ class AkismetSpamGuard implements SpamGuardContract
         $commentAttributes = $data->getDataAttributes();
         $mappedProperties = [];
 
+        if (array_key_exists(self::AKISMET_PARAM_IS_TEST, $commentAttributes)) {
+            if (is_bool($commentAttributes[self::AKISMET_PARAM_IS_TEST])) {
+                $this->isApiTestMode = $commentAttributes[self::AKISMET_PARAM_IS_TEST];
+                unset($commentAttributes[self::AKISMET_PARAM_IS_TEST]);
+            }
+        }
+
+        if (array_key_exists(self::AKISMET_PARAM_COMMENT_TYPE, $commentAttributes)) {
+            $submissionType = $commentAttributes[self::AKISMET_PARAM_COMMENT_TYPE];
+            unset($commentAttributes[self::AKISMET_PARAM_COMMENT_TYPE]);
+
+            if (in_array($submissionType, $this->validSubmissionTypes)) {
+                $this->type = $submissionType;
+            }
+        }
+
+        $unMappedAttributes = [];
+
         foreach ($this->fieldMappings as $key => $value) {
             $sourceValue = null;
 
@@ -447,12 +570,27 @@ class AkismetSpamGuard implements SpamGuardContract
             }
         }
 
-        // Add the 'blob' parameter.
-        $mappedProperties['blog'] = $this->config->get('akismet_front_page', '');
+        foreach ($commentAttributes as $key => $value) {
+            if (!array_key_exists($key, $mappedProperties) && in_array($key, $this->validApiParameters)) {
+                $unMappedAttributes[$key] = $value;
+            }
+        }
+
+        if (count($unMappedAttributes) > 0) {
+            $mappedProperties = array_merge($mappedProperties, $unMappedAttributes);
+        }
+
+        // Add the 'blob' parameter from the configuration if it does not exist in the input.
+        if (!$data->hasDataAttribute(self::AKISMET_PARAM_BLOG)) {
+            $mappedProperties[self::AKISMET_PARAM_BLOG] = $this->config->get('akismet_front_page', '');
+        }
 
         if ($this->isApiTestMode) {
             $mappedProperties[AkismetSpamGuard::AKISMET_API_IS_TEST_MODE] = true;
         }
+
+        $mappedProperties[self::AKISMET_PARAM_COMMENT_TYPE] = $this->type;
+
 
         return $mappedProperties;
     }

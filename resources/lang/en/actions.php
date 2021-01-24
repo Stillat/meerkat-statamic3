@@ -6,6 +6,7 @@ return [
     'cancel' => 'Cancel',
     'confirm' => 'Confirm',
     'try_again' => 'Try Again',
+    'discard_changes' => 'Discard Changes',
     'submit_error_try_again' => 'Submit and Try Again',
     'manage' => 'Manage',
     'meerkat_settings' => 'Meerkat Configuration',
@@ -100,6 +101,9 @@ return [
     'edit_confirm_abandoned' => 'The update action was abandoned',
     'edit_error_encountered' => 'An error was encountered while updating the comment. Would you like to try again?',
     'edit_success' => 'The comment was updated',
+
+    'edit_unsaved_changes_confirm_title' => 'There are unsaved changes',
+    'edit_unsaved_changes_confirm_message' => 'If you continue, you will lose all unsaved changes. Would you like to continue and discard these changes?',
 
     'reply' => 'Reply',
     'reply_confirm_button' => 'Reply',

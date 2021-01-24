@@ -1,17 +1,17 @@
 import template from './template.html';
 import UsesTranslator from '../../Mixins/usesTranslator';
 import ActionHandler from '../../Mixins/actionHandler';
+import CanDismiss from '../../Mixins/canDismissAction';
+import CanPerformAction from '../../Mixins/canPerformAction';
 import {
   ApproveCommentHandler, DeleteCommentHandler,
   MarkAsNotSpamHandler, MarkAsSpamHandler, UnApproveCommentHandler
 } from './Handlers';
-import ActionState from '../../actionState';
-import Type from '../../../Types/type';
 
 require('./style.less');
 
 export default {
-  mixins: [UsesTranslator, ActionHandler],
+  mixins: [UsesTranslator, ActionHandler, CanDismiss, CanPerformAction],
   template: template,
   props: {
     comment: {
@@ -35,25 +35,5 @@ export default {
         'mark-ham': MarkAsNotSpamHandler
       }
     };
-  },
-  methods: {
-    forceDismiss() {
-      if (this.currentAction !== null) {
-        this.currentAction.dismiss();
-      }
-    },
-    checkForDismiss() {
-      if (this.currentAction !== null && this.currentAction.display === true && this.currentAction.canDismiss()) {
-        this.currentAction.dismiss();
-      }
-    },
-    performAction(action, comment) {
-      if (Type.hasValue(this.handlers[action])) {
-        this.confirm(new this.handlers[action](comment))
-          .onConfirm((state: ActionState) => {
-            state.proceed();
-          });
-      }
-    }
   }
 };

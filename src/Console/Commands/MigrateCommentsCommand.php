@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat\Console\Commands;
 
 use Illuminate\Console\Command;
+use Stillat\Meerkat\Concerns\UsesTranslations;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Storage\ThreadStorageManagerContract;
 use Stillat\Meerkat\Core\Support\TypeConversions;
@@ -17,6 +18,7 @@ use Stillat\Meerkat\Core\Support\TypeConversions;
  */
 class MigrateCommentsCommand extends Command
 {
+    use UsesTranslations;
 
     protected $signature = 'meerkat:migrate-comments';
 
@@ -41,7 +43,9 @@ class MigrateCommentsCommand extends Command
         // TODO: Translation support.
         $threadIds = $this->threadManager->getAllThreadIds();
 
-        $this->line('Discovered ' . count($threadIds) . ' thread(s) that will be analyzed.');
+        $this->line($this->trans('commands.migrate_analyze_threads', [
+            'threads' => count($threadIds)
+        ]));
 
         $comments = [];
         $commentCount = 0;
@@ -57,8 +61,12 @@ class MigrateCommentsCommand extends Command
             }
         }
 
-        $this->line('Total: ' . $commentCount . ' comments(s) across all threads analyzed.');
-        $this->line(count($comments) . ' comment(s) need a data structure update.');
+        $this->line($this->trans('commands.migrate_analyzed_count', [
+            'comments' => $commentCount
+        ]));
+        $this->line($this->trans('commands.migrate_structure_update_needed', [
+            'comments' => count($comments)
+        ]));
 
         $commentsUpdated = 0;
 
@@ -70,8 +78,9 @@ class MigrateCommentsCommand extends Command
             }
         }
 
-        $this->line($commentsUpdated . ' comment(s) updated!');
-
+        $this->line($this->trans('commands.migrate_comments_updated', [
+            'comments' => $commentsUpdated
+        ]));
     }
 
 }

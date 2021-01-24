@@ -37,5 +37,4 @@ return [
     'config_settings_failure' => 'The site settings couldn\'t be updated; please try again.',
     'config_both_failure' => 'Your preferences or site settings couldn\'t be updated; please try again.',
 
-
 ];

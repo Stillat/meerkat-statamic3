@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat\Console\Commands;
 
 use Illuminate\Console\Command;
+use Stillat\Meerkat\Concerns\UsesTranslations;
 use Stillat\Meerkat\Core\Contracts\Storage\ThreadStorageManagerContract;
 use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Feedback\SolutionProvider;
@@ -19,6 +20,7 @@ use Stillat\Meerkat\Validation\StorageDriverValidator;
  */
 class ValidateCommand extends Command
 {
+    use UsesTranslations;
 
     /**
      * The command's signature.
@@ -62,8 +64,8 @@ class ValidateCommand extends Command
      */
     public function handle()
     {
-        $this->printHeader('Meerkat Installation Validator');
-        $this->line($this->description);
+        $this->printHeader($this->trans('commands.validate_header'));
+        $this->line($this->trans('commands.validate_description'));
         $this->line('');
 
         $this->validateStorageDrivers();
@@ -96,24 +98,23 @@ class ValidateCommand extends Command
      */
     private function validateStorageDrivers()
     {
-        // TODO: Translation support.
         $driverResults = $this->storageDriverValidator->validate();
 
-        $this->printHeader('Validating Storage Drivers');
+        $this->printHeader($this->trans('commands.validate_storage_drivers'));
 
         $this->line('Configured storage path: ' . PathProvider::normalize($driverResults->getDataAttribute('configured_storage_path')));
         $this->line('Using storage path: ' . PathProvider::normalize($driverResults->getDataAttribute('using_storage_path')));
 
 
         if ($driverResults->isValid) {
-            $this->info('No issues discovered with storage driver configuration.');
+            $this->info($this->trans('commands.validate_storage_valid'));
         } else {
             $this->displayReasons($driverResults->reasons);
         }
 
         if ($driverResults->hasDataAttribute('driver_configuration')) {
 
-            $this->printHeader('Checking Driver Configuration');
+            $this->printHeader($this->trans('commands.validate_driver_configuration'));
 
             $drivers = $driverResults->getDataAttribute('driver_configuration');
 
@@ -124,12 +125,14 @@ class ValidateCommand extends Command
                 $threadValidationResults = $threadDriver->validate();
 
                 if ($threadValidationResults->isValid) {
-                    $this->info('Thread driver configuration valid.');
+                    $this->info($this->trans('commands.validate_thread_valid'));
                 } else {
                     $this->displayReasons($threadValidationResults->reasons);
                 }
             } catch (\Exception $e) {
-                $this->line('Error Code: ' . Errors::DRIVER_THREAD_CANNOT_USE . ':: ' . $e->getMessage());
+                $this->line($this->trans('commands.validate_error_code', [
+                        'errorcode' => Errors::DRIVER_THREAD_CANNOT_USE
+                    ]) . ':: ' . $e->getMessage());
             }
 
         }
@@ -148,13 +151,18 @@ class ValidateCommand extends Command
             $this->line('');
             $this->line(str_repeat('=', 100));
 
-            $this->error('Error Code: ' . $errorCode);
+            $this->error($this->trans('commands.validate_error_code', [
+                'errorcode' => $errorCode
+            ]));
+
             $this->line($failureReason['msg']);
 
             $helpText = $this->solutionProvider->findSolution($errorCode);
 
             if ($helpText !== null && mb_strlen(trim($helpText)) > 0) {
-                $this->info('A possible solution for: ' . $errorCode);
+                $this->info($this->trans('commands.validate_possible_solution', [
+                    'errorcode' => $errorCode
+                ]));
                 $this->info(str_repeat('=', 100));
                 $this->line('');
                 $this->info($helpText);

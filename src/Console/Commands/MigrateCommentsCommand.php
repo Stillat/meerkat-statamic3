@@ -40,7 +40,6 @@ class MigrateCommentsCommand extends Command
 
     public function handle()
     {
-        // TODO: Translation support.
         $threadIds = $this->threadManager->getAllThreadIds();
 
         $this->line($this->trans('commands.migrate_analyze_threads', [

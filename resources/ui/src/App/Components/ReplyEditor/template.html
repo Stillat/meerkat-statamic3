@@ -1,4 +1,8 @@
 <div>
+    <meerkat-stateful-confirm-dialog
+      name="commentReplyActionConfirm" v-if="currentAction !== null && currentAction.display === true"
+      :action-state="currentAction" v-on:cancel="checkForDismiss"></meerkat-stateful-confirm-dialog>
+
     <div class="meerkat__temp-markdown-reply-editor--wrapper">
         <markdown-fieldtype ref="markdownEditor" v-model="comment.state.reply.content"></markdown-fieldtype>
     </div>

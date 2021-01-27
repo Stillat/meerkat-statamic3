@@ -2,6 +2,7 @@
 
 namespace Stillat\Meerkat;
 
+use Statamic\Facades\Utility;
 use Statamic\Statamic;
 use Statamic\Yaml\ParseException;
 use Stillat\Meerkat\Blueprint\BlueprintProvider;
@@ -32,6 +33,7 @@ use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
 use Stillat\Meerkat\Core\Parsing\DateParserFactory;
 use Stillat\Meerkat\Core\Parsing\MarkdownParserFactory;
 use Stillat\Meerkat\Core\Storage\Paths;
+use Stillat\Meerkat\Http\Composers\InstallValidationComposer;
 use Stillat\Meerkat\Logging\ExceptionLogger;
 use Stillat\Meerkat\Mail\MeerkatMailer;
 use Stillat\Meerkat\Parsing\CarbonDateParser;
@@ -45,6 +47,10 @@ use Stillat\Meerkat\Providers\SpamServiceProvider;
 use Stillat\Meerkat\Providers\TagsServiceProvider;
 use Stillat\Meerkat\Providers\ThreadServiceProvider;
 use Stillat\Meerkat\Support\Facades\Meerkat;
+
+if (!defined('MEERKAT_COMMENTS')) {
+    define('MEERKAT_COMMENTS', 210126);
+}
 
 /**
  * Class ServiceProvider
@@ -63,6 +69,10 @@ class ServiceProvider extends AddonServiceProvider
     protected $routes = [
         'cp' => __DIR__ . '/../routes/cp.php',
         'web' => __DIR__ . '/../routes/web.php',
+    ];
+
+    protected $composers = [
+        'meerkat::validation' => InstallValidationComposer::class
     ];
 
     protected $commands = [
@@ -340,6 +350,16 @@ class ServiceProvider extends AddonServiceProvider
 
             $manager->handle($comment);
         });
+    }
+
+    protected function afterBoot()
+    {
+        Utility::make('meerkat-validation')
+            ->title(trans('meerkat::general.installation_validation'))
+            ->description(trans('meerkat::general.installation_validation_desc'))
+            ->icon('list')
+            ->view('meerkat::validation')
+            ->register();
     }
 
     protected function beforeBoot()

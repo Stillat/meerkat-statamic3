@@ -133,6 +133,7 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
         });
 
         $this->includeAddonLanguages();
+        $this->afterBoot();
     }
 
     /**
@@ -142,6 +143,15 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
     protected function beforeBoot()
     {
         // Just an empty method.
+    }
+
+    /**
+     * Provides a place for developers to place anything
+     * that should be done after boot() is executed.
+     */
+    protected function afterBoot()
+    {
+
     }
 
     /**

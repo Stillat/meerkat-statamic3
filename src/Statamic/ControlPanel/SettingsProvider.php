@@ -63,6 +63,12 @@ class SettingsProvider
     {
         $userSettings = $this->userConfigurationManager->getConfiguration();
 
+        if (is_null($userSettings) || is_array($userSettings) === false) {
+            $userSettings = [];
+            $userSettings['cp_per_page'] = 10;
+            $userSettings['cp_avatar_driver'] = 'initials';
+        }
+
         // Add the user's email address to the user settings information.
         $userSettings['email'] = $this->userConfigurationManager->getEmailAddress();
         $userSettings['isSuper'] = $this->userConfigurationManager->isSysAdmin();

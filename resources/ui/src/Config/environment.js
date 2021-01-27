@@ -73,7 +73,10 @@ class Environment {
 Environment.MarkdownHandler = null;
 Environment.Settings = new Settings();
 Environment.UserContext = null;
-Environment.UserPreferences = null;
+Environment.UserPreferences = {
+  'cp_avatar_driver': 'initials',
+  'cp_per_page': 10
+};
 Environment.Preferences = null;
 
 Environment.StatamicApiRoot = '';

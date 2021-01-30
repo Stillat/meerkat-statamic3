@@ -2,10 +2,10 @@
 
 namespace Stillat\Meerkat\Validation;
 
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use Stillat\Meerkat\Http\Controllers\Api\CheckForSpamController;
 use Stillat\Meerkat\Http\Controllers\Api\CommentsController;
 use Stillat\Meerkat\Http\Controllers\Api\ExportController;
@@ -37,6 +37,8 @@ class RouteCacheValidator
     const KEY_NAME = 'name';
     const KEY_ACTION = 'action';
     const ROUTE_CACHE_CLEAR = 'statamic.cp.utilities.meerkat-validation.meerkat.routes.clear.cache';
+
+    const ASSET_CONTROL_PANEL_CONFIGURATION = 'cpConfiguration';
 
     const CATEGORY_CONTROL_PANEL_CONFIGURATION = 'cp_configuration';
     const CATEGORY_SPAM_API = 'spam_api';
@@ -107,7 +109,7 @@ class RouteCacheValidator
      * @var string[]
      */
     protected $requiredEmitters = [
-        'cpConfiguration'
+        self::ASSET_CONTROL_PANEL_CONFIGURATION
     ];
 
     /**
@@ -301,6 +303,22 @@ class RouteCacheValidator
             self::KEY_NAME => $route->getName(),
             self::KEY_ACTION => $route->getActionName()
         ];
+    }
+
+    /**
+     * Attempts to automatically clear the Laravel route cache.
+     */
+    public static function attemptToCorrectRoutes()
+    {
+        /** @var RouteCacheValidator $validator */
+        $validator = app(RouteCacheValidator::class);
+        $validator->loadRoutes();
+
+        if ($validator->hasIssues() && app()->routesAreCached()) {
+            /** @var Filesystem $files */
+            $files = app(Filesystem::class);
+            $files->delete(app()->getCachedRoutesPath());
+        }
     }
 
 }

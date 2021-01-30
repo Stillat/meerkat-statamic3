@@ -26,6 +26,17 @@ class Emit
     static $registeredEmitters = [];
 
     /**
+     * Determines if a dynamic asset has been registered.
+     *
+     * @param string $emissionName The dynamic asset to check for.
+     * @return bool
+     */
+    public static function contains($emissionName)
+    {
+        return in_array($emissionName, self::$registeredEmitters);
+    }
+
+    /**
      * Injects a dynamic stylesheet asset into the Control Panel request.
      *
      * @param string $dynamicCssName The CSS asset name.
@@ -54,7 +65,6 @@ class Emit
         $fileName = basename($dynamicCssName);
 
         Statamic::style($assetNameForStatamic, $fileName);
-
 
         Route::get('/' . Addon::CODE_ADDON_NAME . '/css/' . $fileName . '.css', function () use ($callback) {
             $content = $callback();

@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Support\Facades\Auth;
 use Statamic\Contracts\Auth\UserGroupRepository;
 use Statamic\Http\Controllers\CP\CpController;
+use Stillat\Meerkat\Concerns\CanCorrectRoutes;
 use Stillat\Meerkat\Concerns\UsesConfig;
 use Stillat\Meerkat\Concerns\UsesTranslations;
 use Stillat\Meerkat\Configuration\ConfigurationItem;
@@ -24,7 +25,7 @@ use Stillat\Meerkat\Permissions\GroupPermissionsManager;
 
 class ConfigureController extends CpController
 {
-    use UsesConfig, UsesTranslations;
+    use UsesConfig, UsesTranslations, CanCorrectRoutes;
 
     const KEY_CONFIG_HASH = 'change_set';
     const KEY_CONFIG_ITEMS = 'config';
@@ -46,6 +47,8 @@ class ConfigureController extends CpController
 
     public function index()
     {
+        $this->attemptToCorrectRoutes();
+
         $addonsUrl = url(config('statamic.cp.route'), 'addons');
         $commentsUrl = url(config('statamic.cp.route'), 'meerkat');
 

@@ -34,6 +34,7 @@ use Stillat\Meerkat\Core\Parsing\DateParserFactory;
 use Stillat\Meerkat\Core\Parsing\MarkdownParserFactory;
 use Stillat\Meerkat\Core\Storage\Paths;
 use Stillat\Meerkat\Http\Composers\InstallValidationComposer;
+use Stillat\Meerkat\Http\Controllers\UtilitiesController;
 use Stillat\Meerkat\Logging\ExceptionLogger;
 use Stillat\Meerkat\Mail\MeerkatMailer;
 use Stillat\Meerkat\Parsing\CarbonDateParser;
@@ -359,6 +360,9 @@ class ServiceProvider extends AddonServiceProvider
             ->description(trans('meerkat::general.installation_validation_desc'))
             ->icon('list')
             ->view('meerkat::validation')
+            ->routes(function ($router) {
+                $router->post('cache', [UtilitiesController::class, 'clearSiteRoutesCache'])->name('meerkat.routes.clear.cache');
+            })
             ->register();
     }
 

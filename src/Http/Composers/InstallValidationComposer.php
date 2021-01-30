@@ -5,17 +5,31 @@ namespace Stillat\Meerkat\Http\Composers;
 use Illuminate\View\View;
 use Statamic\Statamic;
 use Stillat\Meerkat\Addon;
+use Stillat\Meerkat\Validation\RouteCacheValidator;
 
 class InstallValidationComposer
 {
+
+    protected $routeCacheValidator = null;
 
     protected $configPaths = [
         'config_supplement' => 'meerkat/supplement/',
         'config_users' => 'meerkat/users/'
     ];
 
+    public function __construct(RouteCacheValidator $routeCacheValidator)
+    {
+        $this->routeCacheValidator = $routeCacheValidator;
+    }
+
     public function compose(View $view)
     {
+        $this->routeCacheValidator->loadRoutes();
+
+        $hasRouteIssues = $this->routeCacheValidator->hasIssues();
+        $missingRouteEmitters = $this->routeCacheValidator->getMissingEmissions();
+        $missingCategories = $this->routeCacheValidator->getMissingCategories();
+
         $storageDirectoriesToCheck = [];
 
         $storageDirectoriesToCheck['storage_content'] = base_path('content/comments/');
@@ -82,7 +96,11 @@ class InstallValidationComposer
 
         $view->with([
             'config_directories' => $configurationDirectories,
-            'system_information' => $variables
+            'system_information' => $variables,
+            'has_route_issues' => $hasRouteIssues,
+            'missing_emissions' => $missingRouteEmitters,
+            'missing_categories' => $missingCategories,
+            'can_clear_route_cache' => $this->routeCacheValidator->canClearRouteCacheFromUi()
         ]);
     }
 

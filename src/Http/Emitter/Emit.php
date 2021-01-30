@@ -19,6 +19,13 @@ class Emit
 {
 
     /**
+     * A list of all dynamic asset emitters registered at run-time.
+     *
+     * @var array
+     */
+    static $registeredEmitters = [];
+
+    /**
      * Injects a dynamic stylesheet asset into the Control Panel request.
      *
      * @param string $dynamicCssName The CSS asset name.
@@ -27,6 +34,8 @@ class Emit
     public static function cpCss($dynamicCssName, $callback)
     {
         if (RequestHelpers::isControlPanelRequestFromHeaders(request())) {
+            self::$registeredEmitters[] = $dynamicCssName;
+
             Emit::css($dynamicCssName, $callback);
         }
     }
@@ -39,6 +48,8 @@ class Emit
      */
     public static function css($dynamicCssName, $callback)
     {
+        self::$registeredEmitters[] = $dynamicCssName;
+
         $assetNameForStatamic = './../' . Addon::CODE_ADDON_NAME;
         $fileName = basename($dynamicCssName);
 
@@ -61,6 +72,8 @@ class Emit
     public static function cpJs($dynamicJsName, $callback)
     {
         if (RequestHelpers::isControlPanelRequestFromHeaders(request())) {
+            self::$registeredEmitters[] = $dynamicJsName;
+
             Emit::js($dynamicJsName, $callback);
         }
     }
@@ -73,6 +86,8 @@ class Emit
      */
     public static function js($dynamicJsName, $callback)
     {
+        self::$registeredEmitters[] = $dynamicJsName;
+
         $assetNameForStatamic = './../' . Addon::CODE_ADDON_NAME;
         $fileName = basename($dynamicJsName);
 

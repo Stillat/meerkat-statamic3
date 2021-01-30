@@ -9,7 +9,7 @@ use Statamic\Http\Controllers\CP\CpController;
 /**
  * Class UtilitiesController
  * @package Stillat\Meerkat\Http\Controllers
- * @since 2.2.2
+ * @since 2.2.3
  */
 class UtilitiesController extends CpController
 {

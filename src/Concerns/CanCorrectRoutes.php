@@ -7,7 +7,7 @@ use Stillat\Meerkat\Validation\RouteCacheValidator;
 /**
  * Trait CanCorrectRoutes
  * @package Stillat\Meerkat\Concerns
- * @since 2.2.2
+ * @since 2.2.3
  */
 trait CanCorrectRoutes
 {

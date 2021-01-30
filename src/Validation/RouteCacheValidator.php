@@ -30,7 +30,7 @@ use Stillat\Meerkat\Http\Emitter\Emit;
  * routes are missing due to Laravel's route caching mechanics.
  *
  * @package Stillat\Meerkat\Validation
- * @since 2.2.2
+ * @since 2.2.3
  */
 class RouteCacheValidator
 {

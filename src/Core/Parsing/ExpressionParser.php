@@ -330,6 +330,11 @@ class ExpressionParser
         return false;
     }
 
+    /**
+     * Sets the filter groups to be recognized by the expression parser.
+     *
+     * @param array $filterGroups The filter groups.
+     */
     public function setFilterGroups($filterGroups)
     {
         $this->filterGroups = $filterGroups;

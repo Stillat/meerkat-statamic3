@@ -41,7 +41,6 @@ use Stillat\Meerkat\Core\Storage\Drivers\Local\Attributes\InternalAttributes;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\Attributes\PrototypeAttributes;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\Attributes\PrototypeAttributeValidator;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\Attributes\TruthyAttributes;
-use Stillat\Meerkat\Core\Storage\Drivers\Local\Indexing\ShadowIndex;
 use Stillat\Meerkat\Core\Storage\Paths;
 use Stillat\Meerkat\Core\Storage\Validators\PathPrivilegeValidator;
 use Stillat\Meerkat\Core\Support\Str;
@@ -180,13 +179,6 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     private $markdownParser = null;
 
     /**
-     * The comment index instance.
-     *
-     * @var ShadowIndex
-     */
-    private $commentShadowIndex = null;
-
-    /**
      * The author retriever instance.
      *
      * @var CommentAuthorRetriever
@@ -245,7 +237,6 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             $this->commentParser = new CommentPrototypeParser();
         }
 
-        $this->commentShadowIndex = new ShadowIndex($config);
         $this->commentStructureResolver = new LocalCommentStructureResolver();
         $this->authorRetriever = $authorRetriever;
         $this->commentPipeline = $commentPipeline;
@@ -261,9 +252,6 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         $this->prototypeElements = PrototypeAttributes::getPrototypeAttributes();
         $this->internalElements = InternalAttributes::getInternalAttributes();
         $this->truthyPrototypeElements = TruthyAttributes::getTruthyAttributes();
-
-        $this->commentShadowIndex->setIsCommentProtoTypeIndexEnabled(false);
-        $this->commentShadowIndex->setIsThreadIndexEnabled(false);
 
         $this->commentParser->setConfig($this->config);
         $this->commentParser->setPrototypeElements($this->prototypeElements);
@@ -324,22 +312,12 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             return $this->threadStructureCache[$threadId];
         }
 
-        if ($this->commentShadowIndex->hasProtoTypeIndex($threadId)) {
-            return $this->commentShadowIndex->getProtoTypeIndex($threadId);
-        }
-
         $threadPath = $this->paths->combine([$this->storagePath, $threadId]);
 
         $commentPaths = [];
 
-        if ($this->commentShadowIndex->hasIndex($threadId) === false) {
-            $threadFilter = $this->paths->combine([$threadPath, '*'.LocalCommentStorageManager::PATH_COMMENT_FILE]);
-            $commentPaths = $this->paths->getFilesRecursively($threadFilter);
-
-            $this->commentShadowIndex->buildIndex($threadId, $commentPaths);
-        } else {
-            $commentPaths = $this->commentShadowIndex->getThreadIndex($threadId);
-        }
+        $threadFilter = $this->paths->combine([$threadPath, '*'.LocalCommentStorageManager::PATH_COMMENT_FILE]);
+        $commentPaths = $this->paths->getFilesRecursively($threadFilter);
 
         $hierarchy = $this->getThreadHierarchy($threadPath, $threadId, $commentPaths);
 
@@ -520,8 +498,6 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         }
 
         $this->runCollectionHookOnAllComments($commentPrototypes);
-
-        $this->commentShadowIndex->buildProtoTypeIndex($threadId, $commentPrototypes);
 
         $hierarchy->setComments($commentPrototypes);
 

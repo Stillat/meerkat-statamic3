@@ -344,7 +344,6 @@ class ExpressionParser
      */
     public function parse($inputString)
     {
-        // TODO: Do a pre-processing step to replace the @gorups with their actual values...
         $this->reset();
 
         $this->tokens = mb_str_split($inputString);

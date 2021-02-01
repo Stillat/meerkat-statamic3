@@ -66,6 +66,17 @@ class PathProvider
     }
 
     /**
+     * Generates a path to the addon configuration directory.
+     *
+     * @param string $path The relative path.
+     * @return string
+     */
+    public static function getConfigurationPath($path = '')
+    {
+        return PathProvider::normalize(PathProvider::getAddonDirectory() . '/config/' . $path);
+    }
+
+    /**
      * Gets the absolute path to the Meerkat addon directory.
      *
      * @param string $path An optional path suffix.

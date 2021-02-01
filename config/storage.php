@@ -35,7 +35,7 @@ return [
     */
     'permissions' => [
         'directory' => 0755,
-        'file'      => 644
+        'file' => 644
     ],
 
     /*
@@ -43,17 +43,30 @@ return [
     | Storage Drivers
     |--------------------------------------------------------------------------
     |
+    | These values control provide a grouping of storage drivers that can
+    | be referenced, and utilized, with a single configuration name.
+    |
+    */
+    'storage_drivers' => [
+        'local' => [
+            'comments' => \Stillat\Meerkat\Core\Storage\Drivers\Local\LocalCommentStorageManager::class,
+            'spam_reports' => \Stillat\Meerkat\Core\Storage\Drivers\Local\LocalGuardReportStorageManager::class,
+            'threads' => \Stillat\Meerkat\Core\Storage\Drivers\Local\LocalThreadStorageManager::class,
+            'tasks' => \Stillat\Meerkat\Core\Storage\Drivers\Local\LocalTaskStorageManager::class,
+            'mail' => \Stillat\Meerkat\Core\Storage\Drivers\Local\LocalEmailReportStorageManager::class,
+            'user_config' => \Stillat\Meerkat\Configuration\Drivers\Local\LocalUserSettingsConfigurationStorageManager::class,
+            'supplemental_config' => \Stillat\Meerkat\Configuration\Drivers\Local\LocalSupplementalSettingsStorageManager::class,
+        ]
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Drivers to Use
+    |--------------------------------------------------------------------------
+    |
     | These values control which storage drivers will be used by different sub-systems.
     |
     */
-    'drivers' => [
-        'comments' => \Stillat\Meerkat\Core\Storage\Drivers\Local\LocalCommentStorageManager::class,
-        'spam_reports' => \Stillat\Meerkat\Core\Storage\Drivers\Local\LocalGuardReportStorageManager::class,
-        'threads' => \Stillat\Meerkat\Core\Storage\Drivers\Local\LocalThreadStorageManager::class,
-        'tasks' => \Stillat\Meerkat\Core\Storage\Drivers\Local\LocalTaskStorageManager::class,
-        'mail' => \Stillat\Meerkat\Core\Storage\Drivers\Local\LocalEmailReportStorageManager::class,
-        'user_config' => \Stillat\Meerkat\Configuration\Drivers\Local\LocalUserSettingsConfigurationStorageManager::class,
-        'supplemental_config' => \Stillat\Meerkat\Configuration\Drivers\Local\LocalSupplementalSettingsStorageManager::class,
-    ],
+    'drivers' => 'local',
 
 ];

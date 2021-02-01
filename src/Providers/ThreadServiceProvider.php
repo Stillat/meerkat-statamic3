@@ -82,7 +82,7 @@ class ThreadServiceProvider extends AddonServiceProvider
 
     public function register()
     {
-        $driverConfiguration = $this->getConfig('storage.drivers', null);
+        $driverConfiguration = $this->getStorageDriverConfiguration();
 
         if ($driverConfiguration === null || is_array($driverConfiguration) === false) {
             $driverConfiguration = [];

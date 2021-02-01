@@ -31,10 +31,10 @@ class StorageDriverValidator
     {
         $validationResults = new ValidationResult();
 
-        $driverConfiguration = $this->getConfig('storage.drivers', null);
+        $driverConfiguration = $this->getStorageDriverConfiguration();
 
         // Guard against unexpected values.
-        if ($driverConfiguration === null || is_array($driverConfiguration) === false) {
+        if ($driverConfiguration === null || is_array($driverConfiguration) === false || count($driverConfiguration) === 0) {
             $validationResults->add(Errors::DRIVER_CONFIGURATION_NOT_FOUND, 'No storage drivers were configured. Local drivers will be utilized.');
             $driverConfiguration = [];
         }

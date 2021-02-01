@@ -138,11 +138,7 @@ class ServiceProvider extends AddonServiceProvider
      */
     private function registerSupplementalStorageDriver()
     {
-        $driverConfiguration = $this->getConfig('storage.drivers', null);
-
-        if ($driverConfiguration === null || is_array($driverConfiguration) === false) {
-            $driverConfiguration = [];
-        }
+        $driverConfiguration = $this->getStorageDriverConfiguration();
 
         if (array_key_exists(self::CONFIG_PREFERENCES_SUPPLEMENTAL, $driverConfiguration) === false) {
             $driverConfiguration[self::CONFIG_PREFERENCES_SUPPLEMENTAL] = LocalSupplementalSettingsStorageManager::class;

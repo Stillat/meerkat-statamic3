@@ -6,6 +6,8 @@ use Statamic\Statamic;
 use Stillat\Meerkat\Comments\CommentMutationPipeline;
 use Stillat\Meerkat\Comments\StatamicCommentFactory;
 use Stillat\Meerkat\Concerns\UsesConfig;
+use Stillat\Meerkat\Configuration\Drivers\Local\LocalUserSettingsConfigurationStorageManager;
+use Stillat\Meerkat\Contracts\Configuration\UserConfigurationStorageManagerContract;
 use Stillat\Meerkat\Core\Comments\CommentChangeSetManagerFactory;
 use Stillat\Meerkat\Core\Comments\CommentManager;
 use Stillat\Meerkat\Core\Comments\CommentManagerFactory;
@@ -76,6 +78,7 @@ class ThreadServiceProvider extends AddonServiceProvider
      * The configuration key that identifies the mail storage driver.
      */
     const CONFIG_MAIL_STORAGE_DRIVER = 'mail';
+    const CONFIG_PREFERENCES_USER = 'config_user';
 
     public function register()
     {
@@ -106,6 +109,10 @@ class ThreadServiceProvider extends AddonServiceProvider
             $driverConfiguration[self::CONFIG_MAIL_STORAGE_DRIVER] = LocalEmailReportStorageManager::class;
         }
 
+        if (array_key_exists(self::CONFIG_PREFERENCES_USER, $driverConfiguration) === false) {
+            $driverConfiguration[self::CONFIG_PREFERENCES_USER] = LocalUserSettingsConfigurationStorageManager::class;
+        }
+
         // If for some reason the specified driver does not exist, fallback to local defaults.
         if (class_exists($driverConfiguration[self::CONFIG_COMMENT_DRIVER]) === false) {
             $driverConfiguration[self::CONFIG_COMMENT_DRIVER] = LocalCommentStorageManager::class;
@@ -125,6 +132,10 @@ class ThreadServiceProvider extends AddonServiceProvider
 
         if (class_exists($driverConfiguration[self::CONFIG_MAIL_STORAGE_DRIVER]) === false) {
             $driverConfiguration[self::CONFIG_MAIL_STORAGE_DRIVER] = LocalEmailReportStorageManager::class;
+        }
+
+        if (class_exists($driverConfiguration[self::CONFIG_PREFERENCES_USER]) === false) {
+            $driverConfiguration[self::CONFIG_PREFERENCES_USER] = LocalUserSettingsConfigurationStorageManager::class;
         }
 
         $this->app->singleton(SanitationManagerContract::class, function ($app) {
@@ -185,6 +196,10 @@ class ThreadServiceProvider extends AddonServiceProvider
 
         $this->app->singleton(ThreadStorageManagerContract::class, function ($app) use ($driverConfiguration) {
             return $app->make($driverConfiguration[self::CONFIG_THREAD_DRIVER]);
+        });
+
+        $this->app->singleton(UserConfigurationStorageManagerContract::class, function ($app) use ($driverConfiguration) {
+            return $app->make($driverConfiguration[self::CONFIG_PREFERENCES_USER]);
         });
 
         $this->app->singleton(ThreadManagerContract::class, function ($app) {

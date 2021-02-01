@@ -7,6 +7,7 @@ use Statamic\Contracts\Auth\User;
 use Statamic\Contracts\Auth\UserRepository;
 use Statamic\Facades\YAML;
 use Stillat\Meerkat\Concerns\UsesConfig;
+use Stillat\Meerkat\Contracts\Configuration\UserConfigurationStorageManagerContract;
 use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
 use Stillat\Meerkat\Core\Support\Arr;
 
@@ -40,13 +41,6 @@ class UserConfigurationManager
     protected $currentUser = null;
 
     /**
-     * The user specific configuration path.
-     *
-     * @var string
-     */
-    protected $configurationPath = '';
-
-    /**
      * Indicates if the configuration manager has loaded the current user details.
      *
      * @var bool
@@ -60,9 +54,17 @@ class UserConfigurationManager
      */
     protected $userId = null;
 
-    public function __construct(UserRepository $userRepository)
+    /**
+     * The UserConfigurationStorageManagerContract implementation instance.
+     *
+     * @var UserConfigurationStorageManagerContract
+     */
+    protected $userConfigStorageManager = null;
+
+    public function __construct(UserRepository $userRepository, UserConfigurationStorageManagerContract $userConfigManager)
     {
         $this->users = $userRepository;
+        $this->userConfigStorageManager = $userConfigManager;
     }
 
     /**
@@ -78,18 +80,17 @@ class UserConfigurationManager
 
         // If, for some reason, the configuration path does not exist, let's return the defaults.
         // The user specific settings are not important enough to break everything over.
-        if (!file_exists($this->configurationPath)) {
+        if ($this->userConfigStorageManager->hasUserConfiguration($this->userId) === false) {
             return $this->getDefaultConfiguration();
         }
 
         try {
-            $contents = file_get_contents($this->configurationPath);
-            $parsedContents = YAML::parse($contents);
+            $userConfiguration = $this->userConfigStorageManager->getConfiguration($this->userId);
 
-            if ($parsedContents !== null && is_array($parsedContents) && Arr::matches([
+            if ($userConfiguration !== null && is_array($userConfiguration) && Arr::matches([
                     self::KEY_PER_PAGE, self::KEY_AVATAR_DRIVER
-                ], $parsedContents)) {
-                return $parsedContents;
+                ], $userConfiguration)) {
+                return $userConfiguration;
             }
         } catch (Exception $e) {
             // Again, user specific settings shouldn't bring down the site.
@@ -124,10 +125,9 @@ class UserConfigurationManager
 
         $this->currentUser = $this->users->current();
         $this->userId = $this->currentUser->id();
-        $this->configurationPath = config_path('meerkat/users/' . $this->userId . '.yaml');
 
-        if (!file_exists($this->configurationPath)) {
-            $this->writeDefaultFile($this->configurationPath);
+        if (!$this->userConfigStorageManager->hasUserConfiguration($this->userId)) {
+            $this->userConfigStorageManager->saveConfiguration($this->userId, $this->getDefaultConfiguration());
         }
     }
 
@@ -141,25 +141,6 @@ class UserConfigurationManager
         $this->loadUserDetails();
 
         return $this->currentUser->isSuper();
-    }
-
-    /**
-     * Attempts to write the default user-specific configuration file to disk.
-     *
-     * @param string $path The storage path.
-     * @return bool
-     */
-    private function writeDefaultFile($path)
-    {
-        $settingContent = YAML::dump($this->getDefaultConfiguration());
-
-        $results = file_put_contents($path, $settingContent);
-
-        if ($results === false) {
-            return false;
-        }
-
-        return true;
     }
 
     /**
@@ -194,13 +175,7 @@ class UserConfigurationManager
         ];
 
         try {
-            $settingContent = YAML::dump($settings);
-
-            $results = file_put_contents($this->configurationPath, $settingContent);
-
-            if ($results === false) {
-                return false;
-            }
+            return $this->userConfigStorageManager->saveConfiguration($this->userId, $settings);
         } catch (Exception $e) {
             ExceptionLoggerFactory::log($e);
         }

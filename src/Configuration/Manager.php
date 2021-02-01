@@ -5,9 +5,9 @@ namespace Stillat\Meerkat\Configuration;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
-use Statamic\Facades\YAML;
 use Stillat\Meerkat\Addon;
 use Stillat\Meerkat\Concerns\UsesConfig;
+use Stillat\Meerkat\Contracts\Configuration\SupplementalStorageManagerContract;
 use Stillat\Meerkat\Core\Data\Types;
 use Stillat\Meerkat\PathProvider;
 
@@ -295,6 +295,12 @@ class Manager
      */
     protected $userGroups = null;
     /**
+     * The SupplementalStorageManagerContract implementation instance.
+     *
+     * @var SupplementalStorageManagerContract
+     */
+    protected $supplementalStorageDriver = null;
+    /**
      * A cache of all the observed configuration behaviors.
      *
      * @var array
@@ -307,10 +313,11 @@ class Manager
      */
     private $cpConfigEnabled = false;
 
-    public function __construct()
+    public function __construct(SupplementalStorageManagerContract $supplementalStorageManager)
     {
         $this->cpConfigEnabled = $this->getConfig('permissions.control_panel_config', true);
         $this->userGroups = null; //$userGroups;
+        $this->supplementalStorageDriver = $supplementalStorageManager;
     }
 
     protected function getConfig($key, $default = null)
@@ -356,20 +363,7 @@ class Manager
             return pathinfo($v, PATHINFO_FILENAME);
         }, array_values($this->getConfigurationMap()));
 
-        $valueToHash = '';
-
-        foreach ($configNamespaces as $namespace) {
-            $allConfigValues[$namespace] = $this->getConfig($namespace);
-
-            $supplementalConfigPath = $this->getSupplementPath($namespace);
-
-            if (!in_array($namespace, $this->alwaysManaged) &&
-                file_exists($supplementalConfigPath) && is_readable($supplementalConfigPath)) {
-                $valueToHash .= 'h' . filemtime($supplementalConfigPath);
-            }
-        }
-
-        return md5($valueToHash);
+        return $this->supplementalStorageDriver->getUpdateHash($configNamespaces, $this->alwaysManaged);
     }
 
     /**
@@ -406,16 +400,6 @@ class Manager
         }
 
         return $configMapping;
-    }
-
-    private function getSupplementPath($namespace)
-    {
-        $configDirectory = config_path(Addon::CODE_ADDON_NAME . '/');
-        if (Str::endsWith($configDirectory, '/') == false) {
-            $configDirectory .= '/';
-        }
-
-        return $configDirectory . self::PATH_SUPPLEMENT . '/' . $namespace . '.yaml';
     }
 
     /**
@@ -468,7 +452,8 @@ class Manager
         // Check against any configuration property that was marked as managed only.
         foreach ($items as $item) {
             $namespaceKey = $item->getNamespace() . '.' . $item->getKey();
-            if (array_key_exists($namespaceKey, $this->behaviorCache) && $this->behaviorCache[$namespaceKey] !== self::BEHAVIOR_MANAGED) {
+            if (array_key_exists($namespaceKey, $this->behaviorCache) &&
+                $this->behaviorCache[$namespaceKey] !== self::BEHAVIOR_MANAGED) {
                 $itemsToSave[] = $item;
             }
         }
@@ -484,22 +469,7 @@ class Manager
             }
         }
 
-        $results = [];
-
-        foreach ($itemsToSave as $namespace => $config) {
-            $path = $this->getSupplementalConfigurationPath($namespace);
-            $configContents = YAML::dump($config);
-
-            $results[$path] = file_put_contents($path, $configContents);
-        }
-
-        foreach ($results as $result) {
-            if ($result === false) {
-                return false;
-            }
-        }
-
-        return true;
+        return $this->supplementalStorageDriver->saveConfiguration($itemsToSave);
     }
 
     /**
@@ -526,17 +496,6 @@ class Manager
     }
 
     /**
-     * Converts the provided configuration sub-namespace to a storage path.
-     *
-     * @param string $namespace The config namespace.
-     * @return string
-     */
-    private function getSupplementalConfigurationPath($namespace)
-    {
-        return config_path('meerkat/supplement/' . $namespace . '.yaml');
-    }
-
-    /**
      * Reloads all dynamic configuration values.
      */
     public function loadConfiguration()
@@ -554,22 +513,12 @@ class Manager
         }, array_values($this->getConfigurationMap()));
 
         $allConfigValues = [];
-        $supplementalConfiguration = [];
 
         foreach ($configNamespaces as $namespace) {
             $allConfigValues[$namespace] = $this->getConfig($namespace);
-
-            $supplementalConfigPath = $this->getSupplementPath($namespace);
-
-            if (!in_array($namespace, $this->alwaysManaged) &&
-                file_exists($supplementalConfigPath) && is_readable($supplementalConfigPath)) {
-                $contents = file_get_contents($supplementalConfigPath);
-
-                if (mb_strlen($contents) > 0) {
-                    $supplementalConfiguration[$namespace] = YAML::parse($contents);
-                }
-            }
         }
+
+        $supplementalConfiguration = $this->supplementalStorageDriver->getAllSupplementalConfiguration($configNamespaces, $this->alwaysManaged);
 
         foreach ($allConfigValues as $namespace => $configValues) {
 
@@ -716,6 +665,17 @@ class Manager
         }
 
         return $supplementalMap;
+    }
+
+    /**
+     * Converts the provided configuration sub-namespace to a storage path.
+     *
+     * @param string $namespace The config namespace.
+     * @return string
+     */
+    private function getSupplementalConfigurationPath($namespace)
+    {
+        return config_path('meerkat/supplement/' . $namespace . '.yaml');
     }
 
 }

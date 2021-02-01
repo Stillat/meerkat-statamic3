@@ -8,10 +8,12 @@ use Statamic\Yaml\ParseException;
 use Stillat\Meerkat\Blueprint\BlueprintProvider;
 use Stillat\Meerkat\Concerns\UsesConfig;
 use Stillat\Meerkat\Concerns\UsesTranslations;
+use Stillat\Meerkat\Configuration\Drivers\Local\LocalSupplementalSettingsStorageManager;
 use Stillat\Meerkat\Configuration\Manager;
 use Stillat\Meerkat\Console\Commands\MigrateCommentsCommand;
 use Stillat\Meerkat\Console\Commands\StatisticsCommand;
 use Stillat\Meerkat\Console\Commands\ValidateCommand;
+use Stillat\Meerkat\Contracts\Configuration\SupplementalStorageManagerContract;
 use Stillat\Meerkat\Core\Configuration as GlobalConfiguration;
 use Stillat\Meerkat\Core\ConfigurationFactories;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
@@ -65,6 +67,8 @@ class ServiceProvider extends AddonServiceProvider
 {
     use UsesConfig, UsesTranslations;
 
+    const CONFIG_PREFERENCES_SUPPLEMENTAL = 'supplemental_config';
+
     protected $defer = false;
 
     protected $routes = [
@@ -101,8 +105,12 @@ class ServiceProvider extends AddonServiceProvider
     {
         $this->createPaths();
 
+        $this->registerSupplementalStorageDriver();
+
         $this->app->singleton(Manager::class, function ($app) {
-            return new Manager();
+            $supplementalStorageManager = $app->make(SupplementalStorageManagerContract::class);
+
+            return new Manager($supplementalStorageManager);
         });
 
         Manager::$instance = app(Manager::class);
@@ -121,6 +129,32 @@ class ServiceProvider extends AddonServiceProvider
         $this->registerSubmissionHandler();
 
         parent::register();
+    }
+
+    /**
+     * Registers the core supplemental configuration storage driver.
+     *
+     * @since 2.3.0
+     */
+    private function registerSupplementalStorageDriver()
+    {
+        $driverConfiguration = $this->getConfig('storage.drivers', null);
+
+        if ($driverConfiguration === null || is_array($driverConfiguration) === false) {
+            $driverConfiguration = [];
+        }
+
+        if (array_key_exists(self::CONFIG_PREFERENCES_SUPPLEMENTAL, $driverConfiguration) === false) {
+            $driverConfiguration[self::CONFIG_PREFERENCES_SUPPLEMENTAL] = LocalSupplementalSettingsStorageManager::class;
+        }
+
+        if (class_exists($driverConfiguration[self::CONFIG_PREFERENCES_SUPPLEMENTAL]) === false) {
+            $driverConfiguration[self::CONFIG_PREFERENCES_SUPPLEMENTAL] = LocalSupplementalSettingsStorageManager::class;
+        }
+
+        $this->app->singleton(SupplementalStorageManagerContract::class, function ($app) use ($driverConfiguration) {
+            return $app->make($driverConfiguration[self::CONFIG_PREFERENCES_SUPPLEMENTAL]);
+        });
     }
 
     /**
@@ -368,6 +402,8 @@ class ServiceProvider extends AddonServiceProvider
 
     protected function beforeBoot()
     {
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+
         /** @var Manager $configurationManager */
         $configurationManager = app(Manager::class);
 

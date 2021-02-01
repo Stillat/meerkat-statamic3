@@ -137,7 +137,6 @@ class SocializeController extends Controller
                 $this->formHandler->blueprintName()
             );
         } catch (RejectSubmissionException $rejectSubmissionException) {
-            dd($rejectSubmissionException);
             return $this->formSuccess(
                 $this->formHandler->getSubmissionParameters(),
                 $this->formHandler->getSubmissionData(),

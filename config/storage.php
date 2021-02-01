@@ -54,9 +54,9 @@ return [
             'threads' => \Stillat\Meerkat\Core\Storage\Drivers\Local\LocalThreadStorageManager::class,
             'tasks' => \Stillat\Meerkat\Core\Storage\Drivers\Local\LocalTaskStorageManager::class,
             'mail' => \Stillat\Meerkat\Core\Storage\Drivers\Local\LocalEmailReportStorageManager::class,
-            'user_config' => \Stillat\Meerkat\Configuration\Drivers\Local\LocalUserSettingsConfigurationStorageManager::class,
+            'config_user' => \Stillat\Meerkat\Configuration\Drivers\Local\LocalUserSettingsConfigurationStorageManager::class,
             'supplemental_config' => \Stillat\Meerkat\Configuration\Drivers\Local\LocalSupplementalSettingsStorageManager::class,
-        ]
+        ],
     ],
 
     /*

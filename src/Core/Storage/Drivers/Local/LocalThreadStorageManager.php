@@ -878,7 +878,9 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
     {
         $wasSoftDeleted = $this->softDeleteById($thread->getId());
 
-        $thread->setIsTrashed(true);
+        if ($wasSoftDeleted) {
+            $thread->setIsTrashed(true);
+        }
 
         return $wasSoftDeleted;
     }

@@ -574,7 +574,10 @@ class EloquentThreadStorageManager implements ThreadStorageManagerContract
         }
 
         if ($didRemove === true) {
-            // TODO: Remove all comments for this thread.
+            $bulkDeleteQuery = 'DELETE FROM meerkat_comments WHERE thread_context_id = :context;';
+            DB::statement($bulkDeleteQuery, [
+                'context' => $id
+            ]);
 
             $this->threadPipeline->removed($this->contextResolver->findById($id), null);
         }

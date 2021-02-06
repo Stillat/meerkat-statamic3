@@ -119,26 +119,102 @@ class EloquentThreadStorageManager implements ThreadStorageManagerContract
      */
     public function getAllThreads($withTrashed = false, $withComments = false)
     {
-        dd('getallthreads');
-        // TODO: Implement getAllThreads() method.
+        /** @var DatabaseThread[] $databaseThreads */
+        $databaseThreads = [];
+
+        if ($withTrashed === true) {
+            $databaseThreads = DatabaseThread::withTrashed()->all();
+        } else {
+            $databaseThreads = DatabaseThread::all();
+        }
+
+        $threadsToReturn = [];
+
+        foreach ($databaseThreads as $thread) {
+            $newThread = $this->materializeThreadFromDatabaseRecord($thread, $withComments);
+
+            $threadsToReturn[] = $newThread;
+        }
+
+        return $threadsToReturn;
     }
 
     /**
-     * Returns the identifiers of all currently stored threads.
-     *
-     * @param bool $includeTrashed Indicates if soft-deleted threads should be included.
-     * @return array
+     * @param DatabaseThread|null $threadInstance
+     * @param bool $includeComments
+     * @return Thread|null
      */
-    public function getAllThreadIds($includeTrashed = false)
+    private function materializeThreadFromDatabaseRecord($threadInstance, $includeComments)
     {
-        $query = DB::table('meerkat_threads')->select('context_id');
-
-        if ($includeTrashed === false) {
-            $query = $query->whereNull('deleted_at');
+        if ($threadInstance === null) {
+            return null;
         }
 
-        return $query->get()->pluck('context_id')
-            ->values()->toArray();
+        $metaData = $this->getMetaData($threadInstance);
+
+        $newThread = new Thread();
+
+        $newThread->setMetaData($metaData);
+        $newThread->setId($threadInstance->context_id);
+        $newThread->setContextId($threadInstance->context_id);
+
+        $threadContext = $this->contextResolver->findById($threadInstance->context_id);
+
+        if ($threadContext !== null) {
+            $newThread->setContext($threadContext);
+            $newThread->setIsUsable(true);
+        } else {
+            $newThread->setIsUsable(false);
+            LocalErrorCodeRepository::log(ErrorLog::warning(Errors::THREAD_CONTEXT_NOT_FOUND, $threadInstance->context_id));
+        }
+
+        if ($includeComments) {
+            $newThread->setHierarchy($this->getAllCommentsById($threadInstance->context_id));
+        }
+
+        $newThread->path = $threadInstance->virtual_path;
+
+        return $newThread;
+    }
+
+    /**
+     * @param DatabaseThread $databaseThread The thread record.
+     * @return ThreadMetaData|null
+     */
+    private function getMetaData($databaseThread)
+    {
+        if ($databaseThread === null) {
+            return null;
+        }
+
+        $contextId = $databaseThread->context_id;
+
+        if (array_key_exists($contextId, self::$metaResolverCache)) {
+            return self::$metaResolverCache[$contextId];
+        }
+
+        $attributes = json_decode($databaseThread->meta_data, true);
+
+        $metaData = new ThreadMetaData();
+
+        $metaData->setCreatedOn($databaseThread->created_at->timestamp);
+        $metaData->setIsTrashed($databaseThread->trashed());
+        $metaData->setDataAttributes($attributes);
+
+        self::$metaResolverCache[$contextId] = $metaData;
+
+        return $metaData;
+    }
+
+    /**
+     * Gets all the comments for the provided thread identifier.
+     *
+     * @param string $threadId The thread's string identifier.
+     * @return ThreadHierarchy
+     */
+    public function getAllCommentsById($threadId)
+    {
+        return $this->commentStorageManager->getCommentsForThreadId($threadId);
     }
 
     /**
@@ -178,44 +254,6 @@ class EloquentThreadStorageManager implements ThreadStorageManagerContract
     }
 
     /**
-     * Updates the meta data for the provided thread.
-     *
-     * @param string $contextId The thread's string identifier.
-     * @param ThreadMetaData $metaData
-     * @return bool
-     */
-    public function updateMetaData($contextId, ThreadMetaData $metaData)
-    {
-        $existingThread = $this->locateThreadCandidate($contextId, true);
-        $threadContext = $this->contextResolver->findById($contextId);
-
-        if ($existingThread === null) {
-            return $this->createForContextWithMetaData($threadContext, $metaData->getDataAttributes());
-        }
-
-        if ($threadContext === null) {
-            LocalErrorCodeRepository::log(ErrorLog::make(Errors::THREAD_CONTEXT_NOT_FOUND, $contextId));
-
-            return false;
-        }
-
-        // Clear the deleted_at column if this thread is no longer trashed.
-        if ($metaData->getIsTrashed() == false) {
-            $existingThread->deleted_at = null;
-        }
-
-        $existingThread->meta_data = json_encode($metaData->getDataAttributes());
-
-        $didSave = $existingThread->save();
-
-        if ($didSave === false) {
-            LocalErrorCodeRepository::log(ErrorLog::make(Errors::THREAD_META_DATA_COULD_NOT_BE_SAVED, $contextId));
-        }
-
-        return $didSave;
-    }
-
-    /**
      * Retrieves the comments for the provided thread.
      *
      * @param ThreadContract $thread
@@ -224,42 +262,6 @@ class EloquentThreadStorageManager implements ThreadStorageManagerContract
     public function getAllComments(ThreadContract $thread)
     {
         return $this->getAllCommentsById($thread->getId());
-    }
-
-    /**
-     * Gets all the comments for the provided thread identifier.
-     *
-     * @param string $threadId The thread's string identifier.
-     * @return ThreadHierarchy
-     */
-    public function getAllCommentsById($threadId)
-    {
-        return $this->commentStorageManager->getCommentsForThreadId($threadId);
-    }
-
-    /**
-     * Returns all comments across all threads.
-     *
-     * @return CommentContract[]
-     */
-    public function getAllSystemComments()
-    {
-        $threads = $this->getAllThreadIds();
-        $comments = [];
-
-        foreach ($threads as $thread) {
-            $threadHierarchy = $this->getAllCommentsById($thread);
-
-            if ($threadHierarchy !== null) {
-                $threadComments = $threadHierarchy->getComments();
-
-                foreach ($threadComments as $comment) {
-                    $comments[$comment->getId()] = $comment;
-                }
-            }
-        }
-
-        return $comments;
     }
 
     /**
@@ -288,6 +290,49 @@ class EloquentThreadStorageManager implements ThreadStorageManagerContract
         $builder->where(AuthorContract::AUTHENTICATED_USER_ID, '=', $currentIdentity->getId());
 
         return $builder->get($this->getAllSystemComments())->flattenDataset();
+    }
+
+    /**
+     * Returns all comments across all threads.
+     *
+     * @return CommentContract[]
+     */
+    public function getAllSystemComments()
+    {
+        $threads = $this->getAllThreadIds();
+        $comments = [];
+
+        foreach ($threads as $thread) {
+            $threadHierarchy = $this->getAllCommentsById($thread);
+
+            if ($threadHierarchy !== null) {
+                $threadComments = $threadHierarchy->getComments();
+
+                foreach ($threadComments as $comment) {
+                    $comments[$comment->getId()] = $comment;
+                }
+            }
+        }
+
+        return $comments;
+    }
+
+    /**
+     * Returns the identifiers of all currently stored threads.
+     *
+     * @param bool $includeTrashed Indicates if soft-deleted threads should be included.
+     * @return array
+     */
+    public function getAllThreadIds($includeTrashed = false)
+    {
+        $query = DB::table('meerkat_threads')->select('context_id');
+
+        if ($includeTrashed === false) {
+            $query = $query->whereNull('deleted_at');
+        }
+
+        return $query->get()->pluck('context_id')
+            ->values()->toArray();
     }
 
     /**
@@ -367,6 +412,92 @@ class EloquentThreadStorageManager implements ThreadStorageManagerContract
     }
 
     /**
+     * Updates the meta data for the provided thread.
+     *
+     * @param string $contextId The thread's string identifier.
+     * @param ThreadMetaData $metaData
+     * @return bool
+     */
+    public function updateMetaData($contextId, ThreadMetaData $metaData)
+    {
+        $existingThread = $this->locateThreadCandidate($contextId, true);
+        $threadContext = $this->contextResolver->findById($contextId);
+
+        if ($existingThread === null) {
+            return $this->createForContextWithMetaData($threadContext, $metaData->getDataAttributes());
+        }
+
+        if ($threadContext === null) {
+            LocalErrorCodeRepository::log(ErrorLog::make(Errors::THREAD_CONTEXT_NOT_FOUND, $contextId));
+
+            return false;
+        }
+
+        // Clear the deleted_at column if this thread is no longer trashed.
+        if ($metaData->getIsTrashed() == false) {
+            $existingThread->deleted_at = null;
+        }
+
+        $existingThread->meta_data = json_encode($metaData->getDataAttributes());
+
+        $didSave = $existingThread->save();
+
+        if ($didSave === false) {
+            LocalErrorCodeRepository::log(ErrorLog::make(Errors::THREAD_META_DATA_COULD_NOT_BE_SAVED, $contextId));
+        }
+
+        return $didSave;
+    }
+
+    /**
+     * Attempts to create a new thread for the provided context.
+     *
+     * @param ThreadContextContract $context The thread's context.
+     * @param array $metaAttributes The meta data attributes.
+     * @return bool
+     */
+    private function createForContextWithMetaData(ThreadContextContract $context, $metaAttributes)
+    {
+        if ($context === null) {
+            return false;
+        }
+
+        $virtualPath = $this->determineVirtualPathById($context->getId());
+
+        $threadMetaData = new DatabaseThread();
+        $threadMetaData->meta_data = json_encode($metaAttributes);
+        $threadMetaData->virtual_path = $virtualPath;
+        $threadMetaData->context_id = $context->getId();
+
+        if (RuntimeStateGuard::threadLocks()->isLocked() === false) {
+            $lock = RuntimeStateGuard::threadLocks()->lock();
+
+            $this->threadPipeline->creating($context, null);
+
+            RuntimeStateGuard::threadLocks()->releaseLock($lock);
+        }
+
+        $didSave = $threadMetaData->save();
+
+        if ($didSave === true) {
+            $this->threadPipeline->created($context, null);
+        }
+
+        return $didSave;
+    }
+
+    /**
+     * Generates an internal path for the given thread identifier.
+     *
+     * @param string $id The thread's identifier.
+     * @return string
+     */
+    public function determineVirtualPathById($id)
+    {
+        return Paths::makeNew()->normalize($this->storagePath . Paths::SYM_FORWARD_SEPARATOR . $id);
+    }
+
+    /**
      * Attempts to permanently delete the provided thread instance.
      *
      * @param ThreadContract $thread The thread instance.
@@ -392,52 +523,6 @@ class EloquentThreadStorageManager implements ThreadStorageManagerContract
     public function deleteById($id)
     {
         return $this->removeById($id);
-    }
-
-    /**
-     * Attempts to soft-delete the provided thread instance.
-     *
-     * @param ThreadContract $thread The thread instance.
-     * @return bool
-     */
-    public function softDelete(ThreadContract $thread)
-    {
-        $wasSoftDeleted = $this->softDeleteById($thread->getContextId());
-
-        if ($wasSoftDeleted) {
-            $thread->setIsTrashed(true);
-        }
-
-        return $wasSoftDeleted;
-    }
-
-    /**
-     * Attempts to soft-delete a thread by its identifier.
-     * s
-     * @param string $id The thread's identifier.
-     * @return bool
-     * @throws Exception
-     */
-    public function softDeleteById($id)
-    {
-        $thread = $this->locateThreadCandidate($id, true);
-
-        if ($thread === null) {
-            return false;
-        }
-
-        $deleteResults = $thread->delete();
-        $wasSoftDeleted = true;
-
-        if ($deleteResults === null || $deleteResults === false) {
-            $wasSoftDeleted = false;
-        }
-
-        if ($wasSoftDeleted) {
-            $this->threadPipeline->softDeleted($this->contextResolver->findById($id), null);
-        }
-
-        return $wasSoftDeleted;
     }
 
     /**
@@ -496,6 +581,52 @@ class EloquentThreadStorageManager implements ThreadStorageManagerContract
     }
 
     /**
+     * Attempts to soft-delete a thread by its identifier.
+     * s
+     * @param string $id The thread's identifier.
+     * @return bool
+     * @throws Exception
+     */
+    public function softDeleteById($id)
+    {
+        $thread = $this->locateThreadCandidate($id, true);
+
+        if ($thread === null) {
+            return false;
+        }
+
+        $deleteResults = $thread->delete();
+        $wasSoftDeleted = true;
+
+        if ($deleteResults === null || $deleteResults === false) {
+            $wasSoftDeleted = false;
+        }
+
+        if ($wasSoftDeleted) {
+            $this->threadPipeline->softDeleted($this->contextResolver->findById($id), null);
+        }
+
+        return $wasSoftDeleted;
+    }
+
+    /**
+     * Attempts to soft-delete the provided thread instance.
+     *
+     * @param ThreadContract $thread The thread instance.
+     * @return bool
+     */
+    public function softDelete(ThreadContract $thread)
+    {
+        $wasSoftDeleted = $this->softDeleteById($thread->getContextId());
+
+        if ($wasSoftDeleted) {
+            $thread->setIsTrashed(true);
+        }
+
+        return $wasSoftDeleted;
+    }
+
+    /**
      * Attempts to move comments from one thread to another thread.
      *
      * @param string $sourceThreadId The identifier of the thread to move data from.
@@ -549,122 +680,6 @@ class EloquentThreadStorageManager implements ThreadStorageManagerContract
     public function createForContext(ThreadContextContract $context)
     {
         return $this->createForContextWithMetaData($context, []);
-    }
-
-    /**
-     * Attempts to create a new thread for the provided context.
-     *
-     * @param ThreadContextContract $context The thread's context.
-     * @param array $metaAttributes The meta data attributes.
-     * @return bool
-     */
-    private function createForContextWithMetaData(ThreadContextContract $context, $metaAttributes)
-    {
-        if ($context === null) {
-            return false;
-        }
-
-        $virtualPath = $this->determineVirtualPathById($context->getId());
-
-        $threadMetaData = new DatabaseThread();
-        $threadMetaData->meta_data = json_encode($metaAttributes);
-        $threadMetaData->virtual_path = $virtualPath;
-        $threadMetaData->context_id = $context->getId();
-
-        if (RuntimeStateGuard::threadLocks()->isLocked() === false) {
-            $lock = RuntimeStateGuard::threadLocks()->lock();
-
-            $this->threadPipeline->creating($context, null);
-
-            RuntimeStateGuard::threadLocks()->releaseLock($lock);
-        }
-
-        $didSave = $threadMetaData->save();
-
-        if ($didSave === true) {
-            $this->threadPipeline->created($context, null);
-        }
-
-        return $didSave;
-    }
-
-    /**
-     * Generates an internal path for the given thread identifier.
-     *
-     * @param string $id The thread's identifier.
-     * @return string
-     */
-    public function determineVirtualPathById($id)
-    {
-        return Paths::makeNew()->normalize($this->storagePath . Paths::SYM_FORWARD_SEPARATOR . $id);
-    }
-
-    /**
-     * @param DatabaseThread|null $threadInstance
-     * @param bool $includeComments
-     * @return Thread|null
-     */
-    private function materializeThreadFromDatabaseRecord($threadInstance, $includeComments)
-    {
-        if ($threadInstance === null) {
-            return null;
-        }
-
-        $metaData = $this->getMetaData($threadInstance);
-
-        $newThread = new Thread();
-
-        $newThread->setMetaData($metaData);
-        $newThread->setId($threadInstance->context_id);
-        $newThread->setContextId($threadInstance->context_id);
-
-        $threadContext = $this->contextResolver->findById($threadInstance->context_id);
-
-        if ($threadContext !== null) {
-            $newThread->setContext($threadContext);
-            $newThread->setIsUsable(true);
-        } else {
-            $newThread->setIsUsable(false);
-            LocalErrorCodeRepository::log(ErrorLog::warning(Errors::THREAD_CONTEXT_NOT_FOUND, $threadInstance->context_id));
-        }
-
-        if ($includeComments) {
-            $newThread->setHierarchy($this->getAllCommentsById($threadInstance->context_id));
-        }
-
-        $newThread->path = $threadInstance->virtual_path;
-
-        return $newThread;
-    }
-
-
-    /**
-     * @param DatabaseThread $databaseThread The thread record.
-     * @return ThreadMetaData|null
-     */
-    private function getMetaData($databaseThread)
-    {
-        if ($databaseThread === null) {
-            return null;
-        }
-
-        $contextId = $databaseThread->context_id;
-
-        if (array_key_exists($contextId, self::$metaResolverCache)) {
-            return self::$metaResolverCache[$contextId];
-        }
-
-        $attributes = json_decode($databaseThread->meta_data, true);
-
-        $metaData = new ThreadMetaData();
-
-        $metaData->setCreatedOn($databaseThread->created_at->timestamp);
-        $metaData->setIsTrashed($databaseThread->trashed());
-        $metaData->setDataAttributes($attributes);
-
-        self::$metaResolverCache[$contextId] = $metaData;
-
-        return $metaData;
     }
 
 }

@@ -502,6 +502,7 @@ class EloquentThreadStorageManager implements ThreadStorageManagerContract
      *
      * @param ThreadContract $thread The thread instance.
      * @return bool
+     * @throws Exception
      */
     public function delete(ThreadContract $thread)
     {
@@ -644,9 +645,25 @@ class EloquentThreadStorageManager implements ThreadStorageManagerContract
             return false;
         }
 
-        // TODO: Implement moveThread() method.
-        // TODO: Move all comments on source thread to target thread.
-        // TODO: After moving comments, force delete source thread silently.
+        $moveThreadCommentsQuery = 'UPDATE meerkat_comments SET thread_context_id = :target WHERE thread_context_id = :source;';
+
+        $dbResult = DB::statement($moveThreadCommentsQuery, [
+            'target' => $targetThreadId,
+            'source' => $sourceThreadId
+        ]);
+
+        if ($dbResult === true) {
+            $deleteResults = $sourceThread->forceDelete();
+            $didDelete = true;
+
+            if ($deleteResults === null || $deleteResults === false) {
+                $didDelete = false;
+            }
+
+            return $didDelete;
+        }
+
+        return false;
     }
 
     /**

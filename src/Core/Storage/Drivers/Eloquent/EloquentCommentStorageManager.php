@@ -482,13 +482,38 @@ class EloquentCommentStorageManager implements CommentStorageManagerContract
             $databaseComment->is_spam = null;
         }
 
-        $databaseComment->save();
+        $didCommentSave = $databaseComment->save();
 
-        dd($comment->getVirtualPath());
+        if ($didCommentSave === true) {
+            $this->commentStructureResolver->clearThreadCache($comment->getThreadId());
+            // Reload the comment to supply the full comment details.
+            $savedComment = $this->findById($comment->getId());
 
+            $this->commentPipeline->created($savedComment, null);
 
-        dd('savey save', $comment);
-        // TODO: Implement save() method.
+            if ($comment->hasDataAttribute(CommentContract::KEY_SPAM)) {
+                if ($comment->isSpam()) {
+                    $this->commentPipeline->markedAsSpam($savedComment, null);
+                } else {
+                    $this->commentPipeline->markedAsHam($savedComment, null);
+                }
+            }
+
+            if ($comment->hasDataAttribute(CommentContract::KEY_PUBLISHED)) {
+                if ($comment->published()) {
+                    $this->commentPipeline->approved($savedComment, null);
+                } else {
+                    $this->commentPipeline->unapproved($savedComment, null);
+                }
+            }
+
+            if ($comment->isReply()) {
+                $this->commentPipeline->replied($savedComment, null);
+            }
+
+        }
+
+        return $didCommentSave;
     }
 
     /**

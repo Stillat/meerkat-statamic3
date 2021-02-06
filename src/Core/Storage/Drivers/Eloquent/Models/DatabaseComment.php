@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int id The storage system's identifier.
  * @property int|null parent_compatibility_id
  * @property int compatibility_id
+ * @property string|null statamic_user_id
  * @property string thread_context_id
  * @property int depth
  * @property bool is_root

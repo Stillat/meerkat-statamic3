@@ -19,14 +19,12 @@ use Stillat\Meerkat\Core\Contracts\Storage\StructureResolverInterface;
 use Stillat\Meerkat\Core\Data\Mutations\ChangeSet;
 use Stillat\Meerkat\Core\Data\Validators\CommentValidator;
 use Stillat\Meerkat\Core\RuntimeStateGuard;
-use Stillat\Meerkat\Core\Storage\CommentArrayStructureResolver;
 use Stillat\Meerkat\Core\Storage\Data\CommentAuthorRetriever;
 use Stillat\Meerkat\Core\Storage\Drivers\Eloquent\Models\DatabaseComment;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalCommentStorageManager;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalCommentStructureResolver;
 use Stillat\Meerkat\Core\Storage\Paths;
 use Stillat\Meerkat\Core\Support\Str;
-use Stillat\Meerkat\Core\Threads\Thread;
 use Stillat\Meerkat\Core\Threads\ThreadHierarchy;
 
 class EloquentCommentStorageManager implements CommentStorageManagerContract

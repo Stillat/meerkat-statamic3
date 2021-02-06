@@ -2,23 +2,29 @@
 
 namespace Stillat\Meerkat\Core\Storage\Drivers\Eloquent;
 
+use DateTime;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Stillat\Meerkat\Core\Comments\AffectsCommentsResult;
 use Stillat\Meerkat\Core\Comments\Comment;
+use Stillat\Meerkat\Core\Comments\DynamicCollectedProperties;
 use Stillat\Meerkat\Core\Comments\VariableSuccessResult;
 use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
+use Stillat\Meerkat\Core\Contracts\Comments\CommentMutationPipelineContract;
+use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\StructureResolverInterface;
 use Stillat\Meerkat\Core\Data\Mutations\ChangeSet;
+use Stillat\Meerkat\Core\Data\Validators\CommentValidator;
 use Stillat\Meerkat\Core\RuntimeStateGuard;
 use Stillat\Meerkat\Core\Storage\CommentArrayStructureResolver;
 use Stillat\Meerkat\Core\Storage\Data\CommentAuthorRetriever;
 use Stillat\Meerkat\Core\Storage\Drivers\Eloquent\Models\DatabaseComment;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalCommentStructureResolver;
 use Stillat\Meerkat\Core\Storage\Paths;
+use Stillat\Meerkat\Core\Threads\Thread;
 use Stillat\Meerkat\Core\Threads\ThreadHierarchy;
 
 class EloquentCommentStorageManager implements CommentStorageManagerContract
@@ -65,14 +71,23 @@ class EloquentCommentStorageManager implements CommentStorageManagerContract
      */
     private $markdownParser = null;
 
+    /**
+     * The CommentMutationPipelineContract implementation instance.
+     *
+     * @var CommentMutationPipelineContract
+     */
+    private $commentPipeline = null;
+
     public function __construct(
         Configuration $config,
         MarkdownParserContract $markdownParser,
+        CommentMutationPipelineContract $commentPipeline,
         CommentAuthorRetriever $authorRetriever)
     {
         $this->config = $config;
         $this->markdownParser = $markdownParser;
         $this->authorRetriever = $authorRetriever;
+        $this->commentPipeline = $commentPipeline;
         $this->paths = new Paths($config);
         $this->commentStructureResolver = new LocalCommentStructureResolver();
     }
@@ -152,32 +167,223 @@ class EloquentCommentStorageManager implements CommentStorageManagerContract
 
     /**
      * @param DatabaseComment $databaseComment
+     * @param ThreadHierarchy $hierarchy
+     * @param DatabaseComment[] $commentPrototypes
      * @return CommentContract
      */
-    private function databaseCommentToCommentContract($databaseComment)
+    private function databaseCommentToCommentContract($databaseComment, ThreadHierarchy &$hierarchy, $commentPrototypes)
     {
         $comment = new Comment();
         $dataAttributes = json_decode($databaseComment->comment_attributes, true);
+
+        $comment->setThreadId($databaseComment->thread_context_id);
 
         $comment->setRawContent($databaseComment->content);
         $comment->setDataAttributes($dataAttributes);
         $comment->setRawAttributes($dataAttributes);
         $comment->setIsNew(false);
 
-        $comment->setThreadId($databaseComment->thread_context_id);
         $comment->flagRuntimeAttributesResolved();
 
-        $comment->setYamlParser(null);
-        $comment->setMarkdownParser($this->markdownParser);
         // Start: Comment Implementation Specifics (not contract).
         $comment->setStorageManager($this);
         $comment->setAuthorRetriever($this->authorRetriever);
         // End:   Comment Implementation Specifics
 
-        // TODO: Implement.
-        $comment->setDataAttribute(CommentContract::KEY_CHILDREN, []);
+        $comment->setYamlParser(null);
+        $comment->setMarkdownParser($this->markdownParser);
+
+        $hasAuthorEmail = false;
+        $hasAuthorName = false;
+
+        if (array_key_exists(AuthorContract::KEY_EMAIL_ADDRESS, $dataAttributes)) {
+            $authorEmailCandidate = $dataAttributes[AuthorContract::KEY_EMAIL_ADDRESS];
+
+            if ($authorEmailCandidate !== null && mb_strlen(trim($authorEmailCandidate)) > 0) {
+                $hasAuthorEmail = true;
+            }
+        }
+
+        if (array_key_exists(AuthorContract::KEY_NAME, $dataAttributes)) {
+            $authorNameCandidate = $dataAttributes[AuthorContract::KEY_NAME];
+
+            if ($authorNameCandidate !== null && mb_strlen(trim($authorNameCandidate)) > 0) {
+                $hasAuthorName = true;
+            }
+        }
+
+        $comment->setDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_NAME, $hasAuthorName);
+        $comment->setDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_EMAIL, $hasAuthorEmail);
+
+        $threadId = $comment->getThreadId();
+        $commentId = $comment->getId();
+
+        $hasAncestor = $hierarchy->hasAncestor($commentId);
+        $directChildren = $hierarchy->getDirectDescendents($commentId);
+        $allDescendents = $hierarchy->getAllDescendents($commentId);
+        $children = [];
+
+        $isParent = count($directChildren) > 0;
+
+        $commentDate = new DateTime();
+        $commentDate->setTimestamp(intval($commentId));
+
+        $commentDateFormatted = $commentDate->format($this->config->getFormattingConfiguration()->commentDateFormat);
+
+        $comment->setDataAttribute(CommentContract::KEY_COMMENT_DATE, $commentDate);
+        $comment->setDataAttribute(CommentContract::KEY_COMMENT_DATE_FORMATTED, $commentDateFormatted);
+        $comment->setDataAttribute(CommentContract::KEY_IS_ROOT, !$hasAncestor);
+        $comment->setDataAttribute(CommentContract::KEY_IS_PARENT, $isParent);
+        $comment->setDataAttribute(CommentContract::KEY_DESCENDENTS, $allDescendents);
+        $comment->setDataAttribute(CommentContract::INTERNAL_CONTEXT_ID, $threadId);
+
+        if (count($allDescendents) == 0) {
+            $comment->setDataAttribute(CommentContract::INTERNAL_ABSOLUTE_ROOT, $commentId);
+        } else {
+            $comment->setDataAttribute(CommentContract::INTERNAL_ABSOLUTE_ROOT, $allDescendents[0]);
+        }
+
+        $comment->setDataAttribute(
+            CommentContract::KEY_DEPTH,
+            $hierarchy->getDepth($commentId)
+        );
+
+        $comment->setDataAttribute(
+            CommentContract::KEY_ANCESTORS,
+            $hierarchy->getAllAncestors($commentId)
+        );
+
+        if ($isParent) {
+            foreach ($directChildren as $child) {
+                if (array_key_exists($child, $commentPrototypes)) {
+                    $children[] = $commentPrototypes[$child];
+                }
+            }
+
+            $comment->setDataAttribute(CommentContract::KEY_HAS_REPLIES, true);
+        } else {
+            $comment->setDataAttribute(CommentContract::KEY_HAS_REPLIES, false);
+        }
+
+        if ($hasAncestor) {
+            $commentParent = $hierarchy->getParent($commentId);
+
+            if (array_key_exists($commentParent, $commentPrototypes)) {
+                /** @var CommentContract $parentPrototype */
+                $parentPrototype = $commentPrototypes[$commentParent];
+                $parentAuthor = $parentPrototype->getAuthor();
+
+                if ($parentAuthor !== null) {
+                    $comment->setParentAuthor($parentAuthor);
+                }
+
+                $comment->setDataAttribute(CommentContract::KEY_PARENT, $parentPrototype);
+            }
+        }
+
+        $comment->setDataAttribute(CommentContract::KEY_CHILDREN, $children);
+        $comment->setDataAttribute(CommentContract::KEY_IS_REPLY, $hasAncestor);
+        $comment->setReplies($children);
+
+        // TODO: Revision count.
+
+        // Executes the comment collecting pipeline events. This is an incredibly powerful
+        // tool for third-party developers, but we need to keep an eye on performance.
+        $this->runCollectionHookOnComment($comment);
 
         return $comment;
+    }
+
+    /**
+     * Runs the requested mutation on the comment.
+     *
+     * @param string $originalId The original string identifier.
+     * @param CommentContract $comment The comment to run mutations against.
+     * @param string $mutation The mutation to run.
+     * @return mixed
+     */
+    private function runMutablePipeline($originalId, $comment, $mutation)
+    {
+        if (RuntimeStateGuard::mutationLocks()->isLocked()) {
+            return $comment;
+        }
+
+        $lock = RuntimeStateGuard::mutationLocks()->lock();
+
+        /** @var CommentContract|null $pipelineResult */
+        $pipelineResult = null;
+
+        if (method_exists($this->commentPipeline, $mutation)) {
+            $this->commentPipeline->$mutation($comment, function ($result) use (&$pipelineResult) {
+                $pipelineResult = $this->mergeFromPipelineResults($pipelineResult, $result);
+            });
+        }
+
+        RuntimeStateGuard::mutationLocks()->releaseLock($lock);
+
+        return $this->reassignFromPipeline($originalId, $comment, $pipelineResult);
+    }
+
+    /**
+     * Attempts to merge a new result into an existing pipeline result.
+     *
+     * @param CommentContract|null $currentPipelineResult The current pipeline result.
+     * @param CommentContract|null $result The result to merge.
+     * @return CommentContract|null
+     */
+    private function mergeFromPipelineResults($currentPipelineResult, $result)
+    {
+        if (CommentValidator::check($result)) {
+            if ($currentPipelineResult === null) {
+                $currentPipelineResult = $result;
+            } else {
+                $currentPipelineResult->mergeAttributes($result->getStorableAttributes());
+            }
+        }
+
+        return $currentPipelineResult;
+    }
+
+    /**
+     * Reassigns the result's identifier.
+     * @param string $originalId The comment identifier.
+     * @param CommentContract $comment The comment to reassign to.
+     * @param CommentContract|null $pipelineResult The aggregate pipeline result.
+     * @return CommentContract
+     */
+    private function reassignFromPipeline($originalId, $comment, $pipelineResult)
+    {
+        if (CommentValidator::check($pipelineResult)) {
+            $pipelineResult->setDataAttribute(CommentContract::KEY_ID, $originalId);
+
+            return $pipelineResult;
+        }
+
+        return $comment;
+    }
+
+    /**
+     * Executes the collecting hook on the comment.
+     *
+     * @param CommentContract $comment The comment to run the hook on.
+     */
+    private function runCollectionHookOnComment($comment)
+    {
+        if ($comment === null || $comment instanceof CommentContract === false) {
+            return;
+        }
+
+        $preMutationAttributes = $comment->getDataAttributeNames();
+
+        $this->runMutablePipeline($comment->getId(),
+            $comment, CommentMutationPipelineContract::METHOD_COLLECTING);
+
+        $comment->setDataAttribute(CommentContract::INTERNAL_HAS_COLLECTED, true);
+        $postCollectionAttributes = $comment->getDataAttributeNames();
+
+        DynamicCollectedProperties::registerDynamicProperties(
+            $preMutationAttributes, $postCollectionAttributes
+        );
     }
 
     /**
@@ -203,24 +409,31 @@ class EloquentCommentStorageManager implements CommentStorageManagerContract
      */
     public function getCommentsForThreadId($threadId)
     {
+        $storageLock = RuntimeStateGuard::storageLocks()->lock();
+
         /** @var Collection $threadComments */
         $threadComments = DatabaseComment::where('thread_context_id', $threadId)->withTrashed()->get();
         $virtualPaths = $threadComments->pluck('virtual_path')->values()->sortByDesc(function ($path) {
             return mb_strlen($path);
         })->toArray();
 
-
         $virtualThreadPath =  $this->paths->combine([$threadId]);
 
         $hierarchy = $this->commentStructureResolver->resolve($virtualThreadPath, $virtualPaths);
 
-        $comments = $threadComments->map(function (DatabaseComment $comment) {
-            return $this->databaseCommentToCommentContract($comment);
+        $threadCommentArray = $threadComments->keyBy(function (DatabaseComment $comment) {
+            return $comment->compatibility_id;
+        })->toArray();
+
+        $comments = $threadComments->map(function (DatabaseComment $comment) use (&$hierarchy, &$threadCommentArray) {
+            return $this->databaseCommentToCommentContract($comment, $hierarchy, $threadCommentArray);
         })->keyBy(function (CommentContract $comment) {
             return $comment->getId();
         })->toArray();
 
         $hierarchy->setComments($comments);
+
+        RuntimeStateGuard::storageLocks()->releaseLock($storageLock);
 
         return $hierarchy;
     }

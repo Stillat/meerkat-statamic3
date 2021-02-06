@@ -22,8 +22,10 @@ use Stillat\Meerkat\Core\RuntimeStateGuard;
 use Stillat\Meerkat\Core\Storage\CommentArrayStructureResolver;
 use Stillat\Meerkat\Core\Storage\Data\CommentAuthorRetriever;
 use Stillat\Meerkat\Core\Storage\Drivers\Eloquent\Models\DatabaseComment;
+use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalCommentStorageManager;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalCommentStructureResolver;
 use Stillat\Meerkat\Core\Storage\Paths;
+use Stillat\Meerkat\Core\Support\Str;
 use Stillat\Meerkat\Core\Threads\Thread;
 use Stillat\Meerkat\Core\Threads\ThreadHierarchy;
 
@@ -110,8 +112,65 @@ class EloquentCommentStorageManager implements CommentStorageManagerContract
      */
     public function findById($id)
     {
-        dd(__METHOD__);
-        // TODO: Implement findById() method.
+        /** @var DatabaseComment $databaseComment */
+        $databaseComment = DatabaseComment::where('compatibility_id', $id)->withTrashed()->first();
+
+        if ($databaseComment === null) {
+            return null;
+        }
+
+        $virtualPath = $databaseComment->virtual_path;
+        $virtualPaths = $this->inferRelationshipsFromPath($databaseComment->compatibility_id, $virtualPath);
+        $threadComments = collect([$databaseComment]);
+        $threadId = $databaseComment->thread_context_id;
+        $virtualThreadPath = $this->paths->combine([$databaseComment->thread_context_id]);
+
+        $simpleHierarchy = $this->getThreadHierarchy($virtualThreadPath, $threadId, $virtualPaths, $threadComments);
+
+        if ($simpleHierarchy->hasComment($id)) {
+            $comment =  $simpleHierarchy->getComment($id);
+
+            if ($comment !== null) {
+                $comment->setThreadId($threadId);
+            }
+
+            return $comment;
+        }
+
+        return null;
+    }
+
+    /**
+     * Infers ancestor relationships from the comment path, to assist with lazy-loading.
+     *
+     * @param string $id The known comment identifier.
+     * @param string $path The comment path.
+     * @return string[]
+     * @since 2.0.12
+     */
+    private function inferRelationshipsFromPath($id, $path)
+    {
+        $resolvedPaths = [];
+        $subStructurePath = $this->paths->combine([
+            LocalCommentStorageManager::PATH_REPLIES_DIRECTORY,
+            $id,
+            LocalCommentStorageManager::PATH_COMMENT_FILE
+        ]);
+
+        if (Str::endsWith($path, $subStructurePath)) {
+            $parentPath = $this->paths->combine([
+                mb_substr($path, 0, mb_strlen($path) - mb_strlen($subStructurePath)),
+                LocalCommentStorageManager::PATH_COMMENT_FILE
+            ]);
+
+            if (file_exists($parentPath)) {
+                $resolvedPaths[] = $parentPath;
+            }
+        }
+
+        $resolvedPaths[] = $path;
+
+        return $resolvedPaths;
     }
 
     /**
@@ -148,8 +207,14 @@ class EloquentCommentStorageManager implements CommentStorageManagerContract
      */
     public function getPathById($commentId)
     {
-        dd(__METHOD__);
-        // TODO: Implement getPathById() method.
+        /** @var DatabaseComment $databaseComment */
+        $databaseComment = DatabaseComment::where('compatibility_id', $commentId)->withTrashed()->first();
+
+        if ($databaseComment === null) {
+            return null;
+        }
+
+        return $databaseComment->virtual_path;
     }
 
     /**
@@ -161,8 +226,22 @@ class EloquentCommentStorageManager implements CommentStorageManagerContract
      */
     public function getReplyPathById($parentId, $childId)
     {
-        dd(__METHOD__);
-        // TODO: Implement getReplyPathById() method.
+        $basePath = $this->getPathById($parentId);
+
+        if (Str::endsWith($basePath, CommentContract::COMMENT_FILENAME)) {
+            $basePath = mb_substr($basePath, 0, -1 * (mb_strlen(CommentContract::COMMENT_FILENAME)));
+        }
+
+        if (Str::endsWith($basePath, Paths::SYM_FORWARD_SEPARATOR)) {
+            $basePath = mb_substr($basePath, 0, -1);
+        }
+
+        return $this->paths->combine([
+            $basePath,
+            LocalCommentStorageManager::PATH_REPLIES_DIRECTORY,
+            $childId,
+            CommentContract::COMMENT_FILENAME
+        ]);
     }
 
     /**
@@ -409,7 +488,6 @@ class EloquentCommentStorageManager implements CommentStorageManagerContract
      */
     public function getCommentsForThreadId($threadId)
     {
-        $storageLock = RuntimeStateGuard::storageLocks()->lock();
 
         /** @var Collection $threadComments */
         $threadComments = DatabaseComment::where('thread_context_id', $threadId)->withTrashed()->get();
@@ -419,13 +497,20 @@ class EloquentCommentStorageManager implements CommentStorageManagerContract
 
         $virtualThreadPath =  $this->paths->combine([$threadId]);
 
+        return $this->getThreadHierarchy($virtualThreadPath, $threadId, $virtualPaths, $threadComments);
+    }
+
+    private function getThreadHierarchy($virtualThreadPath, $threadId, $virtualPaths, $comments)
+    {
+        $storageLock = RuntimeStateGuard::storageLocks()->lock();
+
         $hierarchy = $this->commentStructureResolver->resolve($virtualThreadPath, $virtualPaths);
 
-        $threadCommentArray = $threadComments->keyBy(function (DatabaseComment $comment) {
+        $threadCommentArray = $comments->keyBy(function (DatabaseComment $comment) {
             return $comment->compatibility_id;
         })->toArray();
 
-        $comments = $threadComments->map(function (DatabaseComment $comment) use (&$hierarchy, &$threadCommentArray) {
+        $comments = $comments->map(function (DatabaseComment $comment) use (&$hierarchy, &$threadCommentArray) {
             return $this->databaseCommentToCommentContract($comment, $hierarchy, $threadCommentArray);
         })->keyBy(function (CommentContract $comment) {
             return $comment->getId();
@@ -465,7 +550,7 @@ class EloquentCommentStorageManager implements CommentStorageManagerContract
         $databaseComment->is_parent = $comment->isParent();
         $databaseComment->is_published = $comment->published();
         $databaseComment->content = $comment->getRawContent();
-        $databaseComment->virtual_path = $this->generateVirtualPath($comment->getThreadId(), $comment->getId());
+        $databaseComment->virtual_path = $comment->getVirtualPath();
         $databaseComment->comment_attributes = json_encode($comment->getDataAttributes());
 
         if ($comment->leftByAuthenticatedUser()) {

@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat\Core\Storage\Drivers\Eloquent;
 
 use Exception;
+use Illuminate\Support\Facades\DB;
 use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
@@ -130,8 +131,14 @@ class EloquentThreadStorageManager implements ThreadStorageManagerContract
      */
     public function getAllThreadIds($includeTrashed = false)
     {
-        dd('getallthreadids');
-        // TODO: Implement getAllThreadIds() method.
+        $query = DB::table('meerkat_threads')->select('context_id');
+
+        if ($includeTrashed === false) {
+            $query = $query->whereNull('deleted_at');
+        }
+
+        return $query->get()->pluck('context_id')
+            ->values()->toArray();
     }
 
     /**

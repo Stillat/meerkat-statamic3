@@ -522,7 +522,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Executes the collecting hook on the comment.
      *
-     * @param CommentContract[] $comment The comment to run the hook on.
+     * @param CommentContract $comment The comment to run the hook on.
      */
     private function runCollectionHookOnComment($comment)
     {

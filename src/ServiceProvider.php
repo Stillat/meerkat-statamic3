@@ -105,28 +105,6 @@ class ServiceProvider extends AddonServiceProvider
     {
         $this->createPaths();
 
-        $this->registerSupplementalStorageDriver();
-
-        $this->app->singleton(Manager::class, function ($app) {
-            $supplementalStorageManager = $app->make(SupplementalStorageManagerContract::class);
-
-            return new Manager($supplementalStorageManager);
-        });
-
-        Manager::$instance = app(Manager::class);
-
-        Manager::$instance->loadConfiguration();
-
-        // Registers the error log repository utilized by many Meerkat services and features.
-        $this->registerMeerkatCoreErrorLogRepository();
-        // Register Meerkat Core configuration containers.
-        $this->registerMeerkatSpamGuardConfiguration();
-        $this->registerMeerkatDataPrivacyConfiguration(); // Global Configuration relies on this.
-        $this->registerMeerkatFormattingConfiguration(); // Global Configuration relies on the formatting config.
-        $this->registerMeerkatGlobalConfiguration();
-        $this->registerCoreDependencies();
-        $this->checkIntegrationResourcesExist();
-        $this->registerSubmissionHandler();
 
         parent::register();
     }
@@ -398,6 +376,29 @@ class ServiceProvider extends AddonServiceProvider
 
     protected function beforeBoot()
     {
+        $this->registerSupplementalStorageDriver();
+
+        $this->app->singleton(Manager::class, function ($app) {
+            $supplementalStorageManager = $app->make(SupplementalStorageManagerContract::class);
+
+            return new Manager($supplementalStorageManager);
+        });
+
+        Manager::$instance = app(Manager::class);
+
+        Manager::$instance->loadConfiguration();
+
+        // Registers the error log repository utilized by many Meerkat services and features.
+        $this->registerMeerkatCoreErrorLogRepository();
+        // Register Meerkat Core configuration containers.
+        $this->registerMeerkatSpamGuardConfiguration();
+        $this->registerMeerkatDataPrivacyConfiguration(); // Global Configuration relies on this.
+        $this->registerMeerkatFormattingConfiguration(); // Global Configuration relies on the formatting config.
+        $this->registerMeerkatGlobalConfiguration();
+        $this->registerCoreDependencies();
+        $this->checkIntegrationResourcesExist();
+        $this->registerSubmissionHandler();
+
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
         /** @var Manager $configurationManager */

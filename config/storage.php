@@ -57,6 +57,15 @@ return [
             'config_user' => \Stillat\Meerkat\Configuration\Drivers\Local\LocalUserSettingsConfigurationStorageManager::class,
             'supplemental_config' => \Stillat\Meerkat\Configuration\Drivers\Local\LocalSupplementalSettingsStorageManager::class,
         ],
+        'db' => [
+            'comments' => \Stillat\Meerkat\Core\Storage\Drivers\Local\LocalCommentStorageManager::class,
+            'spam_reports' => \Stillat\Meerkat\Core\Storage\Drivers\Local\LocalGuardReportStorageManager::class,
+            'threads' => \Stillat\Meerkat\Core\Storage\Drivers\Local\LocalThreadStorageManager::class,
+            'tasks' => \Stillat\Meerkat\Core\Storage\Drivers\Local\LocalTaskStorageManager::class,
+            'mail' => \Stillat\Meerkat\Core\Storage\Drivers\Local\LocalEmailReportStorageManager::class,
+            'config_user' => \Stillat\Meerkat\Configuration\Drivers\Eloquent\DatabaseUserSettingsConfigurationStorageManager::class,
+            'supplemental_config' => \Stillat\Meerkat\Configuration\Drivers\Eloquent\DatabaseSupplementalSettingsStorageManager::class,
+        ],
     ],
 
     /*

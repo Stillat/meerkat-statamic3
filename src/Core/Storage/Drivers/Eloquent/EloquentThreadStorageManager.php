@@ -107,7 +107,10 @@ class EloquentThreadStorageManager implements ThreadStorageManagerContract
      */
     public function validate()
     {
-        // TODO: Implement validate() method.
+        $result = new ValidationResult();
+        $result->isValid = true;
+
+        return $result;
     }
 
     /**

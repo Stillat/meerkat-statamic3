@@ -2,8 +2,10 @@
 
 namespace Stillat\Meerkat\Configuration\Drivers\Eloquent;
 
+use Illuminate\Database\QueryException;
 use Stillat\Meerkat\Configuration\Drivers\Eloquent\Models\SupplementalPreferences;
 use Stillat\Meerkat\Contracts\Configuration\SupplementalStorageManagerContract;
+use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
 
 /**
  * Class DatabaseSupplementalSettingsStorageManager
@@ -43,7 +45,18 @@ class DatabaseSupplementalSettingsStorageManager implements SupplementalStorageM
      */
     private function getUsableConfigurationEntry()
     {
-        return SupplementalPreferences::whereNull('deleted_at')->first();
+        $entry = null;
+
+        try {
+            $entry = SupplementalPreferences::whereNull('deleted_at')->first();
+        } catch (QueryException $e) {
+            ExceptionLoggerFactory::log($e);
+
+            $entry = null;
+        }
+
+
+        return $entry;
     }
 
     /**

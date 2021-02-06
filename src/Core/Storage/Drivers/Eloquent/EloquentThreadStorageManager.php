@@ -519,6 +519,7 @@ class EloquentThreadStorageManager implements ThreadStorageManagerContract
      *
      * @param string $id The thread's identifier.
      * @return bool
+     * @throws Exception
      */
     public function deleteById($id)
     {
@@ -614,6 +615,7 @@ class EloquentThreadStorageManager implements ThreadStorageManagerContract
      *
      * @param ThreadContract $thread The thread instance.
      * @return bool
+     * @throws Exception
      */
     public function softDelete(ThreadContract $thread)
     {

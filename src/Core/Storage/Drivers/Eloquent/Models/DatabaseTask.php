@@ -16,14 +16,20 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int task_status The internal task status.
  * @property string task_name The internal task name.
  * @property bool is_complete Indicates if the task has completed.
+ * @property bool was_canceled Indicates if the task was canceled.
  * @property string task_args The json_encode'd task arguments.
  * @property Carbon created_at The date/time instance the thread was created.
  * @property Carbon updated_at The date/time instance the thread was last updated.
+ * @property Carbon|null completed_on The date/time instance the thread was completed.
  */
 class DatabaseTask extends Model
 {
     use HasTimestamps;
 
     protected $table = 'meerkat_tasks';
+
+    protected $casts = [
+        'completed_on' => 'date'
+    ];
 
 }

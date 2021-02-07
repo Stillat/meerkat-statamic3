@@ -2,11 +2,27 @@
 
 namespace Stillat\Meerkat\Core\Storage\Drivers\Eloquent;
 
+use Carbon\Carbon;
+use Statamic\Facades\Data;
 use Stillat\Meerkat\Core\Contracts\Storage\TaskStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Tasks\TaskContract;
+use Stillat\Meerkat\Core\Storage\Drivers\Eloquent\Models\DatabaseTask;
+use Stillat\Meerkat\Core\Tasks\Task;
 
 class DatabaseTaskStorageManager implements TaskStorageManagerContract
 {
+
+
+    /**
+     * Attempts to locate a task record with the provided identifier.
+     *
+     * @param string $taskId The task's system identifier.
+     * @return DatabaseTask|null
+     */
+    private function getDatabaseTask($taskId)
+    {
+        return DatabaseTask::where('system_id', $taskId)->first();
+    }
 
     /**
      * Checks if the identified task was canceled.
@@ -16,7 +32,13 @@ class DatabaseTaskStorageManager implements TaskStorageManagerContract
      */
     public function isTaskCanceledById($taskId)
     {
-        // TODO: Implement isTaskCanceledById() method.
+        $task = $this->getDatabaseTask($taskId);
+
+        if ($task === null) {
+            return false;
+        }
+
+        return $task->was_canceled;
     }
 
     /**
@@ -27,7 +49,7 @@ class DatabaseTaskStorageManager implements TaskStorageManagerContract
      */
     public function isTaskCanceled(TaskContract $task)
     {
-        // TODO: Implement isTaskCanceled() method.
+        return $this->isTaskCanceledById($task->getInstanceId());
     }
 
     /**
@@ -38,7 +60,13 @@ class DatabaseTaskStorageManager implements TaskStorageManagerContract
      */
     public function isTaskCompleteById($taskId)
     {
-        // TODO: Implement isTaskCompleteById() method.
+        $task = $this->getDatabaseTask($taskId);
+
+        if ($task === null) {
+            return false;
+        }
+
+        return $task->is_complete;
     }
 
     /**
@@ -49,7 +77,7 @@ class DatabaseTaskStorageManager implements TaskStorageManagerContract
      */
     public function isTaskComplete(TaskContract $task)
     {
-        // TODO: Implement isTaskComplete() method.
+        return $this->isTaskCompleteById($task->getInstanceId());
     }
 
     /**
@@ -60,7 +88,16 @@ class DatabaseTaskStorageManager implements TaskStorageManagerContract
      */
     public function markCompleteById($taskId)
     {
-        // TODO: Implement markCompleteById() method.
+        $task = $this->getDatabaseTask($taskId);
+
+        if ($task === null) {
+            return false;
+        }
+
+        $task->is_complete = true;
+        $task->completed_on = Carbon::now();
+
+        return $task->save();
     }
 
     /**
@@ -71,7 +108,7 @@ class DatabaseTaskStorageManager implements TaskStorageManagerContract
      */
     public function markComplete(TaskContract $task)
     {
-        // TODO: Implement markComplete() method.
+        return $this->markCompleteById($task->getInstanceId());
     }
 
     /**
@@ -82,7 +119,15 @@ class DatabaseTaskStorageManager implements TaskStorageManagerContract
      */
     public function markCanceledById($taskId)
     {
-        // TODO: Implement markCanceledById() method.
+        $task = $this->getDatabaseTask($taskId);
+
+        if ($task === null) {
+            return false;
+        }
+
+        $task->was_canceled = true;
+
+        return $task->save();
     }
 
     /**
@@ -93,7 +138,7 @@ class DatabaseTaskStorageManager implements TaskStorageManagerContract
      */
     public function markCanceled(TaskContract $task)
     {
-        // TODO: Implement markCanceled() method.
+        return $this->markCanceledById($task->getInstanceId());
     }
 
     /**
@@ -104,7 +149,25 @@ class DatabaseTaskStorageManager implements TaskStorageManagerContract
      */
     public function getCurrentRunTimeById($taskId)
     {
-        // TODO: Implement getCurrentRunTimeById() method.
+        $databaseTask = $this->getDatabaseTask($taskId);
+
+        if ($databaseTask === null) {
+            return 0;
+        }
+
+        $currentTime = time();
+
+        $taskTimestamp = $databaseTask->created_at->timestamp;
+
+        if ($databaseTask->was_canceled === true) {
+            $taskTimestamp = $databaseTask->updated_at->timestamp;
+        } else {
+            if ($databaseTask->completed_on !== null) {
+                $taskTimestamp = $databaseTask->completed_on->timestamp;
+            }
+        }
+
+        return $currentTime - $taskTimestamp;
     }
 
     /**
@@ -115,7 +178,7 @@ class DatabaseTaskStorageManager implements TaskStorageManagerContract
      */
     public function getCurrentRunTime(TaskContract $task)
     {
-        // TODO: Implement getCurrentRunTime() method.
+        return $this->getCurrentRunTimeById($task->getInstanceId());
     }
 
     /**
@@ -126,7 +189,15 @@ class DatabaseTaskStorageManager implements TaskStorageManagerContract
      */
     public function removeTaskById($taskId)
     {
-        // TODO: Implement removeTaskById() method.
+        $task = $this->getDatabaseTask($taskId);
+
+        $result = $task->forceDelete();
+
+        if ($result === true) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -137,7 +208,7 @@ class DatabaseTaskStorageManager implements TaskStorageManagerContract
      */
     public function removeTask(TaskContract $task)
     {
-        // TODO: Implement removeTask() method.
+        return $this->removeTaskById($task->getInstanceId());
     }
 
     /**
@@ -148,7 +219,27 @@ class DatabaseTaskStorageManager implements TaskStorageManagerContract
      */
     public function saveTask(TaskContract $task)
     {
-        // TODO: Implement saveTask() method.
+        $databaseTask = $this->getDatabaseTask($task->getInstanceId());
+
+        if ($databaseTask === null) {
+            $newTask = new DatabaseTask();
+
+            $newTask->system_id = $task->getInstanceId();
+            $newTask->task_name = $task->getTaskName();
+            $newTask->task_status = $task->getStatus();
+            $newTask->task_code = $task->getTaskCode();
+            $newTask->task_args = json_encode($task->getArguments());
+
+            return $newTask->save();
+        }
+
+        $databaseTask->system_id = $task->getInstanceId();
+        $databaseTask->task_name = $task->getTaskName();
+        $databaseTask->task_status = $task->getStatus();
+        $databaseTask->task_code = $task->getTaskCode();
+        $databaseTask->task_args = json_encode($task->getArguments());
+
+        return $databaseTask->save();
     }
 
     /**
@@ -159,7 +250,13 @@ class DatabaseTaskStorageManager implements TaskStorageManagerContract
      */
     public function existsById($taskId)
     {
-        // TODO: Implement existsById() method.
+        $task = $this->getDatabaseTask($taskId);
+
+        if ($task === null) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -170,6 +267,22 @@ class DatabaseTaskStorageManager implements TaskStorageManagerContract
      */
     public function findById($taskId)
     {
-        // TODO: Implement findById() method.
+        $databaseTask = $this->getDatabaseTask($taskId);
+
+        if ($databaseTask === null) {
+            return null;
+        }
+
+        $task = new Task();
+
+        $task->setInstanceId($databaseTask->system_id);
+        $task->setArguments(json_decode($databaseTask->task_args));
+        $task->setCreateDateTimeUtc($databaseTask->created_at->timestamp);
+        $task->setStatus($databaseTask->task_status);
+        $task->setTaskCode($databaseTask->task_code);
+        $task->setTaskName($databaseTask->task_name);
+
+        return $task;
     }
+
 }

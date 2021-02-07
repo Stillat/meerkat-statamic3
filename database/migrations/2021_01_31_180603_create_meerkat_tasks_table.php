@@ -19,7 +19,9 @@ class CreateMeerkatTasksTable extends Migration
             $table->string('task_code');
             $table->integer('task_status');
             $table->string('task_name');
+            $table->dateTime('completed_on')->nullable();
             $table->boolean('is_complete')->default(false);
+            $table->boolean('was_canceled')->default(false);
             $table->json('task_args');
             $table->timestamps();
         });

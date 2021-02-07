@@ -793,7 +793,7 @@ class LocalCommentStorageManager extends AbstractCommentStorageManager implement
 
             try {
                 if ($this->setSpamStatusById($commentId, $isSpam) === true) {
-                    $result->succeeded[] = $commentId;
+                    $result->succeeded[$commentId] = true;
                     $result->comments[] = $commentId;
                 } else {
                     $result->failed[$commentId] = false;
@@ -847,7 +847,7 @@ class LocalCommentStorageManager extends AbstractCommentStorageManager implement
 
             try {
                 if ($this->setApprovedStatusById($commentId, $isApproved) === true) {
-                    $result->succeeded[] = $commentId;
+                    $result->succeeded[$commentId] = true;
                     $result->comments[] = $commentId;
                 } else {
                     $result->failed[$commentId] = false;

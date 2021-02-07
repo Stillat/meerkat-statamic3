@@ -21,6 +21,7 @@ class CreateMeerkatCommentsTable extends Migration
             $table->uuid('thread_context_id');
             $table->longText('virtual_path');
             $table->longText('virtual_dir_path');
+            $table->longText('root_path');
             $table->integer('depth');
             $table->boolean('is_root');
             $table->boolean('is_parent');

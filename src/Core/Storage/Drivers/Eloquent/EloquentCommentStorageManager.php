@@ -24,6 +24,7 @@ use Stillat\Meerkat\Core\RuntimeStateGuard;
 use Stillat\Meerkat\Core\Storage\Data\CommentAuthorRetriever;
 use Stillat\Meerkat\Core\Storage\Drivers\AbstractCommentStorageManager;
 use Stillat\Meerkat\Core\Storage\Drivers\Eloquent\Models\DatabaseComment;
+use Stillat\Meerkat\Core\Storage\Paths;
 use Stillat\Meerkat\Core\Threads\ThreadHierarchy;
 
 class EloquentCommentStorageManager extends AbstractCommentStorageManager implements CommentStorageManagerContract
@@ -257,6 +258,35 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
     }
 
     /**
+     * Determines the root path from the provided virtual path.
+     *
+     * @param string $virtualPath The path to get the root of.
+     * @return string
+     */
+    private function getRootFromVirtualPath($virtualPath)
+    {
+        $parts = explode(Paths::SYM_FORWARD_SEPARATOR, $virtualPath);
+
+        if (count($parts) === 0) {
+            return '';
+        }
+
+        if (mb_strlen(trim($parts[0])) === 0) {
+            array_shift($parts);
+        }
+
+        if (count($parts) < 2) {
+            return '';
+        }
+
+        $rootPaths = [];
+        $rootPaths[] = $parts[0];
+        $rootPaths[] = $parts[1];
+
+        return Paths::SYM_FORWARD_SEPARATOR.implode(Paths::SYM_FORWARD_SEPARATOR, $rootPaths);
+    }
+
+    /**
      * Attempts to save the comment data.
      *
      * @param CommentContract $comment The comment to save.
@@ -281,6 +311,8 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
             $virtualPath = $this->paths->makeRelative($virtualPath);
         }
 
+        $rootPath = $this->getRootFromVirtualPath($virtualPath);
+
         $databaseComment = new DatabaseComment();
         $databaseComment->parent_compatibility_id = $comment->getParentId();
         $databaseComment->compatibility_id = $comment->getId();
@@ -292,6 +324,7 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
         $databaseComment->content = $comment->getRawContent();
         $databaseComment->virtual_path = $virtualPath;
         $databaseComment->virtual_dir_path = dirname($databaseComment->virtual_path);
+        $databaseComment->root_path = $rootPath;
         $databaseComment->comment_attributes = json_encode($comment->getDataAttributes());
 
         if ($comment->leftByAuthenticatedUser()) {

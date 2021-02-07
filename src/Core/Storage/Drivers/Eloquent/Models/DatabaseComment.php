@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string thread_context_id
  * @property string virtual_path
  * @property string virtual_dir_path
+ * @property string root_path
  * @property int depth
  * @property bool is_root
  * @property bool is_parent

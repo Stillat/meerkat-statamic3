@@ -282,7 +282,8 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
         $databaseComment->is_parent = $comment->isParent();
         $databaseComment->is_published = $comment->published();
         $databaseComment->content = $comment->getRawContent();
-        $databaseComment->virtual_path = $comment->getVirtualPath();
+        $databaseComment->virtual_path = $this->paths->makeRelative($comment->getVirtualPath());
+        $databaseComment->virtual_dir_path = dirname($databaseComment->virtual_path);
         $databaseComment->comment_attributes = json_encode($comment->getDataAttributes());
 
         if ($comment->leftByAuthenticatedUser()) {

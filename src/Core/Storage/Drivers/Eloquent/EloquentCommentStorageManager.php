@@ -2,12 +2,16 @@
 
 namespace Stillat\Meerkat\Core\Storage\Drivers\Eloquent;
 
+use Carbon\Carbon;
 use DateTime;
+use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use Stillat\Meerkat\Core\Comments\AffectsCommentsResult;
 use Stillat\Meerkat\Core\Comments\Comment;
+use Stillat\Meerkat\Core\Comments\CommentRemovalEventArgs;
+use Stillat\Meerkat\Core\Comments\CommentRestoringEventArgs;
 use Stillat\Meerkat\Core\Comments\VariableSuccessResult;
 use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
@@ -19,6 +23,7 @@ use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentChangeSetStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Exceptions\ConcurrentResourceAccessViolationException;
+use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
 use Stillat\Meerkat\Core\Paths\PathUtilities;
 use Stillat\Meerkat\Core\RuntimeStateGuard;
 use Stillat\Meerkat\Core\Storage\Data\CommentAuthorRetriever;
@@ -258,35 +263,6 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
     }
 
     /**
-     * Determines the root path from the provided virtual path.
-     *
-     * @param string $virtualPath The path to get the root of.
-     * @return string
-     */
-    private function getRootFromVirtualPath($virtualPath)
-    {
-        $parts = explode(Paths::SYM_FORWARD_SEPARATOR, $virtualPath);
-
-        if (count($parts) === 0) {
-            return '';
-        }
-
-        if (mb_strlen(trim($parts[0])) === 0) {
-            array_shift($parts);
-        }
-
-        if (count($parts) < 2) {
-            return '';
-        }
-
-        $rootPaths = [];
-        $rootPaths[] = $parts[0];
-        $rootPaths[] = $parts[1];
-
-        return Paths::SYM_FORWARD_SEPARATOR.implode(Paths::SYM_FORWARD_SEPARATOR, $rootPaths);
-    }
-
-    /**
      * Attempts to save the comment data.
      *
      * @param CommentContract $comment The comment to save.
@@ -388,6 +364,35 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
     }
 
     /**
+     * Determines the root path from the provided virtual path.
+     *
+     * @param string $virtualPath The path to get the root of.
+     * @return string
+     */
+    private function getRootFromVirtualPath($virtualPath)
+    {
+        $parts = explode(Paths::SYM_FORWARD_SEPARATOR, $virtualPath);
+
+        if (count($parts) === 0) {
+            return '';
+        }
+
+        if (mb_strlen(trim($parts[0])) === 0) {
+            array_shift($parts);
+        }
+
+        if (count($parts) < 2) {
+            return '';
+        }
+
+        $rootPaths = [];
+        $rootPaths[] = $parts[0];
+        $rootPaths[] = $parts[1];
+
+        return Paths::SYM_FORWARD_SEPARATOR . implode(Paths::SYM_FORWARD_SEPARATOR, $rootPaths);
+    }
+
+    /**
      * Attempts to locate a comment by it's identifier.
      *
      * @param string $id The comment's string identifier.
@@ -446,7 +451,7 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
 
         $wasSuccess = false;
 
-        if ($updateResult !== null && $updateResult > 0) {
+        if ($updateResult !== null) {
             $wasSuccess = true;
         }
 
@@ -511,7 +516,7 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
 
         $wasSuccess = false;
 
-        if ($updateResult !== null && $updateResult > 0) {
+        if ($updateResult !== null) {
             $wasSuccess = true;
         }
 
@@ -554,33 +559,6 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
     }
 
     /**
-     * Attempts to locate the comment's child comments and paths.
-     *
-     * @param string $commentId The comment identifier.
-     * @return string[]
-     */
-    public function getDescendentsPaths($commentId)
-    {
-        if (!array_key_exists($commentId, self::$descendentPathCache)) {
-            $paths = DB::select('select concat(children.virtual_dir_path, \'/\') as virtual_dir_path, children.compatibility_id from meerkat_comments AS root
-inner join meerkat_comments as children ON children.virtual_dir_path LIKE CONCAT(root.virtual_dir_path, \'/%\')
-where root.compatibility_id = :rootid ORDER BY children.virtual_path desc', [
-                'rootid' => $commentId
-            ]);
-
-            $pathMappingToReturn = [];
-
-            foreach ($paths as $path) {
-                $pathMappingToReturn[$path->compatibility_id] = $path->virtual_dir_path;
-            }
-
-            self::$descendentPathCache[$commentId] = $pathMappingToReturn;
-        }
-
-        return self::$descendentPathCache[$commentId];
-    }
-
-    /**
      * Attempts to locate the comment's parent and child comment identifiers and paths.
      *
      * @param string $commentId The comment's identifier.
@@ -615,8 +593,110 @@ WHERE target.compatibility_id = :targetid order by virtual_dir_path desc;', [
      */
     public function removeById($commentId)
     {
-        dd(__METHOD__);
-        // TODO: Implement removeById() method.
+        $comment = $this->findById($commentId);
+
+        if ($comment === null) {
+            return AffectsCommentsResult::failed();
+        }
+
+        $descendents = $this->getDescendentsPaths($commentId);
+
+        $commentRemovalEventArgs = new CommentRemovalEventArgs();
+        $commentRemovalEventArgs->comment = $comment;
+
+        if (count($descendents) > 0) {
+            $commentRemovalEventArgs->effectedComments = array_keys($descendents);
+            $commentRemovalEventArgs->willRemoveOthers = true;
+        }
+
+        if (RuntimeStateGuard::mutationLocks()->isLocked() === false) {
+            $lastResult = null;
+
+            $lock = RuntimeStateGuard::mutationLocks()->lock();
+
+            $this->commentPipeline->removing($commentRemovalEventArgs, function ($result) use (&$lastResult) {
+                if ($result !== null && $result instanceof CommentRemovalEventArgs) {
+                    $lastResult = $result;
+                }
+            });
+
+            if ($lastResult !== null && $lastResult instanceof CommentRemovalEventArgs) {
+                if ($lastResult->shouldKeep()) {
+                    RuntimeStateGuard::mutationLocks()->releaseLock($lock);
+                    $didSoftDelete = $this->softDeleteById($commentId);
+
+                    return AffectsCommentsResult::conditionalWithComments($didSoftDelete, $descendents);
+                }
+            }
+
+            RuntimeStateGuard::mutationLocks()->releaseLock($lock);
+        }
+
+        /** @var DatabaseComment $databaseComment */
+        $databaseComment = DatabaseComment::where('compatibility_id', $commentId)->first();
+
+        if ($databaseComment === null) {
+            return AffectsCommentsResult::failed();
+        }
+
+        $virtualDirPath = $databaseComment->virtual_dir_path;
+
+        DB::delete('DELETE FROM meerkat_comments WHERE virtual_dir_path LIKE CONCAT(:path, \'%\');', [
+            'path' => $virtualDirPath
+        ]);
+
+        // TODO: Cleanup reports, revisions, email stuff, etc.
+
+        $this->commentPipeline->removed($commentId, null);
+
+        $descendents[] = $commentId;
+
+        return AffectsCommentsResult::successWithComments($descendents);
+    }
+
+    /**
+     * Attempts to locate the comment's child comments and paths.
+     *
+     * @param string $commentId The comment identifier.
+     * @return string[]
+     */
+    public function getDescendentsPaths($commentId)
+    {
+        if (!array_key_exists($commentId, self::$descendentPathCache)) {
+            $paths = DB::select('select concat(children.virtual_dir_path, \'/\') as virtual_dir_path, children.compatibility_id from meerkat_comments AS root
+inner join meerkat_comments as children ON children.virtual_dir_path LIKE CONCAT(root.virtual_dir_path, \'/%\')
+where root.compatibility_id = :rootid ORDER BY children.virtual_path desc', [
+                'rootid' => $commentId
+            ]);
+
+            $pathMappingToReturn = [];
+
+            foreach ($paths as $path) {
+                $pathMappingToReturn[$path->compatibility_id] = $path->virtual_dir_path;
+            }
+
+            self::$descendentPathCache[$commentId] = $pathMappingToReturn;
+        }
+
+        return self::$descendentPathCache[$commentId];
+    }
+
+    public function softDeleteById($commentId)
+    {
+        $updateResult = DB::table('meerkat_comments')
+            ->where('compatibility_id', $commentId)
+            ->update([
+                'deleted_at' => Carbon::now(),
+                'comment_attributes->is_deleted' => true
+            ]);
+
+        if ($updateResult === null || $updateResult === 0) {
+            return false;
+        }
+
+        $this->commentPipeline->softDeleted($commentId, null);
+
+        return true;
     }
 
     /**
@@ -627,8 +707,29 @@ WHERE target.compatibility_id = :targetid order by virtual_dir_path desc;', [
      */
     public function removeAll($commentIds)
     {
-        dd(__METHOD__);
-        // TODO: Implement removeAll() method.
+        $result = new VariableSuccessResult();
+
+        foreach ($commentIds as $commentId) {
+            try {
+                $removeResult = $this->removeById($commentId);
+
+                if ($removeResult->success === true) {
+                    $result->succeeded[$commentId] = $removeResult;
+
+                    $result->comments[] = $commentId;
+                    $result->comments = array_merge($result->comments, array_map('strval', array_keys($removeResult->comments)));
+                } else {
+                    if (!in_array($commentId, $result->comments)) {
+                        $result->failed[$commentId] = $removeResult;
+                    }
+                }
+            } catch (Exception $e) {
+                ExceptionLoggerFactory::log($e);
+                $result->failed[$commentId] = $e;
+            }
+        }
+
+        return $result->updateState();
     }
 
     /**
@@ -639,20 +740,25 @@ WHERE target.compatibility_id = :targetid order by virtual_dir_path desc;', [
      */
     public function softDeleteAll($commentIds)
     {
-        dd(__METHOD__);
-        // TODO: Implement softDeleteAll() method.
-    }
+        $result = new VariableSuccessResult();
 
-    /**
-     * Attempts to restore a soft-deleted comment.
-     *
-     * @param string $commentId The comment's identifier.
-     * @return AffectsCommentsResult
-     */
-    public function restoreById($commentId)
-    {
-        dd(__METHOD__);
-        // TODO: Implement restoreById() method.
+        foreach ($commentIds as $comment) {
+            try {
+                $deleteResult = $this->softDeleteById($comment);
+
+                if ($deleteResult === true) {
+                    $result->succeeded[$comment] = true;
+                    $result->comments[] = $comment;
+                } else {
+                    $result->failed[$comment] = false;
+                }
+            } catch (Exception $e) {
+                ExceptionLoggerFactory::log($e);
+                $result->failed[$comment] = $e;
+            }
+        }
+
+        return $result->updateState();
     }
 
     /**
@@ -663,13 +769,93 @@ WHERE target.compatibility_id = :targetid order by virtual_dir_path desc;', [
      */
     public function restoreAll($commentIds)
     {
-        dd(__METHOD__);
-        // TODO: Implement restoreAll() method.
+        $result = new VariableSuccessResult();
+
+        foreach ($commentIds as $commentId) {
+            try {
+                $restoreResult = $this->restoreById($commentId);
+
+                if ($restoreResult->success === true) {
+                    $result->succeeded[$commentId] = $restoreResult;
+                    $result->comments[] = $commentId;
+                } else {
+                    $result->failed[$commentId] = $restoreResult;
+                }
+            } catch (Exception $e) {
+                ExceptionLoggerFactory::log($e);
+                $result->failed[$commentId] = $e;
+            }
+        }
+
+        return $result->updateState();
     }
 
-    public function softDeleteById($commentId)
+    /**
+     * Attempts to restore a soft-deleted comment.
+     *
+     * @param string $commentId The comment's identifier.
+     * @return AffectsCommentsResult
+     */
+    public function restoreById($commentId)
     {
-        dd(__METHOD__);
+        $comment = $this->findById($commentId);
+
+        if ($comment === null) {
+            return AffectsCommentsResult::failed();
+        }
+
+
+        if ($comment->isDeleted() === false) {
+            return AffectsCommentsResult::failed();
+        }
+
+        $descendents = $this->getDescendents($commentId);
+
+        $commentRestoreEventArgs = new CommentRestoringEventArgs();
+        $commentRestoreEventArgs->commentId = $commentId;
+        $commentRestoreEventArgs->comment = $comment;
+
+        if (RuntimeStateGuard::mutationLocks()->isLocked() === false) {
+            $lock = RuntimeStateGuard::mutationLocks()->lock();
+
+            $lastResult = null;
+
+            $this->commentPipeline->restoring($commentRestoreEventArgs, function ($result) use (&$lastResult) {
+                if ($result !== null && $result instanceof CommentRestoringEventArgs) {
+                    $lastResult = $result;
+                }
+            });
+
+            if ($lastResult !== null && $lastResult instanceof CommentRestoringEventArgs) {
+                if ($lastResult->shouldRestore() === false) {
+                    RuntimeStateGuard::mutationLocks()->releaseLock($lock);
+                    return AffectsCommentsResult::failed();
+                }
+            }
+
+            RuntimeStateGuard::mutationLocks()->releaseLock($lock);
+        }
+
+        $comment->setDataAttribute(CommentContract::KEY_IS_DELETED, false);
+
+        $updateResult = DB::table('meerkat_comments')
+            ->where('compatibility_id', $commentId)
+            ->update([
+                'deleted_at' => null,
+                'comment_attributes->is_deleted' => false
+            ]);
+
+        $wasUpdated = true;
+
+        if ($updateResult === null || $updateResult === 0) {
+            $wasUpdated = false;
+        }
+
+        if ($wasUpdated === true) {
+            $this->commentPipeline->restored($comment, null);
+        }
+
+        return AffectsCommentsResult::conditionalWithComments($wasUpdated, $descendents);
     }
 
     /**

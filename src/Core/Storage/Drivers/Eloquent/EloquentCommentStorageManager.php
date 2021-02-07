@@ -31,6 +31,7 @@ use Stillat\Meerkat\Core\Storage\Data\CommentAuthorRetriever;
 use Stillat\Meerkat\Core\Storage\Drivers\AbstractCommentStorageManager;
 use Stillat\Meerkat\Core\Storage\Drivers\Eloquent\Models\DatabaseComment;
 use Stillat\Meerkat\Core\Storage\Drivers\Local\Attributes\PrototypeAttributeValidator;
+use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalCommentStorageManager;
 use Stillat\Meerkat\Core\Storage\Paths;
 use Stillat\Meerkat\Core\Threads\ThreadHierarchy;
 
@@ -270,7 +271,7 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
      *
      * @param CommentContract $comment The comment to save.
      * @return bool
-     * @throws ConcurrentResourceAccessViolationException
+     * @throws ConcurrentResourceAccessViolationException|MutationException
      */
     public function save(CommentContract $comment)
     {
@@ -291,18 +292,18 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
         }
 
         $rootPath = $this->getRootFromVirtualPath($virtualPath);
+        $virtualDirPath = dirname($virtualPath);
 
         $databaseComment = new DatabaseComment();
         $databaseComment->parent_compatibility_id = $comment->getParentId();
         $databaseComment->compatibility_id = $comment->getId();
         $databaseComment->thread_context_id = $comment->getThreadId();
-        $databaseComment->depth = $comment->getDepth();
+        $databaseComment->depth = $this->inferDepthFromVirtualPath($virtualDirPath);
         $databaseComment->is_root = $comment->isRoot();
-        $databaseComment->is_parent = $comment->isParent();
         $databaseComment->is_published = $comment->published();
         $databaseComment->content = $comment->getRawContent();
         $databaseComment->virtual_path = $virtualPath;
-        $databaseComment->virtual_dir_path = dirname($databaseComment->virtual_path);
+        $databaseComment->virtual_dir_path = $virtualPath;
         $databaseComment->root_path = $rootPath;
         $databaseComment->comment_attributes = json_encode($comment->getDataAttributes());
 
@@ -468,35 +469,6 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
     }
 
     /**
-     * Determines the root path from the provided virtual path.
-     *
-     * @param string $virtualPath The path to get the root of.
-     * @return string
-     */
-    private function getRootFromVirtualPath($virtualPath)
-    {
-        $parts = explode(Paths::SYM_FORWARD_SEPARATOR, $virtualPath);
-
-        if (count($parts) === 0) {
-            return '';
-        }
-
-        if (mb_strlen(trim($parts[0])) === 0) {
-            array_shift($parts);
-        }
-
-        if (count($parts) < 2) {
-            return '';
-        }
-
-        $rootPaths = [];
-        $rootPaths[] = $parts[0];
-        $rootPaths[] = $parts[1];
-
-        return Paths::SYM_FORWARD_SEPARATOR . implode(Paths::SYM_FORWARD_SEPARATOR, $rootPaths);
-    }
-
-    /**
      * Attempts to locate a comment by it's identifier.
      *
      * @param string $id The comment's string identifier.
@@ -530,6 +502,35 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
         }
 
         return null;
+    }
+
+    /**
+     * Determines the root path from the provided virtual path.
+     *
+     * @param string $virtualPath The path to get the root of.
+     * @return string
+     */
+    private function getRootFromVirtualPath($virtualPath)
+    {
+        $parts = explode(Paths::SYM_FORWARD_SEPARATOR, $virtualPath);
+
+        if (count($parts) === 0) {
+            return '';
+        }
+
+        if (mb_strlen(trim($parts[0])) === 0) {
+            array_shift($parts);
+        }
+
+        if (count($parts) < 2) {
+            return '';
+        }
+
+        $rootPaths = [];
+        $rootPaths[] = $parts[0];
+        $rootPaths[] = $parts[1];
+
+        return Paths::SYM_FORWARD_SEPARATOR . implode(Paths::SYM_FORWARD_SEPARATOR, $rootPaths);
     }
 
     /**
@@ -690,6 +691,39 @@ WHERE target.compatibility_id = :targetid order by virtual_dir_path desc;', [
     }
 
     /**
+     * Attempts to remove all of the provided comments.
+     *
+     * @param array $commentIds The comments to remove.
+     * @return VariableSuccessResult
+     */
+    public function removeAll($commentIds)
+    {
+        $result = new VariableSuccessResult();
+
+        foreach ($commentIds as $commentId) {
+            try {
+                $removeResult = $this->removeById($commentId);
+
+                if ($removeResult->success === true) {
+                    $result->succeeded[$commentId] = $removeResult;
+
+                    $result->comments[] = $commentId;
+                    $result->comments = array_merge($result->comments, array_map('strval', array_keys($removeResult->comments)));
+                } else {
+                    if (!in_array($commentId, $result->comments)) {
+                        $result->failed[$commentId] = $removeResult;
+                    }
+                }
+            } catch (Exception $e) {
+                ExceptionLoggerFactory::log($e);
+                $result->failed[$commentId] = $e;
+            }
+        }
+
+        return $result->updateState();
+    }
+
+    /**
      * Attempts to remove the requested comment.
      *
      * @param string $commentId The comment's identifier.
@@ -801,39 +835,6 @@ where root.compatibility_id = :rootid ORDER BY children.virtual_path desc', [
         $this->commentPipeline->softDeleted($commentId, null);
 
         return true;
-    }
-
-    /**
-     * Attempts to remove all of the provided comments.
-     *
-     * @param array $commentIds The comments to remove.
-     * @return VariableSuccessResult
-     */
-    public function removeAll($commentIds)
-    {
-        $result = new VariableSuccessResult();
-
-        foreach ($commentIds as $commentId) {
-            try {
-                $removeResult = $this->removeById($commentId);
-
-                if ($removeResult->success === true) {
-                    $result->succeeded[$commentId] = $removeResult;
-
-                    $result->comments[] = $commentId;
-                    $result->comments = array_merge($result->comments, array_map('strval', array_keys($removeResult->comments)));
-                } else {
-                    if (!in_array($commentId, $result->comments)) {
-                        $result->failed[$commentId] = $removeResult;
-                    }
-                }
-            } catch (Exception $e) {
-                ExceptionLoggerFactory::log($e);
-                $result->failed[$commentId] = $e;
-            }
-        }
-
-        return $result->updateState();
     }
 
     /**
@@ -987,6 +988,19 @@ where root.compatibility_id = :rootid ORDER BY children.virtual_path desc', [
         }
 
         return false;
+    }
+
+    /**
+     * Returns the comment depth, based on its virtual directory path.
+     *
+     * @param string $path The comment storage path.
+     * @return int
+     */
+    private function inferDepthFromVirtualPath($path)
+    {
+        $path = str_replace(LocalCommentStorageManager::PATH_REPLIES_DIRECTORY . Paths::SYM_FORWARD_SEPARATOR, '', $path);
+
+        return mb_substr_count($path, Paths::SYM_FORWARD_SEPARATOR) - 2;
     }
 
     /**

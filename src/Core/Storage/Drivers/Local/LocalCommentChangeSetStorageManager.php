@@ -9,6 +9,7 @@ use Stillat\Meerkat\Core\Contracts\Parsing\YAMLParserContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentChangeSetStorageManagerContract;
 use Stillat\Meerkat\Core\Data\Mutations\ChangeSet;
 use Stillat\Meerkat\Core\Data\Mutations\ChangeSetCollection;
+use Stillat\Meerkat\Core\Paths\PathUtilities;
 use Stillat\Meerkat\Core\Storage\Paths;
 use Stillat\Meerkat\Core\Support\Str;
 
@@ -48,9 +49,17 @@ class LocalCommentChangeSetStorageManager implements CommentChangeSetStorageMana
      */
     protected $yamlParser = null;
 
+    /**
+     * The storage path.
+     *
+     * @var string
+     */
+    protected $storagePath = '';
+
     public function __construct(Configuration $config, YAMLParserContract $yamlParser)
     {
         $this->config = $config;
+        $this->storagePath = PathUtilities::normalize($this->config->storageDirectory);
         $this->paths = new Paths($this->config);
         $this->yamlParser = $yamlParser;
     }
@@ -82,7 +91,7 @@ class LocalCommentChangeSetStorageManager implements CommentChangeSetStorageMana
             return new ChangeSetCollection();
         }
 
-        $storagePath = $this->getChangeSetStoragePath($comment);
+        $storagePath = $this->paths->ensureRelativeTo($this->storagePath, $this->getChangeSetStoragePath($comment));
 
         if (file_exists($storagePath) === false) {
             return new ChangeSetCollection();
@@ -150,7 +159,7 @@ class LocalCommentChangeSetStorageManager implements CommentChangeSetStorageMana
 
         $dataToSave = $this->yamlParser->toYaml($existingChangeSets->toArray(), null);
 
-        $saveResults = file_put_contents($storagePath, $dataToSave);
+        $saveResults = $this->paths->putContentsRelativeTo($this->storagePath, $storagePath, $dataToSave);
 
         if ($saveResults === false) {
             return false;

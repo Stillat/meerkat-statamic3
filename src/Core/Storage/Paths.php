@@ -20,15 +20,13 @@ class Paths
 {
 
     /**
-     * The default directory permissions to use.
-     */
-    public static $directoryPermissions = 0755;
-
-    /**
      * The directory separator that is used internally.
      */
     const SYM_FORWARD_SEPARATOR = '/';
-
+    /**
+     * The default directory permissions to use.
+     */
+    public static $directoryPermissions = 0755;
     /**
      * A cached instance of a shared Paths instance.
      *
@@ -216,6 +214,23 @@ class Paths
     }
 
     /**
+     * Normalizes the directory separators in the provided path.
+     *
+     * @param string $path The path to normalize.
+     * @return string|string[]
+     */
+    public function normalize($path)
+    {
+        $path = str_replace('\\', self::SYM_FORWARD_SEPARATOR, $path);
+
+        if (Env::isWindows() === false && Str::startsWith($path, Paths::SYM_FORWARD_SEPARATOR) === false) {
+            $path = Paths::SYM_FORWARD_SEPARATOR . $path;
+        }
+
+        return $path;
+    }
+
+    /**
      * Gets all the files with the given pattern, recursively.
      *
      * @param string $pattern The glob search pattern.
@@ -307,17 +322,37 @@ class Paths
     }
 
     /**
-     * Normalizes the directory separators in the provided path.
+     * Adjusts the current path to be relative to the target directory, if it is not already, and writes the contents.
      *
-     * @param string $path The path to normalize.
-     * @return string|string[]
+     * @param string $targetDirectory The target directory.
+     * @param string $path The current path.
+     * @param string $contents The file contents.
+     * @return false|int
      */
-    public function normalize($path)
+    public function putContentsRelativeTo($targetDirectory, $path, $contents)
     {
-        $path = str_replace('\\', self::SYM_FORWARD_SEPARATOR, $path);
+        $path = $this->ensureRelativeTo($targetDirectory, $path);
 
-        if (Env::isWindows() === false && Str::startsWith($path, Paths::SYM_FORWARD_SEPARATOR) === false) {
-            $path = Paths::SYM_FORWARD_SEPARATOR . $path;
+        $storageDirectory = dirname($path);
+
+        if (!file_exists($storageDirectory)) {
+            mkdir($storageDirectory, Paths::$directoryPermissions, true);
+        }
+
+        return file_put_contents($path, $contents);
+    }
+
+    /**
+     * Ensures the path is relative to the target directory.
+     *
+     * @param string $targetDirectory The target directory.
+     * @param string $path The current path.
+     * @return string
+     */
+    public function ensureRelativeTo($targetDirectory, $path)
+    {
+        if (Str::startsWith($path, $targetDirectory) === false) {
+            $path = $targetDirectory . $path;
         }
 
         return $path;

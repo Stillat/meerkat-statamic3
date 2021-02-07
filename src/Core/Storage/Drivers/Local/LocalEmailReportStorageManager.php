@@ -8,6 +8,7 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\YAMLParserContract;
 use Stillat\Meerkat\Core\Contracts\Storage\EmailReportStorageManagerContract;
 use Stillat\Meerkat\Core\Mail\MailReport;
+use Stillat\Meerkat\Core\Paths\PathUtilities;
 use Stillat\Meerkat\Core\Storage\Paths;
 
 /**
@@ -43,11 +44,19 @@ class LocalEmailReportStorageManager implements EmailReportStorageManagerContrac
      */
     protected $yamlParser = null;
 
+    /**
+     * The storage path.
+     *
+     * @var string
+     */
+    protected $storagePath = '';
+
     public function __construct(Configuration $config, YAMLParserContract $yamlParser)
     {
         $this->config = $config;
         $this->paths = new Paths($this->config);
         $this->yamlParser = $yamlParser;
+        $this->storagePath = PathUtilities::normalize($this->config->storageDirectory);
     }
 
     /**
@@ -75,7 +84,7 @@ class LocalEmailReportStorageManager implements EmailReportStorageManagerContrac
      */
     public function wasSent(CommentContract $comment)
     {
-        return file_exists($this->getReportPath($comment));
+        return file_exists($this->paths->ensureRelativeTo($this->storagePath, $this->getReportPath($comment)));
     }
 
     /**
@@ -121,7 +130,7 @@ class LocalEmailReportStorageManager implements EmailReportStorageManagerContrac
      */
     public function saveReportForComment(CommentContract $comment, MailReport $report)
     {
-        $storagePath = $this->getReportPath($comment);
+        $storagePath = $this->paths->ensureRelativeTo($this->storagePath, $this->getReportPath($comment));
         $dataToSave = $this->yamlParser->toYaml($report->toArray(), null);
 
         $saveResults = file_put_contents($storagePath, $dataToSave);

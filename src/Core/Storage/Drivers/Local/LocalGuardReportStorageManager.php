@@ -8,6 +8,7 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\YAMLParserContract;
 use Stillat\Meerkat\Core\Contracts\Storage\GuardReportStorageManagerContract;
 use Stillat\Meerkat\Core\Guard\SpamCheckReport;
+use Stillat\Meerkat\Core\Paths\PathUtilities;
 use Stillat\Meerkat\Core\Storage\Paths;
 
 /**
@@ -43,11 +44,19 @@ class LocalGuardReportStorageManager implements GuardReportStorageManagerContrac
      */
     protected $yamlParser = null;
 
+    /**
+     * The storage path.
+     *
+     * @var string
+     */
+    protected $storagePath = '';
+
     public function __construct(Configuration $config, YAMLParserContract $yamlParser)
     {
         $this->config = $config;
         $this->paths = new Paths($this->config);
         $this->yamlParser = $yamlParser;
+        $this->storagePath = PathUtilities::normalize($this->config->storageDirectory);
     }
 
     /**
@@ -92,7 +101,7 @@ class LocalGuardReportStorageManager implements GuardReportStorageManagerContrac
      */
     public function hasGuardReport(CommentContract $comment)
     {
-        $reportPath = $this->getReportStoragePath($comment);
+        $reportPath = $this->paths->ensureRelativeTo($this->storagePath, $this->getReportStoragePath($comment));
 
         return file_exists($reportPath);
     }
@@ -137,7 +146,7 @@ class LocalGuardReportStorageManager implements GuardReportStorageManagerContrac
         $storagePath = $this->getReportStoragePath($comment);
         $dataToSave = $this->yamlParser->toYaml($report->toArray(), null);
 
-        $saveResults = file_put_contents($storagePath, $dataToSave);
+        $saveResults = $this->paths->putContentsRelativeTo($this->storagePath, $storagePath, $dataToSave);
 
         if ($saveResults === false) {
             return false;

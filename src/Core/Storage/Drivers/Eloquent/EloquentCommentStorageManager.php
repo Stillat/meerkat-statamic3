@@ -379,24 +379,6 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
     }
 
     /**
-     * Attempts to the update the comments' spam status.
-     *
-     * @param CommentContract[] $comments The comments to update.
-     * @param bool $isSpam Whether or not the comments are spam.
-     * @return VariableSuccessResult
-     */
-    public function setSpamStatusForComments($comments, $isSpam)
-    {
-        $commentIds = [];
-
-        foreach ($comments as $comment) {
-            $commentIds[] = $comment->getId();
-        }
-
-        return $this->setSpamStatusForIds($commentIds, $isSpam);
-    }
-
-    /**
      * Attempts to update the comments' spam status.
      *
      * @param array $commentIds The comment identifiers.
@@ -407,42 +389,6 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
     {
         dd(__METHOD__);
         // TODO: Implement setSpamStatusForIds() method.
-    }
-
-    /**
-     * Attempts to mark the comments as spam.
-     *
-     * @param array $commentIds The comment identifiers.
-     * @return VariableSuccessResult
-     */
-    public function setIsSpamForIds($commentIds)
-    {
-        dd(__METHOD__);
-        // TODO: Implement setIsSpamForIds() method.
-    }
-
-    /**
-     * Attempts to mark the comments as not spam.
-     *
-     * @param array $commentIds The comment identifiers.
-     * @return VariableSuccessResult
-     */
-    public function setIsHamForIds($commentIds)
-    {
-        dd(__METHOD__);
-        // TODO: Implement setIsHamForIds() method.
-    }
-
-    /**
-     * Attempts to update the comment's spam status.
-     *
-     * @param CommentContract $comment The comment to update.
-     * @param bool $isSpam Whether or not the comment is spam.
-     * @return bool
-     */
-    public function setSpamStatus(CommentContract $comment, $isSpam)
-    {
-        return $this->setSpamStatusById($comment->getId(), $isSpam);
     }
 
     /**
@@ -459,66 +405,6 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
     }
 
     /**
-     * Attempts to mark the comment as spam.
-     *
-     * @param CommentContract $comment The comment to update.
-     * @return bool
-     */
-    public function setIsSpam(CommentContract $comment)
-    {
-        return $this->setIsSpamById($comment->getId());
-    }
-
-    /**
-     * Attempts to mark the comment as spam.
-     *
-     * @param string $commentId The comment's identifier.
-     * @return bool
-     */
-    public function setIsSpamById($commentId)
-    {
-        dd(__METHOD__);
-        // TODO: Implement setIsSpamById() method.
-    }
-
-    /**
-     * Attempts to mark the comment as not-spam.
-     *
-     * @param CommentContract $comment The comment to update.
-     * @return bool
-     */
-    public function setIsHam(CommentContract $comment)
-    {
-        dd(__METHOD__);
-        // TODO: Implement setIsHam() method.
-    }
-
-    /**
-     * Attempts to mark the comment as not-spam.
-     *
-     * @param string $commentId The comment's identifier.
-     * @return bool
-     */
-    public function setIsHamById($commentId)
-    {
-        dd(__METHOD__);
-        // TODO: Implement setIsHamById() method.
-    }
-
-    /**
-     * Attempts to update the published/approved status for the provided comments.
-     *
-     * @param CommentContract[] $comments The comments to update.
-     * @param bool $isApproved Whether the comments are "published".
-     * @return VariableSuccessResult
-     */
-    public function setApprovedStatusFor($comments, $isApproved)
-    {
-        dd(__METHOD__);
-        // TODO: Implement setApprovedStatusFor() method.
-    }
-
-    /**
      * Attempts to update the published/approved status for the provided comment identifiers.
      *
      * @param array $commentIds The comment identifiers to update.
@@ -532,43 +418,6 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
     }
 
     /**
-     * Attempts to mark the provided comments as approved.
-     *
-     * @param array $commentIds The comments to update.
-     * @return VariableSuccessResult
-     */
-    public function setIsApprovedForIds($commentIds)
-    {
-        dd(__METHOD__);
-        // TODO: Implement setIsApprovedForIds() method.
-    }
-
-    /**
-     * Attempts to mark the provided comments as not approved.
-     *
-     * @param array $commentIds The comments to update.
-     * @return VariableSuccessResult
-     */
-    public function setIsNotApprovedForIds($commentIds)
-    {
-        dd(__METHOD__);
-        // TODO: Implement setIsNotApprovedForIds() method.
-    }
-
-    /**
-     * Attempts to update the comment's published/approved status.
-     *
-     * @param CommentContract $comment The comment to update.
-     * @param bool $isApproved Whether the comment is "published".
-     * @return bool
-     */
-    public function setApprovedStatus(CommentContract $comment, $isApproved)
-    {
-        dd(__METHOD__);
-        // TODO: Implement setApprovedStatus() method.
-    }
-
-    /**
      * Attempts to update the comment's published/approved status.
      *
      * @param string $commentId The comment's identifier.
@@ -579,54 +428,6 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
     {
         dd(__METHOD__);
         // TODO: Implement setApprovedStatusById() method.
-    }
-
-    /**
-     * Attempts to mark the comment as approved/published.
-     *
-     * @param CommentContract $comment The comment to update.
-     * @return bool
-     */
-    public function setIsApproved(CommentContract $comment)
-    {
-        dd(__METHOD__);
-        // TODO: Implement setIsApproved() method.
-    }
-
-    /**
-     * Attempts to mark the comment as approved/published.
-     *
-     * @param string $commentId The comment's identifier.
-     * @return bool
-     */
-    public function setIsApprovedById($commentId)
-    {
-        dd(__METHOD__);
-        // TODO: Implement setIsApprovedById() method.
-    }
-
-    /**
-     * Attempts to mark the comment as un-approved/not-published.
-     *
-     * @param CommentContract $comment The comment to update.
-     * @return bool
-     */
-    public function setIsNotApproved(CommentContract $comment)
-    {
-        dd(__METHOD__);
-        // TODO: Implement setIsNotApproved() method.
-    }
-
-    /**
-     * Attempts to mark the comment as un-approved/not-published.
-     *
-     * @param string $commentId The comment's identifier.
-     * @return bool
-     */
-    public function setIsNotApprovedById($commentId)
-    {
-        dd(__METHOD__);
-        // TODO: Implement setIsNotApprovedById() method.
     }
 
     /**
@@ -713,6 +514,11 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
         // TODO: Implement restoreAll() method.
     }
 
+    public function softDeleteById($commentId)
+    {
+        dd(__METHOD__);
+    }
+
     /**
      * Returns only the virtual paths for all comments in the provided thread.
      *
@@ -727,4 +533,5 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
                 return mb_strlen($path);
             })->toArray();
     }
+
 }

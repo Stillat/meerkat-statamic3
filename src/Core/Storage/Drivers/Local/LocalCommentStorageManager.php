@@ -194,8 +194,6 @@ class LocalCommentStorageManager extends AbstractCommentStorageManager implement
 
         $threadPath = $this->paths->combine([$this->storagePath, $threadId]);
 
-        $commentPaths = [];
-
         $threadFilter = $this->paths->combine([$threadPath, '*' . LocalCommentStorageManager::PATH_COMMENT_FILE]);
         $commentPaths = $this->paths->getFilesRecursively($threadFilter);
 
@@ -397,26 +395,6 @@ class LocalCommentStorageManager extends AbstractCommentStorageManager implement
     private function getCommentPrototype($path)
     {
         return $this->commentParser->getCommentPrototype($path);
-    }
-
-    /**
-     * Attempts to retrieve a storage path from a comment's identifier.
-     *
-     * @param string $commentId The comment's string identifier.
-     * @return string|null
-     */
-    public function getPathById($commentId)
-    {
-        $threadFilter = $this->paths->combine([$this->storagePath, '*' . $commentId . '*']);
-        $commentPath = $this->paths->searchForFile($threadFilter, $this->paths->combine(
-            [$commentId, LocalCommentStorageManager::PATH_COMMENT_FILE]),
-            LocalCommentStorageManager::PATH_COMMENT_FILE);
-
-        if (is_string($commentPath)) {
-            return $commentPath;
-        }
-
-        return null;
     }
 
     /**
@@ -660,6 +638,26 @@ class LocalCommentStorageManager extends AbstractCommentStorageManager implement
     }
 
     /**
+     * Attempts to retrieve a storage path from a comment's identifier.
+     *
+     * @param string $commentId The comment's string identifier.
+     * @return string|null
+     */
+    public function getPathById($commentId)
+    {
+        $threadFilter = $this->paths->combine([$this->storagePath, '*' . $commentId . '*']);
+        $commentPath = $this->paths->searchForFile($threadFilter, $this->paths->combine(
+            [$commentId, LocalCommentStorageManager::PATH_COMMENT_FILE]),
+            LocalCommentStorageManager::PATH_COMMENT_FILE);
+
+        if (is_string($commentPath)) {
+            return $commentPath;
+        }
+
+        return null;
+    }
+
+    /**
      * Gets thread information from a comment's physical path.
      *
      * @param string $path The comment path to analyze.
@@ -778,60 +776,6 @@ class LocalCommentStorageManager extends AbstractCommentStorageManager implement
     }
 
     /**
-     * Attempts to update the comment's spam status.
-     *
-     * @param CommentContract $comment The comment to update.
-     * @param bool $isSpam Whether or not the comment is spam.
-     * @return bool
-     * @throws ConcurrentResourceAccessViolationException
-     * @throws MutationException
-     */
-    public function setSpamStatus(CommentContract $comment, $isSpam)
-    {
-        return $this->setSpamStatusById($comment->getId(), $isSpam);
-    }
-
-    /**
-     * Attempts to update the comment's spam status.
-     *
-     * @param string $commentId The comment's identifier.
-     * @param bool $isSpam Whether or not the comment is spam.
-     * @return bool
-     * @throws ConcurrentResourceAccessViolationException
-     * @throws MutationException
-     */
-    public function setSpamStatusById($commentId, $isSpam)
-    {
-        $comment = $this->findById($commentId);
-
-        if ($comment === null) {
-            return false;
-        }
-
-        $comment->setDataAttribute(CommentContract::KEY_SPAM, $isSpam);
-
-        return $this->update($comment);
-    }
-
-    /**
-     * Attempts to the update the comments' spam status.
-     *
-     * @param CommentContract[] $comments The comments to update.
-     * @param bool $isSpam Whether or not the comments are spam.
-     * @return VariableSuccessResult
-     */
-    public function setSpamStatusForComments($comments, $isSpam)
-    {
-        $commentIds = [];
-
-        foreach ($comments as $comment) {
-            $commentIds[] = $comment->getId();
-        }
-
-        return $this->setSpamStatusForIds($commentIds, $isSpam);
-    }
-
-    /**
      * Attempts to update the comments' spam status.
      *
      * @param array $commentIds The comment identifiers.
@@ -874,95 +818,25 @@ class LocalCommentStorageManager extends AbstractCommentStorageManager implement
     }
 
     /**
-     * Attempts to mark the comments as spam.
-     *
-     * @param array $commentIds The comment identifiers.
-     * @return VariableSuccessResult
-     */
-    public function setIsSpamForIds($commentIds)
-    {
-        return $this->setSpamStatusForIds($commentIds, true);
-    }
-
-    /**
-     * Attempts to mark the comments as not spam.
-     *
-     * @param array $commentIds The comment identifiers.
-     * @return VariableSuccessResult
-     */
-    public function setIsHamForIds($commentIds)
-    {
-        return $this->setSpamStatusForIds($commentIds, false);
-    }
-
-    /**
-     * Attempts to mark the comment as spam.
-     *
-     * @param CommentContract $comment The comment to update.
-     * @return bool
-     * @throws ConcurrentResourceAccessViolationException
-     * @throws MutationException
-     */
-    public function setIsSpam(CommentContract $comment)
-    {
-        return $this->setIsSpamById($comment->getId());
-    }
-
-    /**
-     * Attempts to mark the comment as spam.
+     * Attempts to update the comment's spam status.
      *
      * @param string $commentId The comment's identifier.
+     * @param bool $isSpam Whether or not the comment is spam.
      * @return bool
      * @throws ConcurrentResourceAccessViolationException
      * @throws MutationException
      */
-    public function setIsSpamById($commentId)
+    public function setSpamStatusById($commentId, $isSpam)
     {
-        return $this->setSpamStatusById($commentId, true);
-    }
+        $comment = $this->findById($commentId);
 
-    /**
-     * Attempts to mark the comment as not-spam.
-     *
-     * @param CommentContract $comment The comment to update.
-     * @return bool
-     * @throws ConcurrentResourceAccessViolationException
-     * @throws MutationException
-     */
-    public function setIsHam(CommentContract $comment)
-    {
-        return $this->setIsHamById($comment->getId());
-    }
-
-    /**
-     * Attempts to mark the comment as not-spam.
-     *
-     * @param string $commentId The comment's identifier.
-     * @return bool
-     * @throws ConcurrentResourceAccessViolationException
-     * @throws MutationException
-     */
-    public function setIsHamById($commentId)
-    {
-        return $this->setSpamStatusById($commentId, false);
-    }
-
-    /**
-     * Attempts to update the published/approved status for the provided comments.
-     *
-     * @param CommentContract[] $comments The comments to update.
-     * @param bool $isApproved Whether the comments are "published".
-     * @return VariableSuccessResult
-     */
-    public function setApprovedStatusFor($comments, $isApproved)
-    {
-        $commentIds = [];
-
-        foreach ($comments as $comment) {
-            $commentIds[] = $comment->getId();
+        if ($comment === null) {
+            return false;
         }
 
-        return $this->setApprovedStatusForIds($commentIds, $isApproved);
+        $comment->setDataAttribute(CommentContract::KEY_SPAM, $isSpam);
+
+        return $this->update($comment);
     }
 
     /**
@@ -1027,94 +901,6 @@ class LocalCommentStorageManager extends AbstractCommentStorageManager implement
         $comment->setDataAttribute(CommentContract::KEY_PUBLISHED, $isApproved);
 
         return $this->update($comment);
-    }
-
-    /**
-     * Attempts to mark the provided comments as approved.
-     *
-     * @param array $commentIds The comments to update.
-     * @return VariableSuccessResult
-     */
-    public function setIsApprovedForIds($commentIds)
-    {
-        return $this->setApprovedStatusForIds($commentIds, true);
-    }
-
-    /**
-     * Attempts to mark the provided comments as not approved.
-     *
-     * @param array $commentIds The comments to update.
-     * @return VariableSuccessResult
-     */
-    public function setIsNotApprovedForIds($commentIds)
-    {
-        return $this->setApprovedStatusForIds($commentIds, false);
-    }
-
-    /**
-     * Attempts to update the comment's published/approved status.
-     *
-     * @param CommentContract $comment The comment to update.
-     * @param bool $isApproved Whether the comment is "published".
-     * @return bool
-     * @throws ConcurrentResourceAccessViolationException
-     * @throws MutationException
-     */
-    public function setApprovedStatus(CommentContract $comment, $isApproved)
-    {
-        return $this->setApprovedStatusById($comment->getId(), $isApproved);
-    }
-
-    /**
-     * Attempts to mark the comment as approved/published.
-     *
-     * @param CommentContract $comment The comment to update.
-     * @return bool
-     * @throws ConcurrentResourceAccessViolationException
-     * @throws MutationException
-     */
-    public function setIsApproved(CommentContract $comment)
-    {
-        return $this->setIsNotApprovedById($comment->getId());
-    }
-
-    /**
-     * Attempts to mark the comment as un-approved/not-published.
-     *
-     * @param string $commentId The comment's identifier.
-     * @return bool
-     * @throws ConcurrentResourceAccessViolationException
-     * @throws MutationException
-     */
-    public function setIsNotApprovedById($commentId)
-    {
-        return $this->setApprovedStatusById($commentId, false);
-    }
-
-    /**
-     * Attempts to mark the comment as approved/published.
-     *
-     * @param string $commentId The comment's identifier.
-     * @return bool
-     * @throws ConcurrentResourceAccessViolationException
-     * @throws MutationException
-     */
-    public function setIsApprovedById($commentId)
-    {
-        return $this->setApprovedStatusById($commentId, true);
-    }
-
-    /**
-     * Attempts to mark the comment as un-approved/not-published.
-     *
-     * @param CommentContract $comment The comment to update.
-     * @return bool
-     * @throws ConcurrentResourceAccessViolationException
-     * @throws MutationException
-     */
-    public function setIsNotApproved(CommentContract $comment)
-    {
-        return $this->setIsNotApprovedById($comment->getId());
     }
 
     /**
@@ -1271,7 +1057,6 @@ class LocalCommentStorageManager extends AbstractCommentStorageManager implement
                         }
                     }
                 }
-
             }
 
             $pathMappingToReturn = [];
@@ -1287,6 +1072,32 @@ class LocalCommentStorageManager extends AbstractCommentStorageManager implement
         }
 
         return self::$descendentPathCache[$commentId];
+    }
+
+    /**
+     * Attempts to soft delete the requested comment.
+     *
+     * @param string $commentId The comment's identifier.
+     * @return bool
+     * @throws ConcurrentResourceAccessViolationException
+     * @throws MutationException
+     */
+    public function softDeleteById($commentId)
+    {
+        $comment = $this->findById($commentId);
+
+        if ($comment === null) {
+            return false;
+        }
+
+        $comment->setDataAttribute(CommentContract::KEY_IS_DELETED, true);
+        $wasUpdated = $this->update($comment);
+
+        if ($wasUpdated === true) {
+            $this->commentPipeline->softDeleted($commentId, null);
+        }
+
+        return $wasUpdated;
     }
 
     /**
@@ -1423,32 +1234,6 @@ class LocalCommentStorageManager extends AbstractCommentStorageManager implement
         }
 
         return AffectsCommentsResult::conditionalWithComments($wasUpdated, $descendents);
-    }
-
-    /**
-     * Attempts to soft delete the requested comment.
-     *
-     * @param string $commentId The comment's identifier.
-     * @return bool
-     * @throws ConcurrentResourceAccessViolationException
-     * @throws MutationException
-     */
-    public function softDeleteById($commentId)
-    {
-        $comment = $this->findById($commentId);
-
-        if ($comment === null) {
-            return false;
-        }
-
-        $comment->setDataAttribute(CommentContract::KEY_IS_DELETED, true);
-        $wasUpdated = $this->update($comment);
-
-        if ($wasUpdated === true) {
-            $this->commentPipeline->softDeleted($commentId, null);
-        }
-
-        return $wasUpdated;
     }
 
 }

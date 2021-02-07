@@ -630,32 +630,6 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
     }
 
     /**
-     * Tests if the provided comment identifier is a descendent of the parent.
-     *
-     * @param string $commentId The child identifier to test.
-     * @param string $testParent The parent identifier to test.
-     * @return bool
-     */
-    public function isChildOf($commentId, $testParent)
-    {
-        dd(__METHOD__);
-        // TODO: Implement isChildOf() method.
-    }
-
-    /**
-     * Tests if the parent identifier is the direct ancestor of the provided comment.
-     *
-     * @param string $testParent The parent identifier to test.
-     * @param string $commentId The child identifier to test.
-     * @return bool
-     */
-    public function isParentOf($testParent, $commentId)
-    {
-        dd(__METHOD__);
-        // TODO: Implement isParentOf() method.
-    }
-
-    /**
      * Attempts to locate the comment's child comments.
      *
      * @param string $commentId The comment identifier.
@@ -677,42 +651,6 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
     {
         dd(__METHOD__);
         // TODO: Implement getDescendentsPaths() method.
-    }
-
-    /**
-     * Attempts to locate the comment's parent comments.
-     *
-     * @param string $commentId The comment identifier.
-     * @return string[]
-     */
-    public function getAncestors($commentId)
-    {
-        dd(__METHOD__);
-        // TODO: Implement getAncestors() method.
-    }
-
-    /**
-     * Attempts to locate the comment's parent comments and paths.
-     *
-     * @param string $commentId The comment identifier.
-     * @return string[]
-     */
-    public function getAncestorsPaths($commentId)
-    {
-        dd(__METHOD__);
-        // TODO: Implement getAncestorsPaths() method.
-    }
-
-    /**
-     * Attempts to locate the comment's parent and child comment identifiers.
-     *
-     * @param string $commentId The comment identifier.
-     * @return string[]
-     */
-    public function getRelatedComments($commentId)
-    {
-        dd(__METHOD__);
-        // TODO: Implement getRelatedComments() method.
     }
 
     /**
@@ -749,18 +687,6 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
     {
         dd(__METHOD__);
         // TODO: Implement removeAll() method.
-    }
-
-    /**
-     * Attempts to soft delete the requested comment.
-     *
-     * @param string $commentId The comment's identifier.
-     * @return AffectsCommentsResult
-     */
-    public function softDeleteById($commentId)
-    {
-        dd(__METHOD__);
-        // TODO: Implement softDeleteById() method.
     }
 
     /**

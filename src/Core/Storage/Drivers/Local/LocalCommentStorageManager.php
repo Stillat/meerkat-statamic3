@@ -400,43 +400,6 @@ class LocalCommentStorageManager extends AbstractCommentStorageManager implement
     }
 
     /**
-     * Tests if the parent identifier is the direct ancestor of the provided comment.
-     *
-     * @param string $testParent The parent identifier to test.
-     * @param string $commentId The child identifier to test.
-     * @return bool
-     */
-    public function isParentOf($testParent, $commentId)
-    {
-        return $this->isChildOf($commentId, $testParent);
-    }
-
-    /**
-     * Tests if the provided comment identifier is a descendent of the parent.
-     *
-     * @param string $commentId The child identifier to test.
-     * @param string $testParent The parent identifier to test.
-     * @return bool
-     */
-    public function isChildOf($commentId, $testParent)
-    {
-        $path = $this->getPathById($commentId);
-        $testParentPos = mb_strpos($path, $testParent);
-
-        if ($testParentPos === false) {
-            return false;
-        }
-
-        $commentPos = mb_strpos($path, $commentId);
-
-        if ($testParentPos < $commentPos) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Attempts to retrieve a storage path from a comment's identifier.
      *
      * @param string $commentId The comment's string identifier.
@@ -631,6 +594,35 @@ class LocalCommentStorageManager extends AbstractCommentStorageManager implement
     }
 
     /**
+     * Attempts to persist the comment data to disk.
+     *
+     * @param CommentContract $comment The comment to save.
+     * @return bool
+     */
+    private function persistComment(CommentContract $comment)
+    {
+        $storableAttributes = $comment->getStorableAttributes();
+
+        $storableAttributes = $this->cleanCommentStorableData($storableAttributes);
+
+        $storagePath = $comment->getVirtualPath();
+        $contentToSave = $this->yamlParser->toYaml($storableAttributes, $comment->getRawContent());
+        $directoryName = dirname($storagePath);
+
+        if (!file_exists($directoryName)) {
+            mkdir($directoryName, Paths::$directoryPermissions, true);
+        }
+
+        $result = file_put_contents($storagePath, $contentToSave);
+
+        if ($result === false) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Attempts to locate a comment by its identifier.
      *
      * @param string $id The comment's string identifier.
@@ -694,158 +686,6 @@ class LocalCommentStorageManager extends AbstractCommentStorageManager implement
         }
 
         return null;
-    }
-
-    /**
-     * Attempts to persist the comment data to disk.
-     *
-     * @param CommentContract $comment The comment to save.
-     * @return bool
-     */
-    private function persistComment(CommentContract $comment)
-    {
-        $storableAttributes = $comment->getStorableAttributes();
-
-        $storableAttributes = $this->cleanCommentStorableData($storableAttributes);
-
-        $storagePath = $comment->getVirtualPath();
-        $contentToSave = $this->yamlParser->toYaml($storableAttributes, $comment->getRawContent());
-        $directoryName = dirname($storagePath);
-
-        if (!file_exists($directoryName)) {
-            mkdir($directoryName, Paths::$directoryPermissions, true);
-        }
-
-        $result = file_put_contents($storagePath, $contentToSave);
-
-        if ($result === false) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Attempts to locate the comment's parent comments.
-     *
-     * @param string $commentId The comment identifier.
-     * @return string[]
-     */
-    public function getAncestors($commentId)
-    {
-        return array_keys($this->getAncestorsPaths($commentId));
-    }
-
-    /**
-     * Attempts to locate the comment's parent comments and paths.
-     *
-     * @param string $commentId The comment identifier.
-     * @return string[]
-     */
-    public function getAncestorsPaths($commentId)
-    {
-        if (array_key_exists($commentId, self::$ancestorPathCache) === false) {
-            $commentPath = $this->getPathById($commentId);
-            $subPath = mb_substr($commentPath, mb_strlen($this->storagePath) + 1);
-            $parts = explode(Paths::SYM_FORWARD_SEPARATOR, $subPath);
-
-            if (count($parts) === 0) {
-                return [];
-            }
-
-            $threadId = array_shift($parts);
-
-            $exclude = $this->getExclusionList($commentId);
-
-            $pathMapping = [];
-            $mappingParts = explode(Paths::SYM_FORWARD_SEPARATOR, $commentPath);
-
-            if (count($mappingParts) > 0) {
-                $startProcessingPaths = false;
-
-                for ($i = 0; $i < count($mappingParts); $i++) {
-                    if ($mappingParts[$i] === $threadId) {
-                        $startProcessingPaths = true;
-                        continue;
-                    }
-
-                    if ($mappingParts[$i] === $commentId) {
-                        break;
-                    }
-
-                    if ($startProcessingPaths === false) {
-                        continue;
-                    }
-
-                    if (in_array($mappingParts[$i], $exclude) === false) {
-                        if (array_key_exists($mappingParts[$i], $pathMapping) === false) {
-                            $subMappingParts = array_slice($mappingParts, 0, $i + 1);
-
-                            $pathMapping[$mappingParts[$i]] = implode(Paths::SYM_FORWARD_SEPARATOR, $subMappingParts);
-                        }
-                    }
-                }
-            }
-
-            $pathMappingToReturn = [];
-            $cleanedSubparts = $this->cleanRelatedListing($commentId, $parts);
-
-            foreach ($cleanedSubparts as $subCommentId) {
-                if (array_key_exists($subCommentId, $pathMapping)) {
-                    $pathMappingToReturn[$subCommentId] = $pathMapping[$subCommentId];
-                }
-            }
-
-            self::$ancestorPathCache[$commentId] = $pathMappingToReturn;
-        }
-
-        return self::$ancestorPathCache[$commentId];
-    }
-
-    /**
-     * Generates an exclusion list with the provided details.
-     *
-     * @param string $commentId The comment identifier to exclude.
-     * @return array
-     */
-    private function getExclusionList($commentId)
-    {
-        return [
-            CommentContract::COMMENT_FILENAME,
-            self::PATH_REPLIES_DIRECTORY,
-            $commentId
-        ];
-    }
-
-    /**
-     * Removes structural information from the list of comment identifiers.
-     *
-     * @param string $commentId The comment identifier.
-     * @param array $listing The list of comment identifiers.
-     * @return array
-     */
-    private function cleanRelatedListing($commentId, $listing)
-    {
-        $exclude = [
-            CommentContract::COMMENT_FILENAME,
-            self::PATH_REPLIES_DIRECTORY,
-            $commentId
-        ];
-
-        return array_values(array_unique(array_filter($listing, function ($part) use (&$exclude) {
-            return in_array($part, $exclude) === false;
-        })));
-    }
-
-    /**
-     * Attempts to locate the comment's parent and child comment identifiers.
-     *
-     * @param string $commentId The comment identifier.
-     * @return string[]
-     */
-    public function getRelatedComments($commentId)
-    {
-        return array_keys($this->getRelatedCommentsPaths($commentId));
     }
 
     /**
@@ -1447,32 +1287,6 @@ class LocalCommentStorageManager extends AbstractCommentStorageManager implement
         }
 
         return self::$descendentPathCache[$commentId];
-    }
-
-    /**
-     * Attempts to soft delete the requested comment.
-     *
-     * @param string $commentId The comment's identifier.
-     * @return bool
-     * @throws ConcurrentResourceAccessViolationException
-     * @throws MutationException
-     */
-    public function softDeleteById($commentId)
-    {
-        $comment = $this->findById($commentId);
-
-        if ($comment === null) {
-            return false;
-        }
-
-        $comment->setDataAttribute(CommentContract::KEY_IS_DELETED, true);
-        $wasUpdated = $this->update($comment);
-
-        if ($wasUpdated === true) {
-            $this->commentPipeline->softDeleted($commentId, null);
-        }
-
-        return $wasUpdated;
     }
 
     /**

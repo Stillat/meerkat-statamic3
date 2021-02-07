@@ -242,56 +242,8 @@ class EloquentCommentStorageManager implements CommentStorageManagerContract
         ]);
     }
 
-    /**
-     * @param DatabaseComment $databaseComment
-     * @param ThreadHierarchy $hierarchy
-     * @param DatabaseComment[] $commentPrototypes
-     * @return CommentContract
-     */
-    private function databaseCommentToCommentContract($databaseComment, ThreadHierarchy &$hierarchy, $commentPrototypes)
+    private function fillWithGraphRelationships(&$comment, $hierarchy, &$commentPrototypes)
     {
-        $comment = new Comment();
-        $dataAttributes = json_decode($databaseComment->comment_attributes, true);
-
-        $comment->setThreadId($databaseComment->thread_context_id);
-
-        $comment->setRawContent($databaseComment->content);
-        $comment->setDataAttributes($dataAttributes);
-        $comment->setRawAttributes($dataAttributes);
-        $comment->setIsNew(false);
-
-        $comment->flagRuntimeAttributesResolved();
-
-        // Start: Comment Implementation Specifics (not contract).
-        $comment->setStorageManager($this);
-        $comment->setAuthorRetriever($this->authorRetriever);
-        // End:   Comment Implementation Specifics
-
-        $comment->setYamlParser(null);
-        $comment->setMarkdownParser($this->markdownParser);
-
-        $hasAuthorEmail = false;
-        $hasAuthorName = false;
-
-        if (array_key_exists(AuthorContract::KEY_EMAIL_ADDRESS, $dataAttributes)) {
-            $authorEmailCandidate = $dataAttributes[AuthorContract::KEY_EMAIL_ADDRESS];
-
-            if ($authorEmailCandidate !== null && mb_strlen(trim($authorEmailCandidate)) > 0) {
-                $hasAuthorEmail = true;
-            }
-        }
-
-        if (array_key_exists(AuthorContract::KEY_NAME, $dataAttributes)) {
-            $authorNameCandidate = $dataAttributes[AuthorContract::KEY_NAME];
-
-            if ($authorNameCandidate !== null && mb_strlen(trim($authorNameCandidate)) > 0) {
-                $hasAuthorName = true;
-            }
-        }
-
-        $comment->setDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_NAME, $hasAuthorName);
-        $comment->setDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_EMAIL, $hasAuthorEmail);
-
         $threadId = $comment->getThreadId();
         $commentId = $comment->getId();
 
@@ -348,7 +300,9 @@ class EloquentCommentStorageManager implements CommentStorageManagerContract
             if (array_key_exists($commentParent, $commentPrototypes)) {
                 /** @var CommentContract $parentPrototype */
                 $parentPrototype = $commentPrototypes[$commentParent];
-                $parentAuthor = $parentPrototype->getAuthor();
+                $commentPrototype = tap(new Comment())->setDataAttributes($parentPrototype);
+
+                $parentAuthor = $commentPrototype->getAuthor();
 
                 if ($parentAuthor !== null) {
                     $comment->setParentAuthor($parentAuthor);
@@ -367,6 +321,59 @@ class EloquentCommentStorageManager implements CommentStorageManagerContract
         // Executes the comment collecting pipeline events. This is an incredibly powerful
         // tool for third-party developers, but we need to keep an eye on performance.
         $this->runCollectionHookOnComment($comment);
+
+        return $comment;
+    }
+
+    /**
+     * @param DatabaseComment $databaseComment
+     * @return CommentContract
+     */
+    private function databaseCommentToCommentContract($databaseComment)
+    {
+        $comment = new Comment();
+        $dataAttributes = json_decode($databaseComment->comment_attributes, true);
+
+        $comment->setThreadId($databaseComment->thread_context_id);
+
+        $comment->setRawContent($databaseComment->content);
+        $comment->setDataAttributes($dataAttributes);
+        $comment->setRawAttributes($dataAttributes);
+        $comment->setIsNew(false);
+
+        $comment->flagRuntimeAttributesResolved();
+
+        // Start: Comment Implementation Specifics (not contract).
+        $comment->setStorageManager($this);
+        $comment->setAuthorRetriever($this->authorRetriever);
+        // End:   Comment Implementation Specifics
+
+        $comment->setYamlParser(null);
+        $comment->setMarkdownParser($this->markdownParser);
+
+        $hasAuthorEmail = false;
+        $hasAuthorName = false;
+
+        if (array_key_exists(AuthorContract::KEY_EMAIL_ADDRESS, $dataAttributes)) {
+            $authorEmailCandidate = $dataAttributes[AuthorContract::KEY_EMAIL_ADDRESS];
+
+            if ($authorEmailCandidate !== null && mb_strlen(trim($authorEmailCandidate)) > 0) {
+                $hasAuthorEmail = true;
+            }
+        }
+
+        if (array_key_exists(AuthorContract::KEY_NAME, $dataAttributes)) {
+            $authorNameCandidate = $dataAttributes[AuthorContract::KEY_NAME];
+
+            if ($authorNameCandidate !== null && mb_strlen(trim($authorNameCandidate)) > 0) {
+                $hasAuthorName = true;
+            }
+        }
+
+        $comment->setDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_NAME, $hasAuthorName);
+        $comment->setDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_EMAIL, $hasAuthorEmail);
+
+
 
         return $comment;
     }
@@ -508,10 +515,15 @@ class EloquentCommentStorageManager implements CommentStorageManagerContract
             return $comment->compatibility_id;
         })->toArray();
 
-        $comments = $comments->map(function (DatabaseComment $comment) use (&$hierarchy, &$threadCommentArray) {
-            return $this->databaseCommentToCommentContract($comment, $hierarchy, $threadCommentArray);
+        $comments = $comments->map(function (DatabaseComment $comment) {
+            return $this->databaseCommentToCommentContract($comment);
         })->keyBy(function (CommentContract $comment) {
             return $comment->getId();
+        })->toArray();
+
+
+        $comments = collect($comments)->map(function (CommentContract $comment) use (&$hierarchy, &$comments) {
+            return $this->fillWithGraphRelationships($comment, $hierarchy, $comments);
         })->toArray();
 
         $hierarchy->setComments($comments);

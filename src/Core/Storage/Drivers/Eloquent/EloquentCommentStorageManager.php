@@ -11,6 +11,7 @@ use Stillat\Meerkat\Core\Comments\DynamicCollectedProperties;
 use Stillat\Meerkat\Core\Comments\VariableSuccessResult;
 use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
+use Stillat\Meerkat\Core\Contracts\Comments\CommentFactoryContract;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentMutationPipelineContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
@@ -65,6 +66,13 @@ class EloquentCommentStorageManager implements CommentStorageManagerContract
     private $authorRetriever = null;
 
     /**
+     * The comment factory implementation instance.
+     *
+     * @var CommentFactoryContract|null
+     */
+    private $commentFactory = null;
+
+    /**
      * The Markdown parser implementation instance.
      *
      * @var MarkdownParserContract
@@ -82,9 +90,11 @@ class EloquentCommentStorageManager implements CommentStorageManagerContract
         Configuration $config,
         MarkdownParserContract $markdownParser,
         CommentMutationPipelineContract $commentPipeline,
+        CommentFactoryContract $commentFactory,
         CommentAuthorRetriever $authorRetriever)
     {
         $this->config = $config;
+        $this->commentFactory = $commentFactory;
         $this->markdownParser = $markdownParser;
         $this->authorRetriever = $authorRetriever;
         $this->commentPipeline = $commentPipeline;
@@ -193,8 +203,7 @@ class EloquentCommentStorageManager implements CommentStorageManagerContract
      */
     public function makeFromArrayPrototype($data)
     {
-        dd(__METHOD__);
-        // TODO: Implement makeFromArrayPrototype() method.
+        return $this->commentFactory->makeComment($data);
     }
 
     /**

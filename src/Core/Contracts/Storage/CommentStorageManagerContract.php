@@ -21,6 +21,22 @@ interface CommentStorageManagerContract
 {
 
     /**
+     * Tests if a relationship path exists.
+     *
+     * @param string $path The path to check.
+     * @return bool
+     */
+    public function pathExistsForRelationship($path);
+
+    /**
+     * Tests if the provided comment is new, or not.
+     *
+     * @param CommentContract $comment The comment.
+     * @return bool
+     */
+    public function determineIfNew(CommentContract $comment);
+
+    /**
      * Gets the virtual path manager.
      *
      * @return Paths

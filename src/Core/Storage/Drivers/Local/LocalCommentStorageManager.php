@@ -1186,4 +1186,26 @@ class LocalCommentStorageManager extends AbstractCommentStorageManager implement
         return AffectsCommentsResult::conditionalWithComments($wasUpdated, $descendents);
     }
 
+    /**
+     * Tests if a relationship path exists.
+     *
+     * @param string $path The path to check.
+     * @return bool
+     */
+    public function pathExistsForRelationship($path)
+    {
+        return file_exists($path);
+    }
+
+    /**
+     * Tests if the provided comment is new, or not.
+     *
+     * @param CommentContract $comment The comment.
+     * @return bool
+     */
+    public function determineIfNew(CommentContract $comment)
+    {
+        return !file_exists($comment->getVirtualPath());
+    }
+
 }

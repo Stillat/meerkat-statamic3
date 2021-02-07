@@ -19,7 +19,6 @@ use Stillat\Meerkat\Core\Parsing\UsesMarkdownParser;
 use Stillat\Meerkat\Core\Parsing\UsesYAMLParser;
 use Stillat\Meerkat\Core\Storage\Data\CommentAuthorRetriever;
 use Stillat\Meerkat\Core\Support\TypeConversions;
-use Stillat\Meerkat\Core\Threads\ContextResolverFactory;
 use Stillat\Meerkat\Core\Threads\ThreadManagerFactory;
 
 /**
@@ -230,10 +229,20 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     }
 
     /**
+     * Sets the comment's parent author context, if available.
+     *
+     * @param AuthorContract $author The author of the parent comment.
+     */
+    public function setParentAuthor($author)
+    {
+        $this->parentAuthor = $author;
+    }
+
+    /**
      * Indicates if the comment's author has a name.
      *
-     * @since 2.1.14
      * @return bool
+     * @since 2.1.14
      */
     public function hasAuthorName()
     {
@@ -243,22 +252,12 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     /**
      * Indicates if the comment's author has an email address.
      *
-     * @since 2.1.14
      * @return bool
+     * @since 2.1.14
      */
     public function hasAuthorEmailAddress()
     {
         return $this->getDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_EMAIL, true);
-    }
-
-    /**
-     * Sets the comment's parent author context, if available.
-     *
-     * @param AuthorContract $author The author of the parent comment.
-     */
-    public function setParentAuthor($author)
-    {
-        $this->parentAuthor = $author;
     }
 
     /**
@@ -442,6 +441,11 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
      */
     public function isReply()
     {
+        if ($this->hasDataAttribute(CommentContract::KEY_PARENT_ID) &&
+            $this->getDataAttribute(CommentContract::KEY_PARENT_ID, null) !== null) {
+            return true;
+        }
+
         return TypeConversions::getBooleanValue(
             $this->getDataAttribute(CommentContract::KEY_IS_REPLY, false)
         );
@@ -585,20 +589,21 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     }
 
     /**
-     * Attempts to retrieve the participants for the thread.
+     * Attempts to locate the comment's thread context.
      *
-     * @return AuthorContract[]
+     * @return ThreadContract|null
      */
-    public function getThreadParticipants()
+    public function getThread()
     {
-        $thread = $this->getThread();
-        $participants = [];
-
-        if ($thread !== null) {
-            $participants = $thread->getParticipants();
+        if ($this->threadId === null) {
+            return null;
         }
 
-        return $participants;
+        if (ThreadManagerFactory::hasInstance() === false) {
+            return null;
+        }
+
+        return ThreadManagerFactory::$instance->findById($this->threadId);
     }
 
     /**
@@ -622,21 +627,34 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     }
 
     /**
-     * Attempts to locate the comment's thread context.
+     * Attempts to retrieve the participants for the thread.
      *
-     * @return ThreadContract|null
+     * @return AuthorContract[]
      */
-    public function getThread()
+    public function getThreadParticipants()
     {
-        if ($this->threadId === null) {
-            return null;
+        $thread = $this->getThread();
+        $participants = [];
+
+        if ($thread !== null) {
+            $participants = $thread->getParticipants();
         }
 
-        if (ThreadManagerFactory::hasInstance() === false) {
-            return null;
+        return $participants;
+    }
+
+    /**
+     * Gets the comment's author instance.
+     *
+     * @return AuthorContract
+     */
+    public function getAuthor()
+    {
+        if ($this->commentAuthor === null && $this->authorManager !== null) {
+            $this->commentAuthor = $this->authorManager->getCommentAuthor($this);
         }
 
-        return ThreadManagerFactory::$instance->findById($this->threadId);
+        return $this->commentAuthor;
     }
 
     /**
@@ -675,17 +693,6 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
         $this->resolveRunTimeAttributes();
 
         return $this->getAttributesToSave();
-    }
-
-    /**
-     * Indicates that runtime attributes should already be considered resolved.
-     *
-     * @internal
-     * @since 2.1.6
-     */
-    public function flagRuntimeAttributesResolved()
-    {
-        $this->runTimeAttributesResolved = true;
     }
 
     /**
@@ -732,6 +739,17 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     }
 
     /**
+     * Indicates that runtime attributes should already be considered resolved.
+     *
+     * @internal
+     * @since 2.1.6
+     */
+    public function flagRuntimeAttributesResolved()
+    {
+        $this->runTimeAttributesResolved = true;
+    }
+
+    /**
      * Indicates if the comment is a new instance, or one loaded from storage.
      *
      * @return bool
@@ -748,7 +766,7 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
             return true;
         }
 
-        return !file_exists($virtualPath);
+        return $this->storageManager->determineIfNew($this);
     }
 
     public function setIsNew($isNew)
@@ -865,20 +883,6 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
         }
 
         return false;
-    }
-
-    /**
-     * Gets the comment's author instance.
-     *
-     * @return AuthorContract
-     */
-    public function getAuthor()
-    {
-        if ($this->commentAuthor === null && $this->authorManager !== null) {
-            $this->commentAuthor = $this->authorManager->getCommentAuthor($this);
-        }
-
-        return $this->commentAuthor;
     }
 
     /**

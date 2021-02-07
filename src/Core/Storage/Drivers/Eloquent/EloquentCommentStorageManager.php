@@ -19,6 +19,7 @@ use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentChangeSetStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Exceptions\ConcurrentResourceAccessViolationException;
+use Stillat\Meerkat\Core\Paths\PathUtilities;
 use Stillat\Meerkat\Core\RuntimeStateGuard;
 use Stillat\Meerkat\Core\Storage\Data\CommentAuthorRetriever;
 use Stillat\Meerkat\Core\Storage\Drivers\AbstractCommentStorageManager;
@@ -53,6 +54,7 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
     {
         parent::__construct($config, $commentFactory, $commentPipeline, $identityManager, $authorRetriever, $changeSetManager);
 
+        $this->storagePath = PathUtilities::normalize($this->config->storageDirectory);
         $this->markdownParser = $markdownParser;
     }
 
@@ -273,6 +275,12 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
             return $this->update($comment);
         }
 
+        $virtualPath = $comment->getVirtualPath();
+
+        if ($comment->isReply() === false) {
+            $virtualPath = $this->paths->makeRelative($virtualPath);
+        }
+
         $databaseComment = new DatabaseComment();
         $databaseComment->parent_compatibility_id = $comment->getParentId();
         $databaseComment->compatibility_id = $comment->getId();
@@ -282,7 +290,7 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
         $databaseComment->is_parent = $comment->isParent();
         $databaseComment->is_published = $comment->published();
         $databaseComment->content = $comment->getRawContent();
-        $databaseComment->virtual_path = $this->paths->makeRelative($comment->getVirtualPath());
+        $databaseComment->virtual_path = $virtualPath;
         $databaseComment->virtual_dir_path = dirname($databaseComment->virtual_path);
         $databaseComment->comment_attributes = json_encode($comment->getDataAttributes());
 
@@ -614,6 +622,35 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
             ->get()->pluck('virtual_path')->values()->sortByDesc(function ($path) {
                 return mb_strlen($path);
             })->toArray();
+    }
+
+    /**
+     * Tests if a relationship path exists.
+     *
+     * @param string $path The path to check.
+     * @return bool
+     */
+    public function pathExistsForRelationship($path)
+    {
+        return true;
+    }
+
+
+    /**
+     * Tests if the provided comment is new, or not.
+     *
+     * @param CommentContract $comment The comment.
+     * @return bool
+     */
+    public function determineIfNew(CommentContract $comment)
+    {
+        $result = DatabaseComment::where('compatibility_id', $comment->getId())->first();
+
+        if ($result === null) {
+            return true;
+        }
+
+        return false;
     }
 
 }

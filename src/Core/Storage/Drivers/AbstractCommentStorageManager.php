@@ -871,7 +871,7 @@ abstract class AbstractCommentStorageManager implements CommentStorageManagerCon
                 LocalCommentStorageManager::PATH_COMMENT_FILE
             ]);
 
-            if (file_exists($parentPath)) {
+            if ($this->pathExistsForRelationship($parentPath)) {
                 $resolvedPaths[] = $parentPath;
             }
         }

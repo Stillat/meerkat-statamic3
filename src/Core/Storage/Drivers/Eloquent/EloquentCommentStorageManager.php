@@ -409,7 +409,6 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
         }
 
         foreach ($commentIds as $commentId) {
-
             if ($wasSuccess === true) {
                 $result->comments[] = $commentId;
                 $result->succeeded[$commentId] = true;
@@ -430,8 +429,21 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
      */
     public function setSpamStatusById($commentId, $isSpam)
     {
-        dd(__METHOD__);
-        // TODO: Implement setSpamStatusById() method.
+        if (!is_bool($isSpam)) {
+            throw new InvalidArgumentException('Expected boolean value for $isSpam');
+        }
+
+        $updateResult = DB::table('meerkat_comments')->where('compatibility_id', $commentId)
+            ->update([
+                'is_spam' => $isSpam,
+                'comment_attributes->spam' => $isSpam
+            ]);
+
+        if ($updateResult === null || $updateResult === false) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -443,8 +455,34 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
      */
     public function setApprovedStatusForIds($commentIds, $isApproved)
     {
-        dd(__METHOD__);
-        // TODO: Implement setApprovedStatusForIds() method.
+        if (!is_bool($isApproved)) {
+            throw new InvalidArgumentException('Expected boolean value for $isApproved');
+        }
+
+        $result = new VariableSuccessResult();
+        $updateResult = DB::table('meerkat_comments')
+            ->whereIn('compatibility_id', $commentIds)
+            ->update([
+                'is_published' => $isApproved,
+                'comment_attributes->published' => $isApproved
+            ]);
+
+        $wasSuccess = false;
+
+        if ($updateResult !== null && $updateResult > 0) {
+            $wasSuccess = true;
+        }
+
+        foreach ($commentIds as $commentId) {
+            if ($wasSuccess === true) {
+                $result->comments[] = $commentId;
+                $result->succeeded[$commentId] = true;
+            } else {
+                $result->failed[$commentId] = false;
+            }
+        }
+
+        return $result->updateState();
     }
 
     /**
@@ -456,8 +494,21 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
      */
     public function setApprovedStatusById($commentId, $isApproved)
     {
-        dd(__METHOD__);
-        // TODO: Implement setApprovedStatusById() method.
+        if (!is_bool($isApproved)) {
+            throw new InvalidArgumentException('Expected boolean value for $isApproved');
+        }
+
+        $updateResult = DB::table('meerkat_comments')->where('compatibility_id', $commentId)
+            ->update([
+                'is_published' => $isApproved,
+                'comment_attributes->published' => $isApproved
+            ]);
+
+        if ($updateResult === null || $updateResult === false) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

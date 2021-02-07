@@ -293,6 +293,34 @@ class DatabaseCommentStorageManager extends AbstractCommentStorageManager implem
             return $this->update($comment);
         }
 
+        PrototypeAttributeValidator::validateAttributes($comment->getDataAttributes());
+
+        $originalId = $comment->getId();
+
+        $comment = $this->runMutablePipeline($originalId, $comment, CommentMutationPipelineContract::MUTATION_CREATING);
+
+        // Spam/ham pipeline.
+        if ($comment->hasDataAttribute(CommentContract::KEY_SPAM)) {
+            $comment = $this->runConditionalMutablePipeline(
+                $originalId,
+                $comment,
+                $comment->isSpam(),
+                CommentMutationPipelineContract::METHOD_MARKING_AS_SPAM,
+                CommentMutationPipelineContract::METHOD_MARKING_AS_HAM
+            );
+        }
+
+        // Approving/un-approving pipeline.
+        if ($comment->hasDataAttribute(CommentContract::KEY_PUBLISHED)) {
+            $comment = $this->runConditionalMutablePipeline(
+                $originalId,
+                $comment,
+                $comment->published(),
+                CommentMutationPipelineContract::METHOD_APPROVING,
+                CommentMutationPipelineContract::METHOD_UNAPPROVING
+            );
+        }
+
         $virtualPath = $comment->getVirtualPath();
 
         if ($comment->isReply() === false) {
@@ -304,7 +332,7 @@ class DatabaseCommentStorageManager extends AbstractCommentStorageManager implem
 
         $databaseComment = new DatabaseComment();
         $databaseComment->parent_compatibility_id = $comment->getParentId();
-        $databaseComment->compatibility_id = $comment->getId();
+        $databaseComment->compatibility_id = $originalId;
         $databaseComment->thread_context_id = $comment->getThreadId();
         $databaseComment->depth = $this->inferDepthFromVirtualPath($virtualDirPath);
         $databaseComment->is_root = $comment->isRoot();

@@ -508,7 +508,6 @@ class LocalCommentStorageManager extends AbstractCommentStorageManager implement
 
         $comment = $this->runMutablePipeline($originalId, $comment, CommentMutationPipelineContract::METHOD_UPDATING);
 
-
         // Marking as spam/ham.
         if ($changeSet->wasAttributeMutated(CommentContract::KEY_SPAM)) {
             $comment = $this->runConditionalMutablePipeline(

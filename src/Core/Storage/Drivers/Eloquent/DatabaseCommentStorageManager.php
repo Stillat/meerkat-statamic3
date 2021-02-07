@@ -104,15 +104,21 @@ class DatabaseCommentStorageManager extends AbstractCommentStorageManager implem
         return $this->getThreadHierarchy($virtualThreadPath, $threadId, $virtualPaths, $threadComments);
     }
 
+    /**
+     * Resolves the thread hierarchy for the provided details.
+     *
+     * @param string $virtualThreadPath The virtual thread path.
+     * @param string $threadId The thread's identifier.
+     * @param string[] $virtualPaths The virtual paths.
+     * @param DatabaseComment[]|Collection $comments The comments.
+     * @return ThreadHierarchy
+     * @throws MutationException
+     */
     private function getThreadHierarchy($virtualThreadPath, $threadId, $virtualPaths, $comments)
     {
         $storageLock = RuntimeStateGuard::storageLocks()->lock();
 
         $hierarchy = $this->commentStructureResolver->resolve($virtualThreadPath, $virtualPaths);
-
-        $threadCommentArray = $comments->keyBy(function (DatabaseComment $comment) {
-            return $comment->compatibility_id;
-        })->toArray();
 
         $comments = $comments->map(function (DatabaseComment $comment) {
             return $this->databaseCommentToCommentContract($comment);
@@ -123,6 +129,8 @@ class DatabaseCommentStorageManager extends AbstractCommentStorageManager implem
         $comments = collect($comments)->map(function (CommentContract $comment) use (&$hierarchy, &$comments) {
             return $this->fillWithGraphRelationships($comment, $hierarchy, $comments);
         })->toArray();
+
+        $this->runCollectionHookOnAllComments($comments);
 
         $hierarchy->setComments($comments);
 

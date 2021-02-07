@@ -23,12 +23,14 @@ use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentChangeSetStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Exceptions\ConcurrentResourceAccessViolationException;
+use Stillat\Meerkat\Core\Exceptions\MutationException;
 use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
 use Stillat\Meerkat\Core\Paths\PathUtilities;
 use Stillat\Meerkat\Core\RuntimeStateGuard;
 use Stillat\Meerkat\Core\Storage\Data\CommentAuthorRetriever;
 use Stillat\Meerkat\Core\Storage\Drivers\AbstractCommentStorageManager;
 use Stillat\Meerkat\Core\Storage\Drivers\Eloquent\Models\DatabaseComment;
+use Stillat\Meerkat\Core\Storage\Drivers\Local\Attributes\PrototypeAttributeValidator;
 use Stillat\Meerkat\Core\Storage\Paths;
 use Stillat\Meerkat\Core\Threads\ThreadHierarchy;
 
@@ -142,6 +144,7 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
         $comment->setRawContent($databaseComment->content);
         $comment->setDataAttributes($dataAttributes);
         $comment->setRawAttributes($dataAttributes);
+        $comment->setDataAttribute(CommentContract::INTERNAL_PATH, $databaseComment->virtual_path);
         $comment->setIsNew(false);
 
         $comment->flagRuntimeAttributesResolved();
@@ -356,11 +359,112 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
      *
      * @param CommentContract $comment The comment to save.
      * @return bool
+     * @throws ConcurrentResourceAccessViolationException
+     * @throws MutationException
      */
     public function update(CommentContract $comment)
     {
-        dd(__METHOD__);
-        // TODO: Implement update() method.
+        RuntimeStateGuard::storageLocks()->checkConcurrentAccess();
+
+        if ($comment === null) {
+            return false;
+        }
+
+        if ($comment->getIsNew() === true) {
+            return $this->save($comment);
+        }
+
+        PrototypeAttributeValidator::validateAttributes($comment->getDataAttributes());
+
+        $changeSet = $this->getMutationChangeSet($comment);
+
+        $originalId = $comment->getId();
+
+        $comment = $this->runMutablePipeline($originalId, $comment, CommentMutationPipelineContract::METHOD_UPDATING);
+
+        // Marking as spam/ham.
+        if ($changeSet->wasAttributeMutated(CommentContract::KEY_SPAM)) {
+            $comment = $this->runConditionalMutablePipeline(
+                $originalId,
+                $comment,
+                $comment->isSpam(),
+                CommentMutationPipelineContract::METHOD_MARKING_AS_SPAM,
+                CommentMutationPipelineContract::METHOD_MARKING_AS_HAM
+            );
+        }
+
+        // Approving pipeline.
+        if ($changeSet->wasAttributeMutated(CommentContract::KEY_PUBLISHED)) {
+            $comment = $this->runConditionalMutablePipeline(
+                $originalId,
+                $comment,
+                $comment->published(),
+                CommentMutationPipelineContract::METHOD_APPROVING,
+                CommentMutationPipelineContract::METHOD_UNAPPROVING
+            );
+        }
+
+        // Get the final change set before saving changes.
+        $finalChangeSet = null;
+
+        if ($this->config->trackChanges) {
+            $finalChangeSet = $this->getMutationChangeSet($comment);
+        }
+
+        $didCommentSave = false;
+
+        /** @var DatabaseComment $databaseComment */
+        $databaseComment = DatabaseComment::where('compatibility_id', $originalId)->first();
+
+        if ($databaseComment === null) {
+            $didCommentSave = false;
+        } else {
+            $databaseComment->comment_attributes = json_encode($comment->getDataAttributes());
+
+            if ($comment->getAuthor() !== null && $comment->getAuthor()->getIsTransient() === false) {
+                $databaseComment->statamic_user_id = $comment->getAuthor()->getId();
+            }
+
+            $databaseComment->is_published = $comment->published();
+
+            if ($comment->hasBeenCheckedForSpam()) {
+                $databaseComment->is_spam = $comment->isSpam();
+            }
+
+            $databaseComment->content = $comment->getRawContent();
+
+            $didCommentSave = $databaseComment->save();
+        }
+
+        if ($didCommentSave === true) {
+            $this->commentStructureResolver->clearThreadCache($comment->getThreadId());
+            // Reload the comment to supply the full comment details.
+            $updatedComment = $this->findById($comment->getId());
+
+            $this->commentPipeline->updated($updatedComment, null);
+
+            if ($comment->hasDataAttribute(CommentContract::KEY_SPAM)) {
+                if ($comment->isSpam()) {
+                    $this->commentPipeline->markedAsSpam($updatedComment, null);
+                } else {
+                    $this->commentPipeline->markedAsHam($updatedComment, null);
+                }
+            }
+
+            if ($comment->hasDataAttribute(CommentContract::KEY_PUBLISHED)) {
+                if ($comment->published()) {
+                    $this->commentPipeline->approved($updatedComment, null);
+                } else {
+                    $this->commentPipeline->unapproved($updatedComment, null);
+                }
+            }
+
+            if ($this->config->trackChanges === true && $finalChangeSet !== null) {
+                $this->changeSetManager->addChangeSet($comment, $finalChangeSet);
+            }
+        }
+
+        return $didCommentSave;
     }
 
     /**
@@ -803,7 +907,6 @@ where root.compatibility_id = :rootid ORDER BY children.virtual_path desc', [
         if ($comment === null) {
             return AffectsCommentsResult::failed();
         }
-
 
         if ($comment->isDeleted() === false) {
             return AffectsCommentsResult::failed();

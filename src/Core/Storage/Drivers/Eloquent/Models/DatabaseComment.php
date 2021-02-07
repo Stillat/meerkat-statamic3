@@ -20,7 +20,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string root_path
  * @property int depth
  * @property bool is_root
- * @property bool is_parent
  * @property bool is_published
  * @property bool|null is_spam
  * @property string content

@@ -7,37 +7,24 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Stillat\Meerkat\Core\Comments\AffectsCommentsResult;
 use Stillat\Meerkat\Core\Comments\Comment;
-use Stillat\Meerkat\Core\Comments\DynamicCollectedProperties;
 use Stillat\Meerkat\Core\Comments\VariableSuccessResult;
 use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentFactoryContract;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentMutationPipelineContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
+use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
+use Stillat\Meerkat\Core\Contracts\Storage\CommentChangeSetStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
-use Stillat\Meerkat\Core\Contracts\Storage\StructureResolverInterface;
-use Stillat\Meerkat\Core\Data\Mutations\ChangeSet;
-use Stillat\Meerkat\Core\Data\Validators\CommentValidator;
 use Stillat\Meerkat\Core\RuntimeStateGuard;
 use Stillat\Meerkat\Core\Storage\Data\CommentAuthorRetriever;
+use Stillat\Meerkat\Core\Storage\Drivers\AbstractCommentStorageManager;
 use Stillat\Meerkat\Core\Storage\Drivers\Eloquent\Models\DatabaseComment;
-use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalCommentStorageManager;
-use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalCommentStructureResolver;
-use Stillat\Meerkat\Core\Storage\Paths;
-use Stillat\Meerkat\Core\Support\Str;
 use Stillat\Meerkat\Core\Threads\ThreadHierarchy;
 
-class EloquentCommentStorageManager implements CommentStorageManagerContract
+class EloquentCommentStorageManager extends AbstractCommentStorageManager implements CommentStorageManagerContract
 {
-
-
-    /**
-     * The Meerkat configuration instance.
-     *
-     * @var Configuration
-     */
-    protected $config = null;
 
     /**
      * The path where all comment threads are stored.
@@ -47,163 +34,24 @@ class EloquentCommentStorageManager implements CommentStorageManagerContract
     protected $storagePath = '';
 
     /**
-     * @var Paths|null
-     */
-    protected $paths = null;
-
-    /**
-     * The comment structure resolver instance.
-     *
-     * @var StructureResolverInterface
-     */
-    private $commentStructureResolver = null;
-
-    /**
-     * The author retriever instance.
-     *
-     * @var CommentAuthorRetriever
-     */
-    private $authorRetriever = null;
-
-    /**
-     * The comment factory implementation instance.
-     *
-     * @var CommentFactoryContract|null
-     */
-    private $commentFactory = null;
-
-    /**
      * The Markdown parser implementation instance.
      *
      * @var MarkdownParserContract
      */
     private $markdownParser = null;
 
-    /**
-     * The CommentMutationPipelineContract implementation instance.
-     *
-     * @var CommentMutationPipelineContract
-     */
-    private $commentPipeline = null;
-
     public function __construct(
         Configuration $config,
         MarkdownParserContract $markdownParser,
         CommentMutationPipelineContract $commentPipeline,
         CommentFactoryContract $commentFactory,
-        CommentAuthorRetriever $authorRetriever)
+        IdentityManagerContract $identityManager,
+        CommentAuthorRetriever $authorRetriever,
+        CommentChangeSetStorageManagerContract $changeSetManager)
     {
-        $this->config = $config;
-        $this->commentFactory = $commentFactory;
+        parent::__construct($config, $commentFactory, $commentPipeline, $identityManager, $authorRetriever, $changeSetManager);
+
         $this->markdownParser = $markdownParser;
-        $this->authorRetriever = $authorRetriever;
-        $this->commentPipeline = $commentPipeline;
-        $this->paths = new Paths($config);
-        $this->commentStructureResolver = new LocalCommentStructureResolver();
-    }
-
-    /**
-     * Gets the virtual path manager.
-     *
-     * @return Paths
-     */
-    public function getPaths()
-    {
-        return $this->paths;
-    }
-
-    /**
-     * Attempts to locate a comment by it's identifier.
-     *
-     * @param string $id The comment's string identifier.
-     * @return CommentContract|null
-     */
-    public function findById($id)
-    {
-        /** @var DatabaseComment $databaseComment */
-        $databaseComment = DatabaseComment::where('compatibility_id', $id)->withTrashed()->first();
-
-        if ($databaseComment === null) {
-            return null;
-        }
-
-        $virtualPath = $databaseComment->virtual_path;
-        $virtualPaths = $this->inferRelationshipsFromPath($databaseComment->compatibility_id, $virtualPath);
-        $threadComments = collect([$databaseComment]);
-        $threadId = $databaseComment->thread_context_id;
-        $virtualThreadPath = $this->paths->combine([$databaseComment->thread_context_id]);
-
-        $simpleHierarchy = $this->getThreadHierarchy($virtualThreadPath, $threadId, $virtualPaths, $threadComments);
-
-        if ($simpleHierarchy->hasComment($id)) {
-            $comment =  $simpleHierarchy->getComment($id);
-
-            if ($comment !== null) {
-                $comment->setThreadId($threadId);
-            }
-
-            return $comment;
-        }
-
-        return null;
-    }
-
-    /**
-     * Infers ancestor relationships from the comment path, to assist with lazy-loading.
-     *
-     * @param string $id The known comment identifier.
-     * @param string $path The comment path.
-     * @return string[]
-     * @since 2.0.12
-     */
-    private function inferRelationshipsFromPath($id, $path)
-    {
-        $resolvedPaths = [];
-        $subStructurePath = $this->paths->combine([
-            LocalCommentStorageManager::PATH_REPLIES_DIRECTORY,
-            $id,
-            LocalCommentStorageManager::PATH_COMMENT_FILE
-        ]);
-
-        if (Str::endsWith($path, $subStructurePath)) {
-            $parentPath = $this->paths->combine([
-                mb_substr($path, 0, mb_strlen($path) - mb_strlen($subStructurePath)),
-                LocalCommentStorageManager::PATH_COMMENT_FILE
-            ]);
-
-            if (file_exists($parentPath)) {
-                $resolvedPaths[] = $parentPath;
-            }
-        }
-
-        $resolvedPaths[] = $path;
-
-        return $resolvedPaths;
-    }
-
-    /**
-     * Generates a virtual path for the provided thread and comment.
-     *
-     * @param string $threadId The thread identifier.
-     * @param string $commentId The comment identifier.
-     * @return string
-     */
-    public function generateVirtualPath($threadId, $commentId)
-    {
-        return $this->paths->combine([
-            $threadId, $commentId, CommentContract::COMMENT_FILENAME
-        ]);
-    }
-
-    /**
-     * Constructs a comment from the prototype data.
-     *
-     * @param array $data The comment prototype.
-     * @return CommentContract|null
-     */
-    public function makeFromArrayPrototype($data)
-    {
-        return $this->commentFactory->makeComment($data);
     }
 
     /**
@@ -225,30 +73,100 @@ class EloquentCommentStorageManager implements CommentStorageManagerContract
     }
 
     /**
-     * Attempts to get the reply storage path for the provided parent and child comment.
+     * Gets all comments for the requested thread.
      *
-     * @param string $parentId The parent comment's identifier.
-     * @param string $childId The child comment's identifier.
-     * @return string
+     * @param string $threadId The identifier of the thread.
+     * @return ThreadHierarchy
      */
-    public function getReplyPathById($parentId, $childId)
+    public function getCommentsForThreadId($threadId)
     {
-        $basePath = $this->getPathById($parentId);
+        /** @var Collection $threadComments */
+        $threadComments = DatabaseComment::where('thread_context_id', $threadId)->withTrashed()->get();
+        $virtualPaths = $threadComments->pluck('virtual_path')->values()->sortByDesc(function ($path) {
+            return mb_strlen($path);
+        })->toArray();
 
-        if (Str::endsWith($basePath, CommentContract::COMMENT_FILENAME)) {
-            $basePath = mb_substr($basePath, 0, -1 * (mb_strlen(CommentContract::COMMENT_FILENAME)));
+        $virtualThreadPath = $this->paths->combine([$threadId]);
+
+        return $this->getThreadHierarchy($virtualThreadPath, $threadId, $virtualPaths, $threadComments);
+    }
+
+    private function getThreadHierarchy($virtualThreadPath, $threadId, $virtualPaths, $comments)
+    {
+        $storageLock = RuntimeStateGuard::storageLocks()->lock();
+
+        $hierarchy = $this->commentStructureResolver->resolve($virtualThreadPath, $virtualPaths);
+
+        $threadCommentArray = $comments->keyBy(function (DatabaseComment $comment) {
+            return $comment->compatibility_id;
+        })->toArray();
+
+        $comments = $comments->map(function (DatabaseComment $comment) {
+            return $this->databaseCommentToCommentContract($comment);
+        })->keyBy(function (CommentContract $comment) {
+            return $comment->getId();
+        })->toArray();
+
+        $comments = collect($comments)->map(function (CommentContract $comment) use (&$hierarchy, &$comments) {
+            return $this->fillWithGraphRelationships($comment, $hierarchy, $comments);
+        })->toArray();
+
+        $hierarchy->setComments($comments);
+
+        RuntimeStateGuard::storageLocks()->releaseLock($storageLock);
+
+        return $hierarchy;
+    }
+
+    /**
+     * @param DatabaseComment $databaseComment
+     * @return CommentContract
+     */
+    private function databaseCommentToCommentContract($databaseComment)
+    {
+        $comment = new Comment();
+        $dataAttributes = json_decode($databaseComment->comment_attributes, true);
+
+        $comment->setThreadId($databaseComment->thread_context_id);
+
+        $comment->setRawContent($databaseComment->content);
+        $comment->setDataAttributes($dataAttributes);
+        $comment->setRawAttributes($dataAttributes);
+        $comment->setIsNew(false);
+
+        $comment->flagRuntimeAttributesResolved();
+
+        // Start: Comment Implementation Specifics (not contract).
+        $comment->setStorageManager($this);
+        $comment->setAuthorRetriever($this->authorRetriever);
+        // End:   Comment Implementation Specifics
+
+        $comment->setYamlParser(null);
+        $comment->setMarkdownParser($this->markdownParser);
+
+        $hasAuthorEmail = false;
+        $hasAuthorName = false;
+
+        if (array_key_exists(AuthorContract::KEY_EMAIL_ADDRESS, $dataAttributes)) {
+            $authorEmailCandidate = $dataAttributes[AuthorContract::KEY_EMAIL_ADDRESS];
+
+            if ($authorEmailCandidate !== null && mb_strlen(trim($authorEmailCandidate)) > 0) {
+                $hasAuthorEmail = true;
+            }
         }
 
-        if (Str::endsWith($basePath, Paths::SYM_FORWARD_SEPARATOR)) {
-            $basePath = mb_substr($basePath, 0, -1);
+        if (array_key_exists(AuthorContract::KEY_NAME, $dataAttributes)) {
+            $authorNameCandidate = $dataAttributes[AuthorContract::KEY_NAME];
+
+            if ($authorNameCandidate !== null && mb_strlen(trim($authorNameCandidate)) > 0) {
+                $hasAuthorName = true;
+            }
         }
 
-        return $this->paths->combine([
-            $basePath,
-            LocalCommentStorageManager::PATH_REPLIES_DIRECTORY,
-            $childId,
-            CommentContract::COMMENT_FILENAME
-        ]);
+        $comment->setDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_NAME, $hasAuthorName);
+        $comment->setDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_EMAIL, $hasAuthorEmail);
+
+        return $comment;
     }
 
     private function fillWithGraphRelationships(&$comment, $hierarchy, &$commentPrototypes)
@@ -335,214 +253,6 @@ class EloquentCommentStorageManager implements CommentStorageManagerContract
     }
 
     /**
-     * @param DatabaseComment $databaseComment
-     * @return CommentContract
-     */
-    private function databaseCommentToCommentContract($databaseComment)
-    {
-        $comment = new Comment();
-        $dataAttributes = json_decode($databaseComment->comment_attributes, true);
-
-        $comment->setThreadId($databaseComment->thread_context_id);
-
-        $comment->setRawContent($databaseComment->content);
-        $comment->setDataAttributes($dataAttributes);
-        $comment->setRawAttributes($dataAttributes);
-        $comment->setIsNew(false);
-
-        $comment->flagRuntimeAttributesResolved();
-
-        // Start: Comment Implementation Specifics (not contract).
-        $comment->setStorageManager($this);
-        $comment->setAuthorRetriever($this->authorRetriever);
-        // End:   Comment Implementation Specifics
-
-        $comment->setYamlParser(null);
-        $comment->setMarkdownParser($this->markdownParser);
-
-        $hasAuthorEmail = false;
-        $hasAuthorName = false;
-
-        if (array_key_exists(AuthorContract::KEY_EMAIL_ADDRESS, $dataAttributes)) {
-            $authorEmailCandidate = $dataAttributes[AuthorContract::KEY_EMAIL_ADDRESS];
-
-            if ($authorEmailCandidate !== null && mb_strlen(trim($authorEmailCandidate)) > 0) {
-                $hasAuthorEmail = true;
-            }
-        }
-
-        if (array_key_exists(AuthorContract::KEY_NAME, $dataAttributes)) {
-            $authorNameCandidate = $dataAttributes[AuthorContract::KEY_NAME];
-
-            if ($authorNameCandidate !== null && mb_strlen(trim($authorNameCandidate)) > 0) {
-                $hasAuthorName = true;
-            }
-        }
-
-        $comment->setDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_NAME, $hasAuthorName);
-        $comment->setDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_EMAIL, $hasAuthorEmail);
-
-
-
-        return $comment;
-    }
-
-    /**
-     * Runs the requested mutation on the comment.
-     *
-     * @param string $originalId The original string identifier.
-     * @param CommentContract $comment The comment to run mutations against.
-     * @param string $mutation The mutation to run.
-     * @return mixed
-     */
-    private function runMutablePipeline($originalId, $comment, $mutation)
-    {
-        if (RuntimeStateGuard::mutationLocks()->isLocked()) {
-            return $comment;
-        }
-
-        $lock = RuntimeStateGuard::mutationLocks()->lock();
-
-        /** @var CommentContract|null $pipelineResult */
-        $pipelineResult = null;
-
-        if (method_exists($this->commentPipeline, $mutation)) {
-            $this->commentPipeline->$mutation($comment, function ($result) use (&$pipelineResult) {
-                $pipelineResult = $this->mergeFromPipelineResults($pipelineResult, $result);
-            });
-        }
-
-        RuntimeStateGuard::mutationLocks()->releaseLock($lock);
-
-        return $this->reassignFromPipeline($originalId, $comment, $pipelineResult);
-    }
-
-    /**
-     * Attempts to merge a new result into an existing pipeline result.
-     *
-     * @param CommentContract|null $currentPipelineResult The current pipeline result.
-     * @param CommentContract|null $result The result to merge.
-     * @return CommentContract|null
-     */
-    private function mergeFromPipelineResults($currentPipelineResult, $result)
-    {
-        if (CommentValidator::check($result)) {
-            if ($currentPipelineResult === null) {
-                $currentPipelineResult = $result;
-            } else {
-                $currentPipelineResult->mergeAttributes($result->getStorableAttributes());
-            }
-        }
-
-        return $currentPipelineResult;
-    }
-
-    /**
-     * Reassigns the result's identifier.
-     * @param string $originalId The comment identifier.
-     * @param CommentContract $comment The comment to reassign to.
-     * @param CommentContract|null $pipelineResult The aggregate pipeline result.
-     * @return CommentContract
-     */
-    private function reassignFromPipeline($originalId, $comment, $pipelineResult)
-    {
-        if (CommentValidator::check($pipelineResult)) {
-            $pipelineResult->setDataAttribute(CommentContract::KEY_ID, $originalId);
-
-            return $pipelineResult;
-        }
-
-        return $comment;
-    }
-
-    /**
-     * Executes the collecting hook on the comment.
-     *
-     * @param CommentContract $comment The comment to run the hook on.
-     */
-    private function runCollectionHookOnComment($comment)
-    {
-        if ($comment === null || $comment instanceof CommentContract === false) {
-            return;
-        }
-
-        $preMutationAttributes = $comment->getDataAttributeNames();
-
-        $this->runMutablePipeline($comment->getId(),
-            $comment, CommentMutationPipelineContract::METHOD_COLLECTING);
-
-        $comment->setDataAttribute(CommentContract::INTERNAL_HAS_COLLECTED, true);
-        $postCollectionAttributes = $comment->getDataAttributeNames();
-
-        DynamicCollectedProperties::registerDynamicProperties(
-            $preMutationAttributes, $postCollectionAttributes
-        );
-    }
-
-    /**
-     * Returns only the virtual paths for all comments in the provided thread.
-     *
-     * @param string $threadId The thread's context identifier.
-     * @return string[]
-     */
-    private function getVirtualPathsForThread($threadId)
-    {
-        return DB::table('meerkat_comments')
-            ->select('virtual_path')->where('thread_context_id', $threadId)
-            ->get()->pluck('virtual_path')->values()->sortByDesc(function ($path) {
-                return mb_strlen($path);
-            })->toArray();
-    }
-
-    /**
-     * Gets all comments for the requested thread.
-     *
-     * @param string $threadId The identifier of the thread.
-     * @return ThreadHierarchy
-     */
-    public function getCommentsForThreadId($threadId)
-    {
-
-        /** @var Collection $threadComments */
-        $threadComments = DatabaseComment::where('thread_context_id', $threadId)->withTrashed()->get();
-        $virtualPaths = $threadComments->pluck('virtual_path')->values()->sortByDesc(function ($path) {
-            return mb_strlen($path);
-        })->toArray();
-
-        $virtualThreadPath =  $this->paths->combine([$threadId]);
-
-        return $this->getThreadHierarchy($virtualThreadPath, $threadId, $virtualPaths, $threadComments);
-    }
-
-    private function getThreadHierarchy($virtualThreadPath, $threadId, $virtualPaths, $comments)
-    {
-        $storageLock = RuntimeStateGuard::storageLocks()->lock();
-
-        $hierarchy = $this->commentStructureResolver->resolve($virtualThreadPath, $virtualPaths);
-
-        $threadCommentArray = $comments->keyBy(function (DatabaseComment $comment) {
-            return $comment->compatibility_id;
-        })->toArray();
-
-        $comments = $comments->map(function (DatabaseComment $comment) {
-            return $this->databaseCommentToCommentContract($comment);
-        })->keyBy(function (CommentContract $comment) {
-            return $comment->getId();
-        })->toArray();
-
-
-        $comments = collect($comments)->map(function (CommentContract $comment) use (&$hierarchy, &$comments) {
-            return $this->fillWithGraphRelationships($comment, $hierarchy, $comments);
-        })->toArray();
-
-        $hierarchy->setComments($comments);
-
-        RuntimeStateGuard::storageLocks()->releaseLock($storageLock);
-
-        return $hierarchy;
-    }
-
-    /**
      * Attempts to save the comment data.
      *
      * @param CommentContract $comment The comment to save.
@@ -621,18 +331,6 @@ class EloquentCommentStorageManager implements CommentStorageManagerContract
     }
 
     /**
-     * Retrieves a list of all changes made to the comment.
-     *
-     * @param CommentContract $comment The comment to check.
-     * @return ChangeSet
-     */
-    public function getMutationChangeSet(CommentContract $comment)
-    {
-        dd(__METHOD__);
-        // TODO: Implement getMutationChangeSet() method.
-    }
-
-    /**
      * Attempts to update the comment data.
      *
      * @param CommentContract $comment The comment to save.
@@ -645,6 +343,42 @@ class EloquentCommentStorageManager implements CommentStorageManagerContract
     }
 
     /**
+     * Attempts to locate a comment by it's identifier.
+     *
+     * @param string $id The comment's string identifier.
+     * @return CommentContract|null
+     */
+    public function findById($id)
+    {
+        /** @var DatabaseComment $databaseComment */
+        $databaseComment = DatabaseComment::where('compatibility_id', $id)->withTrashed()->first();
+
+        if ($databaseComment === null) {
+            return null;
+        }
+
+        $virtualPath = $databaseComment->virtual_path;
+        $virtualPaths = $this->inferRelationshipsFromPath($databaseComment->compatibility_id, $virtualPath);
+        $threadComments = collect([$databaseComment]);
+        $threadId = $databaseComment->thread_context_id;
+        $virtualThreadPath = $this->paths->combine([$databaseComment->thread_context_id]);
+
+        $simpleHierarchy = $this->getThreadHierarchy($virtualThreadPath, $threadId, $virtualPaths, $threadComments);
+
+        if ($simpleHierarchy->hasComment($id)) {
+            $comment = $simpleHierarchy->getComment($id);
+
+            if ($comment !== null) {
+                $comment->setThreadId($threadId);
+            }
+
+            return $comment;
+        }
+
+        return null;
+    }
+
+    /**
      * Attempts to the update the comments' spam status.
      *
      * @param CommentContract[] $comments The comments to update.
@@ -653,8 +387,13 @@ class EloquentCommentStorageManager implements CommentStorageManagerContract
      */
     public function setSpamStatusForComments($comments, $isSpam)
     {
-        dd(__METHOD__);
-        // TODO: Implement setSpamStatusForComments() method.
+        $commentIds = [];
+
+        foreach ($comments as $comment) {
+            $commentIds[] = $comment->getId();
+        }
+
+        return $this->setSpamStatusForIds($commentIds, $isSpam);
     }
 
     /**
@@ -703,8 +442,7 @@ class EloquentCommentStorageManager implements CommentStorageManagerContract
      */
     public function setSpamStatus(CommentContract $comment, $isSpam)
     {
-        dd(__METHOD__);
-        // TODO: Implement setSpamStatus() method.
+        return $this->setSpamStatusById($comment->getId(), $isSpam);
     }
 
     /**
@@ -728,8 +466,7 @@ class EloquentCommentStorageManager implements CommentStorageManagerContract
      */
     public function setIsSpam(CommentContract $comment)
     {
-        dd(__METHOD__);
-        // TODO: Implement setIsSpam() method.
+        return $this->setIsSpamById($comment->getId());
     }
 
     /**
@@ -1060,5 +797,20 @@ class EloquentCommentStorageManager implements CommentStorageManagerContract
     {
         dd(__METHOD__);
         // TODO: Implement restoreAll() method.
+    }
+
+    /**
+     * Returns only the virtual paths for all comments in the provided thread.
+     *
+     * @param string $threadId The thread's context identifier.
+     * @return string[]
+     */
+    private function getVirtualPathsForThread($threadId)
+    {
+        return DB::table('meerkat_comments')
+            ->select('virtual_path')->where('thread_context_id', $threadId)
+            ->get()->pluck('virtual_path')->values()->sortByDesc(function ($path) {
+                return mb_strlen($path);
+            })->toArray();
     }
 }

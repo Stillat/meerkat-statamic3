@@ -588,8 +588,23 @@ where root.compatibility_id = :rootid ORDER BY children.virtual_path desc', [
      */
     public function getRelatedCommentsPaths($commentId)
     {
-        dd(__METHOD__);
-        // TODO: Implement getRelatedCommentsPaths() method.
+        if (!array_key_exists($commentId, self::$relatedPathCache)) {
+            $paths = DB::select('SELECT concat(related.virtual_dir_path, \'/\') as virtual_dir_path, related.compatibility_id FROM meerkat_comments as related
+inner join meerkat_comments as target on related.root_path = target.root_path
+WHERE target.compatibility_id = :targetid order by virtual_dir_path desc;', [
+                'targetid' => $commentId
+            ]);
+
+            $pathMappingToReturn = [];
+
+            foreach ($paths as $path) {
+                $pathMappingToReturn[$path->compatibility_id] = $path->virtual_dir_path;
+            }
+
+            self::$relatedPathCache[$commentId] = $pathMappingToReturn;
+        }
+
+        return self::$relatedPathCache[$commentId];
     }
 
     /**

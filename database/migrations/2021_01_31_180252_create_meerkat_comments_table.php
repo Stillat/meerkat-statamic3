@@ -24,7 +24,6 @@ class CreateMeerkatCommentsTable extends Migration
             $table->longText('root_path');
             $table->integer('depth');
             $table->boolean('is_root');
-            $table->boolean('is_parent');
             $table->boolean('is_published');
             $table->boolean('is_spam')->nullable();
             $table->longText('content');

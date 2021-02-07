@@ -529,7 +529,7 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
     public function getDescendentsPaths($commentId)
     {
         if (!array_key_exists($commentId, self::$descendentPathCache)) {
-            $paths = DB::select('select children.virtual_path, children.compatibility_id from meerkat_comments AS root
+            $paths = DB::select('select concat(children.virtual_dir_path, \'/\') as virtual_dir_path, children.compatibility_id from meerkat_comments AS root
 inner join meerkat_comments as children ON children.virtual_dir_path LIKE CONCAT(root.virtual_dir_path, \'/%\')
 where root.compatibility_id = :rootid ORDER BY children.virtual_path desc', [
                 'rootid' => $commentId
@@ -538,7 +538,7 @@ where root.compatibility_id = :rootid ORDER BY children.virtual_path desc', [
             $pathMappingToReturn = [];
 
             foreach ($paths as $path) {
-                $pathMappingToReturn[$path->compatibility_id] = $path->virtual_path;
+                $pathMappingToReturn[$path->compatibility_id] = $path->virtual_dir_path;
             }
 
             self::$descendentPathCache[$commentId] = $pathMappingToReturn;

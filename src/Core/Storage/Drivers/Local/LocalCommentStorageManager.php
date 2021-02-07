@@ -1426,14 +1426,29 @@ class LocalCommentStorageManager extends AbstractCommentStorageManager implement
     }
 
     /**
-     * Attempts to locate the comment's child comments.
+     * Attempts to soft delete the requested comment.
      *
-     * @param string $commentId The comment identifier.
-     * @return string[]
+     * @param string $commentId The comment's identifier.
+     * @return bool
+     * @throws ConcurrentResourceAccessViolationException
+     * @throws MutationException
      */
-    public function getDescendents($commentId)
+    public function softDeleteById($commentId)
     {
-        return array_keys($this->getDescendentsPaths($commentId));
+        $comment = $this->findById($commentId);
+
+        if ($comment === null) {
+            return false;
+        }
+
+        $comment->setDataAttribute(CommentContract::KEY_IS_DELETED, true);
+        $wasUpdated = $this->update($comment);
+
+        if ($wasUpdated === true) {
+            $this->commentPipeline->softDeleted($commentId, null);
+        }
+
+        return $wasUpdated;
     }
 
 }

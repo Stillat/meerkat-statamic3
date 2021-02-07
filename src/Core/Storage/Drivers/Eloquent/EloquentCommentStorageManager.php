@@ -630,18 +630,6 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
     }
 
     /**
-     * Attempts to locate the comment's child comments.
-     *
-     * @param string $commentId The comment identifier.
-     * @return string[]
-     */
-    public function getDescendents($commentId)
-    {
-        dd(__METHOD__);
-        // TODO: Implement getDescendents() method.
-    }
-
-    /**
      * Attempts to locate the comment's child comments and paths.
      *
      * @param string $commentId The comment identifier.

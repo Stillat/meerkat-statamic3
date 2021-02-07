@@ -661,29 +661,14 @@ abstract class AbstractCommentStorageManager implements CommentStorageManagerCon
     }
 
     /**
-     * Attempts to soft delete the requested comment.
+     * Attempts to locate the comment's child comments.
      *
-     * @param string $commentId The comment's identifier.
-     * @return bool
-     * @throws ConcurrentResourceAccessViolationException
-     * @throws MutationException
+     * @param string $commentId The comment identifier.
+     * @return string[]
      */
-    public function softDeleteById($commentId)
+    public function getDescendents($commentId)
     {
-        $comment = $this->findById($commentId);
-
-        if ($comment === null) {
-            return false;
-        }
-
-        $comment->setDataAttribute(CommentContract::KEY_IS_DELETED, true);
-        $wasUpdated = $this->update($comment);
-
-        if ($wasUpdated === true) {
-            $this->commentPipeline->softDeleted($commentId, null);
-        }
-
-        return $wasUpdated;
+        return array_keys($this->getDescendentsPaths($commentId));
     }
 
 }

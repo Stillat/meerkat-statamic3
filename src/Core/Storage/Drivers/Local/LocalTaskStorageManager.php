@@ -288,7 +288,7 @@ class LocalTaskStorageManager implements TaskStorageManagerContract
         }
 
         if ($this->isTaskCanceledById($taskId)) {
-            $taskCanceledChangeTime = filectime($this->getTaskCompletedPath($taskId));
+            $taskCanceledChangeTime = filectime($this->getTaskCanceledPath($taskId));
 
             if ($taskCanceledChangeTime !== false) {
                 return $taskCanceledChangeTime - $taskChangeTime;

@@ -35,7 +35,7 @@ use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalCommentStorageManager;
 use Stillat\Meerkat\Core\Storage\Paths;
 use Stillat\Meerkat\Core\Threads\ThreadHierarchy;
 
-class EloquentCommentStorageManager extends AbstractCommentStorageManager implements CommentStorageManagerContract
+class DatabaseCommentStorageManager extends AbstractCommentStorageManager implements CommentStorageManagerContract
 {
 
     /**

@@ -305,15 +305,8 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
         $databaseComment->virtual_path = $virtualPath;
         $databaseComment->virtual_dir_path = $virtualPath;
         $databaseComment->root_path = $rootPath;
+        $databaseComment->statamic_user_id = $comment->getDataAttribute(AuthorContract::AUTHENTICATED_USER_ID, null);
         $databaseComment->comment_attributes = json_encode($comment->getDataAttributes());
-
-        if ($comment->leftByAuthenticatedUser()) {
-            $author = $comment->getAuthor();
-
-            if ($author !== null && $author->getIsTransient() === false) {
-                $databaseComment->statamic_user_id = $author->getId();
-            }
-        }
 
         if ($comment->hasBeenCheckedForSpam()) {
             $databaseComment->is_spam = $comment->isSpam();

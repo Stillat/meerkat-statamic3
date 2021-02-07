@@ -793,7 +793,7 @@ class LocalCommentStorageManager extends AbstractCommentStorageManager implement
 
             try {
                 if ($this->setSpamStatusById($commentId, $isSpam) === true) {
-                    $result->success[] = $commentId;
+                    $result->succeeded[] = $commentId;
                     $result->comments[] = $commentId;
                 } else {
                     $result->failed[$commentId] = false;
@@ -804,17 +804,7 @@ class LocalCommentStorageManager extends AbstractCommentStorageManager implement
             }
         }
 
-        if (count($result->failed) === 0) {
-            $result->success = true;
-        }
-
-        if (count($result->succeeded) > 0) {
-            $result->partialSuccess = true;
-        }
-
-        $result->comments = array_unique($result->comments);
-
-        return $result;
+        return $result->updateState();
     }
 
     /**
@@ -857,7 +847,7 @@ class LocalCommentStorageManager extends AbstractCommentStorageManager implement
 
             try {
                 if ($this->setApprovedStatusById($commentId, $isApproved) === true) {
-                    $result->success[] = $commentId;
+                    $result->succeeded[] = $commentId;
                     $result->comments[] = $commentId;
                 } else {
                     $result->failed[$commentId] = false;
@@ -868,17 +858,7 @@ class LocalCommentStorageManager extends AbstractCommentStorageManager implement
             }
         }
 
-        if (count($result->failed) === 0) {
-            $result->success = true;
-        }
-
-        if (count($result->succeeded) > 0) {
-            $result->partialSuccess = true;
-        }
-
-        $result->comments = array_unique($result->comments);
-
-        return $result;
+        return $result->updateState();
     }
 
     /**
@@ -933,17 +913,7 @@ class LocalCommentStorageManager extends AbstractCommentStorageManager implement
             }
         }
 
-        if (count($result->failed) === 0) {
-            $result->success = true;
-        }
-
-        if (count($result->succeeded) > 0) {
-            $result->partialSuccess = true;
-        }
-
-        $result->comments = array_unique($result->comments);
-
-        return $result;
+        return $result->updateState();
     }
 
     /**
@@ -1126,17 +1096,7 @@ class LocalCommentStorageManager extends AbstractCommentStorageManager implement
             }
         }
 
-        if (count($result->failed) === 0) {
-            $result->success = true;
-        }
-
-        if (count($result->succeeded) > 0) {
-            $result->partialSuccess = true;
-        }
-
-        $result->comments = array_unique($result->comments);
-
-        return $result;
+        return $result->updateState();
     }
 
     /**
@@ -1165,17 +1125,7 @@ class LocalCommentStorageManager extends AbstractCommentStorageManager implement
             }
         }
 
-        if (count($result->failed) === 0) {
-            $result->success = true;
-        }
-
-        if (count($result->succeeded) > 0) {
-            $result->partialSuccess = true;
-        }
-
-        $result->comments = array_unique($result->comments);
-
-        return $result;
+        return $result->updateState();
     }
 
     /**

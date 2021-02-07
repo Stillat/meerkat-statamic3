@@ -50,4 +50,24 @@ class VariableSuccessResult
      */
     public $failed = [];
 
+    /**
+     * Updates the result's internal state.
+     *
+     * @return $this
+     */
+    public function updateState()
+    {
+        if (count($this->failed) === 0) {
+            $this->success = true;
+        }
+
+        if (count($this->succeeded) > 0) {
+            $this->partialSuccess = true;
+        }
+
+        $this->comments = array_unique($this->comments);
+
+        return $this;
+    }
+
 }

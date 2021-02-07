@@ -516,6 +516,8 @@ abstract class AbstractCommentStorageManager implements CommentStorageManagerCon
      *
      * @param CommentContract $comment The comment to update.
      * @return bool
+     * @throws ConcurrentResourceAccessViolationException
+     * @throws MutationException
      */
     public function setIsSpam(CommentContract $comment)
     {

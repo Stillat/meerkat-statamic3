@@ -5,6 +5,7 @@ namespace Stillat\Meerkat\Core\Storage\Drivers\Eloquent;
 use DateTime;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
 use Stillat\Meerkat\Core\Comments\AffectsCommentsResult;
 use Stillat\Meerkat\Core\Comments\Comment;
 use Stillat\Meerkat\Core\Comments\VariableSuccessResult;
@@ -17,6 +18,7 @@ use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentChangeSetStorageManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
+use Stillat\Meerkat\Core\Exceptions\ConcurrentResourceAccessViolationException;
 use Stillat\Meerkat\Core\RuntimeStateGuard;
 use Stillat\Meerkat\Core\Storage\Data\CommentAuthorRetriever;
 use Stillat\Meerkat\Core\Storage\Drivers\AbstractCommentStorageManager;
@@ -257,6 +259,7 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
      *
      * @param CommentContract $comment The comment to save.
      * @return bool
+     * @throws ConcurrentResourceAccessViolationException
      */
     public function save(CommentContract $comment)
     {
@@ -387,8 +390,35 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
      */
     public function setSpamStatusForIds($commentIds, $isSpam)
     {
-        dd(__METHOD__);
-        // TODO: Implement setSpamStatusForIds() method.
+        if (!is_bool($isSpam)) {
+            throw new InvalidArgumentException('Expected boolean value for $isSpam');
+        }
+
+        $result = new VariableSuccessResult();
+        $updateResult = DB::table('meerkat_comments')
+            ->whereIn('compatibility_id', $commentIds)
+            ->update([
+                'is_spam' => $isSpam,
+                'comment_attributes->spam' => $isSpam
+            ]);
+
+        $wasSuccess = false;
+
+        if ($updateResult !== null && $updateResult > 0) {
+            $wasSuccess = true;
+        }
+
+        foreach ($commentIds as $commentId) {
+
+            if ($wasSuccess === true) {
+                $result->comments[] = $commentId;
+                $result->succeeded[$commentId] = true;
+            } else {
+                $result->failed[$commentId] = false;
+            }
+        }
+
+        return $result->updateState();
     }
 
     /**

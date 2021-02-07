@@ -528,8 +528,23 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
      */
     public function getDescendentsPaths($commentId)
     {
-        dd(__METHOD__);
-        // TODO: Implement getDescendentsPaths() method.
+        if (!array_key_exists($commentId, self::$descendentPathCache)) {
+            $paths = DB::select('select children.virtual_path, children.compatibility_id from meerkat_comments AS root
+inner join meerkat_comments as children ON children.virtual_dir_path LIKE CONCAT(root.virtual_dir_path, \'/%\')
+where root.compatibility_id = :rootid ORDER BY children.virtual_path desc', [
+                'rootid' => $commentId
+            ]);
+
+            $pathMappingToReturn = [];
+
+            foreach ($paths as $path) {
+                $pathMappingToReturn[$path->compatibility_id] = $path->virtual_path;
+            }
+
+            self::$descendentPathCache[$commentId] = $pathMappingToReturn;
+        }
+
+        return self::$descendentPathCache[$commentId];
     }
 
     /**
@@ -610,21 +625,6 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
     }
 
     /**
-     * Returns only the virtual paths for all comments in the provided thread.
-     *
-     * @param string $threadId The thread's context identifier.
-     * @return string[]
-     */
-    private function getVirtualPathsForThread($threadId)
-    {
-        return DB::table('meerkat_comments')
-            ->select('virtual_path')->where('thread_context_id', $threadId)
-            ->get()->pluck('virtual_path')->values()->sortByDesc(function ($path) {
-                return mb_strlen($path);
-            })->toArray();
-    }
-
-    /**
      * Tests if a relationship path exists.
      *
      * @param string $path The path to check.
@@ -634,7 +634,6 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
     {
         return true;
     }
-
 
     /**
      * Tests if the provided comment is new, or not.
@@ -651,6 +650,21 @@ class EloquentCommentStorageManager extends AbstractCommentStorageManager implem
         }
 
         return false;
+    }
+
+    /**
+     * Returns only the virtual paths for all comments in the provided thread.
+     *
+     * @param string $threadId The thread's context identifier.
+     * @return string[]
+     */
+    private function getVirtualPathsForThread($threadId)
+    {
+        return DB::table('meerkat_comments')
+            ->select('virtual_path')->where('thread_context_id', $threadId)
+            ->get()->pluck('virtual_path')->values()->sortByDesc(function ($path) {
+                return mb_strlen($path);
+            })->toArray();
     }
 
 }

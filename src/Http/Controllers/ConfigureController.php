@@ -18,6 +18,7 @@ use Stillat\Meerkat\Core\Contracts\Permissions\PermissionsManagerContract;
 use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Guard\Providers\AkismetSpamGuard;
 use Stillat\Meerkat\Core\Http\Responses\Responses;
+use Stillat\Meerkat\Core\Logging\ErrorReporterFactory;
 use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
 use Stillat\Meerkat\Core\Support\Arr;
 use Stillat\Meerkat\Http\RequestHelpers;
@@ -223,6 +224,8 @@ class ConfigureController extends CpController
                     $savedConfiguration = true;
                 }
             } catch (Exception $e) {
+                ErrorReporterFactory::report($e);
+
                 return Responses::generalFailure();
             }
         } else {

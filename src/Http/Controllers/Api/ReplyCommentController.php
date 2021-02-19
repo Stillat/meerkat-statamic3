@@ -14,6 +14,7 @@ use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Exceptions\CommentNotFoundException;
 use Stillat\Meerkat\Core\Http\Responses\CommentResponseGenerator;
 use Stillat\Meerkat\Core\Http\Responses\Responses;
+use Stillat\Meerkat\Core\Logging\ErrorReporterFactory;
 use Stillat\Meerkat\Http\MessageGeneralCommentResponseGenerator;
 use Stillat\Meerkat\Http\RequestHelpers;
 
@@ -73,8 +74,12 @@ class ReplyCommentController extends CpController
                 ApiParameters::RESULT_COMMENT => $commentResultGenerator->getApiComment($result->toArray())
             ]);
         } catch (CommentNotFoundException $notFoundException) {
+            ErrorReporterFactory::report($notFoundException);
+
             return $resultGenerator->notFound($replyingTo);
         } catch (Exception $e) {
+            ErrorReporterFactory::report($e);
+
             return Responses::generalFailure();
         }
     }

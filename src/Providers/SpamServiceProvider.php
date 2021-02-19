@@ -18,6 +18,7 @@ use Stillat\Meerkat\Core\GuardConfiguration;
 use Stillat\Meerkat\Core\Handlers\SpamServiceHandler;
 use Stillat\Meerkat\Core\Logging\ErrorLog;
 use Stillat\Meerkat\Core\Logging\ErrorLogContext;
+use Stillat\Meerkat\Core\Logging\ErrorReporterFactory;
 use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
 use Stillat\Meerkat\Guard\GuardPipeline;
 use Stillat\Meerkat\Guard\ModeratorHandler;
@@ -87,6 +88,8 @@ class SpamServiceProvider extends AddonServiceProvider
                         $errorContext->details = $e->getTraceAsString();
 
                         LocalErrorCodeRepository::log(ErrorLog::make(Errors::GUARD_CREATION_FAILED, $errorContext));
+                        ErrorReporterFactory::report($e);
+
                     }
                 } else {
                     LocalErrorCodeRepository::log(ErrorLog::warning(

@@ -11,6 +11,7 @@ use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Exceptions\FilterException;
 use Stillat\Meerkat\Core\Http\Responses\CommentResponseGenerator;
 use Stillat\Meerkat\Core\Http\Responses\Responses;
+use Stillat\Meerkat\Core\Logging\ErrorReporterFactory;
 
 class CommentsController extends CpController
 {
@@ -37,8 +38,12 @@ class CommentsController extends CpController
 
             return Responses::successWithData($resultGenerator->getApiResponse());
         } catch (FilterException $filterException) {
+            ErrorReporterFactory::report($filterException);
+
             return Responses::fromErrorCode(Errors::COMMENT_DATA_FILTER_FAILURE, false);
         } catch (Exception $e) {
+            ErrorReporterFactory::report($e);
+
             return Responses::generalFailure();
         }
     }

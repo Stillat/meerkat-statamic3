@@ -2,12 +2,15 @@
 
 namespace Stillat\Meerkat\Configuration;
 
+use Throwable;
 use Exception;
 use Statamic\Contracts\Auth\User;
 use Statamic\Contracts\Auth\UserRepository;
 use Statamic\Facades\YAML;
 use Stillat\Meerkat\Concerns\UsesConfig;
+use Stillat\Meerkat\Core\Logging\ErrorReporterFactory;
 use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
+use Stillat\Meerkat\Core\Logging\Reporters\ExceptionReporter;
 use Stillat\Meerkat\Core\Support\Arr;
 
 /**
@@ -76,6 +79,10 @@ class UserConfigurationManager
     {
         $this->loadUserDetails();
 
+        if ($this->currentUser === null) {
+            return $this->getDefaultConfiguration();
+        }
+
         // If, for some reason, the configuration path does not exist, let's return the defaults.
         // The user specific settings are not important enough to break everything over.
         if (!file_exists($this->configurationPath)) {
@@ -120,14 +127,28 @@ class UserConfigurationManager
             return;
         }
 
-        $this->hasLoadedUser = true;
+        try {
+            $this->hasLoadedUser = true;
 
-        $this->currentUser = $this->users->current();
-        $this->userId = $this->currentUser->id();
-        $this->configurationPath = config_path('meerkat/users/' . $this->userId . '.yaml');
+            $this->currentUser = $this->users->current();
 
-        if (!file_exists($this->configurationPath)) {
-            $this->writeDefaultFile($this->configurationPath);
+            if ($this->currentUser == null) {
+                $this->userId = null;
+                $this->configurationPath = null;
+
+                return;
+            }
+
+            $this->userId = $this->currentUser->id();
+            $this->configurationPath = config_path('meerkat/users/' . $this->userId . '.yaml');
+
+            if (!file_exists($this->configurationPath)) {
+                $this->writeDefaultFile($this->configurationPath);
+            }
+        } catch (Exception $e) {
+            ExceptionLoggerFactory::log($e);
+        } catch (\Throwable $t) {
+            ErrorReporterFactory::report($t);
         }
     }
 
@@ -139,6 +160,10 @@ class UserConfigurationManager
     public function isSysAdmin()
     {
         $this->loadUserDetails();
+
+        if ($this->currentUser === null) {
+            return false;
+        }
 
         return $this->currentUser->isSuper();
     }
@@ -187,6 +212,10 @@ class UserConfigurationManager
     public function updateConfiguration($perPage, $avatarDriver)
     {
         $this->loadUserDetails();
+
+        if ($this->currentUser === null) {
+            return false;
+        }
 
         $settings = [
             self::KEY_AVATAR_DRIVER => $avatarDriver,

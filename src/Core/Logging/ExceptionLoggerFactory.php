@@ -30,6 +30,8 @@ class ExceptionLoggerFactory
      */
     public static function log(Exception $e)
     {
+        ErrorReporterFactory::report($e);
+
         if (ExceptionLoggerFactory::hasInstance()) {
             ExceptionLoggerFactory::$instance->log($e);
         }

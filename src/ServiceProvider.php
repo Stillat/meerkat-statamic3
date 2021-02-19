@@ -17,6 +17,8 @@ use Stillat\Meerkat\Core\ConfigurationFactories;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Http\HttpClientContract;
 use Stillat\Meerkat\Core\Contracts\Logging\ErrorCodeRepositoryContract;
+use Stillat\Meerkat\Core\Contracts\Logging\ErrorReporterContract;
+use Stillat\Meerkat\Core\Contracts\Logging\ErrorReporterManagerContract;
 use Stillat\Meerkat\Core\Contracts\Logging\ExceptionLoggerContract;
 use Stillat\Meerkat\Core\Contracts\Mail\MailerContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
@@ -28,8 +30,12 @@ use Stillat\Meerkat\Core\Handlers\EmailHandler;
 use Stillat\Meerkat\Core\Handlers\HandlerManager;
 use Stillat\Meerkat\Core\Handlers\SpamServiceHandler;
 use Stillat\Meerkat\Core\Http\Client;
+use Stillat\Meerkat\Core\Logging\ErrorReporterFactory;
 use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
+use Stillat\Meerkat\Core\Logging\GlobalLogState;
 use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
+use Stillat\Meerkat\Core\Logging\MemoryErrorReporterManager;
+use Stillat\Meerkat\Core\Logging\Reporters\SpatieRayReporter;
 use Stillat\Meerkat\Core\Parsing\DateParserFactory;
 use Stillat\Meerkat\Core\Parsing\MarkdownParserFactory;
 use Stillat\Meerkat\Core\Storage\Paths;
@@ -99,6 +105,36 @@ class ServiceProvider extends AddonServiceProvider
 
     public function register()
     {
+        GlobalLogState::$isApplicationInDebugMode = config('app.debug', false);
+
+        $this->app->singleton(ErrorReporterManagerContract::class, function ($app) {
+            return new MemoryErrorReporterManager();
+        });
+        ErrorReporterFactory::$instance = app(ErrorReporterManagerContract::class);
+
+        $errorReporters = [];
+
+        if ($this->getConfig('debug.auto_discover_spatie_ray', true) === true) {
+            if (function_exists('\ray') && class_exists('\Spatie\Ray\Ray')) {
+                $errorReporters [] = SpatieRayReporter::class;
+            }
+        }
+
+        $configReporters = $this->getConfig('debug.reporters', []);
+
+        if (is_array($configReporters)) {
+            $errorReporters = array_merge($errorReporters, $configReporters);
+        }
+
+        if (count($errorReporters)) {
+            foreach ($errorReporters as $reporter) {
+                $reporterInstance = app($reporter);
+
+                if ($reporterInstance !== null && $reporterInstance instanceof ErrorReporterContract) {
+                    ErrorReporterFactory::$instance->registerReporter($reporterInstance);
+                }
+            }
+        }
         $this->createPaths();
 
         $this->app->singleton(Manager::class, function ($app) {

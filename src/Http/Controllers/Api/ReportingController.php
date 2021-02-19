@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat\Http\Controllers\Api;
 
 use Exception;
+use Illuminate\Http\Request;
 use Statamic\Http\Controllers\CP\CpController;
 use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
 use Stillat\Meerkat\Core\Contracts\Permissions\PermissionsManagerContract;

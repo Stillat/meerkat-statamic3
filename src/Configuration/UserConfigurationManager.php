@@ -5,11 +5,12 @@ namespace Stillat\Meerkat\Configuration;
 use Exception;
 use Statamic\Contracts\Auth\User;
 use Statamic\Contracts\Auth\UserRepository;
-use Statamic\Facades\YAML;
 use Stillat\Meerkat\Concerns\UsesConfig;
 use Stillat\Meerkat\Contracts\Configuration\UserConfigurationStorageManagerContract;
+use Stillat\Meerkat\Core\Logging\ErrorReporterFactory;
 use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
 use Stillat\Meerkat\Core\Support\Arr;
+use Throwable;
 
 /**
  * Class UserConfigurationManager
@@ -68,6 +69,18 @@ class UserConfigurationManager
     }
 
     /**
+     * Gets the current user's configured avatar driver.
+     *
+     * @return string
+     */
+    public function getAvatarDriver()
+    {
+        $config = $this->getConfiguration();
+
+        return $config[self::KEY_AVATAR_DRIVER];
+    }
+
+    /**
      * Attempts to return the current user's specific configuration.
      *
      * If a failure is encountered, a default set of configuration values will be returned.
@@ -77,6 +90,10 @@ class UserConfigurationManager
     public function getConfiguration()
     {
         $this->loadUserDetails();
+
+        if ($this->currentUser === null) {
+            return $this->getDefaultConfiguration();
+        }
 
         // If, for some reason, the configuration path does not exist, let's return the defaults.
         // The user specific settings are not important enough to break everything over.
@@ -101,18 +118,6 @@ class UserConfigurationManager
     }
 
     /**
-     * Gets the current user's configured avatar driver.
-     *
-     * @return string
-     */
-    public function getAvatarDriver()
-    {
-        $config = $this->getConfiguration();
-
-        return $config[self::KEY_AVATAR_DRIVER];
-    }
-
-    /**
      * Attempts to load the currently authenticated user details.
      */
     protected function loadUserDetails()
@@ -121,26 +126,25 @@ class UserConfigurationManager
             return;
         }
 
-        $this->hasLoadedUser = true;
+        try {
+            $this->hasLoadedUser = true;
 
-        $this->currentUser = $this->users->current();
-        $this->userId = $this->currentUser->id();
+            $this->currentUser = $this->users->current();
 
-        if (!$this->userConfigStorageManager->hasUserConfiguration($this->userId)) {
-            $this->userConfigStorageManager->saveConfiguration($this->userId, $this->getDefaultConfiguration());
+            if ($this->currentUser === null) {
+                $this->userId = null;
+            }
+
+            $this->userId = $this->currentUser->id();
+
+            if (!$this->userConfigStorageManager->hasUserConfiguration($this->userId)) {
+                $this->userConfigStorageManager->saveConfiguration($this->userId, $this->getDefaultConfiguration());
+            }
+        } catch (Exception $e) {
+            ExceptionLoggerFactory::log($e);
+        } catch (Throwable $t) {
+            ErrorReporterFactory::report($t);
         }
-    }
-
-    /**
-     * Indicates if the current user is a Statamic "Super User".
-     *
-     * @return bool
-     */
-    public function isSysAdmin()
-    {
-        $this->loadUserDetails();
-
-        return $this->currentUser->isSuper();
     }
 
     /**
@@ -159,6 +163,22 @@ class UserConfigurationManager
     }
 
     /**
+     * Indicates if the current user is a Statamic "Super User".
+     *
+     * @return bool
+     */
+    public function isSysAdmin()
+    {
+        $this->loadUserDetails();
+
+        if ($this->currentUser === null) {
+            return false;
+        }
+
+        return $this->currentUser->isSuper();
+    }
+
+    /**
      * Updates the user specific configuration values.
      *
      * @param int $perPage The number of items to load per page.
@@ -168,6 +188,10 @@ class UserConfigurationManager
     public function updateConfiguration($perPage, $avatarDriver)
     {
         $this->loadUserDetails();
+
+        if ($this->currentUser === null) {
+            return false;
+        }
 
         $settings = [
             self::KEY_AVATAR_DRIVER => $avatarDriver,

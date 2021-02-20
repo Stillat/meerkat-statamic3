@@ -12,6 +12,7 @@ use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Exceptions\CommentNotFoundException;
 use Stillat\Meerkat\Core\Http\Responses\CommentResponseGenerator;
 use Stillat\Meerkat\Core\Http\Responses\Responses;
+use Stillat\Meerkat\Core\Logging\ErrorReporterFactory;
 use Stillat\Meerkat\Http\MessageGeneralCommentResponseGenerator;
 use Stillat\Meerkat\Http\RequestHelpers;
 
@@ -53,6 +54,8 @@ class NotSpamController extends CpController
                 ApiParameters::RESULT_COMMENTS => $result->comments
             ]);
         } catch (Exception $e) {
+            ErrorReporterFactory::report($e);
+
             return Responses::generalFailure();
         }
     }
@@ -98,9 +101,12 @@ class NotSpamController extends CpController
                 ApiParameters::RESULT_COMMENT => $commentResultGenerator->getApiComment($comment->toArray())
             ]);
         } catch (CommentNotFoundException $notFound) {
+            ErrorReporterFactory::report($notFound);
+
             return $resultGenerator->notFound($commentId);
         } catch (Exception $e) {
-            throw $e;
+            ErrorReporterFactory::report($e);
+
             return Responses::generalFailure();
         }
     }

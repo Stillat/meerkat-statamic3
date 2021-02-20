@@ -14,6 +14,7 @@ use Stillat\Meerkat\Core\Guard\SpamCleaner;
 use Stillat\Meerkat\Core\GuardConfiguration;
 use Stillat\Meerkat\Core\Http\Responses\CommentResponseGenerator;
 use Stillat\Meerkat\Core\Http\Responses\Responses;
+use Stillat\Meerkat\Core\Logging\ErrorReporterFactory;
 use Stillat\Meerkat\Http\MessageGeneralCommentResponseGenerator;
 use Stillat\Meerkat\Http\RequestHelpers;
 
@@ -55,6 +56,8 @@ class SpamController extends CpController
                 ApiParameters::RESULT_COMMENTS => $result->comments
             ]);
         } catch (Exception $e) {
+            ErrorReporterFactory::report($e);
+
             return Responses::generalFailure();
         }
     }
@@ -114,8 +117,12 @@ class SpamController extends CpController
                 ApiParameters::RESULT_COMMENTS => $removedComments
             ]);
         } catch (CommentNotFoundException $notFound) {
+            ErrorReporterFactory::report($notFound);
+
             return $resultGenerator->notFound($commentId);
         } catch (Exception $e) {
+            ErrorReporterFactory::report($e);
+
             return Responses::generalFailure();
         }
     }
@@ -142,6 +149,8 @@ class SpamController extends CpController
                 ApiParameters::RESULT_REMOVED_IDS => $result->comments
             ]);
         } catch (Exception $e) {
+            ErrorReporterFactory::report($e);
+
             return Responses::generalFailure();
         }
     }

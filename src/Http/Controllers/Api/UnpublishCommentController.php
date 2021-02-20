@@ -14,6 +14,7 @@ use Stillat\Meerkat\Core\Http\Responses\CommentResponseGenerator;
 use Stillat\Meerkat\Core\Http\Responses\Responses;
 use Stillat\Meerkat\Core\Logging\ErrorLog;
 use Stillat\Meerkat\Core\Logging\ErrorLogContext;
+use Stillat\Meerkat\Core\Logging\ErrorReporterFactory;
 use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
 use Stillat\Meerkat\Http\MessageGeneralCommentResponseGenerator;
 use Stillat\Meerkat\Http\RequestHelpers;
@@ -56,6 +57,8 @@ class UnpublishCommentController extends CpController
                 ApiParameters::RESULT_COMMENTS => $result->comments
             ]);
         } catch (Exception $e) {
+            ErrorReporterFactory::report($e);
+
             return Responses::generalFailure();
         }
     }
@@ -99,12 +102,16 @@ class UnpublishCommentController extends CpController
                 ApiParameters::RESULT_COMMENT => $commentResultGenerator->getApiComment($comment->toArray())
             ]);
         } catch (CommentNotFoundException $notFound) {
+            ErrorReporterFactory::report($notFound);
+
             return $resultGenerator->notFound($commentId);
         } catch (Exception $e) {
             $context = new ErrorLogContext();
             $context->msg = $e->getMessage();
             $context->details = $e->getTraceAsString();
             LocalErrorCodeRepository::$instance->logError(ErrorLog::make(Errors::GENERAL_EXCEPTION, $context));
+            ErrorReporterFactory::report($e);
+
             return Responses::generalFailure();
         }
     }

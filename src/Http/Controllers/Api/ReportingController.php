@@ -3,11 +3,13 @@
 namespace Stillat\Meerkat\Http\Controllers\Api;
 
 use Exception;
+use Illuminate\Http\Request;
 use Statamic\Http\Controllers\CP\CpController;
 use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
 use Stillat\Meerkat\Core\Contracts\Permissions\PermissionsManagerContract;
 use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Http\Responses\Responses;
+use Stillat\Meerkat\Core\Logging\ErrorReporterFactory;
 use Stillat\Meerkat\Core\Reporting\OverviewAggregator;
 
 /**
@@ -44,6 +46,8 @@ class ReportingController extends CpController
 
             return Responses::successWithData($report);
         } catch (Exception $e) {
+            ErrorReporterFactory::report($e);
+
             return Responses::generalFailure();
         }
     }

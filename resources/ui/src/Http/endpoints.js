@@ -11,7 +11,7 @@ class Endpoints {
 
 }
 
-Endpoints.Prefix = 'api/meerkat/';
+Endpoints.Prefix = 'mapi/meerkat/';
 Endpoints.SystemDetails = '';
 Endpoints.CommentsSearch = 'comments/search';
 Endpoints.CommentsApprove = 'comments/publish';

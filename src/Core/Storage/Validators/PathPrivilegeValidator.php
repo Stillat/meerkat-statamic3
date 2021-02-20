@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat\Core\Storage\Validators;
 
 use Exception;
+use Stillat\Meerkat\Core\Contracts\Logging\ErrorReporterContract;
 use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
 use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
 use Stillat\Meerkat\Core\Storage\Paths;

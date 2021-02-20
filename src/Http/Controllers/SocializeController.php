@@ -14,6 +14,7 @@ use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
+use Stillat\Meerkat\Core\Logging\ErrorReporterFactory;
 use Stillat\Meerkat\Exceptions\FormValidationException;
 use Stillat\Meerkat\Exceptions\RejectSubmissionException;
 use Stillat\Meerkat\Forms\FormHandler;
@@ -125,12 +126,16 @@ class SocializeController extends Controller
                 }
             }
         } catch (ValidationException $validationException) {
+            ErrorReporterFactory::report($validationException);
+
             return $this->formFailure(
                 $this->formHandler->getSubmissionParameters(),
                 $validationException->errors(),
                 $this->formHandler->blueprintName()
             );
         } catch (FormValidationException $validationException) {
+            ErrorReporterFactory::report($validationException);
+
             return $this->formFailure(
                 $this->formHandler->getSubmissionParameters(),
                 $validationException->getErrors(),

@@ -9,6 +9,7 @@ use Stillat\Meerkat\Concerns\UsesConfig;
 use Stillat\Meerkat\Core\Contracts\Logging\ErrorCodeRepositoryContract;
 use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Http\Responses\Responses;
+use Stillat\Meerkat\Core\Logging\ErrorReporterFactory;
 use Stillat\Meerkat\Core\Logging\Telemetry;
 use Stillat\Meerkat\Logging\ErrorLogPresenter;
 
@@ -64,6 +65,8 @@ class TelemetryController extends ApiController
                 return Responses::generalSuccess();
             }
         } catch (Exception $e) {
+            ErrorReporterFactory::report($e);
+
             return Responses::fromErrorCode(Errors::TELEMETRY_OPERATION_FAILURE, false);
         }
 
@@ -90,6 +93,8 @@ class TelemetryController extends ApiController
             }
 
         } catch (Exception $e) {
+            ErrorReporterFactory::report($e);
+
             return Responses::fromErrorCode(Errors::TELEMETRY_OPERATION_FAILURE, false);
         }
 

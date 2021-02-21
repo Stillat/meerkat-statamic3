@@ -120,7 +120,9 @@ class ChangeSet
                 if (IdentityManagerFactory::hasInstance()) {
                     $identity = IdentityManagerFactory::$instance->locateIdentity($array[self::KEY_USER_ID]);
 
-                    $changeSetToReturn->setIdentity($identity);
+                    if ($identity !== null) {
+                        $changeSetToReturn->setIdentity($identity);
+                    }
                 }
             }
         }
@@ -302,7 +304,7 @@ class ChangeSet
      */
     public function setIdentity(AuthorContract $identity)
     {
-        $this->identity = $identity;
+            $this->identity = $identity;
     }
 
     /**

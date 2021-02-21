@@ -89,6 +89,7 @@ abstract class MeerkatTag extends Tags
         $this->expressionParser->setFilterGroups($this->filterManager->getFilterGroups());
 
         $paramFilters = $this->getFiltersFromParams();
+
         $filterString = $this->getParameterValue(CollectionRenderer::PARAM_FILTER, null);
 
         if ($filterString !== null && mb_strlen(trim($filterString)) > 0) {
@@ -99,6 +100,27 @@ abstract class MeerkatTag extends Tags
             }
         }
 
+        if (count($paramFilters) === 0 && $filterString === null) {
+            $trashedFilter = $this->expressionParser->parse(ExpressionParser::build(IsFilters::FILTER_IS_DELETED, ['false']));
+
+            if ($trashedFilter !== null && is_array($trashedFilter) && count($trashedFilter) === 1) {
+                $paramFilters[] = array_pop($trashedFilter);
+            }
+
+            $publishedFilter = $this->expressionParser->parse(ExpressionParser::build(IsFilters::FILTER_IS_PUBLISHED, ['true']));
+
+            if ($publishedFilter !== null && is_array($publishedFilter) && count($publishedFilter) === 1) {
+                $paramFilters[] = array_pop($publishedFilter);
+            }
+
+            $notSpamFilter = $this->expressionParser->parse(ExpressionParser::build(IsFilters::FILTER_IS_SPAM, ['false']));
+
+            if ($notSpamFilter !== null && is_array($notSpamFilter) && count($notSpamFilter) === 1) {
+                $paramFilters[] = array_pop($notSpamFilter);
+            }
+        }
+
+
         $hasTrashedFilter = ExpressionParser::hasFilter(IsFilters::FILTER_IS_DELETED, $paramFilters);
 
         if ($hasTrashedFilter === false) {
@@ -108,6 +130,7 @@ abstract class MeerkatTag extends Tags
                 $paramFilters[] = array_pop($trashedFilter);
             }
         }
+
 
         unset($filterString);
 

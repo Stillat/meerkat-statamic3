@@ -20,7 +20,11 @@ abstract class EventPipeline implements MutationPipelineContract
 
     public function delayMutate($request, $object, $callback)
     {
-        $runSync = $this->getConfig('internals.runDelayedMutationsSync', false);
+        $this->mutate($request, $object, $callback);
+
+        // Disabling delayed mutations as they cause way more problems than they are worth
+        // at the moment. A future update might be to have the "after" ones run in a queue.
+        /* $runSync = $this->getConfig('internals.runDelayedMutationsSync', false);
 
         if ($runSync === false) {
             app()->terminating(function () use ($request, &$object, $callback) {
@@ -28,7 +32,7 @@ abstract class EventPipeline implements MutationPipelineContract
             });
         } else {
             $this->mutate($request, $object, $callback);
-        }
+        }*/
     }
 
     /**

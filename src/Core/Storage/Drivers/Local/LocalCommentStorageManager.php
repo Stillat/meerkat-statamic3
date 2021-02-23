@@ -1780,6 +1780,8 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         $commentRemovalEventArgs = new CommentRemovalEventArgs();
         $commentRemovalEventArgs->comment = $comment;
 
+        $commentRemovalEventArgs->contexts[] = $comment->getThreadId();
+
         if (count($descendents) > 0) {
             $commentRemovalEventArgs->effectedComments = array_keys($descendents);
             $commentRemovalEventArgs->willRemoveOthers = true;

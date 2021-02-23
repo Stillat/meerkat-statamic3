@@ -19,20 +19,6 @@ class CommentRemovalEventArgs implements DataObjectContract
     use DataObject;
 
     /**
-     * The data attributes, if any.
-     *
-     * @var array
-     */
-    protected $attributes = [];
-
-    /**
-     * Indicates whether or not the comment should be permanently removed or not.
-     *
-     * @var boolean
-     */
-    protected $doSoftDelete = false;
-
-    /**
      * The comment instance, if available.
      *
      * @var null|CommentContract
@@ -40,18 +26,36 @@ class CommentRemovalEventArgs implements DataObjectContract
     public $comment = null;
 
     /**
+     * A list of all context identifiers.
+     *
+     * @var string[]
+     */
+    public $contexts = [];
+
+    /**
      * Indicates if the removal will remove other comments.
      *
      * @var bool
      */
     public $willRemoveOthers = false;
-
     /**
      * A list of the effected child comments, if any.
      *
      * @var array
      */
     public $effectedComments = [];
+    /**
+     * The data attributes, if any.
+     *
+     * @var array
+     */
+    protected $attributes = [];
+    /**
+     * Indicates whether or not the comment should be permanently removed or not.
+     *
+     * @var boolean
+     */
+    protected $doSoftDelete = false;
 
     /**
      * Sets an internal flag indicating that the comment should be hidden,
@@ -61,9 +65,9 @@ class CommentRemovalEventArgs implements DataObjectContract
      */
     public function keep()
     {
-       $this->doSoftDelete = true;
+        $this->doSoftDelete = true;
 
-       return $this;
+        return $this;
     }
 
     /**

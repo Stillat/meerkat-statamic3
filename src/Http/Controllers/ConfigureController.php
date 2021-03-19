@@ -23,6 +23,7 @@ use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
 use Stillat\Meerkat\Core\Support\Arr;
 use Stillat\Meerkat\Http\RequestHelpers;
 use Stillat\Meerkat\Permissions\GroupPermissionsManager;
+use Stillat\Meerkat\Statamic\ControlPanel\SettingsProvider;
 
 class ConfigureController extends CpController
 {
@@ -48,7 +49,7 @@ class ConfigureController extends CpController
 
     public function index()
     {
-        /// $this->attemptToCorrectRoutes();
+        $this->attemptToCorrectRoutes();
 
         $addonsUrl = url(config('statamic.cp.route'), 'addons');
         $commentsUrl = url(config('statamic.cp.route'), 'meerkat');
@@ -58,6 +59,19 @@ class ConfigureController extends CpController
             'addonUrl' => $addonsUrl,
             'commentsUrl' => $commentsUrl
         ]);
+    }
+
+    public function getCurrentUserSettings(SettingsProvider $provider)
+    {
+        try {
+            return Responses::successWithData([
+                'settings' => $provider->getCurrentConfiguration()
+            ]);
+        } catch (Exception $e) {
+
+            ExceptionLoggerFactory::log($e);
+            return Responses::generalFailure();
+        }
     }
 
     public function updateUserPerPage(PermissionsManagerContract $permissionsManager, IdentityManagerContract $identityManager,

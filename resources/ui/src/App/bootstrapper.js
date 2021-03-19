@@ -6,6 +6,9 @@ import AvatarDriverRegistry from '../Extend/Avatars/avatarDriverRegistry';
 import {registerVueFilters} from './registerVueFilters';
 import {registerVueComponents} from './registerVueComponents';
 import UserSettings from './userSettings';
+import SettingsRepository from '../Repositories/settingsRepository';
+
+const syncjs = require('syncjs');
 
 /**
  * Provides utilities for bootstrapping Meerkat applications and components.
@@ -56,6 +59,18 @@ class Bootstrapper {
    */
   static bootstrapApplications() {
     Environment.Preferences = new UserSettings();
+
+    SettingsRepository.Instance.getCurrentUserSettings().then(function (response) {
+      if (response.success) {
+        Environment.UserPreferences = response.settings['user'];
+        Environment.UserContext = response.settings['permissions'];
+        Environment.Settings.avatarDriver = response.settings['general'].avatarDriver;
+        Environment.Settings.controlPanelConfigurationEnabled =
+          response.settings['general'].controlPanelConfigurationEnabled;
+        Environment.Settings.telemetryEnabled = response.settings['general'].telemetryEnabled;
+        syncjs.Hubs.config().userAvailable([Environment.UserPreferences]);
+      }
+    });
 
     Bootstrapper.registerDependencies();
     Bootstrapper.liftExtensibilityDrivers();

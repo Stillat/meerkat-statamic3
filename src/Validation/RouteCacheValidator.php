@@ -38,8 +38,6 @@ class RouteCacheValidator
     const KEY_ACTION = 'action';
     const ROUTE_CACHE_CLEAR = 'statamic.cp.utilities.meerkat-validation.meerkat.routes.clear.cache';
 
-    const ASSET_CONTROL_PANEL_CONFIGURATION = 'cpConfiguration';
-
     const CATEGORY_CONTROL_PANEL_CONFIGURATION = 'cp_configuration';
     const CATEGORY_SPAM_API = 'spam_api';
     const CATEGORY_TELEMETRY_API = 'telemetry_api';
@@ -109,7 +107,6 @@ class RouteCacheValidator
      * @var string[]
      */
     protected $requiredEmitters = [
-        self::ASSET_CONTROL_PANEL_CONFIGURATION
     ];
 
     /**

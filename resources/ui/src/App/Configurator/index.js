@@ -67,6 +67,25 @@ export default {
     }
   },
   methods: {
+    onConfigUserAvailable(config) {
+      this.reloadConfigState();
+    },
+    reloadConfigState() {
+      if (Environment.isControlPanelConfigEnabled()) {
+        if (Environment.UserPreferences.isSuper === true) {
+          this.watchForServerConfigChanges();
+          this.canChangeConfig = true;
+        }
+      }
+
+      if (Type.hasValue(Environment.UserPreferences)) {
+        this.userPreferences.avatarDriver = Environment.UserPreferences.cp_avatar_driver;
+        this.userPreferences.perPage = Environment.UserPreferences.cp_per_page;
+        this.userEmail = Environment.UserPreferences.email;
+      }
+
+      this.reloadSettings();
+    },
     watchForServerConfigChanges() {
       window.setInterval(function () {
         SettingsRepository.Instance.getCurrentChangeSet().then(function (response) {
@@ -193,22 +212,9 @@ export default {
     }
   },
   created() {
-    if (Environment.isControlPanelConfigEnabled()) {
-      if (Environment.UserPreferences.isSuper === true) {
-        this.watchForServerConfigChanges();
-        this.canChangeConfig = true;
-      }
-    }
-
+    syncjs.Hubs.config().handledBy(this);
     this.refreshAvatarDrivers();
-
-    if (Type.hasValue(Environment.UserPreferences)) {
-      this.userPreferences.avatarDriver = Environment.UserPreferences.cp_avatar_driver;
-      this.userPreferences.perPage = Environment.UserPreferences.cp_per_page;
-      this.userEmail = Environment.UserPreferences.email;
-    }
-
-    this.reloadSettings();
+    this.reloadConfigState();
   }
 
 };

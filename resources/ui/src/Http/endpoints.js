@@ -31,6 +31,7 @@ Endpoints.CommentsCheckForSpam = 'comments/check-for-spam';
 
 Endpoints.TaskGetStatus = 'tasks/status';
 
+Endpoints.CurrentUser = 'settings/current-user';
 Endpoints.SettingsFetch = 'settings/fetch';
 Endpoints.SettingsSave = 'settings/save';
 Endpoints.SettingsGetCurrentChangeSet = 'settings/current-change-set';

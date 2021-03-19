@@ -62,10 +62,14 @@ class LanguagePatcher
         $fallbackDirectory = PathProvider::getResourcesDirectory('lang') . '/' . $this->fallbackLocale;
 
         // If the configured locale exists, lets find which translation strings do not exist.
-        if (Folder::exists($localeDirectory) && Folder::exists($fallbackDirectory)) {
+        if (Folder::exists($fallbackDirectory)) {
 
             $fallbackLocale = collect(Folder::getFiles($fallbackDirectory))->localize();
-            $targetLocale = collect(Folder::getFiles($localeDirectory))->localize();
+            $targetLocale = collect([]);
+
+            if (Folder::exists($localeDirectory)) {
+                $targetLocale = collect(Folder::getFiles($localeDirectory))->localize();
+            }
 
             $targetFlat = $targetLocale->all();
             $patches = [];

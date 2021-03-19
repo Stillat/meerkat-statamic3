@@ -35,7 +35,7 @@ class CommentMutationPipeline extends EventPipeline implements CommentMutationPi
 
     /**
      * Attempts to fire Statamic's EntrySaved event for the provided thread context.
-     * 
+     *
      * @param string $threadId The entry identifier.
      */
     private function fireStatamicEntrySavedEvent($threadId)

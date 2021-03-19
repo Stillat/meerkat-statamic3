@@ -39,10 +39,10 @@ class Environment {
    *
    * @returns {boolean}
    */
-  static isControlPanelConfigEnabled():  Boolean {
-    let curValue = Type.withDefault(Environment.Settings['controlPanelConfigurationEnabled'], '1');
+  static isControlPanelConfigEnabled(): Boolean {
+    let curValue = Type.withDefault(Environment.Settings['controlPanelConfigurationEnabled'], true);
 
-    return (curValue === '1');
+    return (curValue === true);
   }
 
   /**
@@ -51,9 +51,9 @@ class Environment {
    * @returns {Boolean}
    */
   static isTelemetryEnabled(): Boolean {
-    let curValue = Type.withDefault(Environment.Settings['telemetryEnabled'], '1');
+    let curValue = Type.withDefault(Environment.Settings['telemetryEnabled'], true);
 
-    return (curValue === '1');
+    return (curValue === true);
   }
 
   static getCsrfToken(): string {

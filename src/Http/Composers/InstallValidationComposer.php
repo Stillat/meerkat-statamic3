@@ -5,6 +5,8 @@ namespace Stillat\Meerkat\Http\Composers;
 use Illuminate\View\View;
 use Statamic\Statamic;
 use Stillat\Meerkat\Addon;
+use Stillat\Meerkat\Statamic\ControlPanel\SettingsProvider;
+use Stillat\Meerkat\Translation\LanguagePatcher;
 use Stillat\Meerkat\Validation\RouteCacheValidator;
 
 class InstallValidationComposer
@@ -17,9 +19,20 @@ class InstallValidationComposer
         'config_users' => 'meerkat/users/'
     ];
 
-    public function __construct(RouteCacheValidator $routeCacheValidator)
+    /**
+     * The SettingsProvider instance.
+     *
+     * @var SettingsProvider
+     */
+    protected $settingsProvider = null;
+
+    protected $languagePatchProvider = null;
+
+    public function __construct(RouteCacheValidator $routeCacheValidator, SettingsProvider $provider, LanguagePatcher $languagePatcher)
     {
         $this->routeCacheValidator = $routeCacheValidator;
+        $this->settingsProvider = $provider;
+        $this->languagePatchProvider = $languagePatcher;
     }
 
     public function compose(View $view)

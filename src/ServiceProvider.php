@@ -40,6 +40,7 @@ use Stillat\Meerkat\Core\Parsing\DateParserFactory;
 use Stillat\Meerkat\Core\Parsing\MarkdownParserFactory;
 use Stillat\Meerkat\Core\Storage\Paths;
 use Stillat\Meerkat\Http\Composers\InstallValidationComposer;
+use Stillat\Meerkat\Http\Composers\ManagerComposer;
 use Stillat\Meerkat\Http\Controllers\UtilitiesController;
 use Stillat\Meerkat\Logging\ExceptionLogger;
 use Stillat\Meerkat\Mail\MeerkatMailer;
@@ -79,7 +80,7 @@ class ServiceProvider extends AddonServiceProvider
     ];
 
     protected $composers = [
-        'meerkat::validation' => InstallValidationComposer::class
+        'meerkat::validation' => InstallValidationComposer::class,
     ];
 
     protected $commands = [

@@ -9,6 +9,7 @@ import SaveSettingsResponse from '../Http/Responses/saveSettingsResponse';
 import ValidateAkismetResponse from '../Http/Responses/validateAkismetResponse';
 import ChangeSetResponse from '../Http/Responses/changeSetResponse';
 import BaseResponse from '../Http/Responses/baseResponse';
+import UserConfigurationResponse from '../Http/Responses/userConfigurationResponse';
 
 /**
  * Provides a wrapper around Meerkat's configuration-related HTTP API endpoints.
@@ -21,6 +22,25 @@ class SettingsRepository {
   constructor() {
     canPoolHttpRequests(this);
     this.client = new Client();
+  }
+
+  getCurrentUserSettings() :Promise<UserConfigurationResponse | ErrorResponse> {
+    let request = {},
+      requestHash = hash(request);
+
+    return new Promise(function (resolve, reject) {
+      let requestState = this.shouldProcessRequest(requestHash, 500);
+
+      this.client.get(Endpoints.url(Endpoints.CurrentUser), request, requestState)
+        .then(function (result) {
+          this.releasePending(requestHash);
+          resolve(UserConfigurationResponse.fromApiResponse(result, null));
+        }.bind(this))
+        .catch(function (err) {
+          this.releasePending(requestHash);
+          reject(ErrorResponse.fromError(err));
+        }.bind(this));
+    }.bind(this));
   }
 
   updatePerPage(perPage) :Promise<BaseResponse | ErrorResponse> {

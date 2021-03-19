@@ -14,14 +14,14 @@ class DashboardController extends CpController
 
     public function index()
     {
-        //$this->attemptToCorrectRoutes();
+        $this->attemptToCorrectRoutes();
 
         return view('meerkat::dashboard');
     }
 
     public function dashboardWithFilter($filter)
     {
-        //$this->attemptToCorrectRoutes();
+        $this->attemptToCorrectRoutes();
 
         $validFilters = ['all', 'pending', 'published', 'spam'];
 

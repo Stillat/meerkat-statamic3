@@ -8,7 +8,6 @@ use Stillat\Meerkat\Concerns\EmitsEvents;
 use Stillat\Meerkat\PathProvider;
 use Stillat\Meerkat\Statamic\ControlPanel\AddonNavIcons;
 use Stillat\Meerkat\Statamic\ControlPanel\Navigation;
-use Stillat\Meerkat\Translation\LanguagePatcher;
 
 /**
  * Class ControlPanelServiceProvider
@@ -38,12 +37,6 @@ class ControlPanelServiceProvider extends AddonServiceProvider
      * @var Navigation|null
      */
     protected $navigation = null;
-    /**
-     * The language translation patcher instance.
-     *
-     * @var LanguagePatcher|null
-     */
-    protected $languagePatcher = null;
 
     public function __construct(AddonNavIcons $addonIcons, Navigation $navigation)
     {
@@ -65,8 +58,12 @@ class ControlPanelServiceProvider extends AddonServiceProvider
 
         $this->navigation->create();
 
+
+        $currentLocale = config('app.locale', 'en');
+
         Statamic::style('meerkat', Addon::VERSION . '/meerkat');
         Statamic::script('meerkat', Addon::VERSION . AddonServiceProvider::getResourceJavaScriptPath('/meerkatExtend'));
+        Statamic::script('meerkat', Addon::VERSION . AddonServiceProvider::getResourceJavaScriptPath('/'.$currentLocale.'_translations'));
         $this->emitEvent(ControlPanelServiceProvider::EVENT_REGISTERING_CONTROL_PANEL, '');
         Statamic::script('meerkat', Addon::VERSION . AddonServiceProvider::getResourceJavaScriptPath('/meerkat'));
         Statamic::script('meerkat', Addon::VERSION . AddonServiceProvider::getResourceJavaScriptPath('/bootstrap'));

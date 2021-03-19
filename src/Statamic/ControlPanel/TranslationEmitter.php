@@ -69,8 +69,14 @@ class TranslationEmitter
         if ($transValue != null && is_array($transValue) && count($transValue) > 0) {
             foreach ($transValue as $key => $value) {
                 $cpKey = $transKey . '.' . $key;
-                $jsValue = json_encode($value);
-                $jsToEmit .= '_cst[\'' . $cpKey . '\']=JSON.parse(\'' . $jsValue . '\');';
+
+                if (is_array($value)) {
+                    $jsValue = json_encode($value);
+                    $jsToEmit .= '_cst[\'' . $cpKey . '\']= JSON.parse(\'' . $jsValue. '\');';
+                } else {
+                    $jsValue = str_replace('\'', '\\\'', $value);
+                    $jsToEmit .= '_cst[\'' . $cpKey . '\']= \'' . $jsValue. '\';';
+                }
             }
         }
 

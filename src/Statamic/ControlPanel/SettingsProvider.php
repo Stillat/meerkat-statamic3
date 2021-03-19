@@ -55,12 +55,14 @@ class SettingsProvider
     }
 
     /**
-     * Creates a JavaScript snippet that can be utilized to provide the Meerkat CoreJS runtime with server-side settings.
+     * Returns the current user settings and permissions.
      *
-     * @return string
+     * @return array
      */
-    public function emitStatements()
+    public function getCurrentConfiguration()
     {
+        $settings = [];
+
         $userSettings = $this->userConfigurationManager->getConfiguration();
 
         if (is_null($userSettings) || is_array($userSettings) === false) {
@@ -73,24 +75,12 @@ class SettingsProvider
         $userSettings['email'] = $this->userConfigurationManager->getEmailAddress();
         $userSettings['isSuper'] = $this->userConfigurationManager->isSysAdmin();
 
-        $userSettings = json_encode($userSettings);
+        $settings['user'] = $userSettings;
 
-        $jsonPermissionSet = json_encode($this->identityManager->getIdentityContext()->getPermissionSet());
+        $settings['permissions'] = $this->identityManager->getIdentityContext()->getPermissionSet();
+        $settings['general'] = $this->getSettings();
 
-        $javaScriptStub = file_get_contents(PathProvider::getStub('settings.js'));
-        $settingAssignments = [];
-
-        foreach ($this->getSettings() as $settingName => $value) {
-            $settingAssignments[] = 'window.meerkat.Config.Environment.Settings[\'' . $settingName . '\'] = \'' . $value . '\';';
-        }
-
-        $settings = join(';', $settingAssignments);
-
-        $javaScriptStub = str_replace('/*user-settings*/', 'window.meerkat.Config.Environment.UserPreferences = ' . $userSettings . ';', $javaScriptStub);
-        $javaScriptStub = str_replace('/*settings*/', $settings, $javaScriptStub);
-        $javaScriptStub = str_replace('/*usercontext*/', 'window.meerkat.Config.Environment.UserContext = ' . $jsonPermissionSet . ';', $javaScriptStub);
-
-        return $javaScriptStub;
+        return $settings;
     }
 
     /**

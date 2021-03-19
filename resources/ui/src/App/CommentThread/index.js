@@ -14,7 +14,6 @@ import Endpoints from '../../Http/endpoints';
 import OverviewProvider from '../../Reporting/overviewProvider';
 import ControlPanelApplication from '../controlPanelApplication';
 import TaskObserver from '../../Tasks/taskObserver';
-import Type from '../../Types/type';
 import SettingsRepository from '../../Repositories/settingsRepository';
 
 const syncjs = require('syncjs');
@@ -106,6 +105,16 @@ export default {
         this.state.isCheckingAllForSpam = false;
         ControlPanelApplication.current().controlPanel.message().error(this.trans('actions.check_all_spam_error'));
       }.bind(this));
+    },
+    onConfigUserAvailable(config) {
+      this.permissions = Environment.getPermissions();
+      if (this.permissions.canReportAsHam && this.permissions.canReportAsSpam) {
+        this.canCheckForSpam = true;
+      }
+
+      this.state.initialPerPage = Environment.UserPreferences.cp_per_page;
+      this.searchOptions.resultsPerPage = this.state.initialPerPage;
+      this.updateQueryWithPerPage(this.state.initialPerPage);
     },
     onCommentsGlobalSpamCheckComplete() {
       OverviewProvider.Instance.refresh();
@@ -291,6 +300,7 @@ export default {
         this.applyFromDefaultFilter(poppedValue);
       }
     }.bind(this);
+    syncjs.Hubs.config().handledBy(this);
 
     syncjs.Hubs.comments().handledBy(this);
 

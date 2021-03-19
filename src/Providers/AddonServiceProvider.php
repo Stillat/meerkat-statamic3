@@ -12,6 +12,8 @@ use Stillat\Meerkat\Core\Storage\Paths;
 use Stillat\Meerkat\Core\Support\Str;
 use Stillat\Meerkat\Http\RequestHelpers;
 use Stillat\Meerkat\PathProvider;
+use Stillat\Meerkat\Statamic\ControlPanel\TranslationEmitter;
+use Stillat\Meerkat\Translation\LanguagePatcher;
 
 /**
  * Class AddonServiceProvider
@@ -130,6 +132,7 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
             $configManager = app(Manager::class);
             $configManager->loadConfiguration();
             $this->publishAddonControlPanelAssets();
+            $this->publishControlPanelTranslationPatches();
         });
 
         $this->includeAddonLanguages();
@@ -315,6 +318,21 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
             $resourceTarget = \Illuminate\Support\Str::finish($resourceTarget, '/');
 
             $this->publishResourceDirectory($resourceSource, $resourceTarget);
+        }
+    }
+
+    private function publishControlPanelTranslationPatches()
+    {
+        $currentLocale = config('app.locale', 'en');
+
+        $targetLocation = public_path('/vendor/'.Addon::CODE_ADDON_NAME.'/js/'.Addon::VERSION.'/'.$currentLocale.'_translations.js');
+
+        if (!file_exists($targetLocation)) {
+            /** @var LanguagePatcher $languagePatcher */
+            $languagePatcher = app(LanguagePatcher::class);
+            $statements = TranslationEmitter::getStatements($languagePatcher->getPatches());
+
+            file_put_contents($targetLocation, $statements);
         }
     }
 

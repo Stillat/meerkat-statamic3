@@ -48,7 +48,7 @@ class ConfigureController extends CpController
 
     public function index()
     {
-        $this->attemptToCorrectRoutes();
+        /// $this->attemptToCorrectRoutes();
 
         $addonsUrl = url(config('statamic.cp.route'), 'addons');
         $commentsUrl = url(config('statamic.cp.route'), 'meerkat');

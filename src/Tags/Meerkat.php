@@ -418,7 +418,7 @@ class Meerkat extends MeerkatTag
      */
     public function repliesTo()
     {
-        $scriptPath = PathProvider::publicJsVendorPath('replies-to');
+        $scriptPath = PathProvider::publicJsVendorPath('replies-to.min');
 
         return '<script src="' . $scriptPath . '"></script>';
     }
@@ -431,7 +431,7 @@ class Meerkat extends MeerkatTag
      */
     public function js()
     {
-        $scriptPath = PathProvider::publicJsVendorPath('meerkat');
+        $scriptPath = PathProvider::publicJsVendorPath('meerkat.min');
 
         return '<script src="' . $scriptPath . '"></script>';
     }

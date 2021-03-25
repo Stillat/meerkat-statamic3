@@ -424,6 +424,19 @@ class Meerkat extends MeerkatTag
     }
 
     /**
+     * Returns a Script element referencing Meerkat's JavaScript file..
+     *
+     * {{ meerkat:js }}
+     * @return string
+     */
+    public function js()
+    {
+        $scriptPath = PathProvider::publicJsVendorPath('meerkat');
+
+        return '<script src="' . $scriptPath . '"></script>';
+    }
+
+    /**
      * Returns the current Meerkat version.
      *
      * {{ meerkat:version }}

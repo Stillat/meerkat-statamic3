@@ -85,7 +85,6 @@ abstract class MeerkatTag extends Tags
      */
     protected function applyParamFiltersToQuery($dataQuery)
     {
-        // TODO: NEED to set the filter groups in other places ExpressionParser is used. :)
         $this->expressionParser->setFilterGroups($this->filterManager->getFilterGroups());
 
         $paramFilters = $this->getFiltersFromParams();
@@ -120,7 +119,6 @@ abstract class MeerkatTag extends Tags
             }
         }
 
-
         $hasTrashedFilter = ExpressionParser::hasFilter(IsFilters::FILTER_IS_DELETED, $paramFilters);
 
         if ($hasTrashedFilter === false) {
@@ -130,7 +128,6 @@ abstract class MeerkatTag extends Tags
                 $paramFilters[] = array_pop($trashedFilter);
             }
         }
-
 
         unset($filterString);
 
@@ -171,14 +168,16 @@ abstract class MeerkatTag extends Tags
                     $this->getParameterValue(CollectionRenderer::PARAM_INCLUDE_SPAM, false)
                 ) === false) {
                 $filters[] = ExpressionParser::build(IsFilters::FILTER_IS_SPAM, ['false']);
+            } else {
+                $filters[] = ExpressionParser::build(IsFilters::FILTER_IS_SPAM, ['*']);
             }
         }
 
         if ($this->hasParameterValue(CollectionRenderer::PARAM_UNAPPROVED)) {
             if (TypeConversions::getBooleanValue(
                     $this->getParameterValue(CollectionRenderer::PARAM_UNAPPROVED, false)
-                ) === false) {
-                $filters[] = ExpressionParser::build(IsFilters::FILTER_IS_PUBLISHED, ['true']);
+                ) === true) {
+                $filters[] = ExpressionParser::build(IsFilters::FILTER_IS_PUBLISHED, ['*']);
             }
         }
 

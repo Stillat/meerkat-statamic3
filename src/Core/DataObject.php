@@ -104,7 +104,7 @@ trait DataObject
     /**
      * Set the data on the object identified by the $key with the given $value.
      *
-     * @param string $key The key of the attribute to set.
+     * @param string|array $key The key of the attribute to set.
      * @param string $value The value to set.
      *
      * @return void

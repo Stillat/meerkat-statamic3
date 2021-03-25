@@ -3,6 +3,8 @@
 namespace Stillat\Meerkat\Core\Data;
 
 use Closure;
+use Stillat\Meerkat\Core\Comments\Comment;
+use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\DataObjectContract;
 
 /**
@@ -162,6 +164,21 @@ class PredicateBuilder
 
         uasort($data, $sortFunc);
 
+        foreach ($data as $el) {
+            if ($el instanceof Comment) {
+                $replies = $el->getReplies();
+
+                if (count($replies) > 0) {
+                    uasort($replies, $sortFunc);
+
+                    $replies = array_values($replies);
+
+                    $el->setDataAttribute(CommentContract::KEY_CHILDREN, $replies);
+                    $el->setReplies($replies);
+                }
+            }
+        }
+
         return $data;
     }
 
@@ -185,6 +202,7 @@ class PredicateBuilder
                         if ($comparison[self::KEY_IS_ASC] === true) {
                             $mapA[] = $a->getDataAttribute($prop);
                             $mapB[] = $b->getDataAttribute($prop);
+
                         } else {
                             $mapA[] = $b->getDataAttribute($prop);
                             $mapB[] = $a->getDataAttribute($prop);
@@ -214,9 +232,9 @@ class PredicateBuilder
             }
 
             if ($mapA < $mapB) {
+
                 return -1;
             }
-
             return 1;
         };
     }

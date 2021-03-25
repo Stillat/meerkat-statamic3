@@ -426,18 +426,26 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
      */
     public static function getResourceJavaScriptPath($resourceName)
     {
-        if (Str::endsWith(Addon::VERSION, 'dev')) {
+        if (Str::endsWith($resourceName, ['bootstrap', 'translations'])) {
             return $resourceName;
         }
-        $target = public_path('/vendor/' . Addon::CODE_ADDON_NAME . '/js/' . Addon::VERSION);
-        $minVersion = $resourceName . '.min.js';
+
+        //if (Str::endsWith(Addon::VERSION, 'dev')) {
+        //    return $resourceName;
+        //}
+
+        // $target = public_path('/vendor/' . Addon::CODE_ADDON_NAME . '/js/' . Addon::VERSION);
+        // $minVersion = $resourceName . '.min.js';
         $minResource = $resourceName.'.min';
 
-        if (file_exists($target . $minVersion)) {
+        return $minResource;
+
+        // All builds should now be released with .min.js.
+        /*if (file_exists($target . $minVersion)) {
             return $minResource;
         }
 
-        return $resourceName;
+        return $resourceName;*/
     }
 
 }

@@ -46,7 +46,7 @@ interface DataObjectContract
      * Set the data on the object identified by the $key with the given $value.
      *
      * @param string $key The key of the attribute to set.
-     * @param string|mixed $value The value to set.
+     * @param string|array|mixed $value The value to set.
      *
      * @return void
      */

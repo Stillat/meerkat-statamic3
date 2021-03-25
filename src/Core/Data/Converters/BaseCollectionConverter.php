@@ -170,7 +170,6 @@ class BaseCollectionConverter
             return $value != null;
         });
 
-
         // Update the inner comment properties to use the array form.
         /** @var array $comment */
         foreach ($comments as $commentId => $comment) {

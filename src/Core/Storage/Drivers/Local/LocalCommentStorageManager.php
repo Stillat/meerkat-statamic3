@@ -124,13 +124,6 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     private $canUseDirectory = false;
 
     /**
-     * A cache of thread structures.
-     *
-     * @var array
-     */
-    private $threadStructureCache = [];
-
-    /**
      * A collection of storage directory validation results.
      *
      * @var ValidationResult
@@ -308,10 +301,6 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             return new ThreadHierarchy();
         }
 
-        if (array_key_exists($threadId, $this->threadStructureCache)) {
-            return $this->threadStructureCache[$threadId];
-        }
-
         $threadPath = $this->paths->combine([$this->storagePath, $threadId]);
 
         $commentPaths = [];
@@ -319,11 +308,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         $threadFilter = $this->paths->combine([$threadPath, '*'.LocalCommentStorageManager::PATH_COMMENT_FILE]);
         $commentPaths = $this->paths->getFilesRecursively($threadFilter);
 
-        $hierarchy = $this->getThreadHierarchy($threadPath, $threadId, $commentPaths);
-
-        $this->threadStructureCache[$threadId] = $hierarchy;
-
-        return $hierarchy;
+        return $this->getThreadHierarchy($threadPath, $threadId, $commentPaths);
     }
 
     /**

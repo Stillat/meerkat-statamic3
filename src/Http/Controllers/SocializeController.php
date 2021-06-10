@@ -126,16 +126,12 @@ class SocializeController extends Controller
                 }
             }
         } catch (ValidationException $validationException) {
-            ErrorReporterFactory::report($validationException);
-
             return $this->formFailure(
                 $this->formHandler->getSubmissionParameters(),
                 $validationException->errors(),
                 $this->formHandler->blueprintName()
             );
         } catch (FormValidationException $validationException) {
-            ErrorReporterFactory::report($validationException);
-
             return $this->formFailure(
                 $this->formHandler->getSubmissionParameters(),
                 $validationException->getErrors(),

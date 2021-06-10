@@ -163,9 +163,7 @@ class FormHandler
             $field_rules = array_get($field_config, MeerkatForm::KEY_FORM_CONFIG_VALIDATE);
 
             if ($field_rules) {
-                $partialRules = explode('|', $field_rules);
-
-                if (in_array('sometimes', $partialRules)) {
+                if (in_array('sometimes', $field_rules)) {
                     if (array_key_exists($field_name, $submissionData)&& $submissionData[$field_name] !== null) {
                         $rules[$field_name] = $field_rules;
                     }

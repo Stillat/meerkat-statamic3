@@ -36,7 +36,6 @@ class TelemetryController extends ApiController
 
     public function __construct(Telemetry $telemetry, ErrorCodeRepositoryContract $errors, Request $request)
     {
-        parent::__construct($request);
 
         $this->telemetry = $telemetry;
         $this->errors = $errors;

@@ -15,6 +15,7 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
 use Stillat\Meerkat\Core\Logging\ErrorReporterFactory;
+use Stillat\Meerkat\Core\Support\Str;
 use Stillat\Meerkat\Exceptions\FormValidationException;
 use Stillat\Meerkat\Exceptions\RejectSubmissionException;
 use Stillat\Meerkat\Forms\FormHandler;
@@ -189,6 +190,11 @@ class SocializeController extends Controller
 
         $response = $redirect ? redirect($redirect) : back();
 
+        $jumpSuffix = $this->getJumpSuffix();
+
+        $currentTargetUrl = $response->getTargetUrl().$jumpSuffix;
+        $response->setTargetUrl($currentTargetUrl);
+
         return $response->withInput()->withErrors(
             $errors,
             MeerkatForm::getFormSessionHandle($meerkatBlueprint)
@@ -236,7 +242,30 @@ class SocializeController extends Controller
         session()->flash(MeerkatForm::getFormSessionHandle($meerkatBlueprint) . '.success', __('Submission successful.'));
         session()->flash(self::KEY_SUBMISSION, $mockSubmission);
 
+        $jumpSuffix = $this->getJumpSuffix($mockSubmission->id());
+        $currentTargetUrl = $response->getTargetUrl().$jumpSuffix;
+        $response->setTargetUrl($currentTargetUrl);
+
         return $response;
+    }
+
+    private function getJumpSuffix($id = null)
+    {
+        $jumpValue = '#comments';
+
+        if (request()->has('meerkat_jump')) {
+            $jumpValue = request('meerkat_jump');
+
+            if (Str::startsWith($jumpValue, 'to:')) {
+                $jumpValue = mb_substr($jumpValue, 3);
+            } else if (Str::startsWith($jumpValue, 'comment:id') && $id != null) {
+                $jumpValue = '#comment-'.$id;
+            } else if (Str::startsWith($jumpValue, 'comment:id|') && $id == null) {
+                $jumpValue = mb_substr($jumpValue, 11);
+            }
+        }
+
+        return $jumpValue;
     }
 
     /**

@@ -28,6 +28,8 @@ use Stillat\Meerkat\Tags\Testing\OutputThreadDebugInformation;
  * Class Meerkat
  *
  * The main Meerkat Antlers tags integration.
+ * 
+ * @ls tags
  *
  * @package Stillat\Meerkat\Tags
  * @since 2.0.0

@@ -26,6 +26,8 @@ use Stillat\Meerkat\Tags\Output\RecursiveThreadRenderer;
  *
  * Responsible for managing the interactions between Meerkat and Statamic's Antlers templating engine.
  *
+ * @ls noparse
+ *
  * @package Stillat\Meerkat\Tags\Responses
  * @since 2.0.0
  */

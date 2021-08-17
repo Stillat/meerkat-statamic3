@@ -162,7 +162,7 @@ class FormHandler
         foreach ($this->getFields() as $field_name => $field_config) {
             $field_rules = array_get($field_config, MeerkatForm::KEY_FORM_CONFIG_VALIDATE);
 
-            if ($field_rules) {
+            if ($field_rules && is_array($field_rules)) {
                 if (in_array('sometimes', $field_rules)) {
                     if (array_key_exists($field_name, $submissionData)&& $submissionData[$field_name] !== null) {
                         $rules[$field_name] = $field_rules;

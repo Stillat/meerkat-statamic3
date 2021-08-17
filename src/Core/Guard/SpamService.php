@@ -187,6 +187,7 @@ class SpamService
         $result = new GuardResult();
         $result->success = true;
 
+        /** @var SpamGuardContract $guard */
         foreach ($this->spamGuards as $guard) {
             if ($guard->supportsSubmittingSpam()) {
                 try {

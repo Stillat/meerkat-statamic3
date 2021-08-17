@@ -18,6 +18,8 @@ use Stillat\Meerkat\Tags\Responses\CollectionRenderer;
  *
  * Provides a structured way to implement Statamic tags in separate classes and
  * then utilize them from the single tags namespace Statamic provides to addons.
+ * 
+ * @ls noparse
  *
  * @package Stillat\Meerkat\Tags
  * @since 2.0.0

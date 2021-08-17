@@ -13,6 +13,8 @@ use Stillat\Meerkat\Tags\MeerkatTag;
  *
  * Provides utilities to gather and render theme diagnostics data.
  *
+ * @ls noparse
+ *
  * @package Stillat\Meerkat\Tags\Testing
  * @since 2.0.0
  */

@@ -547,7 +547,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         /** @var CommentContract|null $pipelineResult */
         $pipelineResult = null;
 
-        if (method_exists($this->commentPipeline, $mutation)) {
+        if (method_exists($this->commentPipeline, $mutation) && $comment != null) {
             $this->commentPipeline->$mutation($comment, function ($result) use (&$pipelineResult) {
                 $pipelineResult = $this->mergeFromPipelineResults($pipelineResult, $result);
             });
@@ -803,28 +803,29 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             // Reload the comment to supply the full comment details.
             $savedComment = $this->findById($comment->getId());
 
-            $this->commentPipeline->created($savedComment, null);
+            if ($savedComment != null) {
+                $this->commentPipeline->created($savedComment, null);
 
-            if ($comment->hasDataAttribute(CommentContract::KEY_SPAM)) {
-                if ($comment->isSpam()) {
-                    $this->commentPipeline->markedAsSpam($savedComment, null);
-                } else {
-                    $this->commentPipeline->markedAsHam($savedComment, null);
+                if ($comment->hasDataAttribute(CommentContract::KEY_SPAM)) {
+                    if ($comment->isSpam()) {
+                        $this->commentPipeline->markedAsSpam($savedComment, null);
+                    } else {
+                        $this->commentPipeline->markedAsHam($savedComment, null);
+                    }
+                }
+
+                if ($comment->hasDataAttribute(CommentContract::KEY_PUBLISHED)) {
+                    if ($comment->published()) {
+                        $this->commentPipeline->approved($savedComment, null);
+                    } else {
+                        $this->commentPipeline->unapproved($savedComment, null);
+                    }
+                }
+
+                if ($comment->isReply()) {
+                    $this->commentPipeline->replied($savedComment, null);
                 }
             }
-
-            if ($comment->hasDataAttribute(CommentContract::KEY_PUBLISHED)) {
-                if ($comment->published()) {
-                    $this->commentPipeline->approved($savedComment, null);
-                } else {
-                    $this->commentPipeline->unapproved($savedComment, null);
-                }
-            }
-
-            if ($comment->isReply()) {
-                $this->commentPipeline->replied($savedComment, null);
-            }
-
         }
 
         return $didCommentSave;
@@ -895,26 +896,28 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             // Reload the comment to supply the full comment details.
             $updatedComment = $this->findById($comment->getId());
 
-            $this->commentPipeline->updated($updatedComment, null);
+            if ($updatedComment != null) {
+                $this->commentPipeline->updated($updatedComment, null);
 
-            if ($comment->hasDataAttribute(CommentContract::KEY_SPAM)) {
-                if ($comment->isSpam()) {
-                    $this->commentPipeline->markedAsSpam($updatedComment, null);
-                } else {
-                    $this->commentPipeline->markedAsHam($updatedComment, null);
+                if ($comment->hasDataAttribute(CommentContract::KEY_SPAM)) {
+                    if ($comment->isSpam()) {
+                        $this->commentPipeline->markedAsSpam($updatedComment, null);
+                    } else {
+                        $this->commentPipeline->markedAsHam($updatedComment, null);
+                    }
                 }
-            }
 
-            if ($comment->hasDataAttribute(CommentContract::KEY_PUBLISHED)) {
-                if ($comment->published()) {
-                    $this->commentPipeline->approved($updatedComment, null);
-                } else {
-                    $this->commentPipeline->unapproved($updatedComment, null);
+                if ($comment->hasDataAttribute(CommentContract::KEY_PUBLISHED)) {
+                    if ($comment->published()) {
+                        $this->commentPipeline->approved($updatedComment, null);
+                    } else {
+                        $this->commentPipeline->unapproved($updatedComment, null);
+                    }
                 }
-            }
 
-            if ($this->config->trackChanges === true && $finalChangeSet !== null) {
-                $this->changeSetManager->addChangeSet($comment, $finalChangeSet);
+                if ($this->config->trackChanges === true && $finalChangeSet !== null) {
+                    $this->changeSetManager->addChangeSet($comment, $finalChangeSet);
+                }
             }
         }
 
@@ -2030,7 +2033,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         $comment->setDataAttribute(CommentContract::KEY_IS_DELETED, false);
         $wasUpdated = $this->update($comment);
 
-        if ($wasUpdated === true) {
+        if ($wasUpdated === true && $comment != null) {
             $this->commentPipeline->restored($comment, null);
         }
 

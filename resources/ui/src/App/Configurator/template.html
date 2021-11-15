@@ -17,13 +17,13 @@
 
     <div class="w-full">
       <div class="publish-tabs tabs">
-        <a :class="{'active': activePage == 'publishing'}" v-on:click="activePage = 'publishing'">{{ trans('config.tab_general') }}</a>
-        <a :class="{'active': activePage == 'guard'}" v-on:click="activePage = 'guard'" v-if="canChangeConfig === true">{{ trans('config.tab_spam') }}</a>
-        <a :class="{'active': activePage == 'ip-filter'}" v-on:click="activePage = 'ip-filter'" v-if="ipFilterEnabled === true && canChangeConfig === true" >{{ trans('config.tab_ip_address_filter') }}</a>
-        <a :class="{'active': activePage == 'word-filter'}" v-on:click="activePage = 'word-filter'" v-if="wordFilterEnabled === true && canChangeConfig === true">{{ trans('config.tab_word_filter') }}</a>
-        <a :class="{'active': activePage == 'permissions'}" v-on:click="activePage = 'permissions'" v-if="canChangeConfig === true">{{ trans('config.tab_permissions') }}</a>
-        <a :class="{'active': activePage == 'email'}" v-on:click="activePage = 'email'" v-if="canChangeConfig === true">{{ trans('config.tab_email') }}</a>
-        <a :class="{'active': activePage == 'privacy'}" v-on:click="activePage = 'privacy'" v-if="canChangeConfig === true">{{ trans('config.tab_privacy') }}</a>
+        <a :class="{'tab-button': true, 'active': activePage == 'publishing'}" v-on:click="activePage = 'publishing'">{{ trans('config.tab_general') }}</a>
+        <a :class="{'tab-button': true, 'active': activePage == 'guard'}" v-on:click="activePage = 'guard'" v-if="canChangeConfig === true">{{ trans('config.tab_spam') }}</a>
+        <a :class="{'tab-button': true, 'active': activePage == 'ip-filter'}" v-on:click="activePage = 'ip-filter'" v-if="ipFilterEnabled === true && canChangeConfig === true" >{{ trans('config.tab_ip_address_filter') }}</a>
+        <a :class="{'tab-button': true, 'active': activePage == 'word-filter'}" v-on:click="activePage = 'word-filter'" v-if="wordFilterEnabled === true && canChangeConfig === true">{{ trans('config.tab_word_filter') }}</a>
+        <a :class="{'tab-button': true, 'active': activePage == 'permissions'}" v-on:click="activePage = 'permissions'" v-if="canChangeConfig === true">{{ trans('config.tab_permissions') }}</a>
+        <a :class="{'tab-button': true, 'active': activePage == 'email'}" v-on:click="activePage = 'email'" v-if="canChangeConfig === true">{{ trans('config.tab_email') }}</a>
+        <a :class="{'tab-button': true, 'active': activePage == 'privacy'}" v-on:click="activePage = 'privacy'" v-if="canChangeConfig === true">{{ trans('config.tab_privacy') }}</a>
 
       </div>
 

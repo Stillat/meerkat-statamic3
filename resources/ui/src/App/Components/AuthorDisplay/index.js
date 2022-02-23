@@ -8,11 +8,11 @@ export default {
   template: template,
   props: {
     comment: {
-      type: Comment,
+      type: Object,
       default: null
     },
     author: {
-      type: Author,
+      type: Object,
       default: null
     },
     avatarDriver: {

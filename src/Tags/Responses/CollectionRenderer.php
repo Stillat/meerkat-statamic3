@@ -147,6 +147,10 @@ class CollectionRenderer extends MeerkatTag
     public function setThreadId($threadId)
     {
         $this->threadId = $threadId;
+
+        if (is_object($this->threadId)) {
+            $this->threadId = (string)$this->threadId;
+        }
     }
 
     /**

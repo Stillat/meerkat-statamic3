@@ -15,7 +15,7 @@ export default {
   template: template,
   props: {
     comment: {
-      type: Comment,
+      type: Object,
       default: null
     },
     permissions: {

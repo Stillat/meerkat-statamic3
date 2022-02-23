@@ -63,49 +63,47 @@
   </div>
 
   <div class="publish-fields w-full" v-if="settings != null && $parent.canChangeConfig">
-    <div class="form-group publish-field toggle-fieldtype field-w-1/2">
+    <div class="form-group publish-field toggle-fieldtype field-w-1/2" v-if="typeof settings.items['publishing.auto_publish'] !== 'undefined'">
       <div class="field-inner">
         <label for="field_auto_publish"><span>{{ trans('config.publish_auto') }}</span></label>
         <div class="help-block -mt-1">
           <p>{{ trans('config.publish_auto_desc') }}</p>
         </div>
       </div>
-      <toggle-fieldtype v-model="settings.items['publishing.auto_publish'].value" name="auto_publish" :config="{'handle':'auto_publish'}"
+      <toggle-fieldtype v-model="settings.items['publishing.auto_publish'].value" name="auto_publish" handle="auto_publish" :config="{'handle':'auto_publish'}"
                         :read-only="settings.items['publishing.auto_publish'].behavior === 0"></toggle-fieldtype>
     </div>
 
-    <div class="form-group publish-field toggle-fieldtype field-w-1/2">
+    <div class="form-group publish-field toggle-fieldtype field-w-1/2" v-if="typeof settings.items['publishing.only_accept_comments_from_authenticated_users'] !== 'undefined'">
       <div class="field-inner">
         <label for="field_only_accept_comments_from_authenticated_users"><span>{{ trans('config.only_accept_comments_from_authenticated_users') }}</span></label>
         <div class="help-block -mt-1">
           <p>{{ trans('config.only_accept_comments_from_authenticated_users_desc') }}</p>
         </div>
       </div>
-      <toggle-fieldtype v-model="settings.items['publishing.only_accept_comments_from_authenticated_users'].value" name="only_accept_comments_from_authenticated_users" :config="{'handle':'only_accept_comments_from_authenticated_users'}"
+      <toggle-fieldtype v-model="settings.items['publishing.only_accept_comments_from_authenticated_users'].value" name="only_accept_comments_from_authenticated_users" handle="only_accept_comments_from_authenticated_users" :config="{'handle':'only_accept_comments_from_authenticated_users'}"
                         :read-only="settings.items['publishing.only_accept_comments_from_authenticated_users'].behavior === 0"></toggle-fieldtype>
     </div>
 
-    <div class="form-group publish-field toggle-fieldtype field-w-1/2">
+    <div class="form-group publish-field toggle-fieldtype field-w-1/2" v-if="typeof settings.items['publishing.auto_publish_authenticated_users'] !== 'undefined'">
       <div class="field-inner">
         <label for="field_auto_publish_authenticated_users"><span>{{ trans('config.publish_user_auto') }}</span></label>
         <div class="help-block -mt-1">
           <p>{{ trans('config.publish_user_auto_desc') }}</p>
         </div>
       </div>
-      <toggle-fieldtype v-model="settings.items['publishing.auto_publish_authenticated_users'].value" name="auto_publish_authenticated_users" :config="{'handle':'auto_publish_authenticated_users'}"
+      <toggle-fieldtype v-model="settings.items['publishing.auto_publish_authenticated_users'].value" name="auto_publish_authenticated_users" handle="auto_publish_authenticated_users" :config="{'handle':'auto_publish_authenticated_users'}"
                         :read-only="settings.items['publishing.auto_publish_authenticated_users'].behavior === 0"></toggle-fieldtype>
     </div>
 
-
-
-    <div class="form-group publish-field toggle-fieldtype field-w-1/2">
+    <div class="form-group publish-field toggle-fieldtype field-w-1/2" v-if="typeof settings.items['publishing.automatically_close_comments'] !== 'undefined'">
       <div class="field-inner">
         <label for="field_automatically_close_comments"><span>{{ trans('config.close_threads') }}</span></label>
         <div class="help-block -mt-1">
           <p>{{ trans('config.close_threads_desc') }}</p>
         </div>
       </div>
-      <integer-fieldtype v-model="settings.items['publishing.automatically_close_comments'].value" name="automatically_close_comments" :config="{'handle':'automatically_close_comments'}"
+      <integer-fieldtype v-model="settings.items['publishing.automatically_close_comments'].value" name="automatically_close_comments" handle="automatically_close_comments" :config="{'handle':'automatically_close_comments'}"
                          :read-only="settings.items['publishing.automatically_close_comments'].behavior === 0"></integer-fieldtype>
     </div>
   </div>

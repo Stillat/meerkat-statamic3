@@ -16,7 +16,7 @@
         <p>{{ trans('config.word_filter_banned_desc') }} <span v-if="settings.items['wordlist.banned'].defaults != null && settings.items['wordlist.banned'].defaults.length > 0">{{ trans('config.word_filter_managed_notice') }} <a class="cursor" v-on:click="showDefaults = true" v-if="showDefaults === false">{{ trans('config.word_filter_view_defaults') }}</a></span></p>
       </div>
     </div>
-    <list-fieldtype v-model="settings.items['wordlist.banned'].value"
+    <list-fieldtype v-model="settings.items['wordlist.banned'].value" handle="word_list_banned"
                     :read-only="settings.items['wordlist.banned'].behavior === 0"></list-fieldtype>
   </div>
 

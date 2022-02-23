@@ -4,7 +4,7 @@
       :action-state="currentAction" v-on:cancel="checkForDismiss"></meerkat-stateful-confirm-dialog>
 
     <div class="meerkat__temp-markdown-reply-editor--wrapper">
-        <markdown-fieldtype ref="markdownEditor" v-model="comment.state.reply.content"></markdown-fieldtype>
+        <markdown-fieldtype ref="markdownEditor" handle="comment_reply" v-model="comment.state.reply.content"></markdown-fieldtype>
     </div>
 
     <div class="p-2 bg-grey-20 border-t flex items-center text-sm">

@@ -12,7 +12,7 @@ export default {
   },
   props: {
     settings: {
-      type: SettingsResponse,
+      type: Object,
       default: null
     }
   },

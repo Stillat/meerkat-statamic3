@@ -25,7 +25,7 @@ export default {
       default: ''
     },
     comment: {
-      type: Comment,
+      type: Object,
       default: null
     },
     actionsDisabled: {

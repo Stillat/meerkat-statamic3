@@ -8,7 +8,7 @@
     </div>
   </div>
 
-  <div class="form-group publish-field list-fieldtype field-w-full">
+  <div class="form-group publish-field list-fieldtype field-w-full" v-if="typeof settings.items['iplist.block'] !== 'undefined'">
     <div class="field-inner">
       <label><span>{{ trans('config.ip_filter_blocked') }}</span></label>
       <div class="help-block -mt-1">
@@ -17,7 +17,7 @@
           class="cursor" v-on:click="showDefaults = true" v-if="showDefaults === false">{{ trans('config.ip_filter_view_defaults') }}</a></span></p>
       </div>
     </div>
-    <list-fieldtype v-model="settings.items['iplist.block'].value"
+    <list-fieldtype v-model="settings.items['iplist.block'].value" handle="ip_list_block"
                     :read-only="settings.items['iplist.block'].behavior === 0"></list-fieldtype>
   </div>
 

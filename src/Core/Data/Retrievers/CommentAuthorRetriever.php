@@ -67,6 +67,12 @@ class CommentAuthorRetriever
             }
         }
 
+        foreach ($authorsToReturn as $key => &$author) {
+            if (is_numeric($key)) {
+                $author['id'] = (string)$key;
+            }
+        }
+
         return array_values($authorsToReturn);
     }
 

@@ -758,6 +758,12 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      */
     public function save(CommentContract $comment)
     {
+        $authenticatedUserId = $comment->getDataAttribute(AuthorContract::AUTHENTICATED_USER_ID);
+
+        if (is_numeric($authenticatedUserId)) {
+            $comment->setDataAttribute(AuthorContract::AUTHENTICATED_USER_ID, (string)$authenticatedUserId);
+        }
+
         RuntimeStateGuard::storageLocks()->checkConcurrentAccess();
 
         if ($comment === null) {

@@ -39,18 +39,20 @@ export default {
     },
     perPageOptions: {
       type: Array,
-      default: [
-        10,
-        25,
-        50,
-        100
-      ]
+      default: function () {
+        return [
+          10,
+          25,
+          50,
+          100
+        ];
+      }
     },
     /**
      * @type PagedMetaData
      */
     pageData: {
-      type: PagedMetaData,
+      type: Object,
       default: null
     }
   },

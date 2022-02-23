@@ -22,7 +22,7 @@
             <span>{{ trans('config.privacy_store_user_agent_desc') }}</span>
           </td>
           <td>
-            <toggle-fieldtype v-model="settings.items['privacy.store_user_agent'].value" name="store_user_agent" :config="{'handle':'store_user_agent'}"
+            <toggle-fieldtype v-model="settings.items['privacy.store_user_agent'].value" name="store_user_agent" handle="store_user_agent" :config="{'handle':'store_user_agent'}" v-if="typeof settings.items['privacy.store_user_agent'] !== 'undefined'"
                               :read-only="settings.items['privacy.store_user_agent'].behavior === 0"></toggle-fieldtype>
           </td>
         </tr>
@@ -32,7 +32,7 @@
             <span>{{ trans('config.privacy_store_user_ip_desc') }}</span>
           </td>
           <td>
-            <toggle-fieldtype v-model="settings.items['privacy.store_user_ip'].value" name="store_user_ip" :config="{'handle':'store_user_ip'}"
+            <toggle-fieldtype v-model="settings.items['privacy.store_user_ip'].value" name="store_user_ip" handle="store_user_ip" :config="{'handle':'store_user_ip'}" v-if="typeof settings.items['privacy.store_user_ip'] !== 'undefined'"
                               :read-only="settings.items['privacy.store_user_ip'].behavior === 0"></toggle-fieldtype>
           </td>
         </tr>
@@ -42,7 +42,7 @@
             <span>{{ trans('config.privacy_store_referrer_desc') }}</span>
           </td>
           <td>
-            <toggle-fieldtype v-model="settings.items['privacy.store_referrer'].value" name="store_referrer" :config="{'handle':'store_referrer'}"
+            <toggle-fieldtype v-model="settings.items['privacy.store_referrer'].value" name="store_referrer" handle="store_referrer" :config="{'handle':'store_referrer'}" v-if="typeof settings.items['privacy.store_referrer'] !== 'undefined'"
                               :read-only="settings.items['privacy.store_referrer'].behavior === 0"></toggle-fieldtype>
           </td>
         </tr>

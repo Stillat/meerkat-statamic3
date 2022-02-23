@@ -60,6 +60,7 @@ if (env === 'prod') {
     webpackMode = 'development';
 
     configPlugins = [
+        new MiniCssExtractPlugin(extractOptions),
         new MiniCssExtractPlugin(extractOptions)
     ];
 

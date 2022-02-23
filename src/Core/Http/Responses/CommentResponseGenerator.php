@@ -347,7 +347,7 @@ class CommentResponseGenerator
             if (array_key_exists(AuthorContract::KEY_HAS_USER, $comment[$authorKey])) {
                 if ($comment[$authorKey][AuthorContract::KEY_HAS_USER] === true) {
                     if (array_key_exists(AuthorContract::KEY_USER_ID, $comment[$authorKey])) {
-                        return $comment[$authorKey][AuthorContract::KEY_USER_ID];
+                        return (string)$comment[$authorKey][AuthorContract::KEY_USER_ID];
                     } else {
                         return null;
                     }

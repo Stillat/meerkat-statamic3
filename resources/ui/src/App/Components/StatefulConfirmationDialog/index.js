@@ -12,7 +12,7 @@ export default {
   mixins: [UsesTranslator],
   props: {
     actionState: {
-      type: ActionState,
+      type: Object,
       default: null
     }
   },

@@ -30,31 +30,31 @@
         <tr v-for="(perm, i) in settings.permissions">
           <td>{{ perm.name }}</td>
           <td>
-            <toggle-fieldtype v-model="settings.permissions[i].permissions.hasAllPermissions" :read-only="settings.items['permissions.all_permissions'].behavior === 0" @input="checkPermissions(settings.permissions[i])"></toggle-fieldtype>
+            <toggle-fieldtype v-model="settings.permissions[i].permissions.hasAllPermissions" :handle="'all_permissions' + i" :read-only="settings.items['permissions.all_permissions'].behavior === 0" @input="checkPermissions(settings.permissions[i])"></toggle-fieldtype>
           </td>
           <td>
-            <toggle-fieldtype v-model="settings.permissions[i].permissions.canViewComments" :read-only="settings.items['permissions.can_view_comments'].behavior === 0"></toggle-fieldtype>
+            <toggle-fieldtype v-model="settings.permissions[i].permissions.canViewComments" :handle="'can_view_comments' + i" :read-only="settings.items['permissions.can_view_comments'].behavior === 0"></toggle-fieldtype>
           </td>
           <td>
-            <toggle-fieldtype v-model="settings.permissions[i].permissions.canApproveComments" :read-only="settings.items['permissions.can_approve_comments'].behavior === 0"></toggle-fieldtype>
+            <toggle-fieldtype v-model="settings.permissions[i].permissions.canApproveComments" :handle="'can_approve_comments' + i" :read-only="settings.items['permissions.can_approve_comments'].behavior === 0"></toggle-fieldtype>
           </td>
           <td>
-            <toggle-fieldtype v-model="settings.permissions[i].permissions.canUnApproveComments" :read-only="settings.items['permissions.can_unapprove_comments'].behavior === 0"></toggle-fieldtype>
+            <toggle-fieldtype v-model="settings.permissions[i].permissions.canUnApproveComments" :handle="'can_unapprove_comments' + i" :read-only="settings.items['permissions.can_unapprove_comments'].behavior === 0"></toggle-fieldtype>
           </td>
           <td>
-            <toggle-fieldtype v-model="settings.permissions[i].permissions.canEditComments" :read-only="settings.items['permissions.can_edit_comments'].behavior === 0"></toggle-fieldtype>
+            <toggle-fieldtype v-model="settings.permissions[i].permissions.canEditComments" :handle="'can_edit_comments' + i" :read-only="settings.items['permissions.can_edit_comments'].behavior === 0"></toggle-fieldtype>
           </td>
           <td>
-            <toggle-fieldtype v-model="settings.permissions[i].permissions.canReplyToComments" :read-only="settings.items['permissions.can_reply_to_comments'].behavior === 0"></toggle-fieldtype>
+            <toggle-fieldtype v-model="settings.permissions[i].permissions.canReplyToComments" :handle="'can_reply_to_comments' + i" :read-only="settings.items['permissions.can_reply_to_comments'].behavior === 0"></toggle-fieldtype>
           </td>
           <td>
-            <toggle-fieldtype v-model="settings.permissions[i].permissions.canReportAsHam" :read-only="settings.items['permissions.can_report_as_ham'].behavior === 0"></toggle-fieldtype>
+            <toggle-fieldtype v-model="settings.permissions[i].permissions.canReportAsHam" :handle="'can_report_as_ham' + i" :read-only="settings.items['permissions.can_report_as_ham'].behavior === 0"></toggle-fieldtype>
           </td>
           <td>
-            <toggle-fieldtype v-model="settings.permissions[i].permissions.canReportAsSpam" :read-only="settings.items['permissions.can_report_as_spam'].behavior === 0"></toggle-fieldtype>
+            <toggle-fieldtype v-model="settings.permissions[i].permissions.canReportAsSpam" :handle="'can_report_as_spam' + i" :read-only="settings.items['permissions.can_report_as_spam'].behavior === 0"></toggle-fieldtype>
           </td>
           <td>
-            <toggle-fieldtype v-model="settings.permissions[i].permissions.canRemoveComments" :read-only="settings.items['permissions.can_remove_comments'].behavior === 0"></toggle-fieldtype>
+            <toggle-fieldtype v-model="settings.permissions[i].permissions.canRemoveComments" :handle="'can_remove_comments' + i" :read-only="settings.items['permissions.can_remove_comments'].behavior === 0"></toggle-fieldtype>
           </td>
         </tr>
         </tbody>

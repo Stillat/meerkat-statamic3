@@ -7,7 +7,7 @@ export default {
   template: template,
   props: {
     settings: {
-      type: SettingsResponse,
+      type: Object,
       default: null
     }
   },

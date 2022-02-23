@@ -8,36 +8,36 @@
     </div>
   </div>
 
-  <div class="form-group publish-field toggle-fieldtype field-w-1/2">
+  <div class="form-group publish-field toggle-fieldtype field-w-1/2" v-if="typeof settings.items['email.send_mail'] !== 'undefined'">
     <div class="field-inner">
       <label for="field_send_mail"><span>{{ trans('config.email_send_mail') }}</span></label>
       <div class="help-block -mt-1">
         <p>{{ trans('config.email_send_mail_desc') }}</p>
       </div>
     </div>
-    <toggle-fieldtype v-model="settings.items['email.send_mail'].value" :config="{'handle':'send_mail'}"
+    <toggle-fieldtype v-model="settings.items['email.send_mail'].value" handle="send_mail" :config="{'handle':'send_mail'}"
                       :read-only="settings.items['email.send_mail'].behavior === 0"></toggle-fieldtype>
   </div>
 
-  <div class="form-group publish-field toggle-fieldtype field-w-1/2">
+  <div class="form-group publish-field toggle-fieldtype field-w-1/2" v-if="typeof settings.items['email.check_with_spam_guard'] !== 'undefined'">
     <div class="field-inner">
       <label for="field_check_with_spam_guard"><span>{{ trans('config.email_check_spam_guard') }}</span></label>
       <div class="help-block">
         <p>{{ trans('config.email_check_spam_guard_desc') }}</p>
       </div>
     </div>
-    <toggle-fieldtype v-model="settings.items['email.check_with_spam_guard'].value" name="auto_delete_spam" :config="{'handle':'check_with_spam_guard'}"
+    <toggle-fieldtype v-model="settings.items['email.check_with_spam_guard'].value" name="auto_delete_spam" handle="check_with_spam_guard" :config="{'handle':'check_with_spam_guard'}"
                       :read-only="settings.items['email.check_with_spam_guard'].behavior === 0"></toggle-fieldtype>
   </div>
 
-  <div class="form-group publish-field list-fieldtype field-w-full">
+  <div class="form-group publish-field list-fieldtype field-w-full" v-if="typeof settings.items['email.addresses'] !== 'undefined'">
     <div class="field-inner">
       <label><span>{{ trans('config.email_addresses') }}</span></label>
       <div class="help-block -mt-1">
         <p>{{ trans('config.email_addresses_desc') }} <span v-if="settings.items['email.addresses'].defaults != null && settings.items['email.addresses'].defaults.length > 0">{{ trans('config.email_addresses_notice') }} <a class="cursor" v-on:click="showDefaults = true" v-if="showDefaults === false">{{ trans('config.email_addresses_view_defaults') }}</a></span></p>
       </div>
     </div>
-    <list-fieldtype v-model="settings.items['email.addresses'].value"
+    <list-fieldtype v-model="settings.items['email.addresses'].value" handle="email_list"
                     :read-only="settings.items['email.addresses'].behavior === 0"></list-fieldtype>
   </div>
 

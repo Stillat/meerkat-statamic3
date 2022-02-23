@@ -48,7 +48,7 @@ export default {
       default: false
     },
     comments: {
-      type: CommentResponse,
+      type: Object,
       default: null
     },
     displayFocusMode: {
@@ -187,6 +187,15 @@ export default {
         if (config.length > 0) {
           this.avatarDriver = AvatarDriverRegistry.getDriverName(config[0]);
         }
+      }
+    },
+    onConfigUserAvailable() {
+      this.permissions = Environment.getPermissions();
+
+      if (this.permissions.canApproveComments || this.permissions.canEditComments ||
+          this.permissions.canRemoveComments || this.permissions.canReportAsHam ||
+          this.permissions.canReportAsSpam || this.permissions.canUnApproveComments) {
+        this.canUseBulkActions = true;
       }
     },
     onFilterChange(filter) {

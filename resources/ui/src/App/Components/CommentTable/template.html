@@ -71,7 +71,7 @@
                         </sort-indicator>
                     </th>
                     <th class="sortable-column" v-on:click="updateSortFromHeader('comment')">
-                        <sort-indicator :column="'comment'" :manager="sortManager" :manager="sortManager" style="display: inline-block;padding-top:2px;"
+                        <sort-indicator :column="'comment'" :manager="sortManager" style="display: inline-block;padding-top:2px;"
                                         :respond-to-click="false" v-on:order-changed="updateStateFromOrder">
                             {{ trans('display.header_comment') }}
                         </sort-indicator>
@@ -94,7 +94,7 @@
                       </sort-indicator>
                     </div>
                     <div class="sortable-column meerkat__sort-response--secondary" v-on:click="updateSortFromHeader('comment')">
-                      <sort-indicator :column="'comment'" :manager="sortManager" :manager="sortManager" style="display: inline-block;padding-top:2px;"
+                      <sort-indicator :column="'comment'" :manager="sortManager" style="display: inline-block;padding-top:2px;"
                                       :respond-to-click="false" v-on:order-changed="updateStateFromOrder">
                         {{ trans('display.header_comment') }}
                       </sort-indicator>

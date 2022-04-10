@@ -27,7 +27,7 @@ trait IteratesDataSets
      * @link https://php.net/manual/en/iterator.current.php
      * @return mixed Can return any type.
      */
-    public function current()
+    public function current(): mixed
     {
         $this->flattenDataset();
 
@@ -39,11 +39,11 @@ trait IteratesDataSets
      * @link https://php.net/manual/en/iterator.next.php
      * @return void Any returned value is ignored.
      */
-    public function next()
+    public function next(): void
     {
         $this->flattenDataset();
 
-        return next($this->flattenedData);
+        next($this->flattenedData);
     }
 
     /**
@@ -52,7 +52,7 @@ trait IteratesDataSets
      * @return bool The return value will be casted to boolean and then evaluated.
      * Returns true on success or false on failure.
      */
-    public function valid()
+    public function valid(): bool
     {
         $this->flattenDataset();
 
@@ -64,7 +64,7 @@ trait IteratesDataSets
      * @link https://php.net/manual/en/iterator.key.php
      * @return string|float|int|bool|null scalar on success, or null on failure.
      */
-    public function key()
+    public function key(): mixed
     {
         $this->flattenDataset();
 
@@ -76,7 +76,7 @@ trait IteratesDataSets
      * @link https://php.net/manual/en/iterator.rewind.php
      * @return void Any returned value is ignored.
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->flattenDataset();
 

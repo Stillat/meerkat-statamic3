@@ -112,7 +112,7 @@ class ContextResolver implements ContextResolverContract
 
         $statamicContext->id();
 
-        foreach ($statamicContext->toCacheableArray() as $arrayKey => $arrayValue) {
+        foreach ($statamicContext->toArray() as $arrayKey => $arrayValue) {
             if ($arrayKey === 'data') {
                 continue;
             }

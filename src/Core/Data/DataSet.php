@@ -58,7 +58,7 @@ class DataSet implements DataSetContract, ArrayAccess
      * @param mixed $offset The offset to get.
      * @return mixed
      */
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         if ($this->offsetExists($offset)) {
             return $this->data[$offset];
@@ -73,7 +73,7 @@ class DataSet implements DataSetContract, ArrayAccess
      * @param mixed $offset An offset to check for.
      * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists(mixed $offset): bool
     {
         return isset($this->data[$offset]);
     }
@@ -84,7 +84,7 @@ class DataSet implements DataSetContract, ArrayAccess
      * @param mixed $offset The offset to assign the value to.
      * @param mixed $value The value to set.
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         if (is_null($offset)) {
             $this->data[] = $value;
@@ -98,7 +98,7 @@ class DataSet implements DataSetContract, ArrayAccess
      *
      * @param mixed $offset The offset to unset.
      */
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         if ($this->offsetExists($offset)) {
             unset($this->data[$offset]);

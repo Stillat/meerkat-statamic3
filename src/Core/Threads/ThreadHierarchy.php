@@ -412,7 +412,7 @@ class ThreadHierarchy implements ArrayAccess, Iterator
      * </p>
      * @return mixed Can return all value types.
      */
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         if ($this->offsetExists($offset)) {
             return $this->comments[$offset];
@@ -432,7 +432,7 @@ class ThreadHierarchy implements ArrayAccess, Iterator
      * <p>
      * The return value will be casted to boolean if non-boolean was returned.
      */
-    public function offsetExists($offset)
+    public function offsetExists(mixed $offset): bool
     {
         return isset($this->comments[$offset]);
     }
@@ -448,7 +448,7 @@ class ThreadHierarchy implements ArrayAccess, Iterator
      * </p>
      * @return void
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         if (is_null($offset)) {
             $this->comments[] = $value;
@@ -465,7 +465,7 @@ class ThreadHierarchy implements ArrayAccess, Iterator
      * </p>
      * @return void
      */
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         if ($this->offsetExists($offset)) {
             unset($this->directAncestorMapping[$offset]);
@@ -477,7 +477,7 @@ class ThreadHierarchy implements ArrayAccess, Iterator
      * @link https://php.net/manual/en/iterator.current.php
      * @return mixed Can return any type.
      */
-    public function current()
+    public function current(): mixed
     {
         return current($this->comments);
     }
@@ -486,9 +486,9 @@ class ThreadHierarchy implements ArrayAccess, Iterator
      * Move forward to next element
      * @link https://php.net/manual/en/iterator.next.php
      */
-    public function next()
+    public function next(): void
     {
-        return next($this->comments);
+        next($this->comments);
     }
 
     /**
@@ -497,7 +497,7 @@ class ThreadHierarchy implements ArrayAccess, Iterator
      * @return bool The return value will be casted to boolean and then evaluated.
      * Returns true on success or false on failure.
      */
-    public function valid()
+    public function valid(): bool
     {
         return isset($this->comments[$this->key()]);
     }
@@ -507,7 +507,7 @@ class ThreadHierarchy implements ArrayAccess, Iterator
      * @link https://php.net/manual/en/iterator.key.php
      * @return string|float|int|bool|null scalar on success, or null on failure.
      */
-    public function key()
+    public function key(): mixed
     {
         return key($this->comments);
     }
@@ -517,7 +517,7 @@ class ThreadHierarchy implements ArrayAccess, Iterator
      * @link https://php.net/manual/en/iterator.rewind.php
      * @return void Any returned value is ignored.
      */
-    public function rewind()
+    public function rewind(): void
     {
         reset($this->comments);
     }

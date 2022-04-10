@@ -410,7 +410,7 @@ class Thread implements ThreadContract, JsonSerializable
      *
      * @return array|mixed
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->getDataAttributes();
     }

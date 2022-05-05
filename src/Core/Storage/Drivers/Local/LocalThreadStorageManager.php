@@ -208,7 +208,9 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
         foreach ($threadIdsToUse as $threadId) {
             $newThread = $this->materializeThread($threadId, $withComments);
 
-            $threadsToReturn[] = $newThread;
+            if ($newThread !== null && $newThread->getContext() !== null) {
+                $threadsToReturn[] = $newThread;
+            }
         }
 
         return $threadsToReturn;
@@ -398,8 +400,6 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
 
             if ($dataArray !== null && is_array($dataArray)) {
                 $metaData = ThreadMetaData::makeFromArray($dataArray);
-
-                $context = $this->contextResolver->findById($contextId);
 
                 self::$metaResolverCache[$contextId] = $metaData;
 

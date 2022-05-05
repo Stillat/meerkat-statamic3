@@ -124,6 +124,10 @@ class CommentManager implements CommentManagerContract
                 $commentsToReturn = array_merge($commentsToReturn, $result->flattenDataset());
             }
 
+            if (empty($threads)) {
+                return [];
+            }
+
             return $commentsToReturn;
         }
 

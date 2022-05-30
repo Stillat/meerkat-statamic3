@@ -120,7 +120,6 @@ class CommentSubmitted extends Mailable
 
     public function build()
     {
-        dd($this->getFromEmailAddress());
         return $this->subject($this->trans('email.subject'))
             ->from($this->getFromEmailAddress())->view('meerkat::emails.submission');
     }

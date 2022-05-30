@@ -56,6 +56,13 @@ class CommentSubmitted extends Mailable
      */
     private $fieldMapper = null;
 
+    /**
+     * An optional "from" address override.
+     *
+     * @var string|null
+     */
+    private $fromAddress = null;
+
     public function __construct(CommentContract $comment, FieldMapper $mapper)
     {
         $this->fieldMapper = $mapper;
@@ -89,10 +96,33 @@ class CommentSubmitted extends Mailable
         unset($fields, $targetFields, $exportData);
     }
 
+    /**
+     * Sets an optional "from" email address override.
+     *
+     * @param string|null $address The address.
+     * @return $this
+     */
+    public function setFromAddress($address)
+    {
+        $this->fromAddress = $address;
+
+        return $this;
+    }
+
+    protected function getFromEmailAddress()
+    {
+        if (is_string($this->fromAddress) && strlen($this->fromAddress) > 0) {
+            return $this->fromAddress;
+        }
+
+        return $this->comment->getAuthor()->getEmailAddress();
+    }
+
     public function build()
     {
+        dd($this->getFromEmailAddress());
         return $this->subject($this->trans('email.subject'))
-            ->from($this->comment->getAuthor()->getEmailAddress())->view('meerkat::emails.submission');
+            ->from($this->getFromEmailAddress())->view('meerkat::emails.submission');
     }
 
 }

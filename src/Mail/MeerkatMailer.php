@@ -31,6 +31,13 @@ class MeerkatMailer implements MailerContract
     private $fieldMapper = null;
 
     /**
+     * An optional "from" address override.
+     *
+     * @var string|null
+     */
+    private $fromAddress = null;
+
+    /**
      * The EmailReportStorageManagerContract implementation instance.
      *
      * @var EmailReportStorageManagerContract
@@ -41,6 +48,19 @@ class MeerkatMailer implements MailerContract
     {
         $this->fieldMapper = $fieldMapper;
         $this->mailReportManager = $mailReportManager;
+    }
+
+    /**
+     * Sets an optional "from" email address override.
+     *
+     * @param string|null $address The address.
+     * @return $this
+     */
+    public function setFromAddress($address)
+    {
+        $this->fromAddress = $address;
+
+        return $this;
     }
 
     /**
@@ -61,6 +81,7 @@ class MeerkatMailer implements MailerContract
         $reportItems = [];
 
         $mailable = new CommentSubmitted($comment, $this->fieldMapper);
+        $mailable->setFromAddress($this->fromAddress);
 
         foreach ($addresses as $address) {
             $didSend = false;

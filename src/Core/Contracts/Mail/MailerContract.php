@@ -16,4 +16,12 @@ interface MailerContract
      */
     public function send($addresses, CommentContract $comment);
 
+    /**
+     * Sets an optional "from" email address override.
+     *
+     * @param string|null $address The address.
+     * @return $this
+     */
+    public function setFromAddress($address);
+
 }

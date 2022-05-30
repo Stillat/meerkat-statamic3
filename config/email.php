@@ -18,6 +18,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | From Address
+    |--------------------------------------------------------------------------
+    |
+    | By default the "from" address will be the email of the
+    | comment author when sending automated emails. Change
+    | this value from "null" to a different value to use
+    | a different "from" email address when sending.
+    |
+    */
+    'from_address' => null,
+
+    /*
+    |--------------------------------------------------------------------------
     | Check Comment Against Spam Guard
     |--------------------------------------------------------------------------
     |

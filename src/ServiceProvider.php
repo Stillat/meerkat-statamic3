@@ -316,6 +316,7 @@ class ServiceProvider extends AddonServiceProvider
             $globalConfiguration->sendEmails = $this->getConfig('email.send_mail', false);
             $globalConfiguration->onlySendEmailIfNotSpam = $this->getConfig('email.check_with_spam_guard', true);
             $globalConfiguration->addressToSendEmailTo = $this->getConfig('email.addresses', []);
+            $globalConfiguration->emailFromAddress = $this->getConfig('email.from_address', null);
 
             foreach ($this->getConfig('authors', []) as $configSetting => $configValue) {
                 $globalConfiguration->set('author_' . $configSetting, $configValue);

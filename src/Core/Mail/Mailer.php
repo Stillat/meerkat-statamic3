@@ -46,7 +46,8 @@ class Mailer
      */
     public function sendMailForComment(CommentContract $comment)
     {
-        $this->mailer->send($this->config->addressToSendEmailTo, $comment);
+        $this->mailer->setFromAddress($this->config->emailFromAddress)
+            ->send($this->config->addressToSendEmailTo, $comment);
     }
 
 }

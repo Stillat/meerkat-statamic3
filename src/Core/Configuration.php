@@ -118,6 +118,13 @@ class Configuration extends ConfigurationContainer
     public $sendEmails = false;
 
     /**
+     * An optional "from" email address that will be used instead of the comment author email address.
+     *
+     * @var string|null
+     */
+    public $emailFromAddress = null;
+
+    /**
      * Indicates if Meerkat should only send emails not identified as spam.
      *
      * @var bool

@@ -8,6 +8,7 @@ use Statamic\Entries\Entry;
 use Stillat\Meerkat\Core\Contracts\Threads\ContextResolverContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContextContract;
 use Stillat\Meerkat\Core\Threads\Context;
+use Statamic\Fields\Value;
 
 /**
  * Class ContextResolver
@@ -73,6 +74,10 @@ class ContextResolver implements ContextResolverContract
      */
     public function findById($contextId)
     {
+        if ($contextId instanceof Value) {
+            $contextId = $contextId->value();
+        }
+
         if (self::$resolverCache !== null && is_array(self::$resolverCache)) {
             if (array_key_exists($contextId, self::$resolverCache)) {
                 return self::$resolverCache[$contextId];

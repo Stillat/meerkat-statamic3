@@ -34,6 +34,7 @@ use Stillat\Meerkat\Core\Threads\ThreadMovingEventArgs;
 use Stillat\Meerkat\Core\Threads\ThreadRemovalEventArgs;
 use Stillat\Meerkat\Core\Threads\ThreadRestoringEventArgs;
 use Stillat\Meerkat\Core\ValidationResult;
+use Statamic\Fields\Value;
 
 /**
  * Class LocalThreadStorageManager
@@ -384,6 +385,10 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
      */
     private function getMetaData($contextId)
     {
+        if ($contextId instanceof Value) {
+            $contextId = $contextId->value();
+        }
+
         if ($this->canUseDirectory === false) {
             return null;
         }

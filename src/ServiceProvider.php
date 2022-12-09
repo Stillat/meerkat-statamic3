@@ -262,7 +262,7 @@ class ServiceProvider extends AddonServiceProvider
             $formattingConfig = new FormattingConfiguration();
 
             $formattingConfig->tagsToKeep = $this->getConfig('formatting.keep_tags', '<a><p><ul><li><ol><code><pre>');
-            $formattingConfig->commentDateFormat = $this->getConfig('formatting.comment_date_format', 'Y-m-d h:m:s A');
+            $formattingConfig->commentDateFormat = $this->getConfig('formatting.comment_date_format', 'Y-m-d h:i:s A');
 
             // Register an additional configuration data, if available.
             foreach ($this->getConfig('formatting', []) as $configSetting => $configValue) {

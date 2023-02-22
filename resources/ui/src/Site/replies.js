@@ -166,7 +166,7 @@
       replyLinks.forEach(function (el) {
         el.addEventListener('click', function (event) {
 
-          if (_this.data.ReplyForm !== null) {
+          if (_this.data.ReplyForm !== null && _this.data.ReplyForm.parentNode != null) {
             _this.data.ReplyForm.parentNode.removeChild(_this.data.ReplyForm);
           }
 

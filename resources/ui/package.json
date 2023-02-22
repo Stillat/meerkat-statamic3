@@ -37,7 +37,7 @@
         "less": "^3.12.2",
         "less-loader": "^7.0.1",
         "mini-css-extract-plugin": "^0.11.0",
-        "optimize-css-assets-webpack-plugin": "^5.0.4",
+        "optimize-css-assets-webpack-plugin": "^6.0.1",
         "run-script-os": "^1.1.1",
         "terser-webpack-plugin": "^4.2.3",
         "webpack": "^4.43.0",

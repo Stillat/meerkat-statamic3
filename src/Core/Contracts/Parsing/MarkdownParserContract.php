@@ -7,17 +7,14 @@ namespace Stillat\Meerkat\Core\Contracts\Parsing;
  *
  * Provides a consistent API for managing Markdown-formatted documents.
  *
- * @package Stillat\Meerkat\Core\Contracts\Parsing
  * @since 2.0.0
  */
 interface MarkdownParserContract
 {
-
     /**
      * Parses the provided string document and returns string value.
      *
-     * @param string $content
-     *
+     * @param  string  $content
      * @return string
      */
     public function parseDocument($content);
@@ -25,8 +22,7 @@ interface MarkdownParserContract
     /**
      * Removes problematic HTML elements from the provided document.
      *
-     * @param string $content
-     *
+     * @param  string  $content
      * @return string
      */
     public function cleanDocument($content);
@@ -34,8 +30,7 @@ interface MarkdownParserContract
     /**
      * Parses and cleans the provided content and returns the result.
      *
-     * @param string $content
-     *
+     * @param  string  $content
      * @return string
      */
     public function parse($content);
@@ -43,10 +38,8 @@ interface MarkdownParserContract
     /**
      * Parses the provided string content and merges the results into the provided data container array.
      *
-     * @param string $stringContent The content to parse.
-     * @param array $dataContainer
+     * @param  string  $stringContent The content to parse.
      * @return void
      */
     public function parseStringAndMerge($stringContent, array &$dataContainer);
-
 }

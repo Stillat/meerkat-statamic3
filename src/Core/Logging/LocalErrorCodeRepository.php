@@ -9,18 +9,16 @@ use Stillat\Meerkat\Core\Contracts\Logging\ErrorCodeRepositoryContract;
  * Class LocalErrorCodeRepository
  *
  * Provides an error code repository implementation for a local filesystem.
- *
- * @package Stillat\Meerkat\Core\Logging
  */
 class LocalErrorCodeRepository implements ErrorCodeRepositoryContract
 {
-
     /**
      * A shared LocalErrorCodeRepository instance.
      *
      * @var LocalErrorCodeRepository|null
      */
     public static $instance = null;
+
     /**
      * The local path to store error code logs.
      *
@@ -36,8 +34,8 @@ class LocalErrorCodeRepository implements ErrorCodeRepositoryContract
     /**
      * Logs an error by code and message.
      *
-     * @param string $errorCode The error code.
-     * @param string $errorMessage The error message.
+     * @param  string  $errorCode The error code.
+     * @param  string  $errorMessage The error message.
      */
     public static function logCodeMessage($errorCode, $errorMessage)
     {
@@ -49,7 +47,7 @@ class LocalErrorCodeRepository implements ErrorCodeRepositoryContract
     /**
      * Logs an error through the shared instance.
      *
-     * @param ErrorLog $log The error to log.
+     * @param  ErrorLog  $log The error to log.
      */
     public static function log(ErrorLog $log)
     {
@@ -61,7 +59,7 @@ class LocalErrorCodeRepository implements ErrorCodeRepositoryContract
     /**
      * Logs an error code.
      *
-     * @param ErrorLog $log The error information to log.
+     * @param  ErrorLog  $log The error information to log.
      * @return bool
      */
     public function logError(ErrorLog $log)
@@ -85,14 +83,14 @@ class LocalErrorCodeRepository implements ErrorCodeRepositoryContract
     /**
      * Constructs a storage path for the provided error log.
      *
-     * @param ErrorLog $log The error log to construct the path for.
+     * @param  ErrorLog  $log The error log to construct the path for.
      * @return string
      */
     private function makePath(ErrorLog $log)
     {
-        $logPath = 'e' . $log->errorCode . '-' . $log->instanceId . '.json';
+        $logPath = 'e'.$log->errorCode.'-'.$log->instanceId.'.json';
 
-        return $this->storageDirectory . '/' . $logPath;
+        return $this->storageDirectory.'/'.$logPath;
     }
 
     /**
@@ -102,13 +100,13 @@ class LocalErrorCodeRepository implements ErrorCodeRepositoryContract
      */
     public function removeLogs()
     {
-        if (!file_exists($this->storageDirectory) || is_dir($this->storageDirectory) == false) {
+        if (! file_exists($this->storageDirectory) || is_dir($this->storageDirectory) == false) {
             return false;
         }
 
         $wasSuccess = true;
 
-        $logs = glob($this->storageDirectory . '/e*.json');
+        $logs = glob($this->storageDirectory.'/e*.json');
 
         if ($logs !== null && is_array($logs)) {
             foreach ($logs as $logPath) {
@@ -126,16 +124,16 @@ class LocalErrorCodeRepository implements ErrorCodeRepositoryContract
     /**
      * Removes an error log instance.
      *
-     * @param string $instanceId The instance to remove.
+     * @param  string  $instanceId The instance to remove.
      * @return bool
      */
     public function removeInstance($instanceId)
     {
-        if (!file_exists($this->storageDirectory) || is_dir($this->storageDirectory) == false) {
+        if (! file_exists($this->storageDirectory) || is_dir($this->storageDirectory) == false) {
             return false;
         }
 
-        $logs = glob($this->storageDirectory . '/e*' . $instanceId . '.json');
+        $logs = glob($this->storageDirectory.'/e*'.$instanceId.'.json');
 
         if ($logs !== null && is_array($logs) && count($logs) == 1) {
             return unlink($logs[0]);
@@ -147,7 +145,7 @@ class LocalErrorCodeRepository implements ErrorCodeRepositoryContract
     /**
      * Returns the logs for the provided action.
      *
-     * @param string|null $actionId The action identifier.
+     * @param  string|null  $actionId The action identifier.
      * @return ErrorLog[]
      */
     public function getActionLogs($actionId)
@@ -166,11 +164,11 @@ class LocalErrorCodeRepository implements ErrorCodeRepositoryContract
      */
     public function getLogs()
     {
-        if (!file_exists($this->storageDirectory) || is_dir($this->storageDirectory) == false) {
+        if (! file_exists($this->storageDirectory) || is_dir($this->storageDirectory) == false) {
             return [];
         }
 
-        $logs = glob($this->storageDirectory . '/e*.json');
+        $logs = glob($this->storageDirectory.'/e*.json');
         $logsToReturn = [];
 
         if ($logs !== null && is_array($logs)) {
@@ -189,5 +187,4 @@ class LocalErrorCodeRepository implements ErrorCodeRepositoryContract
 
         return $logsToReturn;
     }
-
 }

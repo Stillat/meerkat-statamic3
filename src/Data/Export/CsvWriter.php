@@ -12,12 +12,10 @@ use Stillat\Meerkat\Core\Contracts\Data\Export\CsvWriterContract;
  *
  * Implements the CsvWriterContract to provide CSV writing features.
  *
- * @package Stillat\Meerkat\Data\Export
  * @since 2.0.0
  */
 class CsvWriter implements CsvWriterContract
 {
-
     /**
      * The Writer instance.
      *
@@ -33,7 +31,8 @@ class CsvWriter implements CsvWriterContract
     /**
      * Writes the headers to the CSV file.
      *
-     * @param array $headers The headers.
+     * @param  array  $headers The headers.
+     *
      * @throws CannotInsertRecord
      */
     public function writeHeaders($headers)
@@ -44,7 +43,7 @@ class CsvWriter implements CsvWriterContract
     /**
      * Inserts the provided as individual rows.
      *
-     * @param array $data The data to write.
+     * @param  array  $data The data to write.
      */
     public function writeData($data)
     {
@@ -58,7 +57,6 @@ class CsvWriter implements CsvWriterContract
      */
     public function getContents()
     {
-        return (string)$this->writer;
+        return (string) $this->writer;
     }
-
 }

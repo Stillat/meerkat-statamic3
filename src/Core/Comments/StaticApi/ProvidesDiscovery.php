@@ -11,17 +11,16 @@ use Stillat\Meerkat\Core\Exceptions\CommentNotFoundException;
  *
  * Provides a static comment-discovery API.
  *
- * @package Stillat\Meerkat\Core\Comments\StaticApi
  * @since 2.0.0
  */
 trait ProvidesDiscovery
 {
-
     /**
      * Attempts to locate the specified comment.
      *
-     * @param string $commentId The comment's string identifier.
+     * @param  string  $commentId The comment's string identifier.
      * @return CommentContract
+     *
      * @throws CommentNotFoundException
      */
     public static function findOrFail($commentId)
@@ -41,7 +40,7 @@ trait ProvidesDiscovery
     /**
      * Attempts to locate the specified comment.
      *
-     * @param string $commentId The comment's string identifier.
+     * @param  string  $commentId The comment's string identifier.
      * @return CommentContract|null
      */
     public static function find($commentId)
@@ -52,5 +51,4 @@ trait ProvidesDiscovery
 
         return null;
     }
-
 }

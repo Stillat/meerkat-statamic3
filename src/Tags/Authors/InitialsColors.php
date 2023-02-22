@@ -7,12 +7,10 @@ namespace Stillat\Meerkat\Tags\Authors;
  *
  * Provides a server-side mapping of the Initials avatar driver colors.
  *
- * @package Stillat\Meerkat\Tags\Authors
  * @since 2.1.18
  */
 class InitialsColors
 {
-
     /**
      * The default background color to use.
      *
@@ -68,13 +66,13 @@ class InitialsColors
         '7' => ['#218c74', '#ffffff'],
         '8' => ['#ffda79', '#000000'],
         '9' => ['#f7d794', '#000000'],
-        '0' => ['#f3a683', '#000000']
+        '0' => ['#f3a683', '#000000'],
     ];
 
     /**
      * Returns the "Initials" colors for the provided character.
      *
-     * @param string $initialChar The first character of the initialism.
+     * @param  string  $initialChar The first character of the initialism.
      * @return string[]
      */
     public static function getColors($initialChar)
@@ -83,11 +81,10 @@ class InitialsColors
             array_key_exists(mb_strtolower($initialChar), self::$avatarColors) === false) {
             return [
                 self::$defaultBackgroundColor,
-                self::$defaultForegroundColor
+                self::$defaultForegroundColor,
             ];
         }
 
         return self::$avatarColors[mb_strtolower($initialChar)];
     }
-
 }

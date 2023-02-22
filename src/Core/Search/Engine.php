@@ -10,12 +10,10 @@ use Stillat\Meerkat\Core\Contracts\Search\SearchAlgorithmContract;
  *
  * Provides search mechanisms for filtering Meerkat datasets.
  *
- * @package Stillat\Meerkat\Core\Search
  * @since 2.0.0
  */
 class Engine
 {
-
     /**
      * The search algorithm implementation instance.
      *
@@ -37,7 +35,8 @@ class Engine
 
     /**
      * Sets the search attributes to search for.
-     * @param string[] $attributes The attributes to search for in the data-set.
+     *
+     * @param  string[]  $attributes The attributes to search for in the data-set.
      */
     public function setSearchAttributes($attributes)
     {
@@ -49,8 +48,6 @@ class Engine
     /**
      * Searches the provided dataset against the defined search attributes and terms.
      *
-     * @param $searchTerms
-     * @param $dataset
      * @return array
      */
     public function search($searchTerms, $dataset)
@@ -69,7 +66,7 @@ class Engine
 
                 if (is_array($item) && array_key_exists($attribute, $item)) {
                     $valueToSearch = $item[$attribute];
-                } else if (is_object($item)) {
+                } elseif (is_object($item)) {
                     if (method_exists($item, 'getDataAttribute')) {
                         $valueToSearch = $item->getDataAttribute($attribute, null);
                     }
@@ -83,5 +80,4 @@ class Engine
 
         return $itemsToReturn;
     }
-
 }

@@ -10,12 +10,10 @@ use Stillat\Meerkat\Core\UuidGenerator;
  *
  * Provides interactions with the backend error report telemetry service.
  *
- * @package Stillat\Meerkat\Core\Logging
  * @since 2.0.0
  */
 class Telemetry
 {
-
     protected $httpClient = null;
 
     protected $idGenerator = null;
@@ -29,9 +27,8 @@ class Telemetry
     public function sendReport($report)
     {
         $this->httpClient->post('https://telemetry.stillat.com/', [
-            'app' => 'Meerkat-' . $this->idGenerator->newId(),
-            'report' => $report
+            'app' => 'Meerkat-'.$this->idGenerator->newId(),
+            'report' => $report,
         ]);
     }
-
 }

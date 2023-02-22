@@ -10,7 +10,6 @@ use Stillat\Meerkat\Concerns\UsesTranslations;
  *
  * Manages interactions between Meerkat and the Statamic Control Panel navigation menu.
  *
- * @package Stillat\Meerkat\ControlPanel
  * @since 2.0.0
  */
 class Navigation
@@ -35,9 +34,8 @@ class Navigation
                 ->icon('addons/meerkat/meerkat-nav')
                 ->view('meerkat::nav.comments')
                 ->route('cp.meerkat.filteredDashboard', [
-                    'filter' => 'pending'
+                    'filter' => 'pending',
                 ]);
         });
     }
-
 }

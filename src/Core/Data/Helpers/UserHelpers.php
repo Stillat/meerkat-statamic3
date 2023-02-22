@@ -10,16 +10,14 @@ use Stillat\Meerkat\Core\Identity\IdentityManagerFactory;
  *
  * Provides utilities for retrieving contextual user lists.
  *
- * @package Stillat\Meerkat\Core\Data\Helpers
  * @since 2.0.0
  */
 class UserHelpers
 {
-
     /**
      * Generates a list of user identifiers.
      *
-     * @param array $knownIds The known user identifiers.
+     * @param  array  $knownIds The known user identifiers.
      * @return array
      */
     public static function buildContextualUserList($knownIds)
@@ -42,5 +40,4 @@ class UserHelpers
 
         return $userList;
     }
-
 }

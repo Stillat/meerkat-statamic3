@@ -12,7 +12,6 @@ use Stillat\Meerkat\Core\Data\Concerns\IteratesDataSets;
  *
  * Represents a basic comment dataset.
  *
- * @package Stillat\Meerkat\Core\Data
  * @since 2.0.0
  */
 class DataSet implements DataSetContract, ArrayAccess
@@ -44,7 +43,7 @@ class DataSet implements DataSetContract, ArrayAccess
     /**
      * Sets the dataset's raw data.
      *
-     * @param array $data The raw data.
+     * @param  array  $data The raw data.
      * @return void
      */
     public function setData($data)
@@ -55,8 +54,7 @@ class DataSet implements DataSetContract, ArrayAccess
     /**
      * Returns the value at the specified offset.
      *
-     * @param mixed $offset The offset to get.
-     * @return mixed
+     * @param  mixed  $offset The offset to get.
      */
     public function offsetGet(mixed $offset): mixed
     {
@@ -70,8 +68,7 @@ class DataSet implements DataSetContract, ArrayAccess
     /**
      * Tests whether or not an offset exists.
      *
-     * @param mixed $offset An offset to check for.
-     * @return bool
+     * @param  mixed  $offset An offset to check for.
      */
     public function offsetExists(mixed $offset): bool
     {
@@ -81,8 +78,8 @@ class DataSet implements DataSetContract, ArrayAccess
     /**
      * Assigns a value to the specified offset.
      *
-     * @param mixed $offset The offset to assign the value to.
-     * @param mixed $value The value to set.
+     * @param  mixed  $offset The offset to assign the value to.
+     * @param  mixed  $value The value to set.
      */
     public function offsetSet(mixed $offset, mixed $value): void
     {
@@ -96,7 +93,7 @@ class DataSet implements DataSetContract, ArrayAccess
     /**
      * Unsets an offset.
      *
-     * @param mixed $offset The offset to unset.
+     * @param  mixed  $offset The offset to unset.
      */
     public function offsetUnset(mixed $offset): void
     {
@@ -132,5 +129,4 @@ class DataSet implements DataSetContract, ArrayAccess
 
         return 0;
     }
-
 }

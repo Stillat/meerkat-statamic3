@@ -14,7 +14,6 @@ use Stillat\Meerkat\Core\Data\Helpers\GroupMapper;
  *
  * Represents a paginated dataset that contains groups.
  *
- * @package Stillat\Meerkat\Core\Data
  * @since 2.0.0
  */
 class PagedGroupedDataSet extends PagedDataSet implements PagedGroupedDataSetContract
@@ -43,7 +42,7 @@ class PagedGroupedDataSet extends PagedDataSet implements PagedGroupedDataSetCon
     /**
      * Applies the mutation callback to all group items.
      *
-     * @param callable $callback The function to execute against all group items.
+     * @param  callable  $callback The function to execute against all group items.
      */
     public function mutate($callback)
     {
@@ -52,5 +51,4 @@ class PagedGroupedDataSet extends PagedDataSet implements PagedGroupedDataSetCon
             $this->getGroupName(),
             $this->getGroupDatasetName(), $callback);
     }
-
 }

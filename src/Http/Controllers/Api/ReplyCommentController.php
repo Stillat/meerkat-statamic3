@@ -3,7 +3,6 @@
 namespace Stillat\Meerkat\Http\Controllers\Api;
 
 use Exception;
-use http\Env\Response;
 use Statamic\Http\Controllers\CP\CpController;
 use Stillat\Meerkat\Core\Comments\Comment;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
@@ -16,11 +15,9 @@ use Stillat\Meerkat\Core\Http\Responses\CommentResponseGenerator;
 use Stillat\Meerkat\Core\Http\Responses\Responses;
 use Stillat\Meerkat\Core\Logging\ErrorReporterFactory;
 use Stillat\Meerkat\Http\MessageGeneralCommentResponseGenerator;
-use Stillat\Meerkat\Http\RequestHelpers;
 
 class ReplyCommentController extends CpController
 {
-
     /**
      * Attaches a comment reply from the Control Panel API request.
      *
@@ -41,7 +38,7 @@ class ReplyCommentController extends CpController
                 return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_REPLY);
             } else {
                 abort(403, 'Unauthorized', [
-                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_REPLY
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_REPLY,
                 ]);
                 exit;
             }
@@ -63,7 +60,7 @@ class ReplyCommentController extends CpController
                 AuthorContract::KEY_EMAIL_ADDRESS => $currentIdentity->getEmailAddress(),
                 AuthorContract::KEY_USER_IP => $this->request->ip(),
                 AuthorContract::KEY_USER_AGENT => $this->request->userAgent(),
-                CommentContract::KEY_REFERRER => $this->request->headers->get('referer')
+                CommentContract::KEY_REFERRER => $this->request->headers->get('referer'),
             ]));
 
             if ($result === false) {
@@ -71,7 +68,7 @@ class ReplyCommentController extends CpController
             }
 
             return Responses::successWithData([
-                ApiParameters::RESULT_COMMENT => $commentResultGenerator->getApiComment($result->toArray())
+                ApiParameters::RESULT_COMMENT => $commentResultGenerator->getApiComment($result->toArray()),
             ]);
         } catch (CommentNotFoundException $notFoundException) {
             ErrorReporterFactory::report($notFoundException);
@@ -83,5 +80,4 @@ class ReplyCommentController extends CpController
             return Responses::generalFailure();
         }
     }
-
 }

@@ -47,15 +47,15 @@ return [
     |
     */
     'fields' => [
-        'author'     => 'name',
-        'email'      => 'email',
-        'content'    => 'comment',
+        'author' => 'name',
+        'email' => 'email',
+        'content' => 'comment',
 
         // These values are handled automatically.
-        'user_ip'    => 'user_ip',
+        'user_ip' => 'user_ip',
         'user_agent' => 'user_agent',
-        'referrer'   => 'referer',
-        'permalink'  => 'page_url',
+        'referrer' => 'referer',
+        'permalink' => 'page_url',
     ],
 
 ];

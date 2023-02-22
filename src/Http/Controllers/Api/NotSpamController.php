@@ -18,7 +18,6 @@ use Stillat\Meerkat\Http\RequestHelpers;
 
 class NotSpamController extends CpController
 {
-
     public function markManyAsNotSpam(
         CommentStorageManagerContract $storageManager,
         PermissionsManagerContract $manager,
@@ -31,7 +30,7 @@ class NotSpamController extends CpController
                 return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_REPORT_HAM);
             } else {
                 abort(403, 'Unauthorized', [
-                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_REPORT_HAM
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_REPORT_HAM,
                 ]);
                 exit;
             }
@@ -43,7 +42,7 @@ class NotSpamController extends CpController
 
         if ($commentIds === null || count($commentIds) === 0) {
             return Responses::conditionalWithData(false, [
-                ApiParameters::RESULT_COMMENTS => []
+                ApiParameters::RESULT_COMMENTS => [],
             ]);
         }
 
@@ -51,7 +50,7 @@ class NotSpamController extends CpController
             $result = $storageManager->setIsHamForIds($commentIds);
 
             return Responses::conditionalWithData($result->success, [
-                ApiParameters::RESULT_COMMENTS => $result->comments
+                ApiParameters::RESULT_COMMENTS => $result->comments,
             ]);
         } catch (Exception $e) {
             ErrorReporterFactory::report($e);
@@ -74,7 +73,7 @@ class NotSpamController extends CpController
                 return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_REPORT_HAM);
             } else {
                 abort(403, 'Unauthorized', [
-                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_REPORT_HAM
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_REPORT_HAM,
                 ]);
                 exit;
             }
@@ -98,7 +97,7 @@ class NotSpamController extends CpController
             }
 
             return Responses::conditionalWithData($result, [
-                ApiParameters::RESULT_COMMENT => $commentResultGenerator->getApiComment($comment->toArray())
+                ApiParameters::RESULT_COMMENT => $commentResultGenerator->getApiComment($comment->toArray()),
             ]);
         } catch (CommentNotFoundException $notFound) {
             ErrorReporterFactory::report($notFound);
@@ -110,8 +109,4 @@ class NotSpamController extends CpController
             return Responses::generalFailure();
         }
     }
-
-
-
-
 }

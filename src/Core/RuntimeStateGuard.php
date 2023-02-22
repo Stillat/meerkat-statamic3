@@ -2,19 +2,15 @@
 
 namespace Stillat\Meerkat\Core;
 
-use Stillat\Meerkat\Core\ResourceLock;
-
 /**
  * Class RuntimeStateGuard
  *
  * Provides utilities to manage resource locks on the comment mutation pipeline.
  *
- * @package Stillat\Meerkat\Core\Comments
  * @since 2.0.0
  */
 class RuntimeStateGuard
 {
-
     /**
      * The resource locks for comment mutations.
      *
@@ -77,5 +73,4 @@ class RuntimeStateGuard
 
         return self::$threadMutationLocks;
     }
-
 }

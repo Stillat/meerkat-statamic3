@@ -9,12 +9,10 @@ use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
  *
  * Provides a shared SanitationManagerContract implementation instance for static APIs.
  *
- * @package Stillat\Meerkat\Core\Parsing
  * @since 2.0.0
  */
 class SanitationManagerFactory
 {
-
     /**
      * A shared SanitationManagerContract implementation instance.
      *
@@ -35,5 +33,4 @@ class SanitationManagerFactory
 
         return false;
     }
-
 }

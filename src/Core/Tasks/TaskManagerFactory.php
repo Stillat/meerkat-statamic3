@@ -9,12 +9,10 @@ use Stillat\Meerkat\Core\Contracts\Storage\TaskStorageManagerContract;
  *
  * Allows Meerkat Core internals to reference a global implementation of TaskStorageManagerContract.
  *
- * @package Stillat\Meerkat\Core\Tasks
  * @since 2.0.0
  */
 class TaskManagerFactory
 {
-
     /**
      * A reference to the TaskStorageManagerContract instance.
      *
@@ -25,7 +23,7 @@ class TaskManagerFactory
     /**
      * Returns a value that indicates if a comment change set manager instance was set.
      *
-     * @return boolean
+     * @return bool
      */
     public static function hasInstance()
     {
@@ -39,5 +37,4 @@ class TaskManagerFactory
 
         return true;
     }
-
 }

@@ -11,7 +11,6 @@ use Stillat\Meerkat\Core\Data\Concerns\GetsAssociatedDatasetData;
  *
  * Represents a paged comment dataset meta data.
  *
- * @package Stillat\Meerkat\Core\Data
  * @since 2.0.0
  */
 class DataSetMetadata implements MetadataCollectionContract
@@ -28,7 +27,7 @@ class DataSetMetadata implements MetadataCollectionContract
     /**
      * Sets the data to analyze.
      *
-     * @param CommentContract[] $data The data to analyze.
+     * @param  CommentContract[]  $data The data to analyze.
      */
     public function setData($data)
     {
@@ -64,5 +63,4 @@ class DataSetMetadata implements MetadataCollectionContract
     {
         return $this->data;
     }
-
 }

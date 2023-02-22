@@ -23,7 +23,6 @@ use Stillat\Meerkat\Tags\MeerkatTag;
  *
  * Handles the interactions between form template behavior and Meerkat Core.
  *
- * @package Stillat\Meerkat\Forms
  * @since 2.0.0
  */
 class MeerkatForm extends MeerkatTag
@@ -31,22 +30,31 @@ class MeerkatForm extends MeerkatTag
     use RendersForms, GetsFormSession, GetsRedirects, GetsHiddenContext;
 
     const KEY_MEERKAT_FORM = '_meerkat_form';
+
     const KEY_PARAM_ERROR_REDIRECT = '_error_redirect';
+
     const KEY_PARAM_BLUEPRINT = 'blueprint';
+
     const KEY_MEERKAT_CONTEXT = '_meerkat_context';
+
     const KEY_DATA_FIELDS = 'fields';
+
     const KEY_FORM_CONFIG_VALIDATE = 'validate';
+
     const KEY_FORM_CONFIG_DISPLAY_NAME = 'display';
+
     const HANDLE_PARAM = ['blueprint'];
+
     /**
      * The blueprint repository implementation.
      *
      * @var BlueprintRepository|null
      */
     protected $blueprints = null;
+
     protected $hasValuesHandled = [
         MeerkatForm::KEY_MEERKAT_FORM,
-        MeerkatForm::KEY_MEERKAT_CONTEXT
+        MeerkatForm::KEY_MEERKAT_CONTEXT,
     ];
 
     /**
@@ -68,12 +76,12 @@ class MeerkatForm extends MeerkatTag
     /**
      * Gets a form session handle for the provided blueprint name.
      *
-     * @param string $blueprintName The name of the blueprint.
+     * @param  string  $blueprintName The name of the blueprint.
      * @return string
      */
     public static function getFormSessionHandle($blueprintName)
     {
-        return 'meerkat.form' . $blueprintName;
+        return 'meerkat.form'.$blueprintName;
     }
 
     public function render()
@@ -120,8 +128,9 @@ class MeerkatForm extends MeerkatTag
 
     /**
      * Processes the
-     * @param Field $field The field to process.
-     * @param string $errorBag The name of the error message collection.
+     *
+     * @param  Field  $field The field to process.
+     * @param  string  $errorBag The name of the error message collection.
      * @return array
      */
     protected function getRenderableField($field, $errorBag = 'default')
@@ -149,7 +158,7 @@ class MeerkatForm extends MeerkatTag
 
     protected function addToDebugBar($data, $formHandle)
     {
-        if (!function_exists('debug_bar')) {
+        if (! function_exists('debug_bar')) {
             return;
         }
 
@@ -177,7 +186,7 @@ class MeerkatForm extends MeerkatTag
     {
         $hiddenField = new Field($name, [
             'type' => 'hidden',
-            'validate' => 'required'
+            'validate' => 'required',
         ]);
 
         $hiddenField->setValue($value);
@@ -197,14 +206,14 @@ class MeerkatForm extends MeerkatTag
 
         return [
             $meerkatBlueprint,
-            $context
+            $context,
         ];
     }
 
     /**
      * Gets fields with extra data for looping over and rendering.
      *
-     * @param string $sessionHandle The form's session handle.
+     * @param  string  $sessionHandle The form's session handle.
      * @return Field[]
      */
     private function getFields($sessionHandle)
@@ -220,7 +229,7 @@ class MeerkatForm extends MeerkatTag
     /**
      * Gets the form's contextual "hidden" fields.
      *
-     * @param string $sessionHandle The form's session handle.
+     * @param  string  $sessionHandle The form's session handle.
      * @return Field[]
      */
     private function getRenderableContextualFields($sessionHandle)
@@ -250,5 +259,4 @@ class MeerkatForm extends MeerkatTag
 
         return $this->blueprint;
     }
-
 }

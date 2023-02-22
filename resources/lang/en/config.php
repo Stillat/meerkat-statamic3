@@ -107,7 +107,6 @@ return [
     'word_filter_default_title' => 'Word Filter Defaults',
     'word_filter_default_desc' => 'Your site administrator has configured default words that will be checked in addition to the ones configured in the Control Panel.',
 
-
     'tab_permissions' => 'Permissions',
     'permissions_title' => 'User Group Permissions',
     'permissions_desc' => 'User group permissions allow you to control what actions users of different User Groups can take. For example, you can create a User Group specifically for moderators who can only view, approve, or remove comments. If you use a spam service provider that charges per API request, you may also wish to limit who can issue those requests.',

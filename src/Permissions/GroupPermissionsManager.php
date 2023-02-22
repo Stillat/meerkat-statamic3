@@ -9,7 +9,7 @@ use Stillat\Meerkat\Core\Permissions\AccessManager;
 
 /**
  * Class GroupPermissionsManager
- * @package Stillat\Meerkat\Permissions
+ *
  * @since 2.1.0
  */
 class GroupPermissionsManager
@@ -17,25 +17,30 @@ class GroupPermissionsManager
     use ConfiguresPermissions;
 
     protected $configuredPermissions = [];
+
     protected $totalRoleCount = 0;
+
     /**
      * The UserGroupRepository implementation instance.
      *
      * @var UserGroupRepository
      */
     private $userGroups = null;
+
     /**
      * The Statamic user groups, if any.
      *
      * @var UserGroup[]
      */
     private $statamicGroups = [];
+
     /**
      * Indicates if the user groups have been loaded.
      *
      * @var bool
      */
     private $hasLoaded = false;
+
     private $permissionsConfigured = false;
 
     private $allPermissions = [
@@ -46,13 +51,12 @@ class GroupPermissionsManager
         AccessManager::PERMISSION_CAN_EDIT,
         AccessManager::PERMISSION_CAN_REPORT_SPAM,
         AccessManager::PERMISSION_CAN_REPORT_HAM,
-        AccessManager::PERMISSION_CAN_REMOVE
+        AccessManager::PERMISSION_CAN_REMOVE,
     ];
 
     public function __construct(UserGroupRepository $userGroups)
     {
         $this->userGroups = $userGroups;
-
     }
 
     public function getPermissionMapping()
@@ -71,7 +75,6 @@ class GroupPermissionsManager
             } else {
                 $groupPermissions[] = $this->getSelectivePermissionsMapping($groupHandle, $groupName);
             }
-
         }
 
         usort($groupPermissions, function ($a, $b) {
@@ -108,8 +111,8 @@ class GroupPermissionsManager
                 AccessManager::PERMISSION_CAN_EDIT => true,
                 AccessManager::PERMISSION_CAN_REPORT_SPAM => true,
                 AccessManager::PERMISSION_CAN_REPORT_HAM => true,
-                AccessManager::PERMISSION_CAN_REMOVE => true
-            ]
+                AccessManager::PERMISSION_CAN_REMOVE => true,
+            ],
         ];
     }
 
@@ -119,8 +122,8 @@ class GroupPermissionsManager
             'name' => $title,
             'id' => $handle,
             'permissions' => [
-                AccessManager::PERMISSION_ALL => false
-            ]
+                AccessManager::PERMISSION_ALL => false,
+            ],
         ];
 
         foreach ($this->allPermissions as $permission) {
@@ -133,14 +136,12 @@ class GroupPermissionsManager
     /**
      * Determines if the specified group has the requested permission.
      *
-     * @param string $groupHandle The Statamic group's identifier.
-     * @param string $permission The permission name.
+     * @param  string  $groupHandle The Statamic group's identifier.
+     * @param  string  $permission The permission name.
      * @return bool
      */
     private function hasPermission($groupHandle, $permission)
     {
         return in_array($groupHandle, $this->configuredPermissions[$permission]);
     }
-
-
 }

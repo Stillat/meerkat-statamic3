@@ -6,14 +6,12 @@ use Stillat\Meerkat\Concerns\UsesConfig;
 use Stillat\Meerkat\Configuration\UserConfigurationManager;
 use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
 use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
-use Stillat\Meerkat\PathProvider;
 
 /**
  * Class SettingsProvider
  *
  * Provides utilities for gathering JavaScript variable names and values.
  *
- * @package Stillat\Meerkat\Statamic\ControlPanel
  * @since 2.0.0
  */
 class SettingsProvider
@@ -21,7 +19,9 @@ class SettingsProvider
     use UsesConfig;
 
     const JS_NAME_AVATAR_DRIVER = 'avatarDriver';
+
     const JS_NAME_CP_CONFIG_ENABLED = 'controlPanelConfigurationEnabled';
+
     const JS_NAME_TELEMETRY_ENABLED = 'telemetryEnabled';
 
     /**
@@ -97,8 +97,7 @@ class SettingsProvider
         return [
             SettingsProvider::JS_NAME_CP_CONFIG_ENABLED => $this->getConfig('permissions.control_panel_config', true),
             SettingsProvider::JS_NAME_AVATAR_DRIVER => $avatarDriver,
-            SettingsProvider::JS_NAME_TELEMETRY_ENABLED => $this->getConfig('telemetry.enabled')
+            SettingsProvider::JS_NAME_TELEMETRY_ENABLED => $this->getConfig('telemetry.enabled'),
         ];
     }
-
 }

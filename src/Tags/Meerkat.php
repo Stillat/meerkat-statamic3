@@ -28,10 +28,9 @@ use Stillat\Meerkat\Tags\Testing\OutputThreadDebugInformation;
  * Class Meerkat
  *
  * The main Meerkat Antlers tags integration.
- * 
+ *
  * @ls tags
  *
- * @package Stillat\Meerkat\Tags
  * @since 2.0.0
  */
 class Meerkat extends MeerkatTag
@@ -53,7 +52,6 @@ class Meerkat extends MeerkatTag
      * @var ContextResolverContract
      */
     private $contextResolver = null;
-
 
     /**
      * The Meerkat Core configuration container.
@@ -94,7 +92,7 @@ class Meerkat extends MeerkatTag
     {
         $gravatarValue = $this->gravatarValue();
 
-        return '//www.gravatar.com/avatar/' . $gravatarValue . '?';
+        return '//www.gravatar.com/avatar/'.$gravatarValue.'?';
     }
 
     /**
@@ -122,7 +120,7 @@ class Meerkat extends MeerkatTag
     {
         $value = $this->identiconValue();
 
-        return 'https://avatars.dicebear.com/v2/identicon/' . $value . '.svg';
+        return 'https://avatars.dicebear.com/v2/identicon/'.$value.'.svg';
     }
 
     /**
@@ -142,7 +140,7 @@ class Meerkat extends MeerkatTag
     {
         $value = $this->jdenticonValue();
 
-        return 'https://avatars.dicebear.com/v2/jdenticon/' . $value . '.svg';
+        return 'https://avatars.dicebear.com/v2/jdenticon/'.$value.'.svg';
     }
 
     /**
@@ -236,6 +234,7 @@ class Meerkat extends MeerkatTag
      * Alias of {{ meerkat:form }}
      *
      * @return string
+     *
      * @throws BindingResolutionException
      * @throws TemplateTagsException
      */
@@ -250,6 +249,7 @@ class Meerkat extends MeerkatTag
      * Maps to {{ meerkat:form }}
      *
      * @return string
+     *
      * @throws BindingResolutionException
      * @throws TemplateTagsException
      */
@@ -259,9 +259,9 @@ class Meerkat extends MeerkatTag
     }
 
     /**
-     * @param $className
-     * @param null $instanceCallback
+     * @param  null  $instanceCallback
      * @return string
+     *
      * @throws BindingResolutionException
      * @throws TemplateTagsException
      */
@@ -276,7 +276,7 @@ class Meerkat extends MeerkatTag
                 $instance = $instanceCallback($instance);
 
                 if ($instance === null || ($instance instanceof MeerkatTag) === false) {
-                    throw new TemplateTagsException('Instance callback must return instance of ' . $className);
+                    throw new TemplateTagsException('Instance callback must return instance of '.$className);
                 }
             }
 
@@ -292,6 +292,7 @@ class Meerkat extends MeerkatTag
      * Maps to {{ meerkat:debug }}
      *
      * @return string
+     *
      * @throws BindingResolutionException
      * @throws TemplateTagsException
      */
@@ -335,6 +336,7 @@ class Meerkat extends MeerkatTag
             /** @var DataSetContract $queryResults */
             $queryResults = $thread->query(function (DataQuery $builder) {
                 $this->applyParamFiltersToQuery($builder);
+
                 return $builder;
             });
 
@@ -366,6 +368,7 @@ class Meerkat extends MeerkatTag
      * {{ meerkat:thread }}
      *
      * @return string|string[]
+     *
      * @throws BindingResolutionException
      * @throws TemplateTagsException
      */
@@ -378,6 +381,7 @@ class Meerkat extends MeerkatTag
      * {{ meerkat:responses }}
      *
      * @return string|string[]
+     *
      * @throws BindingResolutionException
      * @throws TemplateTagsException
      */
@@ -391,11 +395,11 @@ class Meerkat extends MeerkatTag
 
         return $this->renderDynamic(
             CollectionRenderer::class, function (CollectionRenderer $render) use ($contextId) {
-            $render->tagContext = 'meerkat:responses';
-            $render->setThreadId($contextId);
+                $render->tagContext = 'meerkat:responses';
+                $render->setThreadId($contextId);
 
-            return $render;
-        });
+                return $render;
+            });
     }
 
     /**
@@ -409,33 +413,35 @@ class Meerkat extends MeerkatTag
     {
         $commentId = $this->getCurrentContextId();
 
-        return '<a id="comment-"' . $commentId . '"></a>';
+        return '<a id="comment-"'.$commentId.'"></a>';
     }
 
     /**
      * Returns a Script element referencing Meerkat's reply JavaScript file.
      *
      * {{ meerkat:replies-to }}
+     *
      * @return string
      */
     public function repliesTo()
     {
         $scriptPath = PathProvider::publicJsVendorPath('replies-to.min');
 
-        return '<script src="' . $scriptPath . '"></script>';
+        return '<script src="'.$scriptPath.'"></script>';
     }
 
     /**
      * Returns a Script element referencing Meerkat's JavaScript file..
      *
      * {{ meerkat:js }}
+     *
      * @return string
      */
     public function js()
     {
         $scriptPath = PathProvider::publicJsVendorPath('meerkat.min');
 
-        return '<script src="' . $scriptPath . '"></script>';
+        return '<script src="'.$scriptPath.'"></script>';
     }
 
     /**
@@ -456,6 +462,7 @@ class Meerkat extends MeerkatTag
      * {{ meerkat:initials }}
      *
      * @return string
+     *
      * @throws BindingResolutionException
      * @throws TemplateTagsException
      */

@@ -22,21 +22,28 @@ use Stillat\Meerkat\Core\Parsing\ExpressionParser;
  *
  * Provides mechanisms for generating API response values.
  *
- * @package Stillat\Meerkat\Core\Http\Responses
  * @since 2.0.0
  */
 class CommentResponseGenerator
 {
     const KEY_API_COMMENT_COLLECTION = 'comments';
+
     const KEY_API_AUTHOR_COLLECTION = 'authors';
+
     const KEY_API_THREAD_COLLECTION = 'threads';
+
     const KEY_API_SORT_ORDERS = 'orders';
+
     const KEY_API_TERMS = 'terms';
+
     const KEY_API_PAGE_METADATA = 'pages';
+
     const KEY_API_FILTERS = 'filters';
 
     const KEY_PARAM_PAGE = 'page';
+
     const KEY_PARAM_RESULTS_PER_PAGE = 'resultsPerPage';
+
     const VALUE_DEFAULT_PER_PAGE = 10;
 
     /**
@@ -113,14 +120,14 @@ class CommentResponseGenerator
             CommentContract::KEY_PAGE_URL,
             CommentContract::KEY_NAME,
             CommentContract::INTERNAL_HAS_COLLECTED,
-            AuthorContract::KEY_AUTHOR_URL
+            AuthorContract::KEY_AUTHOR_URL,
         ];
     }
 
     /**
      * Updates the internal query state from request parameters.
      *
-     * @param array $parameters The query parameters.
+     * @param  array  $parameters The query parameters.
      */
     public function updateFromParameters($parameters)
     {
@@ -174,13 +181,12 @@ class CommentResponseGenerator
         $requestFilters = [];
         $requestFilters = $this->expressionParser->parse($filterString);
 
-
         if (count($requestFilters) === 0) {
             $requestFilters[] = ExpressionParser::buildFilterArray(IsFilters::FILTER_IS_DELETED, ['false']);
         }
 
         $requestFilters[] = ExpressionParser::buildFilterArray(Where::FILTER_WHERE, [
-            'parser_has_supplemented_data', '!==', 'true'
+            'parser_has_supplemented_data', '!==', 'true',
         ]);
 
         $firstFilter = array_shift($requestFilters);
@@ -213,6 +219,7 @@ class CommentResponseGenerator
      * Constructs an array suitable for returning as an API response.
      *
      * @return array
+     *
      * @throws FilterException
      */
     public function getApiResponse()
@@ -237,7 +244,6 @@ class CommentResponseGenerator
 
         /** @var array $author */
         foreach ($responseAuthors as &$author) {
-
             unset($author[AuthorContract::KEY_PERMISSIONS]);
             unset($author[AuthorContract::KEY_USER]);
 
@@ -264,7 +270,7 @@ class CommentResponseGenerator
             CommentResponseGenerator::KEY_API_SORT_ORDERS => $this->query->getSortString(),
             CommentResponseGenerator::KEY_API_TERMS => $this->query->getTerms(),
             CommentResponseGenerator::KEY_API_PAGE_METADATA => $pageMetaData,
-            CommentResponseGenerator::KEY_API_FILTERS => $filterString
+            CommentResponseGenerator::KEY_API_FILTERS => $filterString,
         ];
     }
 
@@ -314,7 +320,6 @@ class CommentResponseGenerator
         $comment[CommentContract::KEY_AUTHOR] = $this->getAuthorIdentificationInformation(CommentContract::KEY_AUTHOR, $comment);
         $comment[CommentContract::INTERNAL_PARENT_AUTHOR] = $this->getAuthorIdentificationInformation(CommentContract::INTERNAL_PARENT_AUTHOR, $comment);
 
-
         if (array_key_exists(CommentContract::INTERNAL_CONTEXT, $comment)) {
             $comment[CommentContract::INTERNAL_CONTEXT] = $comment[CommentContract::INTERNAL_CONTEXT_ID];
         }
@@ -333,8 +338,8 @@ class CommentResponseGenerator
     /**
      * Attempts to locate the requested author information in the comment.
      *
-     * @param string $authorKey The author key.
-     * @param array $comment The comment array to analyze.
+     * @param  string  $authorKey The author key.
+     * @param  array  $comment The comment array to analyze.
      * @return string|null
      */
     private function getAuthorIdentificationInformation($authorKey, $comment)
@@ -347,7 +352,7 @@ class CommentResponseGenerator
             if (array_key_exists(AuthorContract::KEY_HAS_USER, $comment[$authorKey])) {
                 if ($comment[$authorKey][AuthorContract::KEY_HAS_USER] === true) {
                     if (array_key_exists(AuthorContract::KEY_USER_ID, $comment[$authorKey])) {
-                        return (string)$comment[$authorKey][AuthorContract::KEY_USER_ID];
+                        return (string) $comment[$authorKey][AuthorContract::KEY_USER_ID];
                     } else {
                         return null;
                     }
@@ -366,6 +371,7 @@ class CommentResponseGenerator
      * Returns the comments from the request.
      *
      * @return CommentContract[]
+     *
      * @throws FilterException
      */
     public function getRequestComments()
@@ -374,5 +380,4 @@ class CommentResponseGenerator
 
         return $results->getData();
     }
-
 }

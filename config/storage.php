@@ -35,7 +35,7 @@ return [
     */
     'permissions' => [
         'directory' => 0755,
-        'file'      => 644
+        'file' => 644,
     ],
 
     /*

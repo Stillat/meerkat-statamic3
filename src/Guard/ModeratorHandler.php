@@ -10,12 +10,10 @@ use Stillat\Meerkat\Core\Guard\SubmitModeratorResultsHandler;
  *
  * Coordinates the interactions between the Statamic addon and Meerkat Core for the submission of moderator results.
  *
- * @package Stillat\Meerkat\Guard
  * @since 2.08
  */
 class ModeratorHandler
 {
-
     /**
      * The moderator submission handler.
      *
@@ -31,12 +29,11 @@ class ModeratorHandler
     /**
      * Asks Meerkat Core to submit the results to third-party spam guard providers, if they support it.
      *
-     * @param CommentContract $comment The comment to check.
-     * @param bool $isSpam Indicates if the comment is spam.
+     * @param  CommentContract  $comment The comment to check.
+     * @param  bool  $isSpam Indicates if the comment is spam.
      */
     public function submitToProviders(CommentContract $comment, $isSpam)
     {
         $this->handler->submitToProviders($comment, $isSpam);
     }
-
 }

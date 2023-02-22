@@ -18,6 +18,7 @@ class TelemetryController extends ApiController
     use UsesConfig;
 
     const KEY_ACTION = 'action';
+
     const KEY_REPORT = 'report';
 
     /**
@@ -36,7 +37,6 @@ class TelemetryController extends ApiController
 
     public function __construct(Telemetry $telemetry, ErrorCodeRepositoryContract $errors, Request $request)
     {
-
         $this->telemetry = $telemetry;
         $this->errors = $errors;
     }
@@ -87,10 +87,9 @@ class TelemetryController extends ApiController
                 $report = $presenter->present($logs[0]);
 
                 return Responses::successWithData([
-                    self::KEY_REPORT => $report
+                    self::KEY_REPORT => $report,
                 ]);
             }
-
         } catch (Exception $e) {
             ErrorReporterFactory::report($e);
 
@@ -99,5 +98,4 @@ class TelemetryController extends ApiController
 
         return Responses::nonFatalFailure();
     }
-
 }

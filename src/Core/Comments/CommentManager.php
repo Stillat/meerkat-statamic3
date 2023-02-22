@@ -21,12 +21,10 @@ use Stillat\Meerkat\Core\Threads\ThreadManagerFactory;
  *
  * Provides a consistent API for managing comments.
  *
- * @package Stillat\Meerkat\Core\Comments
  * @since 2.0.0
  */
 class CommentManager implements CommentManagerContract
 {
-
     /**
      * The storage manager implementation instance.
      *
@@ -52,8 +50,8 @@ class CommentManager implements CommentManagerContract
     /**
      * Saves a new reply for the provided parent comment.
      *
-     * @param string $parentId The parent comment string identifier.
-     * @param CommentContract $comment The comment to save as a reply.
+     * @param  string  $parentId The parent comment string identifier.
+     * @param  CommentContract  $comment The comment to save as a reply.
      * @return bool
      */
     public function saveReplyTo($parentId, CommentContract $comment)
@@ -66,8 +64,8 @@ class CommentManager implements CommentManagerContract
     /**
      * Configures a comment as a reply to the provided parent.
      *
-     * @param string $parentId The parent comment string identifier.
-     * @param CommentContract $comment The child comment instance.
+     * @param  string  $parentId The parent comment string identifier.
+     * @param  CommentContract  $comment The child comment instance.
      * @return CommentContract|null
      */
     public function replyTo($parentId, CommentContract $comment)
@@ -87,8 +85,9 @@ class CommentManager implements CommentManagerContract
     /**
      * Attempts to query all comments.
      *
-     * @param DataQuery $query The query to apply to all comments.
+     * @param  DataQuery  $query The query to apply to all comments.
      * @return GroupedDataSetContract|PagedDataSetContract|PagedGroupedDataSetContract|DataSetContract
+     *
      * @throws DataQueryException
      * @throws FilterException
      * @throws InconsistentCompositionException
@@ -104,8 +103,9 @@ class CommentManager implements CommentManagerContract
     /**
      * Attempts to retrieve all comments.
      *
-     * @param bool $withTrashed Indicates if soft-deleted comments should included.
+     * @param  bool  $withTrashed Indicates if soft-deleted comments should included.
      * @return CommentContract[]
+     *
      * @throws FilterException
      * @throws DataQueryException
      * @throws InconsistentCompositionException
@@ -137,8 +137,7 @@ class CommentManager implements CommentManagerContract
     /**
      * Attempts to locate a comment by it's string identifier.
      *
-     * @param string $id
-     *
+     * @param  string  $id
      * @return CommentContract|null
      */
     public function findById($id)
@@ -149,9 +148,8 @@ class CommentManager implements CommentManagerContract
     /**
      * Attempts to remove the provided comment completely.
      *
-     * @param CommentContract $comment
-     *
-     * @return boolean
+     * @param  CommentContract  $comment
+     * @return bool
      */
     public function remove($comment)
     {
@@ -161,9 +159,8 @@ class CommentManager implements CommentManagerContract
     /**
      * Attempts to locate and remove the comment by it's string identifier.
      *
-     * @param string $id
-     *
-     * @return boolean
+     * @param  string  $id
+     * @return bool
      */
     public function removeById($id)
     {
@@ -175,8 +172,7 @@ class CommentManager implements CommentManagerContract
     /**
      * Resolves the storage path for the provided comment.
      *
-     * @param CommentContract $comment
-     *
+     * @param  CommentContract  $comment
      * @return string
      */
     public function determinePath($comment)
@@ -187,13 +183,11 @@ class CommentManager implements CommentManagerContract
     /**
      * Resolves the storage path for a comment with the provided string identifier.
      *
-     * @param string $id
-     *
+     * @param  string  $id
      * @return string
      */
     public function determinePathById($id)
     {
         return $this->commentStorageManager->getPathById($id);
     }
-
 }

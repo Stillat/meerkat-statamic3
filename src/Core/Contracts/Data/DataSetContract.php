@@ -10,12 +10,10 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
  *
  * Represents a basic Core dataset.
  *
- * @package Stillat\Meerkat\Core\Contracts\Data
  * @since 2.0.0
  */
 interface DataSetContract extends MetadataCollectionContract, Iterator
 {
-
     /**
      * Returns the dataset and any additional meta data properties.
      *
@@ -26,7 +24,7 @@ interface DataSetContract extends MetadataCollectionContract, Iterator
     /**
      * Sets the dataset's raw data.
      *
-     * @param array $data The raw data.
+     * @param  array  $data The raw data.
      * @return void
      */
     public function setData($data);
@@ -46,5 +44,4 @@ interface DataSetContract extends MetadataCollectionContract, Iterator
      * @return int
      */
     public function count();
-
 }

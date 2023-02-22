@@ -18,15 +18,13 @@ use Stillat\Meerkat\Tags\Responses\CollectionRenderer;
  *
  * Provides a structured way to implement Statamic tags in separate classes and
  * then utilize them from the single tags namespace Statamic provides to addons.
- * 
+ *
  * @ls noparse
  *
- * @package Stillat\Meerkat\Tags
  * @since 2.0.0
  */
 abstract class MeerkatTag extends Tags
 {
-
     /**
      * The CommentFilterManager implementation instance.
      *
@@ -45,7 +43,7 @@ abstract class MeerkatTag extends Tags
     /**
      * Copies the parent's tag context to the new instance.
      *
-     * @param Tags $tags The original tag context.
+     * @param  Tags  $tags The original tag context.
      */
     public function setFromContext(Tags $tags)
     {
@@ -82,7 +80,8 @@ abstract class MeerkatTag extends Tags
     /**
      * Parses the provided tag parameters and applies any filters to the current data query.
      *
-     * @param DataQuery $dataQuery The data query instance.
+     * @param  DataQuery  $dataQuery The data query instance.
+     *
      * @throws FilterParserException
      */
     protected function applyParamFiltersToQuery($dataQuery)
@@ -96,7 +95,7 @@ abstract class MeerkatTag extends Tags
         if ($filterString !== null && mb_strlen(trim($filterString)) > 0) {
             $filters = $this->expressionParser->parse($filterString);
 
-            if ($filters !== null && is_array($filters)) {
+            if (is_array($filters)) {
                 $paramFilters = array_merge($paramFilters, $filters);
             }
         }
@@ -104,19 +103,19 @@ abstract class MeerkatTag extends Tags
         if (count($paramFilters) === 0 && $filterString === null) {
             $trashedFilter = $this->expressionParser->parse(ExpressionParser::build(IsFilters::FILTER_IS_DELETED, ['false']));
 
-            if ($trashedFilter !== null && is_array($trashedFilter) && count($trashedFilter) === 1) {
+            if (is_array($trashedFilter) && count($trashedFilter) === 1) {
                 $paramFilters[] = array_pop($trashedFilter);
             }
 
             $publishedFilter = $this->expressionParser->parse(ExpressionParser::build(IsFilters::FILTER_IS_PUBLISHED, ['true']));
 
-            if ($publishedFilter !== null && is_array($publishedFilter) && count($publishedFilter) === 1) {
+            if (is_array($publishedFilter) && count($publishedFilter) === 1) {
                 $paramFilters[] = array_pop($publishedFilter);
             }
 
             $notSpamFilter = $this->expressionParser->parse(ExpressionParser::build(IsFilters::FILTER_IS_SPAM, ['false']));
 
-            if ($notSpamFilter !== null && is_array($notSpamFilter) && count($notSpamFilter) === 1) {
+            if (is_array($notSpamFilter) && count($notSpamFilter) === 1) {
                 $paramFilters[] = array_pop($notSpamFilter);
             }
         }
@@ -126,7 +125,7 @@ abstract class MeerkatTag extends Tags
         if ($hasTrashedFilter === false) {
             $trashedFilter = $this->expressionParser->parse(ExpressionParser::build(IsFilters::FILTER_IS_DELETED, ['false']));
 
-            if ($trashedFilter !== null && is_array($trashedFilter) && count($trashedFilter) === 1) {
+            if (is_array($trashedFilter) && count($trashedFilter) === 1) {
                 $paramFilters[] = array_pop($trashedFilter);
             }
         }
@@ -148,6 +147,7 @@ abstract class MeerkatTag extends Tags
      * Parses the Antlers parameters and converts them to filter expressions.
      *
      * @return array
+     *
      * @throws FilterParserException
      */
     protected function getFiltersFromParams()
@@ -156,8 +156,8 @@ abstract class MeerkatTag extends Tags
 
         if ($this->hasParameterValue(CollectionRenderer::PARAM_WITH_TRASHED)) {
             if (TypeConversions::getBooleanValue(
-                    $this->getParameterValue(CollectionRenderer::PARAM_WITH_TRASHED, false)
-                ) === true) {
+                $this->getParameterValue(CollectionRenderer::PARAM_WITH_TRASHED, false)
+            ) === true) {
                 // We are using the wild-card filter here to allow any value.
                 // `true` will match only those comments that are deleted
                 // `false` will match only those comments that are not deleted
@@ -167,8 +167,8 @@ abstract class MeerkatTag extends Tags
 
         if ($this->hasParameterValue(CollectionRenderer::PARAM_INCLUDE_SPAM)) {
             if (TypeConversions::getBooleanValue(
-                    $this->getParameterValue(CollectionRenderer::PARAM_INCLUDE_SPAM, false)
-                ) === false) {
+                $this->getParameterValue(CollectionRenderer::PARAM_INCLUDE_SPAM, false)
+            ) === false) {
                 $filters[] = ExpressionParser::build(IsFilters::FILTER_IS_SPAM, ['false']);
             } else {
                 $filters[] = ExpressionParser::build(IsFilters::FILTER_IS_SPAM, ['*']);
@@ -177,8 +177,8 @@ abstract class MeerkatTag extends Tags
 
         if ($this->hasParameterValue(CollectionRenderer::PARAM_UNAPPROVED)) {
             if (TypeConversions::getBooleanValue(
-                    $this->getParameterValue(CollectionRenderer::PARAM_UNAPPROVED, false)
-                ) === true) {
+                $this->getParameterValue(CollectionRenderer::PARAM_UNAPPROVED, false)
+            ) === true) {
                 $filters[] = ExpressionParser::build(IsFilters::FILTER_IS_PUBLISHED, ['*']);
             }
         }
@@ -210,7 +210,7 @@ abstract class MeerkatTag extends Tags
     /**
      * Checks if a parameter exists in the parameter collection.
      *
-     * @param string $key The parameter name.
+     * @param  string  $key The parameter name.
      * @return bool
      */
     public function hasParameterValue($key)
@@ -225,8 +225,8 @@ abstract class MeerkatTag extends Tags
     /**
      * Attempts to retrieve the value of the named parameter.
      *
-     * @param string $key The name of the parameter.
-     * @param null|mixed $default The default value to return.
+     * @param  string  $key The name of the parameter.
+     * @param  null|mixed  $default The default value to return.
      * @return mixed|null
      */
     public function getParameterValue($key, $default = null)
@@ -245,7 +245,7 @@ abstract class MeerkatTag extends Tags
     /**
      * Converts the value to a UNIX-like timestamp.
      *
-     * @param string $value The input value.
+     * @param  string  $value The input value.
      * @return int|string
      */
     protected function getDateTimeTimestamp($value)
@@ -268,5 +268,4 @@ abstract class MeerkatTag extends Tags
     {
         $this->filterManager->restrictFilter('thread:in', []);
     }
-
 }

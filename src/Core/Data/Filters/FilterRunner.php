@@ -12,12 +12,10 @@ use Stillat\Meerkat\Core\Parsing\ExpressionParser;
  *
  * Provides utilities to make it easier to execute Meerkat comment filters within context.
  *
- * @package Stillat\Meerkat\Core\Data\Filters
  * @since 2.0.0
  */
 class FilterRunner
 {
-
     /**
      * The CommentFilterManager instance.
      *
@@ -51,11 +49,12 @@ class FilterRunner
     /**
      * Processes the provided filters within the surrounding context.
      *
-     * @param CommentContract[] $comments The comments to filter.
-     * @param array $filters The Meerkat filter input.
-     * @param mixed|null $context The Meerkat run-time context, if any.
-     * @param string $tagContext The run-time templating context, if any.
+     * @param  CommentContract[]  $comments The comments to filter.
+     * @param  array  $filters The Meerkat filter input.
+     * @param  mixed|null  $context The Meerkat run-time context, if any.
+     * @param  string  $tagContext The run-time templating context, if any.
      * @return array
+     *
      * @throws FilterException
      */
     public function processFilters($comments, $filters, $context = null, $tagContext = '')
@@ -94,7 +93,7 @@ class FilterRunner
                     });
                 }
             } else {
-                throw new FilterException($filter . ' Meerkat Filter could not be found.');
+                throw new FilterException($filter.' Meerkat Filter could not be found.');
             }
         }
 
@@ -104,8 +103,8 @@ class FilterRunner
     /**
      * Filters list of comments, as well as all nested replies.
      *
-     * @param CommentContract[] $comments The comment.
-     * @param string[] $idsToKeep The comment identifiers to maintain.
+     * @param  CommentContract[]  $comments The comment.
+     * @param  string[]  $idsToKeep The comment identifiers to maintain.
      * @return CommentContract[]
      */
     private function recursivelyFilterComments($comments, $idsToKeep)
@@ -128,5 +127,4 @@ class FilterRunner
             return $shouldKeep;
         });
     }
-
 }

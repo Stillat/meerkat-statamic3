@@ -17,12 +17,10 @@ use Stillat\Meerkat\Core\Mail\MailReportItem;
  *
  * Provides a Meerkat Core MailerContract implementation based on the Laravel mail systems.
  *
- * @package Stillat\Meerkat\Mail
  * @since 2.1.5
  */
 class MeerkatMailer implements MailerContract
 {
-
     /**
      * The FieldMapper instance.
      *
@@ -53,7 +51,7 @@ class MeerkatMailer implements MailerContract
     /**
      * Sets an optional "from" email address override.
      *
-     * @param string|null $address The address.
+     * @param  string|null  $address The address.
      * @return $this
      */
     public function setFromAddress($address)
@@ -66,8 +64,8 @@ class MeerkatMailer implements MailerContract
     /**
      * Sends a comment submission notification to the list of email addresses.
      *
-     * @param string[] $addresses The email addresses to send to.
-     * @param CommentContract $comment The comment to sent.
+     * @param  string[]  $addresses The email addresses to send to.
+     * @param  CommentContract  $comment The comment to sent.
      * @return bool
      */
     public function send($addresses, CommentContract $comment)
@@ -109,5 +107,4 @@ class MeerkatMailer implements MailerContract
 
         return $allWasSuccess;
     }
-
 }

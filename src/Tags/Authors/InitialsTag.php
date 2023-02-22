@@ -11,12 +11,10 @@ use Stillat\Meerkat\Tags\MeerkatTag;
  *
  * Provides access to Meerkat's initial generation system from within Antlers templates.
  *
- * @package Stillat\Meerkat\Tags\Authors
  * @since 2.1.18
  */
 class InitialsTag extends MeerkatTag
 {
-
     /**
      * Renders the tag content.
      *
@@ -30,5 +28,4 @@ class InitialsTag extends MeerkatTag
 
         return InitialsGenerator::getInitials($value, $onlyCaps, $separator);
     }
-
 }

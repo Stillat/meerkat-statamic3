@@ -18,24 +18,27 @@ use Stillat\Meerkat\Core\Threads\Thread;
  * thread:not_in(list, of, ids) - legacy alias
  * not:thread:in(list, of, ids)
  *
- * @package Stillat\Meerkat\Core\Data\Filters\DefaultFilters
  * @since 1.5.85
  *
  * @method mixed get($key, $default = null) Gets a filter parameter value.
  * @method mixed getContext() Gets the filter context.
+ *
  * @see CommentFilter
  */
 class ThreadIn
 {
     const FILTER_THREAD_IN = 'thread:in';
+
     const FILTER_THREAD_NOT_IN = 'thread:not_in';
+
     const FILTER_THREAD_NOT_IN_ALIAS = 'not:thread:in';
+
     const PARAM_THREADS = 'threads';
 
     /**
      * Registers the default thread:in filters.
      *
-     * @param CommentFilterManager $manager The filter manager.
+     * @param  CommentFilterManager  $manager The filter manager.
      */
     public function register(CommentFilterManager $manager)
     {
@@ -66,5 +69,4 @@ class ThreadIn
             });
         }, ThreadIn::PARAM_THREADS);
     }
-
 }

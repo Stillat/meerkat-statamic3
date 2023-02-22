@@ -12,16 +12,14 @@ use Stillat\Meerkat\Core\UuidGenerator;
  *
  * Provides utilities to retrieve author information from a comment dataset.
  *
- * @package Stillat\Meerkat\Core\Data\Retrievers
  * @since 2.0.0
  */
 class CommentAuthorRetriever
 {
-
     /**
      * Extracts author details from the list of comments.
      *
-     * @param array $data The CommentContract arrays.
+     * @param  array  $data The CommentContract arrays.
      * @return array
      */
     public static function getAuthorsFromCommentArray($data)
@@ -29,11 +27,9 @@ class CommentAuthorRetriever
         $authorsToReturn = [];
 
         foreach ($data as $commentArray) {
-
             if (array_key_exists(CommentContract::KEY_AUTHOR, $commentArray) === false) {
                 if (array_key_exists(CommentContract::INTERNAL_PARENT_AUTHOR, $commentArray) === false ||
                     $commentArray[CommentContract::INTERNAL_PARENT_AUTHOR] === null) {
-
                     continue;
                 }
             }
@@ -69,7 +65,7 @@ class CommentAuthorRetriever
 
         foreach ($authorsToReturn as $key => &$author) {
             if (is_numeric($key)) {
-                $author['id'] = (string)$key;
+                $author['id'] = (string) $key;
             }
         }
 
@@ -79,7 +75,7 @@ class CommentAuthorRetriever
     /**
      * Processes the author prototype and returns the result.
      *
-     * @param array $author The author prototype.
+     * @param  array  $author The author prototype.
      * @return array
      */
     protected static function getAuthorFromArray($author)
@@ -96,7 +92,7 @@ class CommentAuthorRetriever
     /**
      * Gets a collection of unique authors in the dataset.
      *
-     * @param CommentContract[] $data The data to analyze.
+     * @param  CommentContract[]  $data The data to analyze.
      * @return AuthorContract[]
      */
     public static function getAuthors($data)
@@ -127,5 +123,4 @@ class CommentAuthorRetriever
 
         return $authorsToReturn;
     }
-
 }

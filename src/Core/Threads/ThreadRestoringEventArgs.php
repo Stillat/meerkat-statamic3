@@ -63,5 +63,4 @@ class ThreadRestoringEventArgs implements DataObjectContract
     {
         return $this->shouldRestore;
     }
-
 }

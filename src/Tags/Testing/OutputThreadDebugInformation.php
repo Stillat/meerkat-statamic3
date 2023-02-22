@@ -15,7 +15,6 @@ use Stillat\Meerkat\Tags\MeerkatTag;
  *
  * @ls noparse
  *
- * @package Stillat\Meerkat\Tags\Testing
  * @since 2.0.0
  */
 class OutputThreadDebugInformation extends MeerkatTag
@@ -43,27 +42,25 @@ class OutputThreadDebugInformation extends MeerkatTag
         $report[] = $this->makeReportItem('Logical Context', $logicalContextId);
         $report[] = $this->makeReportItem('Effective Context', $effectiveContextId);
 
-
         return view('meerkat::tags.debug.thread', [
             'statamicVersion' => Statamic::version(),
             'version' => Addon::VERSION,
-            'report' => $report
+            'report' => $report,
         ]);
     }
 
     /**
      * Generates a standardized debug report item.
      *
-     * @param string $displayHeader The header to display to the user.
-     * @param string $value The value to display to the user.
+     * @param  string  $displayHeader The header to display to the user.
+     * @param  string  $value The value to display to the user.
      * @return array
      */
     private function makeReportItem($displayHeader, $value)
     {
         return [
             'header' => $displayHeader,
-            'value' => $value
+            'value' => $value,
         ];
     }
-
 }

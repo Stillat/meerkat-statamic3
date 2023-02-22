@@ -15,12 +15,10 @@ use Stillat\Meerkat\Core\DataPrivacyConfiguration;
  * The author retriever is responsible for analyzing a
  * collection of comments to find author information.
  *
- * @package Stillat\Meerkat\Core\Storage\Data
  * @since 2.0.0
  */
 class CommentAuthorRetriever
 {
-
     /**
      * An author factory implementation instance.
      *
@@ -52,7 +50,7 @@ class CommentAuthorRetriever
      * Attempts to locate author details from a collection of comments.
      *
      *
-     * @param CommentContract[] $comments
+     * @param  CommentContract[]  $comments
      * @return AuthorContract[]
      */
     public function getAuthorDetails($comments)
@@ -65,7 +63,7 @@ class CommentAuthorRetriever
             $emailAddress = $comment->getDataAttribute(AuthorContract::KEY_EMAIL_ADDRESS, null);
 
             if ($emailAddress !== null && mb_strlen(trim($emailAddress)) > 0) {
-                if (!array_key_exists($emailAddress, $this->authEmailMappings)) {
+                if (! array_key_exists($emailAddress, $this->authEmailMappings)) {
                     $this->authEmailMappings[trim($emailAddress)] = $this->getAuthorDataPrototype($comment);
                 }
             }
@@ -79,7 +77,7 @@ class CommentAuthorRetriever
     /**
      * Finds author data prototype data.
      *
-     * @param CommentContract $comment The comment to find authorship data in.
+     * @param  CommentContract  $comment The comment to find authorship data in.
      * @return array
      */
     private function getAuthorDataPrototype($comment)
@@ -111,7 +109,7 @@ class CommentAuthorRetriever
             AuthorContract::AUTHENTICATED_USER_ID => $userId,
             AuthorContract::KEY_AUTHOR_URL => $webUrl,
             CommentContract::INTERNAL_AUTHOR_HAS_EMAIL => $comment->getDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_EMAIL, false),
-            CommentContract::INTERNAL_AUTHOR_HAS_NAME => $comment->getDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_EMAIL, false)
+            CommentContract::INTERNAL_AUTHOR_HAS_NAME => $comment->getDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_EMAIL, false),
         ];
     }
 
@@ -139,7 +137,7 @@ class CommentAuthorRetriever
 
             $authorKey = trim($emailAddress.$authName);
 
-            if (!array_key_exists($authorKey, $this->authEmailMappings)) {
+            if (! array_key_exists($authorKey, $this->authEmailMappings)) {
                 $authorPrototype = $this->getAuthorDataPrototype($comment);
 
                 $this->authEmailMappings[$authorKey] = $this->authorFactory->makeAuthor($authorPrototype);
@@ -150,5 +148,4 @@ class CommentAuthorRetriever
 
         return null;
     }
-
 }

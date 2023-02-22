@@ -9,16 +9,14 @@ use Stillat\Meerkat\Core\Support\Str;
  *
  * Provides utilities for converting values to their appropriate run-time types from filter strings.
  *
- * @package Stillat\Meerkat\Core\Data
  * @since 2.0.0
  */
 class ValueWrapper
 {
-
     /**
      * Wraps the provided value in a DataQuery package based on it's type.
      *
-     * @param mixed $value The input value.
+     * @param  mixed  $value The input value.
      * @return string
      */
     public static function wrap($value)
@@ -32,7 +30,7 @@ class ValueWrapper
         } elseif (is_string($value)) {
             $value = str_replace(',', 'dq{SEP}', $value);
 
-            return 'dq:string{' . $value . '}';
+            return 'dq:string{'.$value.'}';
         } elseif (is_array($value) || is_object($value)) {
             return 'dq:object{'.serialize($value).'}';
         }
@@ -43,7 +41,7 @@ class ValueWrapper
     /**
      * Converts the wrapped value back to it's runtime type.
      *
-     * @param string $value The wrapped type.
+     * @param  string  $value The wrapped type.
      * @return bool|string|string[]|null
      */
     public static function unwrap($value)
@@ -91,5 +89,4 @@ class ValueWrapper
 
         return $value;
     }
-
 }

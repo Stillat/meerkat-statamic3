@@ -15,16 +15,14 @@ use Stillat\Meerkat\Providers\ControlPanelServiceProvider;
  *
  * Provides helpers for interacting with Meerkat life-cycle events.
  *
- * @package Stillat\Meerkat\Support\Facades\StaticHelpers
  * @since 2.0.0
  */
 trait ProvidesEventHelpers
 {
-
     /**
      * Called when Meerkat is registering itself with the Statamic Control Panel.
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onRegisteringControlPanel(callable $handler)
     {
@@ -34,12 +32,12 @@ trait ProvidesEventHelpers
     /**
      * Helper method to register Meerkat prefixed events.
      *
-     * @param string $event The event suffix.
-     * @param callable $handler The callback.
+     * @param  string  $event The event suffix.
+     * @param  callable  $handler The callback.
      */
     protected static function listenToEvent($event, $handler)
     {
-        Event::listen(Addon::ADDON_NAME . '.' . $event, $handler);
+        Event::listen(Addon::ADDON_NAME.'.'.$event, $handler);
     }
 
     /**
@@ -48,7 +46,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onCollectingComment(callable $handler)
     {
@@ -61,7 +59,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract[]
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onCollectingAllComments(callable $handler)
     {
@@ -74,7 +72,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onCommentCreating(callable $handler)
     {
@@ -87,7 +85,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onCommentUpdating(callable $handler)
     {
@@ -100,7 +98,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onCommentUpdated(callable $handler)
     {
@@ -113,7 +111,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onCommentCreated(callable $handler)
     {
@@ -126,7 +124,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onCommentRemoving(callable $handler)
     {
@@ -139,7 +137,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: string - The comment identifier.
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onCommentRemoved(callable $handler)
     {
@@ -152,7 +150,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: string - The comment identifier.
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onCommentSoftDeleted(callable $handler)
     {
@@ -165,7 +163,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onCommentReplying(callable $handler)
     {
@@ -178,7 +176,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onCommentReplied(callable $handler)
     {
@@ -191,7 +189,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onCommentMarkingAsSpam(callable $handler)
     {
@@ -204,7 +202,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onCommentMarkingAsHam(callable $handler)
     {
@@ -217,7 +215,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onCommentSpamStatusUpdated(callable $handler)
     {
@@ -231,7 +229,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onCommentMarkedAsSpam(callable $handler)
     {
@@ -244,7 +242,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onCommentMarkedAsHam(callable $handler)
     {
@@ -257,7 +255,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onCommentApproving(callable $handler)
     {
@@ -270,7 +268,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onCommentApproved(callable $handler)
     {
@@ -283,7 +281,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onCommentUnapproving(callable $handler)
     {
@@ -296,7 +294,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onCommentUnapproved(callable $handler)
     {
@@ -309,7 +307,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onCommentRestoring(callable $handler)
     {
@@ -322,7 +320,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: CommentContract
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onCommentRestored(callable $handler)
     {
@@ -335,7 +333,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: SpamService
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onGuardStarting(callable $handler)
     {
@@ -348,7 +346,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: ThreadRemovalEventArgs
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onThreadRemoving(callable $handler)
     {
@@ -361,7 +359,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: ThreadContextContract
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onThreadRemoved(callable $handler)
     {
@@ -374,7 +372,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: ThreadContextContract
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onThreadSoftDeleted(callable $handler)
     {
@@ -387,7 +385,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: ThreadContextContract
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onThreadCreating(callable $handler)
     {
@@ -400,7 +398,7 @@ trait ProvidesEventHelpers
      * Callback arguments:
      *      0: ThreadContextContract
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onThreadCreated(callable $handler)
     {
@@ -413,7 +411,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: ThreadMovingEventArgs
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onThreadMoving(callable $handler)
     {
@@ -426,7 +424,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: ThreadContextContract
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onThreadMoved(callable $handler)
     {
@@ -439,7 +437,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: ThreadRestoringEventArgs
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onThreadRestoring(callable $handler)
     {
@@ -452,7 +450,7 @@ trait ProvidesEventHelpers
      * Callable arguments:
      *      0: ThreadContextContract
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onThreadRestored(callable $handler)
     {
@@ -466,7 +464,7 @@ trait ProvidesEventHelpers
      *      0: AuthorContract
      *      1: PermissionsSet
      *
-     * @param callable $handler The callback.
+     * @param  callable  $handler The callback.
      */
     public static function onPermissionsResolving(callable $handler)
     {
@@ -477,5 +475,4 @@ trait ProvidesEventHelpers
     {
         Event::listen(['Meerkat.comments.created', 'Meerkat.comments.updated'], $handler);
     }
-
 }

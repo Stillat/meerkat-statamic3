@@ -12,16 +12,14 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentFactoryContract;
  *
  * Allows for customizations in how comments are created from a Statamic installation.
  *
- * @package Stillat\Meerkat\Comments
  * @since 2.0.0
  */
 class StatamicCommentFactory implements CommentFactoryContract
 {
-
     /**
      * Converts the comment prototype into an instance of CommentContract.
      *
-     * @param array $protoComment The comment prototype.
+     * @param  array  $protoComment The comment prototype.
      * @return CommentContract
      */
     public function makeComment($protoComment)
@@ -40,5 +38,4 @@ class StatamicCommentFactory implements CommentFactoryContract
 
         return $comment;
     }
-
 }

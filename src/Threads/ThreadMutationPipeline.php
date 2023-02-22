@@ -3,10 +3,9 @@
 namespace Stillat\Meerkat\Threads;
 
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContextContract;
-use Stillat\Meerkat\Core\Contracts\Threads\ThreadContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadMutationPipelineContract;
-use Stillat\Meerkat\Core\Threads\ThreadRemovalEventArgs;
 use Stillat\Meerkat\Core\Threads\ThreadMovingEventArgs;
+use Stillat\Meerkat\Core\Threads\ThreadRemovalEventArgs;
 use Stillat\Meerkat\Core\Threads\ThreadRestoringEventArgs;
 use Stillat\Meerkat\EventPipeline;
 
@@ -15,17 +14,15 @@ use Stillat\Meerkat\EventPipeline;
  *
  * Implements the Meerkat Core thread mutation pipeline to broadcast thread life-cycle events.
  *
- * @package Stillat\Meerkat\Threads
  * @since 2.0.0
  */
 class ThreadMutationPipeline extends EventPipeline implements ThreadMutationPipelineContract
 {
-
     /**
      * Broadcasts that a thread's context is resolving.
      *
-     * @param ThreadContextContract $thread The thread being resolved.
-     * @param callable $callback A callback that will be invoked after each pipeline stop.
+     * @param  ThreadContextContract  $thread The thread being resolved.
+     * @param  callable  $callback A callback that will be invoked after each pipeline stop.
      */
     public function resolving(ThreadContextContract $thread, $callback)
     {
@@ -37,8 +34,8 @@ class ThreadMutationPipeline extends EventPipeline implements ThreadMutationPipe
     /**
      * Called before the thread is removed.
      *
-     * @param ThreadRemovalEventArgs $eventArgs The event args.
-     * @param callable $callback The callback.
+     * @param  ThreadRemovalEventArgs  $eventArgs The event args.
+     * @param  callable  $callback The callback.
      */
     public function removing(ThreadRemovalEventArgs $eventArgs, $callback)
     {
@@ -54,8 +51,8 @@ class ThreadMutationPipeline extends EventPipeline implements ThreadMutationPipe
     /**
      * Called after the thread has been removed.
      *
-     * @param ThreadContextContract $threadContext The thread context.
-     * @param callable $callback The callback.
+     * @param  ThreadContextContract  $threadContext The thread context.
+     * @param  callable  $callback The callback.
      */
     public function removed(ThreadContextContract $threadContext, $callback)
     {
@@ -69,8 +66,8 @@ class ThreadMutationPipeline extends EventPipeline implements ThreadMutationPipe
     /**
      * Called after a thread has been soft-deleted.
      *
-     * @param ThreadContextContract $threadContext The thread context.
-     * @param callable $callback The callback.
+     * @param  ThreadContextContract  $threadContext The thread context.
+     * @param  callable  $callback The callback.
      */
     public function softDeleted(ThreadContextContract $threadContext, $callback)
     {
@@ -84,8 +81,8 @@ class ThreadMutationPipeline extends EventPipeline implements ThreadMutationPipe
     /**
      * Called before the thread is created.
      *
-     * @param ThreadContextContract $threadContext The thread context.
-     * @param callable $callback The callback.
+     * @param  ThreadContextContract  $threadContext The thread context.
+     * @param  callable  $callback The callback.
      */
     public function creating(ThreadContextContract $threadContext, $callback)
     {
@@ -101,8 +98,7 @@ class ThreadMutationPipeline extends EventPipeline implements ThreadMutationPipe
     /**
      * Called after the thread is created.
      *
-     * @param ThreadContextContract $threadContext
-     * @param callable $callback The callback.
+     * @param  callable  $callback The callback.
      */
     public function created(ThreadContextContract $threadContext, $callback)
     {
@@ -116,8 +112,8 @@ class ThreadMutationPipeline extends EventPipeline implements ThreadMutationPipe
     /**
      * Called before the thread is moved to another context.
      *
-     * @param ThreadMovingEventArgs $eventArgs The event args.
-     * @param callable $callback The callback.
+     * @param  ThreadMovingEventArgs  $eventArgs The event args.
+     * @param  callable  $callback The callback.
      */
     public function moving(ThreadMovingEventArgs $eventArgs, $callback)
     {
@@ -133,8 +129,7 @@ class ThreadMutationPipeline extends EventPipeline implements ThreadMutationPipe
     /**
      * Called after the thread has been moved.
      *
-     * @param ThreadContextContract $thread
-     * @param callable $callback The callback.
+     * @param  callable  $callback The callback.
      */
     public function moved(ThreadContextContract $thread, $callback)
     {
@@ -148,8 +143,8 @@ class ThreadMutationPipeline extends EventPipeline implements ThreadMutationPipe
     /**
      * Called before the thread is being restored from a soft-deleted state.
      *
-     * @param ThreadRestoringEventArgs $eventArgs The event args.
-     * @param callable $callback The callback.
+     * @param  ThreadRestoringEventArgs  $eventArgs The event args.
+     * @param  callable  $callback The callback.
      */
     public function restoring(ThreadRestoringEventArgs $eventArgs, $callback)
     {
@@ -165,8 +160,8 @@ class ThreadMutationPipeline extends EventPipeline implements ThreadMutationPipe
     /**
      * Called after the thread has been restored from a soft-deleted state.
      *
-     * @param ThreadContextContract $thread The thread context.
-     * @param callable $callback The callback.
+     * @param  ThreadContextContract  $thread The thread context.
+     * @param  callable  $callback The callback.
      */
     public function restored(ThreadContextContract $thread, $callback)
     {
@@ -176,5 +171,4 @@ class ThreadMutationPipeline extends EventPipeline implements ThreadMutationPipe
             $callback
         );
     }
-
 }

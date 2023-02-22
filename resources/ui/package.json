@@ -19,6 +19,7 @@
         "ky": "^0.23.0",
         "luxon": "^1.28.1",
         "number-abbreviate": "^2.0.0",
+        "resolve-cwd": "^2.0.0",
         "store": "^2.0.12",
         "wolfy87-eventemitter": "^5.2.9"
     },
@@ -40,7 +41,6 @@
         "optimize-css-assets-webpack-plugin": "^5.0.4",
         "run-script-os": "^1.1.1",
         "terser-webpack-plugin": "^4.2.3",
-        "webpack": "^4.43.0",
         "webpack-cli": "^3.3.12"
     }
 }

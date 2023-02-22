@@ -16,12 +16,10 @@ use Stillat\Meerkat\Core\Support\DateUtilities;
  *
  * Provides utilities/tools for managing Meerkat Comment threads.
  *
- * @package Stillat\Meerkat\Core\Threads
  * @since 2.0.0
  */
 class ThreadManager implements ThreadManagerContract
 {
-
     /**
      * The Configuration instance to provide access to the shared file share.
      *
@@ -62,8 +60,7 @@ class ThreadManager implements ThreadManagerContract
         ContextResolverContract $contextResolver,
         ThreadMutationPipelineContract $threadPipeline,
         ThreadStorageManagerContract $streamStorageManager
-    )
-    {
+    ) {
         $this->config = $config;
         $this->contextResolver = $contextResolver;
         $this->threadPipeline = $threadPipeline;
@@ -72,7 +69,6 @@ class ThreadManager implements ThreadManagerContract
         // Create an instance of Paths using the configuration we just received.
         $this->pathManager = new Paths($this->config);
     }
-
 
     /**
      * Gets the thread storage manager implementation instance.
@@ -87,8 +83,8 @@ class ThreadManager implements ThreadManagerContract
     /**
      * Attempts to locate all threads.
      *
-     * @param bool $includeTrashed Whether to include soft-deleted threads.
-     * @param bool $includeComments Whether to include comments.
+     * @param  bool  $includeTrashed Whether to include soft-deleted threads.
+     * @param  bool  $includeComments Whether to include comments.
      * @return ThreadContract[]
      */
     public function getAllThreads($includeTrashed = false, $includeComments = false)
@@ -99,8 +95,7 @@ class ThreadManager implements ThreadManagerContract
     /**
      * Returns a collection of all thread IDs.
      *
-     * @param boolean $includeTrashed Indicates if Meerkat should locate trashed threads.
-     *
+     * @param  bool  $includeTrashed Indicates if Meerkat should locate trashed threads.
      * @return array
      */
     public function getAllThreadIds($includeTrashed = false)
@@ -111,9 +106,9 @@ class ThreadManager implements ThreadManagerContract
     /**
      * Returns a value indicating if a thread exists for the provided context identifier.
      *
-     * @param string $contextId The context's string identifier.
-     * @param boolean $withTrashed Indicates if Meerkat should look for soft-deleted threads.
-     * @return boolean
+     * @param  string  $contextId The context's string identifier.
+     * @param  bool  $withTrashed Indicates if Meerkat should look for soft-deleted threads.
+     * @return bool
      */
     public function existsForContext($contextId, $withTrashed)
     {
@@ -123,10 +118,9 @@ class ThreadManager implements ThreadManagerContract
     /**
      * Attempts to locate and return a thread for the provided string identifier.
      *
-     * @param string $id The identifier for the thread to look up.
-     * @param boolean $withTrashed Indicates if Meerkat should look for soft-deleted threads.
-     * @param boolean $includeComments Indicates if Meerkat should pre-load the comments.
-     *
+     * @param  string  $id The identifier for the thread to look up.
+     * @param  bool  $withTrashed Indicates if Meerkat should look for soft-deleted threads.
+     * @param  bool  $includeComments Indicates if Meerkat should pre-load the comments.
      * @return ThreadContract|null
      */
     public function findById($id, $withTrashed = false, $includeComments = true)
@@ -137,7 +131,6 @@ class ThreadManager implements ThreadManagerContract
     /**
      * Persists the specified thread to disk.
      *
-     * @param ThreadContract $thread
      *
      * @return ThreadContract
      */
@@ -157,7 +150,6 @@ class ThreadManager implements ThreadManagerContract
     /**
      * Resolves the storage path for the provided thread instance.
      *
-     * @param ThreadContract $thread
      *
      * @return string
      */
@@ -169,8 +161,7 @@ class ThreadManager implements ThreadManagerContract
     /**
      * Resolves the storage path for the provided thread string identifier.
      *
-     * @param string $id
-     *
+     * @param  string  $id
      * @return string
      */
     public function determinePathById($id)
@@ -181,8 +172,8 @@ class ThreadManager implements ThreadManagerContract
     /**
      * Attempts to remove a thread instance.
      *
-     * @param ThreadContract $thread The thread instance.
-     * @return boolean
+     * @param  ThreadContract  $thread The thread instance.
+     * @return bool
      */
     public function remove(ThreadContract $thread)
     {
@@ -192,8 +183,8 @@ class ThreadManager implements ThreadManagerContract
     /**
      * Attempts to remove a thread by it's identifier.
      *
-     * @param string $id The comment's identifier.
-     * @return boolean
+     * @param  string  $id The comment's identifier.
+     * @return bool
      */
     public function removeById($id)
     {
@@ -203,9 +194,9 @@ class ThreadManager implements ThreadManagerContract
     /**
      * Moves the comments from the source thread to the target thread.
      *
-     * @param string $sourceThreadId The identifier of the source thread.
-     * @param string $targetThreadId The identifier of the target thread.
-     * @return boolean
+     * @param  string  $sourceThreadId The identifier of the source thread.
+     * @param  string  $targetThreadId The identifier of the target thread.
+     * @return bool
      */
     public function moveThread($sourceThreadId, $targetThreadId)
     {
@@ -215,19 +206,18 @@ class ThreadManager implements ThreadManagerContract
     /**
      * Restores a previously soft-deleted thread.
      *
-     * @param string $threadId The string identifier of the thread.
-     * @return boolean
+     * @param  string  $threadId The string identifier of the thread.
+     * @return bool
      */
     public function restoreThread($threadId)
     {
         return $this->threadStorageManager->restoreThread($threadId);
     }
 
-
     /**
      * Determines if new comment submissions are allowed for the requested context identifier.
      *
-     * @param string $contextId The context's identifier.
+     * @param  string  $contextId The context's identifier.
      * @return bool
      */
     public function areCommentsEnabledForContext($contextId)
@@ -249,5 +239,4 @@ class ThreadManager implements ThreadManagerContract
 
         return true;
     }
-
 }

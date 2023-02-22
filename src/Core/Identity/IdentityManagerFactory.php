@@ -9,12 +9,10 @@ use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
  *
  * Allows Meerkat Core internals to reference a global implementation.
  *
- * @package Stillat\Meerkat\Core\Identity
  * @since 2.0.0
  */
 class IdentityManagerFactory
 {
-
     /**
      * A reference to the IdentityManagerContract implementation instance.
      *
@@ -24,6 +22,7 @@ class IdentityManagerFactory
 
     /**
      * Returns a value that indicates if an IdentityManagerContract implementation instance was set.
+     *
      * @return bool
      */
     public static function hasInstance()
@@ -38,6 +37,4 @@ class IdentityManagerFactory
 
         return true;
     }
-
 }
-

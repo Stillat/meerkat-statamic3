@@ -9,7 +9,6 @@ use Closure;
  *
  * Represents a value that can be resolved dynamically.
  *
- * @package Stillat\Meerkat\Core\Data\Filters
  * @since 1.5.85
  */
 class FilterVariable
@@ -62,7 +61,7 @@ class FilterVariable
     /**
      * Sets the user context.
      *
-     * @param mixed|null $user The user context.
+     * @param  mixed|null  $user The user context.
      */
     public function setUser($user)
     {
@@ -72,7 +71,7 @@ class FilterVariable
     /**
      * Sets the name of the variable.
      *
-     * @param string $name The variables's name.
+     * @param  string  $name The variables's name.
      */
     public function setName($name)
     {
@@ -102,7 +101,7 @@ class FilterVariable
     /**
      * Sets the variables's context.
      *
-     * @param mixed|null $context The context.
+     * @param  mixed|null  $context The context.
      */
     public function setContext($context)
     {
@@ -132,7 +131,7 @@ class FilterVariable
     /**
      * Sets the variable's parameters.
      *
-     * @param array $parameters The parameters.
+     * @param  array  $parameters The parameters.
      */
     public function setParameters($parameters)
     {
@@ -142,8 +141,8 @@ class FilterVariable
     /**
      * Gets a parameter's value, or a default if it does not exist.
      *
-     * @param string $key The parameter name to get.
-     * @param null $default The default value to return.
+     * @param  string  $key The parameter name to get.
+     * @param  null  $default The default value to return.
      * @return mixed|null
      */
     public function get($key, $default = null)
@@ -158,7 +157,7 @@ class FilterVariable
     /**
      * Checks if a parameter with the given name exists.
      *
-     * @param string $key The key to check.
+     * @param  string  $key The key to check.
      * @return bool
      */
     public function has($key)
@@ -169,7 +168,7 @@ class FilterVariable
     /**
      * Sets the variable callable.
      *
-     * @param callable $callable The variable to resolve.
+     * @param  callable  $callable The variable to resolve.
      */
     public function setCallback($callable)
     {
@@ -195,5 +194,4 @@ class FilterVariable
     {
         return call_user_func($this->variableCallback);
     }
-
 }

@@ -15,12 +15,12 @@ use Stillat\Meerkat\Core\Support\Str;
  *
  * Determines if a comment is spam by checking against a list of unfavorable words
  *
- * @package Stillat\Meerkat\Core\Guard\Providers
  * @since 2.0.0
  */
 class WordFilterSpamGuard implements SpamGuardContract
 {
     const WDF_MATCHED = 'WDF-01-001';
+
     const WDF_DEFAULT_MESSAGE = 'Word filter matched against a configured value.';
 
     private $reasons = [];
@@ -70,7 +70,7 @@ class WordFilterSpamGuard implements SpamGuardContract
     /**
      * Gets a value indicating if the detector succeeded.
      *
-     * @return boolean
+     * @return bool
      */
     public function wasSuccess()
     {
@@ -81,9 +81,8 @@ class WordFilterSpamGuard implements SpamGuardContract
      * Returns a value indicating if the provided comment has a
      * high probability of being a disingenuous posting.
      *
-     * @param DataObjectContract $data
      *
-     * @return boolean
+     * @return bool
      */
     public function getIsSpam(DataObjectContract $data)
     {
@@ -104,7 +103,7 @@ class WordFilterSpamGuard implements SpamGuardContract
                 $reason->setReasonCode(self::WDF_MATCHED);
                 $reason->setReasonContext([
                     'word' => $word,
-                    'property' => CommentContract::INTERNAL_CONTENT_RAW
+                    'property' => CommentContract::INTERNAL_CONTENT_RAW,
                 ]);
 
                 $this->reasons[] = $reason;
@@ -118,7 +117,7 @@ class WordFilterSpamGuard implements SpamGuardContract
                 $reason->setReasonCode(self::WDF_MATCHED);
                 $reason->setReasonContext([
                     'word' => $word,
-                    'property' => AuthorContract::KEY_EMAIL_ADDRESS
+                    'property' => AuthorContract::KEY_EMAIL_ADDRESS,
                 ]);
 
                 $this->reasons[] = $reason;
@@ -127,17 +126,15 @@ class WordFilterSpamGuard implements SpamGuardContract
             }
 
             if (Str::contains($name, $word)) {
-
                 $reason = new SpamReason();
                 $reason->setReasonText(self::WDF_DEFAULT_MESSAGE);
                 $reason->setReasonCode(self::WDF_MATCHED);
                 $reason->setReasonContext([
                     'word' => $word,
-                    'property' => AuthorContract::KEY_NAME
+                    'property' => AuthorContract::KEY_NAME,
                 ]);
 
                 $this->reasons[] = $reason;
-
 
                 return true;
             }
@@ -148,11 +145,10 @@ class WordFilterSpamGuard implements SpamGuardContract
                 $reason->setReasonCode(self::WDF_MATCHED);
                 $reason->setReasonContext([
                     'word' => $word,
-                    'property' => CommentContract::KEY_LEGACY_COMMENT
+                    'property' => CommentContract::KEY_LEGACY_COMMENT,
                 ]);
 
                 $this->reasons[] = $reason;
-
 
                 return true;
             }
@@ -163,7 +159,7 @@ class WordFilterSpamGuard implements SpamGuardContract
                 $reason->setReasonCode(self::WDF_MATCHED);
                 $reason->setReasonContext([
                     'word' => $word,
-                    'property' => CommentContract::KEY_CONTENT
+                    'property' => CommentContract::KEY_CONTENT,
                 ]);
 
                 $this->reasons[] = $reason;
@@ -179,9 +175,8 @@ class WordFilterSpamGuard implements SpamGuardContract
      * Marks a comment as a spam, and communicates this
      * to third-party vendors if configured to do so.
      *
-     * @param DataObjectContract $data
      *
-     * @return boolean
+     * @return bool
      */
     public function markAsSpam(DataObjectContract $data)
     {
@@ -192,9 +187,8 @@ class WordFilterSpamGuard implements SpamGuardContract
      * Marks a comment as not-spam, and communicates this
      * to third-party vendors if configured to do so.
      *
-     * @param DataObjectContract $data
      *
-     * @return boolean
+     * @return bool
      */
     public function markAsHam(DataObjectContract $data)
     {
@@ -205,7 +199,7 @@ class WordFilterSpamGuard implements SpamGuardContract
      * Returns a value indicating if a guard supports submitting
      * not-spam results to a third-party service or product.
      *
-     * @return boolean
+     * @return bool
      */
     public function supportsSubmittingHam()
     {
@@ -216,7 +210,7 @@ class WordFilterSpamGuard implements SpamGuardContract
      * Returns a value indicating if a guard supports submitting
      * spam results to a third-party service or product.
      *
-     * @return boolean
+     * @return bool
      */
     public function supportsSubmittingSpam()
     {
@@ -226,7 +220,8 @@ class WordFilterSpamGuard implements SpamGuardContract
     /**
      * Returns a value indicating if the guard encountered errors.
      *
-     * @return boolean
+     * @return bool
+     *
      * @since 2.0.0
      */
     public function hasErrors()
@@ -243,5 +238,4 @@ class WordFilterSpamGuard implements SpamGuardContract
     {
         return [];
     }
-
 }

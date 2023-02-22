@@ -7,12 +7,10 @@ namespace Stillat\Meerkat\Core\Guard;
  *
  * Contains success status and error data from a guard operation.
  *
- * @package Stillat\Meerkat\Core\Guard
  * @since 2.0.0
  */
 class GuardResult
 {
-
     /**
      * A collection of errors raised during the guard operation.
      *
@@ -41,5 +39,4 @@ class GuardResult
 
         return $result;
     }
-
 }

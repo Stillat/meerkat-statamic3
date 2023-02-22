@@ -11,7 +11,6 @@ use Stillat\Meerkat\Core\DataObject;
  *
  * Represents a Comment during a thread mutation request
  *
- * @package Stillat\Meerkat\Core\Threads
  * @since 2.0.0
  */
 class CommentRemovalEventArgs implements DataObjectContract
@@ -38,22 +37,25 @@ class CommentRemovalEventArgs implements DataObjectContract
      * @var bool
      */
     public $willRemoveOthers = false;
+
     /**
      * A list of the effected child comments, if any.
      *
      * @var array
      */
     public $effectedComments = [];
+
     /**
      * The data attributes, if any.
      *
      * @var array
      */
     protected $attributes = [];
+
     /**
      * Indicates whether or not the comment should be permanently removed or not.
      *
-     * @var boolean
+     * @var bool
      */
     protected $doSoftDelete = false;
 
@@ -85,11 +87,10 @@ class CommentRemovalEventArgs implements DataObjectContract
     /**
      * Returns a value indicating if the comment should be permanently removed or not.
      *
-     * @return boolean
+     * @return bool
      */
     public function shouldKeep()
     {
         return $this->doSoftDelete;
     }
-
 }

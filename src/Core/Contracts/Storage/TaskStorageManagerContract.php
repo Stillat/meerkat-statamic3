@@ -9,16 +9,14 @@ use Stillat\Meerkat\Core\Contracts\Tasks\TaskContract;
  *
  * Provides a consistent API for task and storage interactions.
  *
- * @package Stillat\Meerkat\Core\Contracts\Storage
  * @since 2.0.0
  */
 interface TaskStorageManagerContract
 {
-
     /**
      * Checks if the identified task was canceled.
      *
-     * @param string $taskId The task identifier.
+     * @param  string  $taskId The task identifier.
      * @return bool
      */
     public function isTaskCanceledById($taskId);
@@ -26,7 +24,7 @@ interface TaskStorageManagerContract
     /**
      * Checks if the task was canceled.
      *
-     * @param TaskContract $task The task.
+     * @param  TaskContract  $task The task.
      * @return bool
      */
     public function isTaskCanceled(TaskContract $task);
@@ -34,7 +32,7 @@ interface TaskStorageManagerContract
     /**
      * Checks if the identified task is complete.
      *
-     * @param string $taskId The task identifier.
+     * @param  string  $taskId The task identifier.
      * @return bool
      */
     public function isTaskCompleteById($taskId);
@@ -42,7 +40,7 @@ interface TaskStorageManagerContract
     /**
      * Checks if the identified task is complete.
      *
-     * @param TaskContract $task The task.
+     * @param  TaskContract  $task The task.
      * @return bool
      */
     public function isTaskComplete(TaskContract $task);
@@ -50,7 +48,7 @@ interface TaskStorageManagerContract
     /**
      * Attempts to mark the task as complete.
      *
-     * @param string $taskId The task identifier.
+     * @param  string  $taskId The task identifier.
      * @return bool
      */
     public function markCompleteById($taskId);
@@ -58,7 +56,7 @@ interface TaskStorageManagerContract
     /**
      * Attempts to mark the task as complete.
      *
-     * @param TaskContract $task The task.
+     * @param  TaskContract  $task The task.
      * @return bool
      */
     public function markComplete(TaskContract $task);
@@ -66,7 +64,7 @@ interface TaskStorageManagerContract
     /**
      * Attempts to mark the task as canceled.
      *
-     * @param string $taskId The task identifier.
+     * @param  string  $taskId The task identifier.
      * @return bool
      */
     public function markCanceledById($taskId);
@@ -74,7 +72,7 @@ interface TaskStorageManagerContract
     /**
      * Attempts to mark the task as canceled.
      *
-     * @param TaskContract $task The task.
+     * @param  TaskContract  $task The task.
      * @return bool
      */
     public function markCanceled(TaskContract $task);
@@ -82,7 +80,7 @@ interface TaskStorageManagerContract
     /**
      * Attempts to get the current task execution time, in seconds.
      *
-     * @param string $taskId The task identifier.
+     * @param  string  $taskId The task identifier.
      * @return int
      */
     public function getCurrentRunTimeById($taskId);
@@ -90,7 +88,7 @@ interface TaskStorageManagerContract
     /**
      * Attempts to get the current task execution time, in seconds.
      *
-     * @param TaskContract $task The task.
+     * @param  TaskContract  $task The task.
      * @return int
      */
     public function getCurrentRunTime(TaskContract $task);
@@ -98,7 +96,7 @@ interface TaskStorageManagerContract
     /**
      * Attempts to remove the provided task.
      *
-     * @param string $taskId The task identifier.
+     * @param  string  $taskId The task identifier.
      * @return bool
      */
     public function removeTaskById($taskId);
@@ -106,7 +104,7 @@ interface TaskStorageManagerContract
     /**
      * Attempts to remove the provided task.
      *
-     * @param TaskContract $task The task.
+     * @param  TaskContract  $task The task.
      * @return bool
      */
     public function removeTask(TaskContract $task);
@@ -114,7 +112,7 @@ interface TaskStorageManagerContract
     /**
      * Saves the provided task to storage.
      *
-     * @param TaskContract $task The task to save.
+     * @param  TaskContract  $task The task to save.
      * @return bool
      */
     public function saveTask(TaskContract $task);
@@ -122,7 +120,7 @@ interface TaskStorageManagerContract
     /**
      * Tests if a task with the provided identifier exists.
      *
-     * @param string $taskId The task identifier.
+     * @param  string  $taskId The task identifier.
      * @return bool
      */
     public function existsById($taskId);
@@ -130,9 +128,8 @@ interface TaskStorageManagerContract
     /**
      * Attempts to locate the task instance with the provided identifier.
      *
-     * @param string $taskId The task's identifier.
+     * @param  string  $taskId The task's identifier.
      * @return TaskContract|null
      */
     public function findById($taskId);
-
 }

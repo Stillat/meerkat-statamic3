@@ -9,15 +9,18 @@ use Stillat\Meerkat\Core\Support\Arr;
  *
  * Represents an individual configuration item.
  *
- * @package Stillat\Meerkat\Configuration
  * @since 2.1.0
  */
 class ConfigurationItem
 {
     const KEY_NAMESPACE = 'namespace';
+
     const KEY_KEY = 'key';
+
     const KEY_BEHAVIOR = 'behavior';
+
     const KEY_DEFAULTS = 'defaults';
+
     const KEY_VALUE = 'value';
 
     /**
@@ -68,7 +71,7 @@ class ConfigurationItem
     /**
      * Sets the configuration item's namespace.
      *
-     * @param string $namespace The namespace.
+     * @param  string  $namespace The namespace.
      */
     public function setNamespace($namespace)
     {
@@ -88,7 +91,7 @@ class ConfigurationItem
     /**
      * Sets the configuration item's key.
      *
-     * @param string $key The key.
+     * @param  string  $key The key.
      */
     public function setKey($key)
     {
@@ -98,7 +101,7 @@ class ConfigurationItem
     /**
      * Sets the configuration item's override behavior.
      *
-     * @param int $behavior The override behavior.
+     * @param  int  $behavior The override behavior.
      */
     public function setBehavior($behavior)
     {
@@ -128,7 +131,7 @@ class ConfigurationItem
     /**
      * Sets the configuration item's current value.
      *
-     * @param mixed $value The value.
+     * @param  mixed  $value The value.
      */
     public function setValue($value)
     {
@@ -148,7 +151,7 @@ class ConfigurationItem
     /**
      * Sets the configuration item's default values, if a list type.
      *
-     * @param array $values The default values.
+     * @param  array  $values The default values.
      */
     public function setDefaultValues($values)
     {
@@ -167,14 +170,14 @@ class ConfigurationItem
             self::KEY_KEY => $this->key,
             self::KEY_BEHAVIOR => $this->configBehavior,
             self::KEY_DEFAULTS => $this->defaultValues,
-            self::KEY_VALUE => $this->value
+            self::KEY_VALUE => $this->value,
         ];
     }
 
     /**
      * Attempts to construct a ConfigurationItem instance from the array data.
      *
-     * @param array $array The item data.
+     * @param  array  $array The item data.
      * @return ConfigurationItem
      */
     public static function fromArray($array)
@@ -183,7 +186,7 @@ class ConfigurationItem
 
         if (Arr::matches([
             self::KEY_NAMESPACE, self::KEY_KEY,
-            self::KEY_BEHAVIOR, self::KEY_DEFAULTS, self::KEY_VALUE
+            self::KEY_BEHAVIOR, self::KEY_DEFAULTS, self::KEY_VALUE,
         ], $array)) {
             $configItem->setNamespace($array[self::KEY_NAMESPACE]);
             $configItem->setKey($array[self::KEY_KEY]);
@@ -196,7 +199,7 @@ class ConfigurationItem
                 $cleanedValues = [];
 
                 foreach ($value as $item) {
-                    if (!is_string($item)) {
+                    if (! is_string($item)) {
                         continue;
                     }
 
@@ -211,5 +214,4 @@ class ConfigurationItem
 
         return $configItem;
     }
-
 }

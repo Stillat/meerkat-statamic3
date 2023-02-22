@@ -13,12 +13,10 @@ use Stillat\Meerkat\Core\Support\Str;
  *
  * Provides cross-platform path-related utility methods
  *
- * @package Stillat\Meerkat\Core\Storage
  * @since 2.0.0
  */
 class Paths
 {
-
     /**
      * The default directory permissions to use.
      */
@@ -61,8 +59,7 @@ class Paths
     /**
      * Removes all leading/trailing back and forward slashes.
      *
-     * @param string $segment
-     *
+     * @param  string  $segment
      * @return string
      */
     private function cleanSegment($segment)
@@ -94,7 +91,7 @@ class Paths
     /**
      * Gets a directory listing for the provided path. Not recursive.
      *
-     * @param string $path The directory to search.
+     * @param  string  $path The directory to search.
      * @return string[]
      */
     public static function getDirectories($path)
@@ -120,9 +117,9 @@ class Paths
     /**
      * Attempts to copy all the source directories contents to the destination directory.
      *
-     * @param string $source The path that things should be copied from.
-     * @param string $destination The path that things should be copied to.
-     * @param bool $cleanUpSource Whether to remove all the contents from the source directory.
+     * @param  string  $source The path that things should be copied from.
+     * @param  string  $destination The path that things should be copied to.
+     * @param  bool  $cleanUpSource Whether to remove all the contents from the source directory.
      */
     public static function recursivelyCopyDirectory($source, $destination, $cleanUpSource)
     {
@@ -135,16 +132,16 @@ class Paths
 
             while (false !== ($file = readdir($dirHandle))) {
                 if (($file != '.') && ($file != '..')) {
-                    if (is_dir($source . Paths::SYM_FORWARD_SEPARATOR . $file)) {
+                    if (is_dir($source.Paths::SYM_FORWARD_SEPARATOR.$file)) {
                         Paths::recursivelyCopyDirectory(
-                            $source . Paths::SYM_FORWARD_SEPARATOR . $file,
-                            $destination . Paths::SYM_FORWARD_SEPARATOR . $file,
+                            $source.Paths::SYM_FORWARD_SEPARATOR.$file,
+                            $destination.Paths::SYM_FORWARD_SEPARATOR.$file,
                             false
                         );
                     } else {
                         copy(
-                            $source . Paths::SYM_FORWARD_SEPARATOR . $file,
-                            $destination . Paths::SYM_FORWARD_SEPARATOR . $file
+                            $source.Paths::SYM_FORWARD_SEPARATOR.$file,
+                            $destination.Paths::SYM_FORWARD_SEPARATOR.$file
                         );
                     }
                 }
@@ -161,7 +158,7 @@ class Paths
     /**
      * Recursively removes the contents of a directory.
      *
-     * @param string $directory The path to remove.
+     * @param  string  $directory The path to remove.
      */
     public static function recursivelyRemoveDirectory($directory)
     {
@@ -169,10 +166,10 @@ class Paths
             $objects = scandir($directory);
             foreach ($objects as $object) {
                 if ($object != '.' && $object != '..') {
-                    if (filetype($directory . Paths::SYM_FORWARD_SEPARATOR . $object) == 'dir') {
-                        Paths::recursivelyRemoveDirectory($directory . Paths::SYM_FORWARD_SEPARATOR . $object);
+                    if (filetype($directory.Paths::SYM_FORWARD_SEPARATOR.$object) == 'dir') {
+                        Paths::recursivelyRemoveDirectory($directory.Paths::SYM_FORWARD_SEPARATOR.$object);
                     } else {
-                        unlink($directory . Paths::SYM_FORWARD_SEPARATOR . $object);
+                        unlink($directory.Paths::SYM_FORWARD_SEPARATOR.$object);
                     }
                 }
             }
@@ -184,8 +181,8 @@ class Paths
     /**
      * Converts the path to a path relative to the storage root.
      *
-     * @param string $path The path to convert.
-     * @return string|boolean
+     * @param  string  $path The path to convert.
+     * @return string|bool
      */
     public function makeRelative($path)
     {
@@ -201,8 +198,7 @@ class Paths
     /**
      * Combines the provided path segments with the root storage path and returns it.
      *
-     * @param string[] $segments The path segments to combine.
-     *
+     * @param  string[]  $segments The path segments to combine.
      * @return string
      */
     public function combineWithStorage(array $segments)
@@ -212,14 +208,14 @@ class Paths
         // We've already cleaned the root storage directory; just put it at the beginning.
         array_unshift($segments, $this->cleanedStorageRoot);
 
-        return $this->normalize($this->cleanSegment(join($this->config->directorySeparator, $segments)));
+        return $this->normalize($this->cleanSegment(implode($this->config->directorySeparator, $segments)));
     }
 
     /**
      * Gets all the files with the given pattern, recursively.
      *
-     * @param string $pattern The glob search pattern.
-     * @param int $flags The glob flags.
+     * @param  string  $pattern The glob search pattern.
+     * @param  int  $flags The glob flags.
      * @return array|false
      */
     public function getFilesRecursively($pattern, $flags = 0)
@@ -230,14 +226,14 @@ class Paths
             $files = [];
         }
 
-        $dirs = glob(dirname($pattern) . '/*', GLOB_NOSORT);
+        $dirs = glob(dirname($pattern).'/*', GLOB_NOSORT);
 
         if ($dirs === false || is_array($dirs) === false) {
             $dirs = [];
         }
 
         foreach ($dirs as $dir) {
-            $files = array_merge($files, $this->getFilesRecursively($dir . '/' . basename($pattern), $flags));
+            $files = array_merge($files, $this->getFilesRecursively($dir.'/'.basename($pattern), $flags));
         }
 
         return $files;
@@ -246,9 +242,9 @@ class Paths
     /**
      * Recursively searched for a file using multiple patterns.
      *
-     * @param string $pattern The primary pattern.
-     * @param string $subPattern The sub-pattern to search.
-     * @param string $fileName The name of the file to locate.
+     * @param  string  $pattern The primary pattern.
+     * @param  string  $subPattern The sub-pattern to search.
+     * @param  string  $fileName The name of the file to locate.
      * @return array|false|string|string[]
      */
     public function searchForFile($pattern, $subPattern, $fileName)
@@ -260,7 +256,7 @@ class Paths
         }
 
         if (Str::startsWith($pattern, Paths::SYM_FORWARD_SEPARATOR) === false) {
-            $pattern = Paths::SYM_FORWARD_SEPARATOR . $pattern;
+            $pattern = Paths::SYM_FORWARD_SEPARATOR.$pattern;
         }
 
         foreach ($files as $file) {
@@ -273,18 +269,18 @@ class Paths
             }
         }
 
-        $dirs = glob(dirname($pattern) . '/*', GLOB_NOSORT);
+        $dirs = glob(dirname($pattern).'/*', GLOB_NOSORT);
 
         if ($dirs === false || is_array($dirs) === false) {
             $dirs = [];
         }
 
         foreach ($dirs as $dir) {
-            $temp = $this->searchForFile($dir . '/' . basename($pattern), $subPattern, $fileName);
+            $temp = $this->searchForFile($dir.'/'.basename($pattern), $subPattern, $fileName);
 
             if (is_array($temp) && count($temp) > 0) {
                 $files = array_merge($files, $temp);
-            } else if (is_string($temp)) {
+            } elseif (is_string($temp)) {
                 return $temp;
             }
         }
@@ -295,21 +291,20 @@ class Paths
     /**
      * Combines the provided path segments and returns the created path.
      *
-     * @param string[] $segments The path segments to combine.
-     *
+     * @param  string[]  $segments The path segments to combine.
      * @return string
      */
     public function combine(array $segments)
     {
         array_walk($segments, [$this, 'cleanSegment']);
 
-        return $this->normalize($this->cleanSegment(join($this->config->directorySeparator, $segments)));
+        return $this->normalize($this->cleanSegment(implode($this->config->directorySeparator, $segments)));
     }
 
     /**
      * Normalizes the directory separators in the provided path.
      *
-     * @param string $path The path to normalize.
+     * @param  string  $path The path to normalize.
      * @return string|string[]
      */
     public function normalize($path)
@@ -317,10 +312,9 @@ class Paths
         $path = str_replace('\\', self::SYM_FORWARD_SEPARATOR, $path);
 
         if (Env::isWindows() === false && Str::startsWith($path, Paths::SYM_FORWARD_SEPARATOR) === false) {
-            $path = Paths::SYM_FORWARD_SEPARATOR . $path;
+            $path = Paths::SYM_FORWARD_SEPARATOR.$path;
         }
 
         return $path;
     }
-
 }

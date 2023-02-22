@@ -9,12 +9,10 @@ use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
  *
  * Allows Meerkat Core internals to reference a global implementation
  *
- * @package Stillat\Meerkat\Core\Threads
  * @since 2.0.0
  */
 class ThreadManagerFactory
 {
-
     /**
      * A reference to the ThreadManager instance.
      *
@@ -25,7 +23,7 @@ class ThreadManagerFactory
     /**
      * Returns a value that indicates if a ThreadManager instance was set.
      *
-     * @return boolean
+     * @return bool
      */
     public static function hasInstance()
     {
@@ -39,5 +37,4 @@ class ThreadManagerFactory
 
         return true;
     }
-
 }

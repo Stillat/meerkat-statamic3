@@ -9,13 +9,12 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
  *
  * Provides utilities to locate comments from a list of input fields.
  *
- * @package Stillat\Meerkat\Core\Comments
  * @since 2.0.0
  */
 class IdRetriever
 {
-
     const KEY_IDS = 'ids';
+
     const KEY_IS_REPLYING = 'is_reply';
 
     /**
@@ -24,7 +23,7 @@ class IdRetriever
      * If a shared instance has been supplied to CommentManagerFactory,
      * this method will validate the existence of the found comment.
      *
-     * @param array $fields The fields to retrieve data for.
+     * @param  array  $fields The fields to retrieve data for.
      * @return array
      */
     public static function getIdAndValidateExistence($fields)
@@ -32,7 +31,7 @@ class IdRetriever
         $isReply = false;
         $replyingTo = null;
 
-        if (isset($fields[self::KEY_IDS]) && !empty($fields[self::KEY_IDS])) {
+        if (isset($fields[self::KEY_IDS]) && ! empty($fields[self::KEY_IDS])) {
             if (is_array($fields[self::KEY_IDS]) && count($fields[self::KEY_IDS]) > 0) {
                 $replyingTo = $fields[self::KEY_IDS][0];
             } else {
@@ -61,8 +60,7 @@ class IdRetriever
 
         return [
             self::KEY_IS_REPLYING => $isReply,
-            CommentContract::KEY_ID => $replyingTo
+            CommentContract::KEY_ID => $replyingTo,
         ];
     }
-
 }

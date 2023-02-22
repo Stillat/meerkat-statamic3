@@ -13,12 +13,10 @@ use Stillat\Meerkat\Core\Exceptions\InconsistentCompositionException;
  * Presence of this trait indicates that the eventual
  * implementation should provide access to a parser.
  *
- * @package Stillat\Meerkat\Core\Parsing
  * @since 2.0.0
  */
 trait UsesYAMLParser
 {
-
     /**
      * The YAMLParserContract implementation instance.
      *
@@ -30,6 +28,7 @@ trait UsesYAMLParser
      * Returns access to an AbstractYAMLParser instance.
      *
      * @return YAMLParserContract
+     *
      * @throws InconsistentCompositionException
      */
     protected function getYamlParser()
@@ -44,11 +43,10 @@ trait UsesYAMLParser
     /**
      * Sets the YAMLParserContract implementation instance.
      *
-     * @param YAMLParserContract $yamlParser The parser instance.
+     * @param  YAMLParserContract  $yamlParser The parser instance.
      */
     public function setYamlParser($yamlParser)
     {
         $this->yamlParser = $yamlParser;
     }
-
 }

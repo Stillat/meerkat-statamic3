@@ -8,13 +8,11 @@ use Stillat\Meerkat\Core\Http\Responses\Responses;
 
 class IndexController extends CpController
 {
-
     public function index()
     {
         return Responses::successWithData([
             'product' => Addon::ADDON_NAME,
-            'version' => Addon::VERSION
+            'version' => Addon::VERSION,
         ]);
     }
-
 }

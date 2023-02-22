@@ -14,13 +14,14 @@ use Stillat\Meerkat\Core\Tasks\Task;
  *
  * Manages the interactions between the Tasks sub-system and the user's local filesystem.
  *
- * @package Stillat\Meerkat\Core\Storage\Drivers\Local
  * @since 2.0.0
  */
 class LocalTaskStorageManager implements TaskStorageManagerContract
 {
     const EXT_TASK = '.task';
+
     const EXT_DONE = '.done';
+
     const EXT_CANCELED = '.cancel';
 
     /**
@@ -74,7 +75,7 @@ class LocalTaskStorageManager implements TaskStorageManagerContract
     /**
      * Saves the provided task to storage.
      *
-     * @param TaskContract $task The task to save.
+     * @param  TaskContract  $task The task to save.
      * @return bool
      */
     public function saveTask(TaskContract $task)
@@ -96,21 +97,21 @@ class LocalTaskStorageManager implements TaskStorageManagerContract
     /**
      * Constructs the storage path to the main task file.
      *
-     * @param string $taskId The task's identifier.
+     * @param  string  $taskId The task's identifier.
      * @return string
      */
     private function getTaskFilePath($taskId)
     {
         return $this->paths->combine([
             $this->taskStoragePath,
-            $taskId, self::EXT_TASK
+            $taskId, self::EXT_TASK,
         ]);
     }
 
     /**
      * Prepares the base directory for the tasks's file storage.
      *
-     * @param string $taskPath The tasks' storage path.
+     * @param  string  $taskPath The tasks' storage path.
      */
     private function prepareTaskPath($taskPath)
     {
@@ -124,7 +125,7 @@ class LocalTaskStorageManager implements TaskStorageManagerContract
     /**
      * Attempts to mark the task as complete.
      *
-     * @param TaskContract $task The task.
+     * @param  TaskContract  $task The task.
      * @return bool
      */
     public function markComplete(TaskContract $task)
@@ -135,7 +136,7 @@ class LocalTaskStorageManager implements TaskStorageManagerContract
     /**
      * Attempts to mark the task as complete.
      *
-     * @param string $taskId The task identifier.
+     * @param  string  $taskId The task identifier.
      * @return bool
      */
     public function markCompleteById($taskId)
@@ -154,7 +155,7 @@ class LocalTaskStorageManager implements TaskStorageManagerContract
     /**
      * Tests if a task with the provided identifier exists.
      *
-     * @param string $taskId The task identifier.
+     * @param  string  $taskId The task identifier.
      * @return bool
      */
     public function existsById($taskId)
@@ -167,21 +168,21 @@ class LocalTaskStorageManager implements TaskStorageManagerContract
     /**
      * Constructs the completed-flag path for the task identifier.
      *
-     * @param string $taskId The task's identifier.
+     * @param  string  $taskId The task's identifier.
      * @return string
      */
     private function getTaskCompletedPath($taskId)
     {
         return $this->paths->combine([
             $this->taskStoragePath,
-            $taskId, self::EXT_DONE
+            $taskId, self::EXT_DONE,
         ]);
     }
 
     /**
      * Attempts to mark the task as canceled.
      *
-     * @param TaskContract $task The task.
+     * @param  TaskContract  $task The task.
      * @return bool
      */
     public function markCanceled(TaskContract $task)
@@ -192,7 +193,7 @@ class LocalTaskStorageManager implements TaskStorageManagerContract
     /**
      * Attempts to mark the task as canceled.
      *
-     * @param string $taskId The task identifier.
+     * @param  string  $taskId The task identifier.
      * @return bool
      */
     public function markCanceledById($taskId)
@@ -211,21 +212,21 @@ class LocalTaskStorageManager implements TaskStorageManagerContract
     /**
      * Constructs the canceled-flag path for the task identifier.
      *
-     * @param string $taskId The task's identifier.
+     * @param  string  $taskId The task's identifier.
      * @return string
      */
     private function getTaskCanceledPath($taskId)
     {
         return $this->paths->combine([
             $this->taskStoragePath,
-            $taskId, self::EXT_CANCELED
+            $taskId, self::EXT_CANCELED,
         ]);
     }
 
     /**
      * Checks if the task was canceled.
      *
-     * @param TaskContract $task The task.
+     * @param  TaskContract  $task The task.
      * @return bool
      */
     public function isTaskCanceled(TaskContract $task)
@@ -236,7 +237,7 @@ class LocalTaskStorageManager implements TaskStorageManagerContract
     /**
      * Checks if the identified task was canceled.
      *
-     * @param string $taskId The task identifier.
+     * @param  string  $taskId The task identifier.
      * @return bool
      */
     public function isTaskCanceledById($taskId)
@@ -249,7 +250,7 @@ class LocalTaskStorageManager implements TaskStorageManagerContract
     /**
      * Attempts to get the current task execution time, in seconds.
      *
-     * @param TaskContract $task The task.
+     * @param  TaskContract  $task The task.
      * @return int
      */
     public function getCurrentRunTime(TaskContract $task)
@@ -262,7 +263,7 @@ class LocalTaskStorageManager implements TaskStorageManagerContract
      *
      * Note: This method estimates the current execution time.
      *
-     * @param string $taskId The task identifier.
+     * @param  string  $taskId The task identifier.
      * @return int
      */
     public function getCurrentRunTimeById($taskId)
@@ -301,7 +302,7 @@ class LocalTaskStorageManager implements TaskStorageManagerContract
     /**
      * Checks if the identified task is complete.
      *
-     * @param string $taskId The task identifier.
+     * @param  string  $taskId The task identifier.
      * @return bool
      */
     public function isTaskCompleteById($taskId)
@@ -314,7 +315,7 @@ class LocalTaskStorageManager implements TaskStorageManagerContract
     /**
      * Checks if the identified task is complete.
      *
-     * @param TaskContract $task The task.
+     * @param  TaskContract  $task The task.
      * @return bool
      */
     public function isTaskComplete(TaskContract $task)
@@ -325,7 +326,7 @@ class LocalTaskStorageManager implements TaskStorageManagerContract
     /**
      * Attempts to remove the provided task.
      *
-     * @param TaskContract $task The task.
+     * @param  TaskContract  $task The task.
      * @return bool
      */
     public function removeTask(TaskContract $task)
@@ -336,7 +337,7 @@ class LocalTaskStorageManager implements TaskStorageManagerContract
     /**
      * Attempts to remove the provided task.
      *
-     * @param string $taskId The task identifier.
+     * @param  string  $taskId The task identifier.
      * @return bool
      */
     public function removeTaskById($taskId)
@@ -355,7 +356,7 @@ class LocalTaskStorageManager implements TaskStorageManagerContract
     /**
      * Attempts to locate the task instance with the provided identifier.
      *
-     * @param string $taskId The task's identifier.
+     * @param  string  $taskId The task's identifier.
      * @return TaskContract|null
      */
     public function findById($taskId)
@@ -385,5 +386,4 @@ class LocalTaskStorageManager implements TaskStorageManagerContract
 
         return $task;
     }
-
 }

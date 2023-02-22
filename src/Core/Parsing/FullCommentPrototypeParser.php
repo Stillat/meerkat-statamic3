@@ -16,12 +16,10 @@ use Stillat\Meerkat\Core\Storage\Drivers\Local\LocalCommentStorageManager;
  * This prototype parser produces the most consistent results across a wide
  * range of Comment data structures, but with a higher performance cost.
  *
- * @package Stillat\Meerkat\Core\Parsing
  * @since 2.1.6
  */
 class FullCommentPrototypeParser implements PrototypeParserContract
 {
-
     /**
      * The prototype comment elements to parse.
      *
@@ -58,7 +56,7 @@ class FullCommentPrototypeParser implements PrototypeParserContract
     /**
      * Sets the comment's truthy prototype elements.
      *
-     * @param array $elements The truthy prototype elements.
+     * @param  array  $elements The truthy prototype elements.
      */
     public function setTruthyElements($elements)
     {
@@ -68,7 +66,7 @@ class FullCommentPrototypeParser implements PrototypeParserContract
     /**
      * Sets the Meerkat Core configuration instance.
      *
-     * @param Configuration $configuration The configuration.
+     * @param  Configuration  $configuration The configuration.
      */
     public function setConfig(Configuration $configuration)
     {
@@ -78,7 +76,7 @@ class FullCommentPrototypeParser implements PrototypeParserContract
     /**
      * Sets the prototype elements.
      *
-     * @param array $elements The prototype elements.
+     * @param  array  $elements The prototype elements.
      */
     public function setPrototypeElements($elements)
     {
@@ -90,7 +88,7 @@ class FullCommentPrototypeParser implements PrototypeParserContract
      *
      * Supplemental data and content are ignored during this phase.
      *
-     * @param string $path The full path to the comment data.
+     * @param  string  $path The full path to the comment data.
      * @return array
      */
     public function getCommentPrototype($path)
@@ -105,7 +103,7 @@ class FullCommentPrototypeParser implements PrototypeParserContract
             $alreadyFoundContent = true;
 
             unset($parsedComment[CommentContract::KEY_LEGACY_COMMENT]);
-        } else if (array_key_exists(CommentContract::KEY_CONTENT, $parsedComment)) {
+        } elseif (array_key_exists(CommentContract::KEY_CONTENT, $parsedComment)) {
             $commentContent = $parsedComment[CommentContract::KEY_CONTENT];
 
             unset($parsedComment[CommentContract::KEY_CONTENT]);
@@ -122,8 +120,7 @@ class FullCommentPrototypeParser implements PrototypeParserContract
             LocalCommentStorageManager::KEY_HEADERS => $parsedComment,
             LocalCommentStorageManager::KEY_RAW_HEADERS => $parsedComment,
             LocalCommentStorageManager::KEY_CONTENT => $commentContent,
-            LocalCommentStorageManager::KEY_NEEDS_MIGRATION => $alreadyFoundContent
+            LocalCommentStorageManager::KEY_NEEDS_MIGRATION => $alreadyFoundContent,
         ];
     }
-
 }

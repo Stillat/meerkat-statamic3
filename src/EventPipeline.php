@@ -11,7 +11,6 @@ use Stillat\Meerkat\Core\Contracts\MutationPipelineContract;
  *
  * Provides a consistent implementation for managing event mutation pipelines.
  *
- * @package Stillat\Meerkat
  * @since 2.0.0
  */
 abstract class EventPipeline implements MutationPipelineContract
@@ -38,9 +37,9 @@ abstract class EventPipeline implements MutationPipelineContract
     /**
      * Broadcasts requests that implementations may mutate and return a modified object.
      *
-     * @param string $request The type of mutation request to propagate.
-     * @param mixed $object A reference to the object to mutate.
-     * @param callable $callback A callback to be applied to each pipeline stop.
+     * @param  string  $request The type of mutation request to propagate.
+     * @param  mixed  $object A reference to the object to mutate.
+     * @param  callable  $callback A callback to be applied to each pipeline stop.
      */
     public function mutate($request, &$object, $callback)
     {
@@ -54,8 +53,8 @@ abstract class EventPipeline implements MutationPipelineContract
     /**
      * Attempts to execute the callback after the current request.
      *
-     * @param string[] $args The arguments.
-     * @param callable $callback The callback to execute later.
+     * @param  string[]  $args The arguments.
+     * @param  callable  $callback The callback to execute later.
      */
     public function delayExecute($args, $callback)
     {
@@ -69,5 +68,4 @@ abstract class EventPipeline implements MutationPipelineContract
             $callback($args);
         }
     }
-
 }

@@ -4,7 +4,6 @@ namespace Stillat\Meerkat\Http\Controllers;
 
 use Illuminate\Http\Concerns\InteractsWithInput;
 use Illuminate\Support\MessageBag;
-use Illuminate\Validation\UnauthorizedException;
 use Illuminate\Validation\ValidationException;
 use Statamic\Contracts\Auth\UserRepository;
 use Statamic\Events\FormSubmitted;
@@ -14,7 +13,6 @@ use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadManagerContract;
-use Stillat\Meerkat\Core\Logging\ErrorReporterFactory;
 use Stillat\Meerkat\Core\Support\Str;
 use Stillat\Meerkat\Exceptions\FormValidationException;
 use Stillat\Meerkat\Exceptions\RejectSubmissionException;
@@ -27,7 +25,6 @@ use Stillat\Meerkat\Forms\MockSubmission;
  *
  * Accepts new comment submission requests.
  *
- * @package Stillat\Meerkat\Http\Controllers
  * @since 2.0.0
  */
 class SocializeController extends Controller
@@ -35,7 +32,9 @@ class SocializeController extends Controller
     use InteractsWithInput;
 
     const KEY_SUBMISSION = 'submission';
+
     const KEY_ERRORS = 'errors';
+
     const KEY_SUCCESS = 'success';
 
     /**
@@ -205,7 +204,7 @@ class SocializeController extends Controller
      * Runs Statamic's form submission creating event to allow
      * other Statamic addon's to intercept the submission.
      *
-     * @param array $data The submission data.
+     * @param  array  $data The submission data.
      * @return array
      */
     private function runStatamicCreatingEvent($data)
@@ -219,7 +218,7 @@ class SocializeController extends Controller
 
         return [
             self::KEY_ERRORS => $errors,
-            self::KEY_SUBMISSION => $mockedSubmission
+            self::KEY_SUBMISSION => $mockedSubmission,
         ];
     }
 
@@ -228,7 +227,7 @@ class SocializeController extends Controller
         if (request()->ajax()) {
             return response([
                 self::KEY_SUCCESS => true,
-                self::KEY_SUBMISSION => $data
+                self::KEY_SUBMISSION => $data,
             ]);
         }
 
@@ -239,7 +238,7 @@ class SocializeController extends Controller
         $mockSubmission = new MockSubmission();
         $mockSubmission->data($data);
 
-        session()->flash(MeerkatForm::getFormSessionHandle($meerkatBlueprint) . '.success', __('Submission successful.'));
+        session()->flash(MeerkatForm::getFormSessionHandle($meerkatBlueprint).'.success', __('Submission successful.'));
         session()->flash(self::KEY_SUBMISSION, $mockSubmission);
 
         $jumpSuffix = $this->getJumpSuffix($mockSubmission->id());
@@ -258,9 +257,9 @@ class SocializeController extends Controller
 
             if (Str::startsWith($jumpValue, 'to:')) {
                 $jumpValue = mb_substr($jumpValue, 3);
-            } else if (Str::startsWith($jumpValue, 'comment:id') && $id != null) {
+            } elseif (Str::startsWith($jumpValue, 'comment:id') && $id != null) {
                 $jumpValue = '#comment-'.$id;
-            } else if (Str::startsWith($jumpValue, 'comment:id|') && $id == null) {
+            } elseif (Str::startsWith($jumpValue, 'comment:id|') && $id == null) {
                 $jumpValue = mb_substr($jumpValue, 11);
             }
         }
@@ -271,7 +270,7 @@ class SocializeController extends Controller
     /**
      * Adds the request information (such as User-Agent) to the comment's data.
      *
-     * @param array $data The comment data.
+     * @param  array  $data The comment data.
      * @return array
      */
     private function fillWithRequestData($data)
@@ -299,7 +298,7 @@ class SocializeController extends Controller
     /**
      * Adds the current authenticated user information, if the email addresses match.
      *
-     * @param array $data The comment's data.
+     * @param  array  $data The comment's data.
      * @return array
      */
     private function fillWithUserData($data)
@@ -325,12 +324,11 @@ class SocializeController extends Controller
     /**
      * Fills the comment data with the context's information.
      *
-     * @param array $data The comment's data.
+     * @param  array  $data The comment's data.
      * @return array
      */
     private function fillWithEntryData($data)
     {
         return array_merge($data, $this->formHandler->getEntryData());
     }
-
 }

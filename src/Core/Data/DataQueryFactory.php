@@ -9,12 +9,10 @@ use Stillat\Meerkat\Core\Contracts\Data\QueryFactoryContract;
  *
  * Provides utilities for generating new DataQuery instances.
  *
- * @package Stillat\Meerkat\Core\Data
  * @since 2.0.0
  */
 class DataQueryFactory
 {
-
     /**
      * The QueryFactoryContract implementation instance.
      *
@@ -35,5 +33,4 @@ class DataQueryFactory
 
         return DataQueryFactory::$queryBuilderFactory->getNew();
     }
-
 }

@@ -9,13 +9,10 @@ use Stillat\Meerkat\Core\Contracts\Threads\ContextResolverContract;
  *
  * Provides Meerkat Core internals access to a shared instance of the CommentResolverContract.
  *
- * @package Stillat\Meerkat\Core\Threads
  * @since 2.0.0
  */
 class ContextResolverFactory
 {
-
-
     /**
      * A reference to the ContextResolverContract implementation instance.
      *
@@ -40,5 +37,4 @@ class ContextResolverFactory
 
         return true;
     }
-
 }

@@ -3,13 +3,13 @@
 namespace Stillat\Meerkat\Support\Facades;
 
 use Illuminate\Support\Facades\Facade;
+use Stillat\Meerkat\Core\Guard\GuardResult;
 use Stillat\Meerkat\Core\Guard\SpamServiceWrapper;
 use Stillat\Meerkat\Core\Guard\Specimen;
-use Stillat\Meerkat\Core\Guard\GuardResult;
 
 /**
  * Class Spam
- * @package Stillat\Meerkat\Support\Facades
+ *
  * @since 2.2.0
  *
  * @method static bool isSpam(Specimen $specimen)
@@ -18,7 +18,6 @@ use Stillat\Meerkat\Core\Guard\GuardResult;
  */
 class Spam extends Facade
 {
-
     protected static function getFacadeAccessor()
     {
         return SpamServiceWrapper::class;
@@ -27,12 +26,11 @@ class Spam extends Facade
     /**
      * Creates a new Specimen instance and returns it.
      *
-     * @param array $data The data attributes to use, if any.
+     * @param  array  $data The data attributes to use, if any.
      * @return Specimen
      */
     public static function make($data = [])
     {
         return (new Specimen())->withData($data);
     }
-
 }

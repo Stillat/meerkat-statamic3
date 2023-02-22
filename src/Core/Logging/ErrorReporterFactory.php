@@ -9,12 +9,10 @@ use Stillat\Meerkat\Core\Contracts\Logging\ErrorReporterManagerContract;
  *
  * Provides a central location for Meerkat internals to access a global ErrorReporterManagerContract instance.
  *
- * @package Stillat\Meerkat\Core\Logging
  * @since 2.3.0
  */
 class ErrorReporterFactory
 {
-
     /**
      * The global ErrorReporterManagerContract instance, if any.
      *
@@ -25,7 +23,7 @@ class ErrorReporterFactory
     /**
      * Reports the error to the global error report manager, if one exists.
      *
-     * @param mixed $errorObject The error object.
+     * @param  mixed  $errorObject The error object.
      */
     public static function report($errorObject)
     {
@@ -33,5 +31,4 @@ class ErrorReporterFactory
             self::$instance->report($errorObject);
         }
     }
-
 }

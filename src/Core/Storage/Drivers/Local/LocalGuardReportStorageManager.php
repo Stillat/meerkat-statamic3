@@ -15,7 +15,6 @@ use Stillat\Meerkat\Core\Storage\Paths;
  *
  * Manages the interactions between Meerkat Guard Reports and a local file system.
  *
- * @package Stillat\Meerkat\Core\Storage\Drivers\Local
  * @since 2.0.0
  */
 class LocalGuardReportStorageManager implements GuardReportStorageManagerContract
@@ -53,7 +52,7 @@ class LocalGuardReportStorageManager implements GuardReportStorageManagerContrac
     /**
      * Attempts to locate the guard report for the provided comment identifier.
      *
-     * @param string $commentId The comment identifier.
+     * @param  string  $commentId The comment identifier.
      * @return SpamCheckReport|null
      */
     public function getReportForCommentId($commentId)
@@ -64,7 +63,6 @@ class LocalGuardReportStorageManager implements GuardReportStorageManagerContrac
     /**
      * Attempts to locate the guard report for the provided comment.
      *
-     * @param CommentContract $comment
      * @return SpamCheckReport|null
      */
     public function getGuardReportForComment(CommentContract $comment)
@@ -87,7 +85,7 @@ class LocalGuardReportStorageManager implements GuardReportStorageManagerContrac
     /**
      * Tests if a Guard report exists for the provided comment.
      *
-     * @param CommentContract $comment The comment.
+     * @param  CommentContract  $comment The comment.
      * @return bool
      */
     public function hasGuardReport(CommentContract $comment)
@@ -100,7 +98,7 @@ class LocalGuardReportStorageManager implements GuardReportStorageManagerContrac
     /**
      * Retrieves the file path for the comment's revisions.
      *
-     * @param CommentContract $comment The comment to locate the path for.
+     * @param  CommentContract  $comment The comment to locate the path for.
      * @return string
      */
     private function getReportStoragePath(CommentContract $comment)
@@ -109,15 +107,15 @@ class LocalGuardReportStorageManager implements GuardReportStorageManagerContrac
 
         return $this->paths->combine([
             $storageDirectory,
-            self::PATH_REPORT
+            self::PATH_REPORT,
         ]);
     }
 
     /**
      * Attempts to save the Guard report for the provided comment.
      *
-     * @param string $commentId The comment identifier.
-     * @param SpamCheckReport $report The report to persist.
+     * @param  string  $commentId The comment identifier.
+     * @param  SpamCheckReport  $report The report to persist.
      * @return bool
      */
     public function addGuardReportById($commentId, SpamCheckReport $report)
@@ -128,8 +126,8 @@ class LocalGuardReportStorageManager implements GuardReportStorageManagerContrac
     /**
      * Attempts to save the Guard report for the provided comment.
      *
-     * @param CommentContract $comment The comment to save the report for.
-     * @param SpamCheckReport $report The report to persist.
+     * @param  CommentContract  $comment The comment to save the report for.
+     * @param  SpamCheckReport  $report The report to persist.
      * @return bool
      */
     public function addGuardReport(CommentContract $comment, SpamCheckReport $report)
@@ -149,7 +147,7 @@ class LocalGuardReportStorageManager implements GuardReportStorageManagerContrac
     /**
      * Attempts to remove any existing Guard reports for the provided comment.
      *
-     * @param string $commentId The comment identifier.
+     * @param  string  $commentId The comment identifier.
      * @return bool
      */
     public function removeGuardReportById($commentId)
@@ -160,7 +158,7 @@ class LocalGuardReportStorageManager implements GuardReportStorageManagerContrac
     /**
      * Attempts to remove any existing Guard reports for the provided comment.
      *
-     * @param CommentContract $comment The comment.
+     * @param  CommentContract  $comment The comment.
      * @return bool
      */
     public function removeGuardReport(CommentContract $comment)
@@ -183,12 +181,11 @@ class LocalGuardReportStorageManager implements GuardReportStorageManagerContrac
     /**
      * Tests if a Guard report exists for the provided comment.
      *
-     * @param string $commentId The comment identifier.
+     * @param  string  $commentId The comment identifier.
      * @return bool
      */
     public function hasGuardReportById($commentId)
     {
         return $this->hasGuardReport(Comment::find($commentId));
     }
-
 }

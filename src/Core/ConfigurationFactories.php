@@ -7,12 +7,10 @@ namespace Stillat\Meerkat\Core;
  *
  * Provides mechanisms for accessing shared configuration containers.
  *
- * @package Stillat\Meerkat\Core
  * @since 2.0.0
  */
 class ConfigurationFactories
 {
-
     /**
      * A shared configuration container instance.
      *
@@ -33,5 +31,4 @@ class ConfigurationFactories
 
         return true;
     }
-
 }

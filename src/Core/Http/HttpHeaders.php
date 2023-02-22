@@ -7,12 +7,10 @@ namespace Stillat\Meerkat\Core\Http;
  *
  * Represents a collection of request HTTP headers.
  *
- * @package Stillat\Meerkat\Core\Http
  * @since 2.0.0
  */
 class HttpHeaders
 {
-
     /**
      * A collection of raw header values.
      *
@@ -74,7 +72,7 @@ class HttpHeaders
      * Gets a header's value.
      *
      * @param $header string The header to locate.
-     * @param null $default An optional default value.
+     * @param  null  $default An optional default value.
      * @return mixed|null
      */
     public function getHeaderValue($header, $default = null)
@@ -96,5 +94,4 @@ class HttpHeaders
     {
         return array_key_exists(mb_strtolower($header), $this->keyedHeaders);
     }
-
 }

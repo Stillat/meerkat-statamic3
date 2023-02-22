@@ -10,18 +10,24 @@ use Stillat\Meerkat\Core\Support\Str;
  *
  * Provides utilities for comparing values using a string-input comparison operator.
  *
- * @package Stillat\Meerkat\Core\Data
  * @since 2.0.0
  */
 class Comparator
 {
     const COMPARISON_LOSE_EQUALITY = '=';
+
     const COMPARISON_LOSE_INEQUALITY = '!=';
+
     const COMPARISON_STRICT_EQUALITY = '==';
+
     const COMPARISON_STRICT_INEQUALITY = '!==';
+
     const COMPARISON_GREATER_THAN = '>';
+
     const COMPARISON_GREATER_THAN_OR_EQUALS = '>=';
+
     const COMPARISON_LESS_THAN = '<';
+
     const COMPARISON_LESS_THAN_OR_EQUALS = '<=';
 
     /**
@@ -37,7 +43,7 @@ class Comparator
         self::COMPARISON_GREATER_THAN,
         self::COMPARISON_GREATER_THAN_OR_EQUALS,
         self::COMPARISON_LESS_THAN,
-        self::COMPARISON_LESS_THAN_OR_EQUALS
+        self::COMPARISON_LESS_THAN_OR_EQUALS,
     ];
 
     public function compare($property, $comparison, $checkValue)
@@ -70,8 +76,8 @@ class Comparator
     /**
      * Tests if the provided value is strictly not equal to the check value.
      *
-     * @param mixed $property The value to check.
-     * @param mixed $checkValue The value to check against.
+     * @param  mixed  $property The value to check.
+     * @param  mixed  $checkValue The value to check against.
      * @return bool
      */
     protected function checkStrictInequality($property, $checkValue)
@@ -82,8 +88,8 @@ class Comparator
     /**
      * Tests if the provided value is not equal to the check value.
      *
-     * @param mixed $property The value to check.
-     * @param mixed $checkValue The value to check against.
+     * @param  mixed  $property The value to check.
+     * @param  mixed  $checkValue The value to check against.
      * @return bool
      */
     protected function checkLoseInequality($property, $checkValue)
@@ -94,8 +100,8 @@ class Comparator
     /**
      * Tests is the provided value is equal to and has the same type as the check value.
      *
-     * @param mixed $property The value to check.
-     * @param mixed $checkValue The value to check against.
+     * @param  mixed  $property The value to check.
+     * @param  mixed  $checkValue The value to check against.
      * @return bool
      */
     protected function checkStrictEquality($property, $checkValue)
@@ -106,8 +112,8 @@ class Comparator
     /**
      * Tests is the provided value is greater than the check value.
      *
-     * @param mixed $property The value to check.
-     * @param mixed $checkValue The value to check against.
+     * @param  mixed  $property The value to check.
+     * @param  mixed  $checkValue The value to check against.
      * @return bool
      */
     protected function checkGreaterThan($property, $checkValue)
@@ -118,8 +124,8 @@ class Comparator
     /**
      * Tests is the provided value is greater than or equal to the check value.
      *
-     * @param mixed $property The value to check.
-     * @param mixed $checkValue The value to check against.
+     * @param  mixed  $property The value to check.
+     * @param  mixed  $checkValue The value to check against.
      * @return bool
      */
     protected function checkGreaterOrEqualTo($property, $checkValue)
@@ -130,8 +136,8 @@ class Comparator
     /**
      * Tests is the provided value is less than to the check value.
      *
-     * @param mixed $property The value to check.
-     * @param mixed $checkValue The value to check against.
+     * @param  mixed  $property The value to check.
+     * @param  mixed  $checkValue The value to check against.
      * @return bool
      */
     protected function checkLessThan($property, $checkValue)
@@ -142,8 +148,8 @@ class Comparator
     /**
      * Tests is the provided value is less than or equal to the check value.
      *
-     * @param mixed $property The value to check.
-     * @param mixed $checkValue The value to check against.
+     * @param  mixed  $property The value to check.
+     * @param  mixed  $checkValue The value to check against.
      * @return bool
      */
     protected function checkLessThanOrEqualTo($property, $checkValue)
@@ -154,13 +160,12 @@ class Comparator
     /**
      * Tests is the provided value is equal to the check value.
      *
-     * @param mixed $property The value to check.
-     * @param mixed $checkValue The value to check against.
+     * @param  mixed  $property The value to check.
+     * @param  mixed  $checkValue The value to check against.
      * @return bool
      */
     protected function checkEquality($property, $checkValue)
     {
         return $property == $checkValue;
     }
-
 }

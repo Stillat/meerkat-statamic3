@@ -23,7 +23,6 @@ class ExportController extends CpController
 {
     use UsesTranslations;
 
-
     // TODO: Check for exceptions on export and log to error logs.
 
     /**
@@ -52,7 +51,7 @@ class ExportController extends CpController
                 return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_VIEW);
             } else {
                 abort(403, 'Unauthorized', [
-                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_VIEW
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_VIEW,
                 ]);
                 exit;
             }
@@ -81,11 +80,11 @@ class ExportController extends CpController
         if ($this->request->has('download')) {
             $dir = storage_path('meerkat/tmp/downloads');
 
-            if (!file_exists($dir)) {
+            if (! file_exists($dir)) {
                 mkdir($dir, Paths::$directoryPermissions, true);
             }
 
-            $path = storage_path('meerkat/tmp/downloads/Comments-' . time() . '.' . $extension);
+            $path = storage_path('meerkat/tmp/downloads/Comments-'.time().'.'.$extension);
             File::put($path, $data);
 
             $response = response()->download($path)->deleteFileAfterSend(true);
@@ -106,7 +105,7 @@ class ExportController extends CpController
                 return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_VIEW);
             } else {
                 abort(403, 'Unauthorized', [
-                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_VIEW
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_VIEW,
                 ]);
                 exit;
             }
@@ -115,7 +114,7 @@ class ExportController extends CpController
         $exportHeaders = [];
 
         foreach ($this->exportFields as $field) {
-            $exportHeaders[] = $this->trans('fields.' . $field);
+            $exportHeaders[] = $this->trans('fields.'.$field);
         }
 
         $data = '';
@@ -137,5 +136,4 @@ class ExportController extends CpController
 
         return $this->getResponse($data, 'csv', $csvExporter->getContentType());
     }
-
 }

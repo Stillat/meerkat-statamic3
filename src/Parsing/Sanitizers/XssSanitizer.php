@@ -11,12 +11,10 @@ use Stillat\Meerkat\Core\Support\TypeConversions;
  *
  * Removes the configured HTML tags from input values.
  *
- * @package Stillat\Meerkat\Parsing\Sanitizers
  * @since 2.0.0
  */
 class XssSanitizer implements OutputSanitizerContract
 {
-
     /**
      * The Meerkat Core configuration instance.
      *
@@ -26,6 +24,7 @@ class XssSanitizer implements OutputSanitizerContract
 
     /**
      * The configured HTML tags to keep.
+     *
      * @var string
      */
     protected $tagsToKeep = '';
@@ -42,7 +41,7 @@ class XssSanitizer implements OutputSanitizerContract
     /**
      * Sanitizes the input value.
      *
-     * @param string $value The value to sanitize.
+     * @param  string  $value The value to sanitize.
      * @return string
      */
     public function sanitize($value)
@@ -53,5 +52,4 @@ class XssSanitizer implements OutputSanitizerContract
 
         return $value;
     }
-
 }

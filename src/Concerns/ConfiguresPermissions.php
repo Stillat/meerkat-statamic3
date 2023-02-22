@@ -19,7 +19,7 @@ trait ConfiguresPermissions
     /**
      * Sets the role-based permissions rules.
      *
-     * @param array $permissions The user-configured permission rules.
+     * @param  array  $permissions The user-configured permission rules.
      */
     protected function setPermissions($permissions)
     {
@@ -36,7 +36,7 @@ trait ConfiguresPermissions
         foreach ($allPermissionKeys as $permissionCategory) {
             if (array_key_exists($permissionCategory, $this->configuredPermissions) == false) {
                 $this->configuredPermissions[$permissionCategory] = [];
-            } else if ($this->configuredPermissions[$permissionCategory] === null) {
+            } elseif ($this->configuredPermissions[$permissionCategory] === null) {
                 $this->configuredPermissions[$permissionCategory] = [];
             }
         }
@@ -44,39 +44,39 @@ trait ConfiguresPermissions
         // Get rid of the PERMISSION_ALL entry.
         array_shift($allPermissionKeys);
 
-        if (!is_array($this->configuredPermissions[AccessManager::PERMISSION_ALL])) {
+        if (! is_array($this->configuredPermissions[AccessManager::PERMISSION_ALL])) {
             $this->configuredPermissions[AccessManager::PERMISSION_ALL] = [];
         }
 
-        if (!is_array($this->configuredPermissions[AccessManager::PERMISSION_CAN_VIEW])) {
+        if (! is_array($this->configuredPermissions[AccessManager::PERMISSION_CAN_VIEW])) {
             $this->configuredPermissions[AccessManager::PERMISSION_CAN_VIEW] = [];
         }
 
-        if (!is_array($this->configuredPermissions[AccessManager::PERMISSION_CAN_APPROVE])) {
+        if (! is_array($this->configuredPermissions[AccessManager::PERMISSION_CAN_APPROVE])) {
             $this->configuredPermissions[AccessManager::PERMISSION_CAN_APPROVE] = [];
         }
 
-        if (!is_array($this->configuredPermissions[AccessManager::PERMISSION_CAN_UNAPPROVE])) {
+        if (! is_array($this->configuredPermissions[AccessManager::PERMISSION_CAN_UNAPPROVE])) {
             $this->configuredPermissions[AccessManager::PERMISSION_CAN_UNAPPROVE] = [];
         }
 
-        if (!is_array($this->configuredPermissions[AccessManager::PERMISSION_CAN_REPLY])) {
+        if (! is_array($this->configuredPermissions[AccessManager::PERMISSION_CAN_REPLY])) {
             $this->configuredPermissions[AccessManager::PERMISSION_CAN_REPLY] = [];
         }
 
-        if (!is_array($this->configuredPermissions[AccessManager::PERMISSION_CAN_EDIT])) {
+        if (! is_array($this->configuredPermissions[AccessManager::PERMISSION_CAN_EDIT])) {
             $this->configuredPermissions[AccessManager::PERMISSION_CAN_EDIT] = [];
         }
 
-        if (!is_array($this->configuredPermissions[AccessManager::PERMISSION_CAN_REPORT_SPAM])) {
+        if (! is_array($this->configuredPermissions[AccessManager::PERMISSION_CAN_REPORT_SPAM])) {
             $this->configuredPermissions[AccessManager::PERMISSION_CAN_REPORT_SPAM] = [];
         }
 
-        if (!is_array($this->configuredPermissions[AccessManager::PERMISSION_CAN_REPORT_HAM])) {
+        if (! is_array($this->configuredPermissions[AccessManager::PERMISSION_CAN_REPORT_HAM])) {
             $this->configuredPermissions[AccessManager::PERMISSION_CAN_REPORT_HAM] = [];
         }
 
-        if (!is_array($this->configuredPermissions[AccessManager::PERMISSION_CAN_REMOVE])) {
+        if (! is_array($this->configuredPermissions[AccessManager::PERMISSION_CAN_REMOVE])) {
             $this->configuredPermissions[AccessManager::PERMISSION_CAN_REMOVE] = [];
         }
 
@@ -97,5 +97,4 @@ trait ConfiguresPermissions
 
         $this->permissionsConfigured = true;
     }
-
 }

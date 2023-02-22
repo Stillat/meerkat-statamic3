@@ -9,7 +9,6 @@ use Stillat\Meerkat\Core\DataObject;
  *
  * Represents a thread's meta data and associated data.
  *
- * @package Stillat\Meerkat\Core\Threads
  * @since 2.0.0
  */
 class ThreadMetaData
@@ -17,7 +16,9 @@ class ThreadMetaData
     use DataObject;
 
     const KEY_IS_TRASHED = 'trashed';
+
     const KEY_CREATED_UTC = 'created';
+
     const KEY_ATTRIBUTES = 'attributes';
 
     /**
@@ -51,8 +52,7 @@ class ThreadMetaData
     /**
      * Attempts to create a thread from the provided data.
      *
-     * @param array $data The thread data.
-     *
+     * @param  array  $data The thread data.
      * @return ThreadMetaData
      */
     public static function makeFromArray($data)
@@ -67,7 +67,7 @@ class ThreadMetaData
     /**
      * Sets the internal properties to match the supplied data.
      *
-     * @param array $data The data to use.
+     * @param  array  $data The data to use.
      */
     public function fromArray($data)
     {
@@ -87,7 +87,7 @@ class ThreadMetaData
     /**
      * Sets the timestamp the thread was created on.
      *
-     * @param int $time The timestamp.
+     * @param  int  $time The timestamp.
      */
     public function setCreatedOn($time)
     {
@@ -97,7 +97,7 @@ class ThreadMetaData
     /**
      * Sets the timestamp the thread's context was created on.
      *
-     * @param int $time The timestamp.
+     * @param  int  $time The timestamp.
      */
     public function setContextCreatedOn($time)
     {
@@ -109,7 +109,7 @@ class ThreadMetaData
      *
      * Creation time is only updated if the incoming value is older than the current value.
      *
-     * @param ThreadMetaData $newData The data to update the current state with.
+     * @param  ThreadMetaData  $newData The data to update the current state with.
      */
     public function update(ThreadMetaData $newData)
     {
@@ -153,7 +153,7 @@ class ThreadMetaData
     /**
      * Sets whether or not the thread has been deleted.
      *
-     * @param bool $isTrashed Whether the thread is deleted.
+     * @param  bool  $isTrashed Whether the thread is deleted.
      */
     public function setIsTrashed($isTrashed)
     {
@@ -170,8 +170,7 @@ class ThreadMetaData
         return [
             self::KEY_IS_TRASHED => $this->isTrashed,
             self::KEY_CREATED_UTC => $this->createdUtc,
-            self::KEY_ATTRIBUTES => $this->attributes
+            self::KEY_ATTRIBUTES => $this->attributes,
         ];
     }
-
 }

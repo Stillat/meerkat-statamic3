@@ -10,7 +10,6 @@ use Stillat\Meerkat\Core\DataObject;
  *
  * Provided to listeners when a thread is being moved.
  *
- * @package Stillat\Meerkat\Core\Threads
  * @since 2.0.0
  */
 class ThreadMovingEventArgs implements DataObjectContract
@@ -37,6 +36,7 @@ class ThreadMovingEventArgs implements DataObjectContract
      * @var array
      */
     protected $attributes = [];
+
     /**
      * Indicates if Meerkat should proceed with the move.
      *
@@ -77,5 +77,4 @@ class ThreadMovingEventArgs implements DataObjectContract
     {
         return $this->doMove;
     }
-
 }

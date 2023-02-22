@@ -15,12 +15,10 @@ use Stillat\Meerkat\Core\Exceptions\InconsistentCompositionException;
  *
  * Provides utilities to remove all comments currently marked as spam.
  *
- * @package Stillat\Meerkat\Core\Guard
  * @since 2.0.8
  */
 class SpamCleaner
 {
-
     /**
      * The DataQuery instance.
      *
@@ -45,15 +43,16 @@ class SpamCleaner
     /**
      * Removes all comments currently marked as spam.
      *
+     * @return VariableSuccessResult
+     *
      * @throws FilterException
      * @throws DataQueryException
      * @throws InconsistentCompositionException
-     * @return VariableSuccessResult
      */
     public function deleteAllSpam()
     {
         $spamComments = array_keys($this->manager->queryAll($this->dataQuery)->getData());
+
         return $this->manager->getStorageManager()->removeAll($spamComments);
     }
-
 }

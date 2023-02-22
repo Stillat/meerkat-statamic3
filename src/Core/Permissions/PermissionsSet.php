@@ -7,12 +7,10 @@ namespace Stillat\Meerkat\Core\Permissions;
  *
  * Represents a collection of permissions a user may have.
  *
- * @package Stillat\Meerkat\Core\Permissions
  * @since 2.0.0
  */
 class PermissionsSet
 {
-
     /**
      * Indicates if the user may view comments.
      *
@@ -80,7 +78,7 @@ class PermissionsSet
     /**
      * Sets the user's access to all applicable permissions.
      *
-     * @param bool $canAccess Whether the identity has the permissions.
+     * @param  bool  $canAccess Whether the identity has the permissions.
      */
     private function setAuthState($canAccess)
     {
@@ -118,8 +116,7 @@ class PermissionsSet
             AccessManager::PERMISSION_CAN_EDIT => $this->canEditComments,
             AccessManager::PERMISSION_CAN_REPORT_SPAM => $this->canReportAsSpam,
             AccessManager::PERMISSION_CAN_REPORT_HAM => $this->canReportAsHam,
-            AccessManager::PERMISSION_CAN_REMOVE => $this->canRemoveComments
+            AccessManager::PERMISSION_CAN_REMOVE => $this->canRemoveComments,
         ];
     }
-
 }

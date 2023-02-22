@@ -19,7 +19,6 @@ use Stillat\Meerkat\Core\Exceptions\FilterParserException;
 use Stillat\Meerkat\Core\Exceptions\ParserException;
 use Stillat\Meerkat\Core\Parsing\ExpressionParser;
 use Stillat\Meerkat\Tags\MeerkatTag;
-use Stillat\Meerkat\Tags\Output\RecursiveThreadRenderer;
 
 /**
  * Class CollectionRenderer
@@ -28,32 +27,48 @@ use Stillat\Meerkat\Tags\Output\RecursiveThreadRenderer;
  *
  * @ls noparse
  *
- * @package Stillat\Meerkat\Tags\Responses
  * @since 2.0.0
  */
 class CollectionRenderer extends MeerkatTag
 {
     const PARAM_UNAPPROVED = 'include_unapproved';
+
     const PARAM_INCLUDE_SPAM = 'include_spam';
+
     const PARAM_WITH_TRASHED = 'with_trashed';
+
     const PARAM_FILTER = 'filter';
+
     const PARAM_FLAT = 'flat';
+
     const PARAM_ORDER = 'order';
+
     const PARAM_SINCE = 'since';
+
     const PARAM_UNTIL = 'until';
+
     const PARAM_COLLECTION_ALIAS = 'as';
+
     const PARAM_AUTO_MARKDOWN = 'auto_markdown';
 
     const PARAM_PAGINATE = 'paginate';
+
     const PARAM_OFFSET = 'offset';
+
     const PARAM_PAGEBY = 'pageby';
+
     const PARAM_DEFAULT_PAGEBY = 'page';
+
     const PARAM_LIMIT = 'limit';
 
     const RETURN_TOTAL_RESULTS = 'total_results';
+
     const RETURN_HAS_RESULTS = 'has_results';
+
     const RETURN_NO_RESULTS = 'no_results';
+
     const RETURN_ITEMS_COUNT = 'items_count';
+
     const DEFAULT_COLLECTION_NAME = 'comments';
 
     /**
@@ -142,14 +157,14 @@ class CollectionRenderer extends MeerkatTag
     /**
      * Sets the internal thread identifier.
      *
-     * @param string $threadId The thread identifier.
+     * @param  string  $threadId The thread identifier.
      */
     public function setThreadId($threadId)
     {
         $this->threadId = $threadId;
 
         if (is_object($this->threadId)) {
-            $this->threadId = (string)$this->threadId;
+            $this->threadId = (string) $this->threadId;
         }
     }
 
@@ -157,6 +172,7 @@ class CollectionRenderer extends MeerkatTag
      * Renders the tag content.
      *
      * @return string|array
+     *
      * @throws FilterException
      * @throws FilterParserException
      * @throws ParserException
@@ -244,7 +260,7 @@ class CollectionRenderer extends MeerkatTag
     private function applyFilterRestrictions()
     {
         $this->filterManager->restrictFilter('thread:in', [
-            'meerkat:all-comments'
+            'meerkat:all-comments',
         ]);
     }
 
@@ -284,7 +300,7 @@ class CollectionRenderer extends MeerkatTag
             } elseif (count($orderParts) === 1) {
                 $orders[] = [
                     PredicateBuilder::KEY_PROPERTY => trim($orderParts[0]),
-                    PredicateBuilder::KEY_IS_ASC => true
+                    PredicateBuilder::KEY_IS_ASC => true,
                 ];
             } else {
                 $ascending = true;
@@ -295,7 +311,7 @@ class CollectionRenderer extends MeerkatTag
 
                 $orders[] = [
                     PredicateBuilder::KEY_PROPERTY => trim($orderParts[0]),
-                    PredicateBuilder::KEY_IS_ASC => $ascending
+                    PredicateBuilder::KEY_IS_ASC => $ascending,
                 ];
             }
         }
@@ -326,7 +342,7 @@ class CollectionRenderer extends MeerkatTag
     /**
      * Prepares a paginated, grouped dataset for rendering.
      *
-     * @param PagedGroupedDataSetContract $dataset The grouped, and paged dataset.
+     * @param  PagedGroupedDataSetContract  $dataset The grouped, and paged dataset.
      * @return array
      */
     private function renderPaginatedGroupedDataset($dataset)
@@ -354,15 +370,15 @@ class CollectionRenderer extends MeerkatTag
             PagedDataSet::KEY_PAGINATE => $dataset->getAdditionalMetaData(),
             self::RETURN_TOTAL_RESULTS => $totalResults,
             self::RETURN_HAS_RESULTS => $hasResults,
-            self::RETURN_NO_RESULTS => !$hasResults,
-            self::RETURN_ITEMS_COUNT => $dataset->getItemsCount()
+            self::RETURN_NO_RESULTS => ! $hasResults,
+            self::RETURN_ITEMS_COUNT => $dataset->getItemsCount(),
         ];
     }
 
     /**
      * Prepares the grouped dataset for rendering.
      *
-     * @param GroupedDataSetContract $dataset The grouped dataset.
+     * @param  GroupedDataSetContract  $dataset The grouped dataset.
      * @return array
      */
     private function renderGroupedComments($dataset)
@@ -383,9 +399,9 @@ class CollectionRenderer extends MeerkatTag
 
         $groupData = array_merge($groupData, [
             self::RETURN_HAS_RESULTS => $hasResults,
-            self::RETURN_NO_RESULTS => !$hasResults,
+            self::RETURN_NO_RESULTS => ! $hasResults,
             self::RETURN_TOTAL_RESULTS => $totalItems,
-            self::RETURN_ITEMS_COUNT => $totalItems
+            self::RETURN_ITEMS_COUNT => $totalItems,
         ]);
 
         // Removes group keys before returning the data to the view engine.
@@ -398,8 +414,8 @@ class CollectionRenderer extends MeerkatTag
     /**
      * Prepares the paginated dataset for rendering.
      *
-     * @param PagedDataSetContract $dataset The paginated dataset.
-     * @param string $collectionName The name of the collection.
+     * @param  PagedDataSetContract  $dataset The paginated dataset.
+     * @param  string  $collectionName The name of the collection.
      * @return array
      */
     private function renderPaginatedComments($dataset, $collectionName)
@@ -422,18 +438,18 @@ class CollectionRenderer extends MeerkatTag
             PagedDataSet::KEY_PAGINATE => $dataset->getAdditionalMetaData(),
             self::RETURN_TOTAL_RESULTS => $totalResults,
             self::RETURN_HAS_RESULTS => $hasResults,
-            self::RETURN_NO_RESULTS => !$hasResults,
-            self::RETURN_ITEMS_COUNT => $dataset->getItemsCount()
+            self::RETURN_NO_RESULTS => ! $hasResults,
+            self::RETURN_ITEMS_COUNT => $dataset->getItemsCount(),
         ];
     }
 
     /**
      * Renders the provided list of comments.
      *
-     * @param array $comments The comments to render.
-     * @param string $collectionName The collection name.
-     * @param bool $isFlatList Indicates if the results should be a flat list.
-     * @return string
+     * @param  array  $comments The comments to render.
+     * @param  string  $collectionName The collection name.
+     * @param  bool  $isFlatList Indicates if the results should be a flat list.
+     * @return array
      */
     private function renderListComments($comments, $collectionName, $isFlatList)
     {
@@ -453,16 +469,16 @@ class CollectionRenderer extends MeerkatTag
             $displayComments = $comments;
         }
 
-        return $this->parseComments([
-            $collectionName => $displayComments
+        return $this->prepareData([
+            $collectionName => $displayComments,
         ], $this->context->toArray(), $collectionName);
     }
 
     /**
      * Recursively processes the comment's content as Markdown.
      *
-     * @param array $comments The comments to apply Markdown processing to.
-     * @param string $collectionName The inner collection name.
+     * @param  array  $comments The comments to apply Markdown processing to.
+     * @param  string  $collectionName The inner collection name.
      * @return array
      */
     private function recursivelyApplyMarkdown($comments, $collectionName)
@@ -483,14 +499,14 @@ class CollectionRenderer extends MeerkatTag
     }
 
     /**
-     * Renders a recursive thread.
+     * Prepare the data for the response.
      *
-     * @param array $data The comment data.
-     * @param array $context The render context.
-     * @param string $collectionName The name of the collection.
-     * @return string|string[]
+     * @param  array  $data The comment data.
+     * @param  array  $context The render context.
+     * @param  string  $collectionName The name of the collection.
+     * @return array
      */
-    protected function parseComments($data = [], $context = [], $collectionName = 'comments')
+    protected function prepareData($data = [], $context = [], $collectionName = 'comments')
     {
         $metaData = [];
         $totalResults = count($data[$collectionName]);
@@ -501,7 +517,7 @@ class CollectionRenderer extends MeerkatTag
                 self::RETURN_TOTAL_RESULTS => $totalResults,
                 self::RETURN_ITEMS_COUNT => $totalResults,
                 self::RETURN_HAS_RESULTS => $hasResults,
-                self::RETURN_NO_RESULTS => !$hasResults
+                self::RETURN_NO_RESULTS => ! $hasResults,
             ];
         }
 
@@ -509,10 +525,6 @@ class CollectionRenderer extends MeerkatTag
             $data = array_merge($data, $metaData);
         }
 
-
-        return RecursiveThreadRenderer::renderRecursiveThread(
-            $this->sanitizer, $this->content, $data, $context, $collectionName
-        );
+        return $data;
     }
-
 }

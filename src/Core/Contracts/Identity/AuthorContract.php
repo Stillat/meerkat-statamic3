@@ -32,23 +32,32 @@ use Stillat\Meerkat\Core\Permissions\PermissionsSet;
  * The administrator's identity would be associated
  * with the postings stored author information.
  *
- * @package Stillat\Meerkat\Core\Contracts\Identity
  * @since 2.0.0
  */
 interface AuthorContract extends DataObjectContract, Serializable
 {
-
     const KEY_USER_IP = 'user_ip';
+
     const KEY_USER_AGENT = 'user_agent';
+
     const KEY_EMAIL_ADDRESS = 'email';
+
     const KEY_NAME = 'name';
+
     const AUTHENTICATED_USER_ID = 'authenticated_user';
+
     const KEY_USER_ID = 'id';
+
     const KEY_USER = 'user';
+
     const KEY_HAS_USER = 'has_user';
+
     const KEY_PERMISSIONS = 'permissions';
+
     const KEY_AUTHOR_URL = 'url';
+
     const KEY_HAS_NAME = 'has_name';
+
     const KEY_HAS_EMAIL = 'has_email';
 
     const KEY_INITIALS = 'initials';
@@ -59,14 +68,14 @@ interface AuthorContract extends DataObjectContract, Serializable
      * to the entity it is attached to. A transient
      * author is not represented in the host sys.
      *
-     * @return boolean
+     * @return bool
      */
     public function getIsTransient();
 
     /**
      * Sets whether or not the user is persisted in the host system.
      *
-     * @param boolean $isTransient Whether or not the user is persisted.
+     * @param  bool  $isTransient Whether or not the user is persisted.
      * @return void
      */
     public function setIsTransient($isTransient);
@@ -81,7 +90,7 @@ interface AuthorContract extends DataObjectContract, Serializable
     /**
      * Sets the user string identifier.
      *
-     * @param string $userId
+     * @param  string  $userId
      * @return void
      */
     public function setId($userId);
@@ -96,7 +105,7 @@ interface AuthorContract extends DataObjectContract, Serializable
     /**
      * Sets the display name for the current author context.
      *
-     * @param string $displayName The display name to use for this author.
+     * @param  string  $displayName The display name to use for this author.
      * @return void
      */
     public function setDisplayName($displayName);
@@ -118,14 +127,14 @@ interface AuthorContract extends DataObjectContract, Serializable
     /**
      * Sets the identity's web address.
      *
-     * @param string $webAddress The web address.
+     * @param  string  $webAddress The web address.
      */
     public function setWebAddress($webAddress);
 
     /**
      * Sets the identity's email address.
      *
-     * @param string $emailAddress The identity's email address.
+     * @param  string  $emailAddress The identity's email address.
      * @return mixed
      */
     public function setEmailAddress($emailAddress);
@@ -140,7 +149,7 @@ interface AuthorContract extends DataObjectContract, Serializable
     /**
      * Sets the author context's permission set.
      *
-     * @param PermissionsSet $permissionSet
+     * @param  PermissionsSet  $permissionSet
      * @return mixed
      */
     public function setPermissionsSet($permissionSet);
@@ -158,5 +167,4 @@ interface AuthorContract extends DataObjectContract, Serializable
      * @return array
      */
     public function toArray();
-
 }

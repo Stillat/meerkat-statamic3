@@ -7,12 +7,12 @@ namespace Stillat\Meerkat\Core\Logging\Tracing;
  *
  * Provides simple wrappers and utilities around PHP back-traces.
  *
- * @package Stillat\Meerkat\Core\Logging\Tracing
  * @since 2.0.0
  */
 class Tracer
 {
     const KEY_CLASS = 'class';
+
     const KEY_FUNCTION = 'function';
 
     /**
@@ -32,12 +32,11 @@ class Tracer
                 $method = $lastItem[self::KEY_CLASS];
 
                 if (array_key_exists(self::KEY_FUNCTION, $lastItem)) {
-                    $method .= '::' . $lastItem[self::KEY_FUNCTION];
+                    $method .= '::'.$lastItem[self::KEY_FUNCTION];
                 }
             }
         }
 
         return $method;
     }
-
 }

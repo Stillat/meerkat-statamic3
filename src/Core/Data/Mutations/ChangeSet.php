@@ -10,16 +10,18 @@ use Stillat\Meerkat\Core\Identity\IdentityManagerFactory;
  *
  * Represents a set of changes between an attribute set.
  *
- * @package Stillat\Meerkat\Core\Data\Mutations
  * @since 2.0.0
  */
 class ChangeSet
 {
-
     const KEY_TIMESTAMP = 'timestamp';
+
     const KEY_USER_ID = 'user';
+
     const KEY_ORIGINAL_KEY_ORDER = 'oko';
+
     const KEY_NEW_SERIALIZED = 'new';
+
     const KEY_OLD_SERIALIZED = 'old';
 
     /**
@@ -93,7 +95,7 @@ class ChangeSet
     /**
      * Converts the array into a ChangeSet instance.
      *
-     * @param array $array The array to convert.
+     * @param  array  $array The array to convert.
      * @return ChangeSet
      */
     public static function fromArray($array)
@@ -135,7 +137,7 @@ class ChangeSet
     /**
      * Sets the original key order.
      *
-     * @param array $keys The original keys.
+     * @param  array  $keys The original keys.
      */
     public function setOriginalKeyOrder($keys)
     {
@@ -145,8 +147,8 @@ class ChangeSet
     /**
      * Sets the serialized versions of the datasets that were compared.
      *
-     * @param string $old The serialized version of the old data.
-     * @param string $new The serialized version of the new data.
+     * @param  string  $old The serialized version of the old data.
+     * @param  string  $new The serialized version of the new data.
      */
     public function setSerializedRepresentations($old, $new)
     {
@@ -183,7 +185,7 @@ class ChangeSet
     /**
      * Deserializes the content and returns an array.
      *
-     * @param string $content The content to decode.
+     * @param  string  $content The content to decode.
      * @return array
      */
     private function getProperties($content)
@@ -191,7 +193,7 @@ class ChangeSet
         $content = json_decode($content);
 
         if (is_array($content) === false) {
-            $content = (array)$content;
+            $content = (array) $content;
         }
 
         return $content;
@@ -220,7 +222,7 @@ class ChangeSet
     /**
      * Sets the properties that were changed, and their values.
      *
-     * @param array $attributes The mutated attributes.
+     * @param  array  $attributes The mutated attributes.
      */
     public function setChangedAttributes($attributes)
     {
@@ -240,7 +242,7 @@ class ChangeSet
     /**
      * Sets a list attribute names that remained unchanged.
      *
-     * @param array $attributes The unchanged attributes.
+     * @param  array  $attributes The unchanged attributes.
      */
     public function setUnchangedAttributes($attributes)
     {
@@ -260,7 +262,7 @@ class ChangeSet
     /**
      * Sets the attributes that were removed.
      *
-     * @param array $attributes The removed attributes.
+     * @param  array  $attributes The removed attributes.
      */
     public function setRemovedAttributes($attributes)
     {
@@ -280,7 +282,7 @@ class ChangeSet
     /**
      * Sets the list of new attributes.
      *
-     * @param array $attributes The new attributes.
+     * @param  array  $attributes The new attributes.
      */
     public function setNewAttributes($attributes)
     {
@@ -300,11 +302,11 @@ class ChangeSet
     /**
      * Sets the identity for the change set.
      *
-     * @param AuthorContract $identity The identity to utilize.
+     * @param  AuthorContract  $identity The identity to utilize.
      */
     public function setIdentity(AuthorContract $identity)
     {
-            $this->identity = $identity;
+        $this->identity = $identity;
     }
 
     /**
@@ -327,7 +329,7 @@ class ChangeSet
             self::KEY_ORIGINAL_KEY_ORDER => json_encode($this->getOriginalKeyOrder()),
             self::KEY_NEW_SERIALIZED => $this->getNewSerialized(),
             self::KEY_OLD_SERIALIZED => $this->getOldSerialized(),
-            self::KEY_USER_ID => $identityContext
+            self::KEY_USER_ID => $identityContext,
         ];
     }
 
@@ -344,7 +346,7 @@ class ChangeSet
     /**
      * Sets the change-set's timestamp.
      *
-     * @param int $timestamp The change-set timestamp.
+     * @param  int  $timestamp The change-set timestamp.
      */
     public function setTimestampUtc($timestamp)
     {
@@ -384,7 +386,7 @@ class ChangeSet
     /**
      * Tests if any changes were detected for the attribute.
      *
-     * @param string $attributeName The attribute name.
+     * @param  string  $attributeName The attribute name.
      * @return bool
      */
     public function wasAttributeMutated($attributeName)
@@ -401,7 +403,7 @@ class ChangeSet
     /**
      * Tests if the attribute was introduced in the new dataset.
      *
-     * @param string $attributeName The attribute name.
+     * @param  string  $attributeName The attribute name.
      * @return bool
      */
     public function wasAttributeAdded($attributeName)
@@ -412,7 +414,7 @@ class ChangeSet
     /**
      * Tests if the attribute was changed between the datasets.
      *
-     * @param string $attributeName The attribute name.
+     * @param  string  $attributeName The attribute name.
      * @return bool
      */
     public function wasAttributeChanged($attributeName)
@@ -423,12 +425,11 @@ class ChangeSet
     /**
      * Tests if the attribute was removed in the new dataset.
      *
-     * @param string $attributeName The attribute name.
+     * @param  string  $attributeName The attribute name.
      * @return bool
      */
     public function wasAttributeRemoved($attributeName)
     {
         return array_key_exists($attributeName, $this->removedAttributes);
     }
-
 }

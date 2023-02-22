@@ -9,13 +9,14 @@ use Stillat\Meerkat\Core\Support\Arr;
  *
  * Represents a collection of report items related to sending comment submission emails.
  *
- * @package Stillat\Meerkat\Core\Mail
  * @ince 2.1.5
  */
 class MailReport
 {
     const KEY_GENERATED_ON = 'generated_on';
+
     const KEY_ITEMS = 'items';
+
     const KEY_COMMENT_ID = 'comment_id';
 
     /**
@@ -47,7 +48,7 @@ class MailReport
     /**
      * Constructs a new instance of MailReport from the provided data.
      *
-     * @param array $data The report data.
+     * @param  array  $data The report data.
      * @return MailReport
      */
     public static function fromArray($data)
@@ -87,7 +88,7 @@ class MailReport
     /**
      * Sets the mail report items.
      *
-     * @param MailReportItem[] $reportItems The report items.
+     * @param  MailReportItem[]  $reportItems The report items.
      */
     public function setItems($reportItems)
     {
@@ -104,7 +105,7 @@ class MailReport
         return [
             self::KEY_ITEMS => $this->getItemArray(),
             self::KEY_COMMENT_ID => $this->getCommentId(),
-            self::KEY_GENERATED_ON => $this->getGeneratedOn()
+            self::KEY_GENERATED_ON => $this->getGeneratedOn(),
         ];
     }
 
@@ -137,7 +138,7 @@ class MailReport
     /**
      * Sets the report's comment system identifier.
      *
-     * @param string $commentId The comment identifier.
+     * @param  string  $commentId The comment identifier.
      */
     public function setCommentId($commentId)
     {
@@ -157,11 +158,10 @@ class MailReport
     /**
      * Sets the UTC timestamp the report was generated on.
      *
-     * @param int $generatedOn The date/time the report was generated on.
+     * @param  int  $generatedOn The date/time the report was generated on.
      */
     public function setGeneratedOn($generatedOn)
     {
         $this->generatedOn = $generatedOn;
     }
-
 }

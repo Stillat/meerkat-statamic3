@@ -12,23 +12,21 @@ use Stillat\Meerkat\Http\RequestHelpers;
  *
  * Provides utilities for emitting dynamic stylesheets and JavaScript assets.
  *
- * @package Stillat\Meerkat\Http\Emitter
  * @since 2.0.0
  */
 class Emit
 {
-
     /**
      * A list of all dynamic asset emitters registered at run-time.
      *
      * @var array
      */
-    static $registeredEmitters = [];
+    public static $registeredEmitters = [];
 
     /**
      * Determines if a dynamic asset has been registered.
      *
-     * @param string $emissionName The dynamic asset to check for.
+     * @param  string  $emissionName The dynamic asset to check for.
      * @return bool
      */
     public static function contains($emissionName)
@@ -39,8 +37,8 @@ class Emit
     /**
      * Injects a dynamic stylesheet asset into the Control Panel request.
      *
-     * @param string $dynamicCssName The CSS asset name.
-     * @param callable $callback The stylesheet generation callback.
+     * @param  string  $dynamicCssName The CSS asset name.
+     * @param  callable  $callback The stylesheet generation callback.
      */
     public static function cpCss($dynamicCssName, $callback)
     {
@@ -54,19 +52,19 @@ class Emit
     /**
      * Injects a dynamic stylesheet into a general Web request.
      *
-     * @param string $dynamicCssName The CSS asset name.
-     * @param callable $callback The stylesheet generation callback.
+     * @param  string  $dynamicCssName The CSS asset name.
+     * @param  callable  $callback The stylesheet generation callback.
      */
     public static function css($dynamicCssName, $callback)
     {
         self::$registeredEmitters[] = $dynamicCssName;
 
-        $assetNameForStatamic = './../' . Addon::CODE_ADDON_NAME;
+        $assetNameForStatamic = './../'.Addon::CODE_ADDON_NAME;
         $fileName = basename($dynamicCssName);
 
         Statamic::style($assetNameForStatamic, $fileName);
 
-        Route::get('/' . Addon::CODE_ADDON_NAME . '/css/' . $fileName . '.css', function () use ($callback) {
+        Route::get('/'.Addon::CODE_ADDON_NAME.'/css/'.$fileName.'.css', function () use ($callback) {
             $content = $callback();
 
             return response($content)->header('Content-Type', 'text/css');
@@ -76,8 +74,8 @@ class Emit
     /**
      * Injects a dynamic JavaScript asset into the Control Panel request.
      *
-     * @param string $dynamicJsName The JavaScript asset name.
-     * @param callable $callback The JavaScript generation callback.
+     * @param  string  $dynamicJsName The JavaScript asset name.
+     * @param  callable  $callback The JavaScript generation callback.
      */
     public static function cpJs($dynamicJsName, $callback)
     {
@@ -91,23 +89,22 @@ class Emit
     /**
      * Injects a dynamic JavaScript asset into a general Web request.
      *
-     * @param string $dynamicJsName The JavaScript asset name.
-     * @param callable $callback The JavaScript generation callback.
+     * @param  string  $dynamicJsName The JavaScript asset name.
+     * @param  callable  $callback The JavaScript generation callback.
      */
     public static function js($dynamicJsName, $callback)
     {
         self::$registeredEmitters[] = $dynamicJsName;
 
-        $assetNameForStatamic = './../' . Addon::CODE_ADDON_NAME;
+        $assetNameForStatamic = './../'.Addon::CODE_ADDON_NAME;
         $fileName = basename($dynamicJsName);
 
         Statamic::script($assetNameForStatamic, $fileName);
 
-        Route::get('/' . Addon::CODE_ADDON_NAME . '/js/' . $fileName . '.js', function () use ($callback) {
+        Route::get('/'.Addon::CODE_ADDON_NAME.'/js/'.$fileName.'.js', function () use ($callback) {
             $content = $callback();
 
             return response($content)->header('Content-Type', 'application/javascript');
         });
     }
-
 }

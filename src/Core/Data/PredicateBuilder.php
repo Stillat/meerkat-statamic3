@@ -12,16 +12,16 @@ use Stillat\Meerkat\Core\Contracts\DataObjectContract;
  *
  * Provides utilities for generating dynamic sorting predicates.
  *
- * @package Stillat\Meerkat\Core\Data
  * @since 2.0.0
  */
 class PredicateBuilder
 {
-
     const KEY_PROPERTY = 'property';
+
     const KEY_IS_ASC = 'asc';
 
     const KEY_DIRECTION_ASC = 'asc';
+
     const KEY_DIRECTION_DESC = 'desc';
 
     /**
@@ -42,7 +42,7 @@ class PredicateBuilder
         $sortStringParts = [];
 
         foreach ($this->comparisons as $comparison) {
-            if (!is_array($comparison) || array_key_exists(self::KEY_IS_ASC, $comparison) === false ||
+            if (! is_array($comparison) || array_key_exists(self::KEY_IS_ASC, $comparison) === false ||
                 array_key_exists(self::KEY_PROPERTY, $comparison) === false) {
                 continue;
             }
@@ -54,7 +54,7 @@ class PredicateBuilder
                 $direction = self::KEY_DIRECTION_ASC;
             }
 
-            $sortStringParts[] = $comparison[self::KEY_PROPERTY] . ',' . $direction;
+            $sortStringParts[] = $comparison[self::KEY_PROPERTY].','.$direction;
         }
 
         return implode('|', $sortStringParts);
@@ -65,7 +65,7 @@ class PredicateBuilder
      *
      * This method resets the internal comparisons.
      *
-     * @param string $p The property name.
+     * @param  string  $p The property name.
      * @return $this
      */
     public function asc($p)
@@ -79,7 +79,7 @@ class PredicateBuilder
     /**
      * Sorts the collection using the provided property in ascending order.
      *
-     * @param string $p The property name.
+     * @param  string  $p The property name.
      * @return $this
      */
     public function thenByAsc($p)
@@ -102,14 +102,14 @@ class PredicateBuilder
     /**
      * Adds a comparison to the internal sorting comparisons.
      *
-     * @param string $propertyName The property name.
-     * @param bool $asc Indicates if the sort order is ascending, else descending.
+     * @param  string  $propertyName The property name.
+     * @param  bool  $asc Indicates if the sort order is ascending, else descending.
      */
     private function addComparison($propertyName, $asc)
     {
         $this->comparisons[] = [
             self::KEY_PROPERTY => $propertyName,
-            self::KEY_IS_ASC => $asc
+            self::KEY_IS_ASC => $asc,
         ];
     }
 
@@ -118,7 +118,7 @@ class PredicateBuilder
      *
      * This method resets the internal comparisons.
      *
-     * @param string $p The property name.
+     * @param  string  $p The property name.
      * @return $this
      */
     public function desc($p)
@@ -132,7 +132,7 @@ class PredicateBuilder
     /**
      * Sorts the collection using the provided property in descending order.
      *
-     * @param string $p The property name.
+     * @param  string  $p The property name.
      * @return $this
      */
     public function thenByDesc($p)
@@ -155,7 +155,7 @@ class PredicateBuilder
     /**
      * Sorts the provided data using previously defined sort predicates.
      *
-     * @param array $data The data to sort.
+     * @param  array  $data The data to sort.
      * @return array
      */
     public function sort($data)
@@ -202,7 +202,6 @@ class PredicateBuilder
                         if ($comparison[self::KEY_IS_ASC] === true) {
                             $mapA[] = $a->getDataAttribute($prop);
                             $mapB[] = $b->getDataAttribute($prop);
-
                         } else {
                             $mapA[] = $b->getDataAttribute($prop);
                             $mapB[] = $a->getDataAttribute($prop);
@@ -232,12 +231,10 @@ class PredicateBuilder
             }
 
             if ($mapA < $mapB) {
-
                 return -1;
             }
+
             return 1;
         };
     }
-
 }
-

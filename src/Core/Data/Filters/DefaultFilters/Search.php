@@ -15,10 +15,10 @@ use Stillat\Meerkat\Core\Search\EngineFactory;
  *
  * search:terms(hello, there)
  *
- * @package Stillat\Meerkat\Core\Data\Filters\DefaultFilters
  * @since 2.0.0
  *
  * @method mixed get($key, $default = null) Gets a filter parameter value.
+ *
  * @see CommentFilter
  */
 class Search
@@ -43,5 +43,4 @@ class Search
             });
         }, Search::PARAM_TERMS);
     }
-
 }

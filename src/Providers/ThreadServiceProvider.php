@@ -45,7 +45,6 @@ use Stillat\Meerkat\Threads\ThreadMutationPipeline;
  *
  * Registers the thread and comment Meerkat Core services.
  *
- * @package Stillat\Meerkat\Providers
  * @since 2.0.0
  */
 class ThreadServiceProvider extends AddonServiceProvider
@@ -208,5 +207,4 @@ class ThreadServiceProvider extends AddonServiceProvider
             ContextResolverFactory::$instance = app(ContextResolverContract::class);
         });
     }
-
 }

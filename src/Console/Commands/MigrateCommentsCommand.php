@@ -13,7 +13,6 @@ use Stillat\Meerkat\Core\Support\TypeConversions;
  *
  * Provides utilities for migrating comment data structures.
  *
- * @package Stillat\Meerkat\Console\Commands
  * @since 2.0.0
  */
 class MigrateCommentsCommand extends Command
@@ -43,7 +42,7 @@ class MigrateCommentsCommand extends Command
         $threadIds = $this->threadManager->getAllThreadIds();
 
         $this->line($this->trans('commands.migrate_analyze_threads', [
-            'threads' => count($threadIds)
+            'threads' => count($threadIds),
         ]));
 
         $comments = [];
@@ -61,10 +60,10 @@ class MigrateCommentsCommand extends Command
         }
 
         $this->line($this->trans('commands.migrate_analyzed_count', [
-            'comments' => $commentCount
+            'comments' => $commentCount,
         ]));
         $this->line($this->trans('commands.migrate_structure_update_needed', [
-            'comments' => count($comments)
+            'comments' => count($comments),
         ]));
 
         $commentsUpdated = 0;
@@ -78,8 +77,7 @@ class MigrateCommentsCommand extends Command
         }
 
         $this->line($this->trans('commands.migrate_comments_updated', [
-            'comments' => $commentsUpdated
+            'comments' => $commentsUpdated,
         ]));
     }
-
 }

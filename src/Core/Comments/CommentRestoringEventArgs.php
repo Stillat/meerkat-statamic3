@@ -6,7 +6,7 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
 use Stillat\Meerkat\Core\Contracts\DataObjectContract;
 use Stillat\Meerkat\Core\DataObject;
 
-class CommentRestoringEventArgs implements  DataObjectContract
+class CommentRestoringEventArgs implements DataObjectContract
 {
     use DataObject;
 
@@ -71,5 +71,4 @@ class CommentRestoringEventArgs implements  DataObjectContract
     {
         return $this->shouldRestore;
     }
-
 }

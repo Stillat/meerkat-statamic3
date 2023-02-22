@@ -7,12 +7,10 @@ namespace Stillat\Meerkat;
  *
  * Provides a central location to manage common export fields.
  *
- * @package Stillat\Meerkat
  * @since 2.1.5
  */
 class ExportFields
 {
-
     /**
      * Returns the standard export fields.
      *
@@ -29,8 +27,7 @@ class ExportFields
             'author.referer',
             'comment.content',
             'comment.is_spam',
-            'comment.published'
+            'comment.published',
         ];
     }
-
 }

@@ -9,16 +9,14 @@ use Stillat\Meerkat\Core\Storage\Paths;
  *
  * Provides utilities for retrieving a thread identifier from a storage path.
  *
- * @package Stillat\Meerkat\Core\Data\Retrievers
  * @since 2.0.0
  */
 class PathThreadIdRetriever
 {
-
     /**
      * Attempts to retrieve a thread identifier from a comment's storage path.
      *
-     * @param string $storagePath The comment storage path.
+     * @param  string  $storagePath The comment storage path.
      * @return string|null
      */
     public static function idFromStoragePath($storagePath)
@@ -43,5 +41,4 @@ class PathThreadIdRetriever
 
         return null;
     }
-
 }

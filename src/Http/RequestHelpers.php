@@ -11,7 +11,6 @@ use Stillat\Meerkat\Core\Logging\ErrorLog;
  *
  * Provides HTTP related helper methods.
  *
- * @package Stillat\Meerkat\Http
  * @since 2.0.0
  */
 class RequestHelpers
@@ -53,7 +52,6 @@ class RequestHelpers
         $statamicCpRoute = trim($statamicCpRoute, '\//');
         $requestPath = trim($request->path(), '\//');
 
-
         if (Str::startsWith($requestPath, $statamicCpRoute)) {
             return true;
         }
@@ -64,7 +62,7 @@ class RequestHelpers
     /**
      * Tests if the provided request is a Statamic Control Panel request by inspecting headers.
      *
-     * @param Request $request The request.
+     * @param  Request  $request The request.
      * @return bool
      */
     public static function isControlPanelRequestFromHeaders($request)
@@ -81,14 +79,11 @@ class RequestHelpers
             $statamicCpRoute = config('statamic.cp.route');
             $statamicCpRoute = trim($statamicCpRoute, '\//');
 
-
-            if (Str::startsWith($referrer, '/' . $statamicCpRoute . '/')) {
-
+            if (Str::startsWith($referrer, '/'.$statamicCpRoute.'/')) {
                 return true;
             }
         }
 
         return false;
     }
-
 }

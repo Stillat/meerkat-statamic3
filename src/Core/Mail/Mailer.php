@@ -11,12 +11,10 @@ use Stillat\Meerkat\Core\Contracts\Mail\MailerContract;
  *
  * A wrapper around the MailerContract system.
  *
- * @package Stillat\Meerkat\Core\Mail
  * @since 2.1.5
  */
 class Mailer
 {
-
     /**
      * The Meerkat Core Configuration container.
      *
@@ -27,10 +25,10 @@ class Mailer
     /**
      * The MailerContract implementation instance.
      * f
+     *
      * @var MailerContract
      */
     protected $mailer = null;
-
 
     public function __construct(MailerContract $mailer, Configuration $config)
     {
@@ -38,16 +36,14 @@ class Mailer
         $this->config = $config;
     }
 
-
     /**
      * Sends an email for the provided comment.
      *
-     * @param CommentContract $comment The comment.
+     * @param  CommentContract  $comment The comment.
      */
     public function sendMailForComment(CommentContract $comment)
     {
         $this->mailer->setFromAddress($this->config->emailFromAddress)
             ->send($this->config->addressToSendEmailTo, $comment);
     }
-
 }

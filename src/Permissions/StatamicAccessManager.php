@@ -14,29 +14,38 @@ use Stillat\Meerkat\Identity\StatamicAuthorFactory;
  *
  * Handles the resolution of permissions for author contexts.
  *
- * @package Stillat\Meerkat\Core\Permissions
  * @since 1.0.0
  */
 class StatamicAccessManager extends AccessManager
 {
     use EmitsEvents, ConfiguresPermissions;
 
-
     protected $canViewComments = true;
+
     protected $canApproveComments = true;
+
     protected $canUnApproveComments = true;
+
     protected $canReplyToComments = true;
+
     protected $canEditComments = true;
+
     protected $canReportAsSpam = true;
+
     protected $canReportAsHam = true;
+
     protected $canRemoveComments = true;
 
     protected $userRoles = [];
+
     protected $userRoleInstances = null;
+
     protected $configuredPermissions = [];
+
     protected $totalRoleCount = 0;
 
     private $permissionsConfigured = false;
+
     private $identity = null;
 
     /**
@@ -49,7 +58,6 @@ class StatamicAccessManager extends AccessManager
     /**
      * Resolves the permissions set for the provided identity.
      *
-     * @param AuthorContract $identity
      * @return PermissionsSet
      */
     public function getPermissions(AuthorContract $identity)
@@ -147,6 +155,7 @@ class StatamicAccessManager extends AccessManager
             $this->canRemoveComments = false;
 
             $this->resolveFromEvents();
+
             return;
         }
 
@@ -278,5 +287,4 @@ class StatamicAccessManager extends AccessManager
     {
         return $this->canRemoveComments;
     }
-
 }

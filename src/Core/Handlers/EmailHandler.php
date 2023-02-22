@@ -12,12 +12,10 @@ use Stillat\Meerkat\Core\Mail\Mailer;
  *
  * Handles the interaction between the mailer implementations and the underlying storage systems.
  *
- * @package Stillat\Meerkat\Core\Handlers
  * @since 2.1.5
  */
 class EmailHandler extends BaseHandler
 {
-
     /**
      * The Core Configuration container.
      *
@@ -69,5 +67,4 @@ class EmailHandler extends BaseHandler
             }
         }
     }
-
 }

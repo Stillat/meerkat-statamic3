@@ -12,12 +12,10 @@ use Stillat\Meerkat\Core\Parsing\AbstractMarkdownParser;
  *
  * Handles interactions between Statamic's Markdown parser and Meerkat Core.
  *
- * @package Stillat\Meerkat\Parsing
  * @since 2.0.0
  */
 class MarkdownParser extends AbstractMarkdownParser implements MarkdownParserContract
 {
-
     /**
      * The Statamic Markdown parser instance.
      *
@@ -35,13 +33,11 @@ class MarkdownParser extends AbstractMarkdownParser implements MarkdownParserCon
     /**
      * Parses the provided string document and returns string value.
      *
-     * @param string $content
-     *
+     * @param  string  $content
      * @return string
      */
     public function parseDocument($content)
     {
         return $this->statamicParser->parse($content);
     }
-
 }

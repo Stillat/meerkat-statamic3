@@ -7,12 +7,10 @@ namespace Stillat\Meerkat;
  *
  * Provides utilities and helpers for interacting with the addon's storage directories.
  *
- * @package Stillat\Meerkat
  * @since 2.0.0
  */
 class PathProvider
 {
-
     const MEERKAT_COMMENTS_DIRECTORY = '/content/comments/';
 
     /**
@@ -22,7 +20,7 @@ class PathProvider
     {
         $contentPath = PathProvider::contentPath();
 
-        if (!file_exists($contentPath)) {
+        if (! file_exists($contentPath)) {
             mkdir($contentPath);
         }
     }
@@ -34,7 +32,7 @@ class PathProvider
      */
     public static function contentPath()
     {
-        $configuredPath = config(Addon::CODE_ADDON_NAME . '.storage.path', null);
+        $configuredPath = config(Addon::CODE_ADDON_NAME.'.storage.path', null);
 
         if ($configuredPath !== null) {
             return $configuredPath;
@@ -46,7 +44,7 @@ class PathProvider
     /**
      * Ensures that all directory separators are forward slashes.
      *
-     * @param string $path The path to normalize.
+     * @param  string  $path The path to normalize.
      * @return string
      */
     public static function normalize($path)
@@ -57,40 +55,40 @@ class PathProvider
     /**
      * Generates a path to the addon resource directory.
      *
-     * @param string $path The relative path.
+     * @param  string  $path The relative path.
      * @return string
      */
     public static function getResourcesDirectory($path = '')
     {
-        return PathProvider::normalize(PathProvider::getAddonDirectory() . '/resources/' . $path);
+        return PathProvider::normalize(PathProvider::getAddonDirectory().'/resources/'.$path);
     }
 
     /**
      * Gets the absolute path to the Meerkat addon directory.
      *
-     * @param string $path An optional path suffix.
+     * @param  string  $path An optional path suffix.
      * @return false|string
      */
     public static function getAddonDirectory($path = '')
     {
-        return PathProvider::normalize(realpath(__DIR__ . '/../' . $path));
+        return PathProvider::normalize(realpath(__DIR__.'/../'.$path));
     }
 
     /**
      * Generates a path to an addon stub file.
      *
-     * @param string $file The relative path.
+     * @param  string  $file The relative path.
      * @return string
      */
     public static function getStub($file)
     {
-        return PathProvider::normalize(PathProvider::getAddonDirectory('src/_stubs/' . $file));
+        return PathProvider::normalize(PathProvider::getAddonDirectory('src/_stubs/'.$file));
     }
 
     /**
      * Ensures all directory separators are back slashes.
      *
-     * @param string $path The path.
+     * @param  string  $path The path.
      * @return string
      */
     public static function winPath($path)
@@ -101,12 +99,11 @@ class PathProvider
     /**
      * Generates a URL for the requested JavaScript resource name.
      *
-     * @param string $resourceName The public resource name.
+     * @param  string  $resourceName The public resource name.
      * @return string
      */
     public static function publicJsVendorPath($resourceName)
     {
-        return url('vendor/' . Addon::CODE_ADDON_NAME . '/js/' . Addon::VERSION . '/' . $resourceName . '.js');
+        return url('vendor/'.Addon::CODE_ADDON_NAME.'/js/'.Addon::VERSION.'/'.$resourceName.'.js');
     }
-
 }

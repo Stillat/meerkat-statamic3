@@ -19,7 +19,6 @@ use Stillat\Meerkat\Core\Parsing\UsesMarkdownParser;
 use Stillat\Meerkat\Core\Parsing\UsesYAMLParser;
 use Stillat\Meerkat\Core\Storage\Data\CommentAuthorRetriever;
 use Stillat\Meerkat\Core\Support\TypeConversions;
-use Stillat\Meerkat\Core\Threads\ContextResolverFactory;
 use Stillat\Meerkat\Core\Threads\ThreadManagerFactory;
 
 /**
@@ -27,15 +26,14 @@ use Stillat\Meerkat\Core\Threads\ThreadManagerFactory;
  *
  * Provides a consistent base implementation for comments.
  *
- * @package Stillat\Meerkat\Core\Comments
  * @since 2.0.0
  */
 class Comment implements CommentContract, ProvidesSearchableAttributesContract
 {
     use UsesMarkdownParser, UsesYAMLParser,
         ProvidesDiscovery, ProvidesMutations, ProvidesCreation, DataObject {
-        removeDataAttribute as origRemoveDataAttribute;
-    }
+            removeDataAttribute as origRemoveDataAttribute;
+        }
 
     /**
      * The comment's parent instance, if available.
@@ -68,7 +66,7 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     /**
      * Indicates if the always has comments override has been set.
      *
-     * @var boolean
+     * @var bool
      */
     protected $commentOverrideAlwaysHasReplies = false;
 
@@ -106,28 +104,33 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
      * @var bool
      */
     protected $runTimeAttributesResolved = false;
+
     /**
      * A collection of attributes that may have been removed before actualizing the data.
      *
      * @var array
      */
     protected $removedAttributes = [];
+
     /**
      * The storage manager instance.
      *
      * @var CommentStorageManagerContract|null
      */
     private $storageManager = null;
+
     /**
      * @var CommentAuthorRetriever|null
      */
     private $authorManager = null;
+
     /**
      * Indicates if the comment has already been persisted to storage or not.
      *
      * @var bool
      */
     private $isNew = false;
+
     /**
      * The thread identifier, if available.
      *
@@ -163,7 +166,7 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     /**
      * Sets the thread's string identifier.
      *
-     * @param string $threadId The thread string identifier.
+     * @param  string  $threadId The thread string identifier.
      * @return void
      */
     public function setThreadId($threadId)
@@ -202,7 +205,7 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     /**
      * Sets a reference to a shared storage manager instance.
      *
-     * @param CommentStorageManagerContract $manager The storage manager instance.
+     * @param  CommentStorageManagerContract  $manager The storage manager instance.
      */
     public function setStorageManager(CommentStorageManagerContract &$manager)
     {
@@ -212,7 +215,7 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     /**
      * Sets a reference to a shared author retriever instance.
      *
-     * @param CommentAuthorRetriever $retriever The author retriever instance.
+     * @param  CommentAuthorRetriever  $retriever The author retriever instance.
      */
     public function setAuthorRetriever(CommentAuthorRetriever &$retriever)
     {
@@ -233,6 +236,7 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
      * Indicates if the comment's author has a name.
      *
      * @since 2.1.14
+     *
      * @return bool
      */
     public function hasAuthorName()
@@ -244,6 +248,7 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
      * Indicates if the comment's author has an email address.
      *
      * @since 2.1.14
+     *
      * @return bool
      */
     public function hasAuthorEmailAddress()
@@ -254,7 +259,7 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     /**
      * Sets the comment's parent author context, if available.
      *
-     * @param AuthorContract $author The author of the parent comment.
+     * @param  AuthorContract  $author The author of the parent comment.
      */
     public function setParentAuthor($author)
     {
@@ -278,7 +283,7 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     /**
      * Sets the comment's content.
      *
-     * @param string $content
+     * @param  string  $content
      * @return CommentContract
      *
      * @throws InconsistentCompositionException
@@ -303,7 +308,7 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     /**
      * Sets the comment's raw content value.
      *
-     * @param string $content The content.
+     * @param  string  $content The content.
      * @return CommentContract
      */
     public function setRawContent($content)
@@ -317,7 +322,7 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     /**
      * Sets the comments raw attribute values.
      *
-     * @param array $attributes The attributes.
+     * @param  array  $attributes The attributes.
      * @return CommentContract
      */
     public function setRawAttributes($attributes)
@@ -330,7 +335,7 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     /**
      * Returns a value indicating if the comment has replies.
      *
-     * @return boolean
+     * @return bool
      */
     public function getHasReplies()
     {
@@ -358,7 +363,7 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     /**
      * Marks the comment as unpublished.
      *
-     * @return boolean
+     * @return bool
      */
     public function unpublish()
     {
@@ -384,7 +389,7 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     /**
      * Marks the comment as published.
      *
-     * @return boolean
+     * @return bool
      */
     public function publish()
     {
@@ -396,7 +401,7 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     /**
      * Returns a value indicating if the comment is published.
      *
-     * @return boolean
+     * @return bool
      */
     public function published()
     {
@@ -408,7 +413,7 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     /**
      * Returns a value indicating if the comment is a root level comment.
      *
-     * @return boolean
+     * @return bool
      */
     public function isRoot()
     {
@@ -438,7 +443,7 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     /**
      * Returns a value indicating if the comment is a reply.
      *
-     * @return boolean
+     * @return bool
      */
     public function isReply()
     {
@@ -460,7 +465,7 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     /**
      * Sets the comment's replies.
      *
-     * @param CommentContract[] $replies The replies to the comment.
+     * @param  CommentContract[]  $replies The replies to the comment.
      * @return CommentContract
      */
     public function setReplies($replies)
@@ -483,7 +488,7 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     /**
      * Sets the parent comment for this comment instance.
      *
-     * @param CommentContract $comment The parent comment.
+     * @param  CommentContract  $comment The parent comment.
      * @return CommentContract
      */
     public function setParentComment($comment)
@@ -521,7 +526,7 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     /**
      * Tests if the comment has been checked for spam.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasBeenCheckedForSpam()
     {
@@ -531,7 +536,7 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     /**
      * Returns a value indicating if the comment was marked as spam.
      *
-     * @return boolean
+     * @return bool
      */
     public function isSpam()
     {
@@ -552,7 +557,7 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     /**
      * Gets whether or not the comment is deleted.
      *
-     * @return boolean
+     * @return bool
      */
     public function isDeleted()
     {
@@ -642,7 +647,7 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     /**
      * Sets the comment's participants.
      *
-     * @param AuthorContract[] $participants The comment's participants.
+     * @param  AuthorContract[]  $participants The comment's participants.
      * @return CommentContract
      */
     public function setParticipants($participants)
@@ -655,7 +660,7 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     /**
      * Sets the comment's author context.
      *
-     * @param AuthorContract $author The author of the comment.
+     * @param  AuthorContract  $author The author of the comment.
      * @return CommentContract
      */
     public function setAuthor($author)
@@ -681,6 +686,7 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
      * Indicates that runtime attributes should already be considered resolved.
      *
      * @internal
+     *
      * @since 2.1.6
      */
     public function flagRuntimeAttributesResolved()
@@ -705,7 +711,7 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
             return;
         }
 
-        $this->yamlParser->parseAndMerge(join('', $this->rawAttributes), $this->attributes);
+        $this->yamlParser->parseAndMerge(implode('', $this->rawAttributes), $this->attributes);
 
         foreach ($this->removedAttributes as $removedAttribute) {
             if (array_key_exists($removedAttribute, $this->attributes)) {
@@ -748,7 +754,7 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
             return true;
         }
 
-        return !file_exists($virtualPath);
+        return ! file_exists($virtualPath);
     }
 
     public function setIsNew($isNew)
@@ -783,7 +789,7 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     /**
      * Removes a data attribute with the given name.
      *
-     * @param string $attributeName The name of the attribute to remove.
+     * @param  string  $attributeName The name of the attribute to remove.
      */
     public function removeDataAttribute($attributeName)
     {
@@ -817,7 +823,7 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     /**
      * Updates the comment's content and saves the comment.
      *
-     * @param string $content The new content.
+     * @param  string  $content The new content.
      * @return bool
      */
     public function updateCommentContent($content)
@@ -898,7 +904,7 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
             CommentContract::KEY_CONTENT,
             CommentContract::KEY_USER_AGENT,
             CommentContract::KEY_PAGE_URL,
-            CommentContract::INTERNAL_CONTENT_RAW
+            CommentContract::INTERNAL_CONTENT_RAW,
         ];
     }
 
@@ -939,5 +945,4 @@ class Comment implements CommentContract, ProvidesSearchableAttributesContract
     {
         return $this->getDataAttribute(CommentContract::INTERNAL_PATH, null);
     }
-
 }

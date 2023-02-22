@@ -9,12 +9,10 @@ use Stillat\Meerkat\Core\Exceptions\ConcurrentResourceAccessViolationException;
  *
  * Provides utilities for creating, and managing resource locks.
  *
- * @package Stillat\Meerkat\Core
  * @since 2.0.0
  */
 class ResourceLock
 {
-
     /**
      * A list of all active resource locks.
      *
@@ -38,7 +36,7 @@ class ResourceLock
     /**
      * Releases the provided lock on the resource.
      *
-     * @param int $lockObj The lock to release.
+     * @param  int  $lockObj The lock to release.
      */
     public function releaseLock($lockObj)
     {
@@ -64,7 +62,7 @@ class ResourceLock
      */
     public function getLockString()
     {
-        return join(',', $this->resourceLocks);
+        return implode(',', $this->resourceLocks);
     }
 
     /**
@@ -88,5 +86,4 @@ class ResourceLock
             $this->raiseAccessViolation();
         }
     }
-
 }

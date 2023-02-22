@@ -2,7 +2,6 @@
 
 namespace Stillat\Meerkat\Configuration;
 
-use Throwable;
 use Exception;
 use Statamic\Contracts\Auth\User;
 use Statamic\Contracts\Auth\UserRepository;
@@ -10,7 +9,6 @@ use Statamic\Facades\YAML;
 use Stillat\Meerkat\Concerns\UsesConfig;
 use Stillat\Meerkat\Core\Logging\ErrorReporterFactory;
 use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
-use Stillat\Meerkat\Core\Logging\Reporters\ExceptionReporter;
 use Stillat\Meerkat\Core\Support\Arr;
 
 /**
@@ -18,7 +16,6 @@ use Stillat\Meerkat\Core\Support\Arr;
  *
  * Manages Statamic user-specific Control Panel settings.
  *
- * @package Stillat\Meerkat\Configuration
  * @since 2.1.0
  */
 class UserConfigurationManager
@@ -26,6 +23,7 @@ class UserConfigurationManager
     use UsesConfig;
 
     const KEY_AVATAR_DRIVER = 'cp_avatar_driver';
+
     const KEY_PER_PAGE = 'cp_per_page';
 
     /**
@@ -85,7 +83,7 @@ class UserConfigurationManager
 
         // If, for some reason, the configuration path does not exist, let's return the defaults.
         // The user specific settings are not important enough to break everything over.
-        if (!file_exists($this->configurationPath)) {
+        if (! file_exists($this->configurationPath)) {
             return $this->getDefaultConfiguration();
         }
 
@@ -94,8 +92,8 @@ class UserConfigurationManager
             $parsedContents = YAML::parse($contents);
 
             if ($parsedContents !== null && is_array($parsedContents) && Arr::matches([
-                    self::KEY_PER_PAGE, self::KEY_AVATAR_DRIVER
-                ], $parsedContents)) {
+                self::KEY_PER_PAGE, self::KEY_AVATAR_DRIVER,
+            ], $parsedContents)) {
                 return $parsedContents;
             }
         } catch (Exception $e) {
@@ -140,9 +138,9 @@ class UserConfigurationManager
             }
 
             $this->userId = $this->currentUser->id();
-            $this->configurationPath = config_path('meerkat/users/' . $this->userId . '.yaml');
+            $this->configurationPath = config_path('meerkat/users/'.$this->userId.'.yaml');
 
-            if (!file_exists($this->configurationPath)) {
+            if (! file_exists($this->configurationPath)) {
                 $this->writeDefaultFile($this->configurationPath);
             }
         } catch (Exception $e) {
@@ -171,7 +169,7 @@ class UserConfigurationManager
     /**
      * Attempts to write the default user-specific configuration file to disk.
      *
-     * @param string $path The storage path.
+     * @param  string  $path The storage path.
      * @return bool
      */
     private function writeDefaultFile($path)
@@ -198,15 +196,15 @@ class UserConfigurationManager
 
         return [
             self::KEY_AVATAR_DRIVER => $defaultAvatarDriver,
-            self::KEY_PER_PAGE => 25
+            self::KEY_PER_PAGE => 25,
         ];
     }
 
     /**
      * Updates the user specific configuration values.
      *
-     * @param int $perPage The number of items to load per page.
-     * @param string $avatarDriver The user's avatar driver.
+     * @param  int  $perPage The number of items to load per page.
+     * @param  string  $avatarDriver The user's avatar driver.
      * @return bool
      */
     public function updateConfiguration($perPage, $avatarDriver)
@@ -219,7 +217,7 @@ class UserConfigurationManager
 
         $settings = [
             self::KEY_AVATAR_DRIVER => $avatarDriver,
-            self::KEY_PER_PAGE => $perPage
+            self::KEY_PER_PAGE => $perPage,
         ];
 
         try {
@@ -250,5 +248,4 @@ class UserConfigurationManager
 
         return $this->currentUser->email();
     }
-
 }

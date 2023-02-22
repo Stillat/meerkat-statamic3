@@ -11,25 +11,22 @@ use Stillat\Meerkat\EventPipeline;
  *
  * Provides interactions between Meerkat Core and Statamic/Laravel event systems.
  *
- * @package Stillat\Meerkat\Guard
  * @since 2.0.0
  */
 class GuardPipeline extends EventPipeline implements SpamGuardPipelineContract
 {
-
     /**
      * Called when the Spam Service is starting.
      *
-     * @param SpamService $service The spam service.
-     * @param callable $callback An optional callback.
+     * @param  SpamService  $service The spam service.
+     * @param  callable  $callback An optional callback.
      */
     public function guardStarting(SpamService $service, $callback)
     {
         $pipelineArgs = [
-            $service
+            $service,
         ];
 
         $this->mutate(SpamGuardPipelineContract::MUTATION_REGISTERING, $pipelineArgs, $callback);
     }
-
 }

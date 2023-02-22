@@ -16,7 +16,6 @@ use Stillat\Meerkat\Core\Support\Str;
  *
  * Provides utilities for aggregating installation details to prepare an error log.
  *
- * @package Stillat\Meerkat\Logging
  * @since 2.0.0
  */
 class ErrorLogPresenter
@@ -46,7 +45,7 @@ class ErrorLogPresenter
     /**
      * Converts the provided error log into a string with relevant version details.
      *
-     * @param ErrorLog $errorLog The error log to process.
+     * @param  ErrorLog  $errorLog The error log to process.
      * @return string
      */
     public function present(ErrorLog $errorLog)
@@ -56,8 +55,8 @@ class ErrorLogPresenter
             'versions' => [
                 'php' => phpversion(),
                 'statamic' => Statamic::version(),
-                'meerkat' => Addon::VERSION
-            ]
+                'meerkat' => Addon::VERSION,
+            ],
         ];
 
         if ($this->getConfig('telemetry.errors.submit_addon_data', true) === true) {
@@ -72,7 +71,7 @@ class ErrorLogPresenter
                     'vendor' => $addon->vendorName(),
                 ];
 
-                $rawAttributes = (array)($addon);
+                $rawAttributes = (array) ($addon);
                 foreach ($rawAttributes as $k => $attribute) {
                     if (Str::endsWith($k, 'version') && Str::endsWith($k, 'latestVersion') === false) {
                         $addonData['version'] = $attribute;
@@ -108,7 +107,7 @@ class ErrorLogPresenter
     /**
      * Prepares the content for submission.
      *
-     * @param string $content The content to prepare.
+     * @param  string  $content The content to prepare.
      * @return string|string[]
      */
     private function prepare($content)
@@ -117,5 +116,4 @@ class ErrorLogPresenter
 
         return $content;
     }
-
 }

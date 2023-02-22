@@ -15,7 +15,6 @@ use Stillat\Meerkat\Core\Storage\Paths;
  *
  * Manages the interactions between Meerkat Mail Reports and a local file system.
  *
- * @package Stillat\Meerkat\Core\Storage\Drivers\Local
  * @since 2.1.5
  */
 class LocalEmailReportStorageManager implements EmailReportStorageManagerContract
@@ -53,7 +52,7 @@ class LocalEmailReportStorageManager implements EmailReportStorageManagerContrac
     /**
      * Indicates if mail was already sent for the provided comment.
      *
-     * @param string $commentId The comment identifier.
+     * @param  string  $commentId The comment identifier.
      * @return bool
      */
     public function wasSentById($commentId)
@@ -70,7 +69,7 @@ class LocalEmailReportStorageManager implements EmailReportStorageManagerContrac
     /**
      * Indicates if mail was already sent for the provided comment.
      *
-     * @param CommentContract $comment The comment.
+     * @param  CommentContract  $comment The comment.
      * @return bool
      */
     public function wasSent(CommentContract $comment)
@@ -81,7 +80,7 @@ class LocalEmailReportStorageManager implements EmailReportStorageManagerContrac
     /**
      * Retrieves the file path for the mail report.
      *
-     * @param CommentContract $comment The comment.
+     * @param  CommentContract  $comment The comment.
      * @return string
      */
     private function getReportPath(CommentContract $comment)
@@ -90,15 +89,15 @@ class LocalEmailReportStorageManager implements EmailReportStorageManagerContrac
 
         return $this->paths->combine([
             $storageDirectory,
-            self::EXT_REPORT
+            self::EXT_REPORT,
         ]);
     }
 
     /**
      * Saves a mail report for the provided comment.
      *
-     * @param string $commentId The comment identifier.
-     * @param MailReport $report The report.
+     * @param  string  $commentId The comment identifier.
+     * @param  MailReport  $report The report.
      * @return bool
      */
     public function saveReportForCommentById($commentId, MailReport $report)
@@ -115,8 +114,8 @@ class LocalEmailReportStorageManager implements EmailReportStorageManagerContrac
     /**
      * Saves a mail report for the provided comment.
      *
-     * @param CommentContract $comment The comment.
-     * @param MailReport $report The report.
+     * @param  CommentContract  $comment The comment.
+     * @param  MailReport  $report The report.
      * @return bool
      */
     public function saveReportForComment(CommentContract $comment, MailReport $report)
@@ -136,7 +135,7 @@ class LocalEmailReportStorageManager implements EmailReportStorageManagerContrac
     /**
      * Locates an existing mail report for the provided comment.
      *
-     * @param string $commentId The comment identifier.
+     * @param  string  $commentId The comment identifier.
      * @return MailReport|null
      */
     public function getReportForCommentById($commentId)
@@ -153,7 +152,7 @@ class LocalEmailReportStorageManager implements EmailReportStorageManagerContrac
     /**
      * Locates an existing mail report for the provided comment.
      *
-     * @param CommentContract $comment The comment.
+     * @param  CommentContract  $comment The comment.
      * @return MailReport|null
      */
     public function getReportForComment(CommentContract $comment)
@@ -167,5 +166,4 @@ class LocalEmailReportStorageManager implements EmailReportStorageManagerContrac
 
         return MailReport::fromArray($contents);
     }
-
 }

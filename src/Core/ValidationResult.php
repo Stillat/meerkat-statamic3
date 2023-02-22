@@ -7,7 +7,6 @@ namespace Stillat\Meerkat\Core;
  *
  * A consistent way to represent validity between systems
  *
- * @package Stillat\Meerkat\Core
  * @since 2.0.0
  */
 class ValidationResult
@@ -17,7 +16,7 @@ class ValidationResult
     /**
      * Indicates if validation was a success.
      *
-     * @var boolean
+     * @var bool
      */
     public $isValid = false;
 
@@ -38,21 +37,21 @@ class ValidationResult
     /**
      * Adds a new failure reason to the validation result.
      *
-     * @param string $errorCode The error code for the result.
-     * @param string $msg A human-readable version of the message.
+     * @param  string  $errorCode The error code for the result.
+     * @param  string  $msg A human-readable version of the message.
      */
     public function add($errorCode, $msg)
     {
         $this->reasons[] = [
             'code' => $errorCode,
-            'msg' => $msg
+            'msg' => $msg,
         ];
     }
 
     /**
      * Merges the reasons with the current results and updates the validity.
      *
-     * @param string[] $reasons The validation results to merge.
+     * @param  string[]  $reasons The validation results to merge.
      * @return void
      */
     public function mergeReasons($reasons)
@@ -74,7 +73,7 @@ class ValidationResult
     /**
      * Indicates if the current results contains the provided error code.
      *
-     * @param string $errorCode The error code to test.
+     * @param  string  $errorCode The error code to test.
      * @return bool
      */
     public function containsError($errorCode)
@@ -99,5 +98,4 @@ class ValidationResult
 
         return false;
     }
-
 }

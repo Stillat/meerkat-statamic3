@@ -10,18 +10,15 @@ namespace Stillat\Meerkat\Core\Contracts\Identity;
  * Author factors should be implemented in the host system,
  * and work with their native authentication systems.
  *
- * @package Stillat\Meerkat\Core\Contracts\Identity
  * @since 2.0.0
  */
 interface AuthorFactoryContract
 {
-
     /**
      * Constructs a valid AuthorContract instance from the prototype.
      *
-     * @param array $protoAuthor
+     * @param  array  $protoAuthor
      * @return AuthorContract
      */
     public function makeAuthor($protoAuthor);
-
 }

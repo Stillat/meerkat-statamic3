@@ -7,16 +7,14 @@ namespace Stillat\Meerkat\Core\Support;
  *
  * Common string related helper functions and utilities.
  *
- * @package Stillat\Meerkat\Core\Support
  * @since 2.0.0
  */
 class Str
 {
-
     /**
      * Breaks the input string into an array by newline character.
      *
-     * @param string $str The input string.
+     * @param  string  $str The input string.
      * @return array
      */
     public static function toArray($str)
@@ -27,21 +25,21 @@ class Str
     /**
      * Tests if the input value matches the provided pattern.
      *
-     * @param string $pattern The search pattern.
-     * @param string $value The value to test.
+     * @param  string  $pattern The search pattern.
+     * @param  string  $value The value to test.
      * @return bool
      */
     public static function isLike($pattern, $value)
     {
         $pattern = str_replace('%', '.*', preg_quote($pattern, '/'));
 
-        return (bool)preg_match("/^{$pattern}$/i", $value);
+        return (bool) preg_match("/^{$pattern}$/i", $value);
     }
 
     /**
      * Tests if the input string is null or all whitespace.
      *
-     * @param string $val The value to test.
+     * @param  string  $val The value to test.
      * @return bool
      */
     public static function isNullOrEmpty($val)
@@ -57,11 +55,10 @@ class Str
         return false;
     }
 
-
     /**
      * Returns a version of the input value without spaces.
      *
-     * @param string $value The input value.
+     * @param  string  $value The input value.
      * @return string
      */
     public static function withoutSpaces($value)
@@ -75,17 +72,18 @@ class Str
      * Origin: Laravel Framework 6.x
      * https://github.com/laravel/framework/blob/6.x/src/Illuminate/Support/Str.php#L139-L154
      *
-     * @param string $haystack
-     * @param string|array $needles
+     * @param  string  $haystack
+     * @param  string|array  $needles
      * @return bool
      */
     public static function contains($haystack, $needles)
     {
-        foreach ((array)$needles as $needle) {
+        foreach ((array) $needles as $needle) {
             if ($needle !== '' && mb_strpos($haystack, $needle) !== false) {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -95,14 +93,14 @@ class Str
      * Origin: Laravel Framework 6.x
      * https://github.com/laravel/framework/blob/6.x/src/Illuminate/Support/Str.php#L567-L583
      *
-     * @param string $haystack
-     * @param string|string[] $needles
+     * @param  string  $haystack
+     * @param  string|string[]  $needles
      * @return bool
      */
     public static function startsWith($haystack, $needles)
     {
-        foreach ((array)$needles as $needle) {
-            if ($needle !== '' && substr($haystack, 0, strlen($needle)) === (string)$needle) {
+        foreach ((array) $needles as $needle) {
+            if ($needle !== '' && substr($haystack, 0, strlen($needle)) === (string) $needle) {
                 return true;
             }
         }
@@ -113,19 +111,18 @@ class Str
     /**
      * Determine if a given string ends with a given substring.
      *
-     * @param string $haystack
-     * @param string|string[] $needles
+     * @param  string  $haystack
+     * @param  string|string[]  $needles
      * @return bool
      */
     public static function endsWith($haystack, $needles)
     {
-        foreach ((array)$needles as $needle) {
-            if (substr($haystack, -strlen($needle)) === (string)$needle) {
+        foreach ((array) $needles as $needle) {
+            if (substr($haystack, -strlen($needle)) === (string) $needle) {
                 return true;
             }
         }
 
         return false;
     }
-
 }

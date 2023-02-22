@@ -7,12 +7,10 @@ namespace Stillat\Meerkat\Core\Comments;
  *
  * Represents the return results of actions against multiple comments.
  *
- * @package Stillat\Meerkat\Core\Comments
  * @since 2.0.0
  */
 class VariableSuccessResult
 {
-
     /**
      * Indicates if all actions succeeded.
      *
@@ -49,5 +47,4 @@ class VariableSuccessResult
      * @var array
      */
     public $failed = [];
-
 }

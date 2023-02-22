@@ -5,22 +5,20 @@ namespace Stillat\Meerkat\Threads;
 use Illuminate\Support\Collection;
 use Statamic\Contracts\Entries\EntryRepository;
 use Statamic\Entries\Entry;
+use Statamic\Fields\Value;
 use Stillat\Meerkat\Core\Contracts\Threads\ContextResolverContract;
 use Stillat\Meerkat\Core\Contracts\Threads\ThreadContextContract;
 use Stillat\Meerkat\Core\Threads\Context;
-use Statamic\Fields\Value;
 
 /**
  * Class ContextResolver
  *
  * Locates a Statamic Entry context for a Meerkat thread.
  *
- * @package Stillat\Meerkat\Threads
  * @since 2.0.0
  */
 class ContextResolver implements ContextResolverContract
 {
-
     /**
      * A global context cache.
      *
@@ -51,7 +49,7 @@ class ContextResolver implements ContextResolverContract
     /**
      * Tests if a thread exists for the provided identifier.
      *
-     * @param string $contextId The thread identifier.
+     * @param  string  $contextId The thread identifier.
      * @return bool
      */
     public function contextExistsById($contextId)
@@ -68,8 +66,7 @@ class ContextResolver implements ContextResolverContract
     /**
      * Attempts to locate a thread context by it's string identifier.
      *
-     * @param string $contextId
-     *
+     * @param  string  $contextId
      * @return ThreadContextContract
      */
     public function findById($contextId)
@@ -140,5 +137,4 @@ class ContextResolver implements ContextResolverContract
 
         return $threadContext;
     }
-
 }

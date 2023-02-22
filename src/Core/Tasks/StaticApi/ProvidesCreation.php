@@ -11,16 +11,14 @@ use Stillat\Meerkat\Core\Tasks\Task;
  *
  * Provides helper utilities for constructing Task instances statically.
  *
- * @package Stillat\Meerkat\Core\Tasks\StaticApi
  * @since 2.0.0
  */
 trait ProvidesCreation
 {
-
     /**
      * Creates a new task and returns it.
      *
-     * @param string $taskCode The internal task code.
+     * @param  string  $taskCode The internal task code.
      * @return TaskContract
      */
     public static function taskFromMethod($taskCode)
@@ -31,8 +29,8 @@ trait ProvidesCreation
     /**
      * Creates a new task and returns it.
      *
-     * @param string $taskName The task name.
-     * @param string $taskCode The internal task code.
+     * @param  string  $taskName The task name.
+     * @param  string  $taskCode The internal task code.
      * @return TaskContract
      */
     public static function newTask($taskName, $taskCode)
@@ -44,5 +42,4 @@ trait ProvidesCreation
 
         return $newTask;
     }
-
 }

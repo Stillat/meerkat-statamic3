@@ -13,17 +13,14 @@ use Stillat\Meerkat\Core\Contracts\Parsing\YAMLParserContract;
  * This abstract implementation handles the parseAndMerge responsibility
  * of the YAMLParserContract. Use this to kick-start custom parsers.
  *
- * @package Stillat\Meerkat\Core\Parsing
  * @since 2.0.0
  */
 abstract class AbstractYAMLParser implements YAMLParserContract
 {
-
     /**
      * Parses the provided string document and merges the results into the provided data container array.
      *
-     * @param string $content
-     * @param array $dataContainer
+     * @param  string  $content
      * @return void
      */
     public function parseAndMerge($content, array &$dataContainer)
@@ -32,7 +29,7 @@ abstract class AbstractYAMLParser implements YAMLParserContract
         $dataContainer = array_merge($parsedDocument, $dataContainer);
 
         if (array_key_exists(CommentContract::KEY_LEGACY_COMMENT, $dataContainer) &&
-            !array_key_exists(CommentContract::KEY_CONTENT, $dataContainer)) {
+            ! array_key_exists(CommentContract::KEY_CONTENT, $dataContainer)) {
             $dataContainer[CommentContract::KEY_CONTENT] = $dataContainer[CommentContract::KEY_LEGACY_COMMENT];
             $dataContainer[CommentContract::KEY_LEGACY_COMMENT] = $dataContainer[CommentContract::KEY_CONTENT];
         }

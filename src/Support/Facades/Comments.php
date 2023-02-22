@@ -11,7 +11,6 @@ use Stillat\Meerkat\Core\Data\Filters\CommentFilterManager;
  *
  * Provides a static API for the CommentFilterManager instance.
  *
- * @package Stillat\Meerkat\Support\Facades
  * @since 2.0.0
  *
  * @method static string getFilterMap($filter)
@@ -25,14 +24,13 @@ use Stillat\Meerkat\Core\Data\Filters\CommentFilterManager;
  * @method static bool hasFilter($filterName)
  * @method static mixed|null getUser()
  * @method static void setUser(AuthorContract $identity)
+ *
  * @see \Stillat\Meerkat\Core\Data\\CommentFilterManager
  */
 class Comments extends Facade
 {
-
     protected static function getFacadeAccessor()
     {
         return CommentFilterManager::class;
     }
-
 }

@@ -16,7 +16,6 @@ use Stillat\Meerkat\Core\Data\Mutations\ChangeSetCollection;
  *
  * Defines a standard structure for Meerkat comments
  *
- * @package Stillat\Meerkat\Core\Contracts\Comments
  * @since 2.0.0
  */
 interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdownContract, ParsesYamlContract
@@ -24,27 +23,47 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     const COMMENT_FILENAME = 'comment.md';
 
     const KEY_REPLIES = 'replies';
+
     const KEY_COMMENT_DATE_FORMATTED = 'comment_date_formatted';
+
     const KEY_CONTENT = 'content';
+
     const KEY_LEGACY_COMMENT = 'comment';
+
     const KEY_COMMENT_MARKDOWN = 'comment_markdown';
+
     const KEY_ID = 'id';
+
     const KEY_COMMENT_DATE = 'comment_date';
+
     const KEY_ALIAS_DATE = 'date';
+
     const KEY_ALIAS_DATE_FORMATTED = 'date_formatted';
+
     const KEY_IS_REPLY = 'is_reply';
+
     const KEY_DEPTH = 'depth';
+
     const KEY_ANCESTORS = 'ancestors';
+
     const KEY_DESCENDENTS = 'descendants';
+
     const KEY_CHILDREN = 'children';
+
     const KEY_PARENT = 'parent';
 
     const KEY_AUTHOR = 'author';
+
     const KEY_PARENT_ID = 'parent_id';
+
     const KEY_IS_PARENT = 'is_parent';
+
     const KEY_IS_ROOT = 'is_root';
+
     const KEY_IS_DELETED = 'is_deleted';
+
     const KEY_PUBLISHED = 'published';
+
     const KEY_SPAM = 'spam';
 
     const KEY_HAS_CHECKED_FOR_SPAM = 'has_checked_for_spam';
@@ -52,32 +71,57 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     const KEY_HAS_REPLIES = 'has_replies';
 
     const KEY_NAME = 'name';
+
     const KEY_EMAIL = 'email';
+
     const KEY_USER_IP = 'user_ip';
+
     const KEY_USER_AGENT = 'user_agent';
+
     const KEY_REFERRER = 'referer';
+
     const KEY_PAGE_URL = 'page_url';
 
     const INTERNAL_HAS_COLLECTED = 'internal_runtime_has_collected';
+
     const INTERNAL_PARENT_AUTHOR = 'internal_parent_author';
+
     const INTERNAL_ABSOLUTE_ROOT = 'internal_root';
+
     const INTERNAL_CONTENT_TRUNCATED = 'internal_content_truncated';
+
     const INTERNAL_CONTEXT = 'context';
+
     const INTERNAL_CONTENT_RAW = 'content_raw';
+
     const INTERNAL_PATH = 'internal_path';
+
     const INTERNAL_RESPONSE = 'internal_response';
+
     const INTERNAL_RESPONSE_PATH = 'internal_response_path';
+
     const INTERNAL_RESPONSE_ID = 'internal_response_id';
+
     const INTERNAL_RESPONSE_CONTEXT = 'internal_response_context';
+
     const INTERNAL_CONTEXT_ID = 'internal_context_id';
+
     const INTERNAL_RESPONSE_HAS_REPLIES = 'internal_response_has_replies';
+
     const INTERNAL_STRUCTURE_NEEDS_MIGRATION = 'internal_needs_structure_migration';
+
     const INTERNAL_HISTORY_REVISION_COUNT = 'revision_count';
+
     const INTERNAL_HAS_SUPPLEMENTED_DATA = 'parser_has_supplemented_data';
+
     const INTERNAL_PARSER_CONTENT_SUPPLEMENTED = 'parser_content_supplemented';
+
     const INTERNAL_PARSER_AUTHOR_NAME_SUPPLEMENTED = 'parser_author_name_supplemented';
+
     const INTERNAL_PARSER_AUTHOR_EMAIL_SUPPLEMENTED = 'parser_author_email_supplemented';
+
     const INTERNAL_AUTHOR_HAS_EMAIL = 'internal_author_has_email';
+
     const INTERNAL_AUTHOR_HAS_NAME = 'internal_author_has_name';
 
     const INTERNAL_STRUCTURE_HAS_REPLIES = 'has_replies';
@@ -92,7 +136,7 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     /**
      * Sets if the comment is a new comment.
      *
-     * @param bool $isNew Indicates if the comment is a "new" comment.
+     * @param  bool  $isNew Indicates if the comment is a "new" comment.
      * @return mixed
      */
     public function setIsNew($isNew);
@@ -100,7 +144,7 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     /**
      * Sets the thread's string identifier.
      *
-     * @param string $threadId The thread string identifier.
+     * @param  string  $threadId The thread string identifier.
      * @return void
      */
     public function setThreadId($threadId);
@@ -129,7 +173,7 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     /**
      * Sets the comment's content.
      *
-     * @param string $content The content.
+     * @param  string  $content The content.
      * @return CommentContract
      */
     public function setContent($content);
@@ -144,7 +188,7 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     /**
      * Sets the comment's raw content value.
      *
-     * @param string $content The content.
+     * @param  string  $content The content.
      * @return CommentContract
      */
     public function setRawContent($content);
@@ -159,7 +203,7 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     /**
      * Sets the comments raw attribute values.
      *
-     * @param array $attributes The attributes.
+     * @param  array  $attributes The attributes.
      * @return CommentContract
      */
     public function setRawAttributes($attributes);
@@ -167,7 +211,7 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     /**
      * Returns a value indicating if the comment has replies.
      *
-     * @return boolean
+     * @return bool
      */
     public function getHasReplies();
 
@@ -202,7 +246,7 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     /**
      * Sets the comment's replies.
      *
-     * @param CommentContract[] $replies The replies to the comment.
+     * @param  CommentContract[]  $replies The replies to the comment.
      * @return CommentContract
      */
     public function setReplies($replies);
@@ -210,28 +254,28 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     /**
      * Marks the comment as unpublished.
      *
-     * @return boolean
+     * @return bool
      */
     public function unpublish();
 
     /**
      * Marks the comment as published.
      *
-     * @return boolean
+     * @return bool
      */
     public function publish();
 
     /**
      * Returns a value indicating if the comment is published.
      *
-     * @return boolean
+     * @return bool
      */
     public function published();
 
     /**
      * Returns a value indicating if the comment is a root level comment.
      *
-     * @return boolean
+     * @return bool
      */
     public function isRoot();
 
@@ -252,21 +296,21 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     /**
      * Tests if the comment has been checked for spam.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasBeenCheckedForSpam();
 
     /**
      * Returns a value indicating if the comment was marked as spam.
      *
-     * @return boolean
+     * @return bool
      */
     public function isSpam();
 
     /**
      * Returns a value indicating if the comment is a reply.
      *
-     * @return boolean
+     * @return bool
      */
     public function isReply();
 
@@ -280,7 +324,7 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     /**
      * Sets the parent comment for this comment instance.
      *
-     * @param CommentContract $comment The parent comment.
+     * @param  CommentContract  $comment The parent comment.
      * @return CommentContract
      */
     public function setParentComment($comment);
@@ -309,14 +353,14 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     /**
      * Gets whether or not the comment is deleted.
      *
-     * @return boolean
+     * @return bool
      */
     public function isDeleted();
 
     /**
      * Sets the comment's author context.
      *
-     * @param AuthorContract $author The author of the comment.
+     * @param  AuthorContract  $author The author of the comment.
      * @return CommentContract
      */
     public function setAuthor($author);
@@ -331,7 +375,7 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     /**
      * Sets the comment's parent author context, if available.
      *
-     * @param  AuthorContract $author The author of the parent comment.
+     * @param  AuthorContract  $author The author of the parent comment.
      * @return CommentContract
      */
     public function setParentAuthor($author);
@@ -347,6 +391,7 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
      * Indicates if the comment's author has a name.
      *
      * @since 2.1.14
+     *
      * @return bool
      */
     public function hasAuthorName();
@@ -355,6 +400,7 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
      * Indicates if the comment's author has an email address.
      *
      * @since 2.1.14
+     *
      * @return bool
      */
     public function hasAuthorEmailAddress();
@@ -390,7 +436,7 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     /**
      * Sets the comment's participants.
      *
-     * @param AuthorContract[] $participants The comment's participants.
+     * @param  AuthorContract[]  $participants The comment's participants.
      * @return CommentContract
      */
     public function setParticipants($participants);
@@ -426,7 +472,7 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     /**
      * Updates the comment's content and saves the comment.
      *
-     * @param string $content The new content.
+     * @param  string  $content The new content.
      * @return bool
      */
     public function updateCommentContent($content);
@@ -434,7 +480,7 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
     /**
      * Sets the string identifier of the parent comment.
      *
-     * @param string $parentId The parent comment's identifier.
+     * @param  string  $parentId The parent comment's identifier.
      * @return void
      */
     public function setParentId($parentId);
@@ -459,5 +505,4 @@ interface CommentContract extends DataObjectContract, Serializable, ParsesMarkdo
      * @return ChangeSetCollection|null
      */
     public function getRevisions();
-
 }

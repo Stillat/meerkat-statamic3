@@ -10,7 +10,6 @@ use Stillat\Meerkat\Core\Contracts\Permissions\PermissionsManagerContract;
 use Stillat\Meerkat\Core\Contracts\Storage\CommentStorageManagerContract;
 use Stillat\Meerkat\Core\Errors;
 use Stillat\Meerkat\Core\Exceptions\CommentNotFoundException;
-use Stillat\Meerkat\Core\Http\Responses\CommentResponseGenerator;
 use Stillat\Meerkat\Core\Http\Responses\Responses;
 use Stillat\Meerkat\Core\Logging\ErrorReporterFactory;
 use Stillat\Meerkat\Http\MessageGeneralCommentResponseGenerator;
@@ -18,7 +17,6 @@ use Stillat\Meerkat\Http\RequestHelpers;
 
 class RemoveCommentController extends CpController
 {
-
     public function deleteMany(
         CommentStorageManagerContract $storageManager,
         PermissionsManagerContract $manager,
@@ -31,7 +29,7 @@ class RemoveCommentController extends CpController
                 return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_REMOVE);
             } else {
                 abort(403, 'Unauthorized', [
-                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_REMOVE
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_REMOVE,
                 ]);
                 exit;
             }
@@ -43,7 +41,7 @@ class RemoveCommentController extends CpController
 
         if ($commentIds === null || count($commentIds) === 0) {
             return Responses::conditionalWithData(false, [
-                ApiParameters::RESULT_REMOVED_IDS => []
+                ApiParameters::RESULT_REMOVED_IDS => [],
             ]);
         }
 
@@ -51,7 +49,7 @@ class RemoveCommentController extends CpController
             $result = $storageManager->removeAll($commentIds);
 
             return Responses::conditionalWithData($result->success, [
-                ApiParameters::RESULT_REMOVED_IDS => $result->comments
+                ApiParameters::RESULT_REMOVED_IDS => $result->comments,
             ]);
         } catch (Exception $e) {
             ErrorReporterFactory::report($e);
@@ -73,7 +71,7 @@ class RemoveCommentController extends CpController
                 return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_REMOVE);
             } else {
                 abort(403, 'Unauthorized', [
-                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_REMOVE
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_REMOVE,
                 ]);
                 exit;
             }
@@ -96,7 +94,7 @@ class RemoveCommentController extends CpController
             $commentsRemoved[] = $commentId;
 
             return Responses::conditionalWithData($result->success, [
-                ApiParameters::RESULT_REMOVED_IDS => $commentsRemoved
+                ApiParameters::RESULT_REMOVED_IDS => $commentsRemoved,
             ]);
         } catch (CommentNotFoundException $notFound) {
             ErrorReporterFactory::report($notFound);
@@ -108,5 +106,4 @@ class RemoveCommentController extends CpController
             return Responses::generalFailure();
         }
     }
-
 }

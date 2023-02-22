@@ -9,12 +9,10 @@ use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
  *
  * Provides a consistent API for managing comment dataset meta data.
  *
- * @package Stillat\Meerkat\Core\Storage\Data
  * @since 2.0.0
  */
 interface MetadataCollectionContract
 {
-
     /**
      * Gets a list of unique comment identifiers in the dataset.
      *
@@ -77,5 +75,4 @@ interface MetadataCollectionContract
      * @return string[]
      */
     public function getAnonymousAuthorEmailAddresses();
-
 }

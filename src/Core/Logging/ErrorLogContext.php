@@ -9,13 +9,12 @@ use Exception;
  *
  * Provides a consistent API for interacting with Meerkat Error Log contexts.
  *
- * @package Stillat\Meerkat\Core\Logging
  * @since 2.0.0
  */
 class ErrorLogContext
 {
-
     const KEY_MSG = 'msg';
+
     const KEY_DETAILS = 'details';
 
     /**
@@ -35,7 +34,7 @@ class ErrorLogContext
     /**
      * Attempts to convert the string to an ErrorLogContext instance.
      *
-     * @param string $value The value to convert.
+     * @param  string  $value The value to convert.
      * @return ErrorLogContext
      */
     public static function fromString($value)
@@ -44,7 +43,7 @@ class ErrorLogContext
         $contextToReturn->msg = $value;
 
         try {
-            $decoded = (array)json_decode($value);
+            $decoded = (array) json_decode($value);
 
             if (array_key_exists(self::KEY_MSG, $decoded)) {
                 $contextToReturn->msg = $decoded[self::KEY_MSG];
@@ -59,5 +58,4 @@ class ErrorLogContext
 
         return $contextToReturn;
     }
-
 }

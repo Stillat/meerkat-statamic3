@@ -17,13 +17,12 @@ use Stillat\Meerkat\Core\Exceptions\ParserException;
  *
  * The input string "hello, 'this is a, nested, \'string\', value" is equivalent.
  *
- * @package Stillat\Meerkat\Core\Parsing
  * @since 2.0.0
  */
 class ArrayParser
 {
-
     const TOKEN_SEPARATOR = ',';
+
     const TOKEN_ESCAPE = '\\';
 
     const TOKEN_QUOTE_DELIMITER = '\'';
@@ -31,9 +30,10 @@ class ArrayParser
     /**
      * Parses an input string into an array of values.
      *
-     * @param string $inputString The input string.
-     * @param string $delimiter The element delimiter.
+     * @param  string  $inputString The input string.
+     * @param  string  $delimiter The element delimiter.
      * @return array
+     *
      * @throws ParserException
      */
     public static function getValues($inputString, $delimiter = ',')
@@ -61,6 +61,7 @@ class ArrayParser
             if ($i === $lastBufferItem) {
                 if ($inQuotes === true && $thisChar === self::TOKEN_QUOTE_DELIMITER) {
                     $parserParts[] = implode('', $charBuffer);
+
                     continue;
                 } elseif ($inQuotes === true && $thisChar !== self::TOKEN_QUOTE_DELIMITER) {
                     throw new ParserException('Unmatched quotes at end of sequence: '.$inputString);
@@ -73,29 +74,31 @@ class ArrayParser
                     throw new ParserException('Unrecognized escape sequence: \\null');
                 }
 
-
                 if ($peek === self::TOKEN_QUOTE_DELIMITER) {
                     $charBuffer[] = self::TOKEN_QUOTE_DELIMITER;
                     $i += 2;
 
                     $inQuotes = true;
+
                     continue;
                 } elseif ($peek === self::TOKEN_ESCAPE) {
                     $charBuffer[] = self::TOKEN_ESCAPE;
                     $i += 1;
                 }
-
             } elseif ($thisChar === self::TOKEN_QUOTE_DELIMITER) {
                 if ($inQuotes === false) {
                     $inQuotes = true;
+
                     continue;
                 }
 
                 $inQuotes = false;
+
                 continue;
             } elseif ($thisChar === $delimiter) {
                 if ($inQuotes === true) {
                     $charBuffer[] = $thisChar;
+
                     continue;
                 }
                 $parserParts[] = implode('', $charBuffer);
@@ -109,5 +112,4 @@ class ArrayParser
 
         return $parserParts;
     }
-
 }

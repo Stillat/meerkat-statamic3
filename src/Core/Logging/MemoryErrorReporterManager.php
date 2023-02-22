@@ -10,12 +10,10 @@ use Stillat\Meerkat\Core\Contracts\Logging\ErrorReporterManagerContract;
  *
  * Manages reported errors in-memory.
  *
- * @package Stillat\Meerkat\Core\Logging
  * @since 2.3.0
  */
 class MemoryErrorReporterManager implements ErrorReporterManagerContract
 {
-
     /**
      * A list of all registered ErrorReporterContract instances.
      *
@@ -26,7 +24,7 @@ class MemoryErrorReporterManager implements ErrorReporterManagerContract
     /**
      * Registers a new reporter instance with the manager.
      *
-     * @param ErrorReporterContract $reporter The reporter instance.
+     * @param  ErrorReporterContract  $reporter The reporter instance.
      */
     public function registerReporter(ErrorReporterContract $reporter)
     {
@@ -36,7 +34,7 @@ class MemoryErrorReporterManager implements ErrorReporterManagerContract
     /**
      * Instructs the manager to report the error to all registered reporters.
      *
-     * @param mixed $errorObject The error object.
+     * @param  mixed  $errorObject The error object.
      */
     public function report($errorObject)
     {
@@ -49,5 +47,4 @@ class MemoryErrorReporterManager implements ErrorReporterManagerContract
             $reporter->log($errorObject);
         }
     }
-
 }

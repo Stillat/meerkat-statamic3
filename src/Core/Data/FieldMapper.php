@@ -9,12 +9,10 @@ use Stillat\Meerkat\Core\Support\Arr;
  *
  * Allows for accessing common data using a shorthand accessor.
  *
- * @package Stillat\Meerkat\Core\Data
  * @since 2.0.0
  */
 class FieldMapper
 {
-
     /**
      * A mapping of shorthand fields and their data target.
      *
@@ -24,7 +22,7 @@ class FieldMapper
         'comment.date' => 'comment_date_formatted',
         'comment.content' => 'content_raw',
         'comment.is_spam' => 'spam',
-        'comment.published' => 'published'
+        'comment.published' => 'published',
     ];
 
     /**
@@ -51,8 +49,8 @@ class FieldMapper
     /**
      * Sets the text to use for transformation values.
      *
-     * @param string $trueText The text to use for true values.
-     * @param string $falseText The text to use for false values.
+     * @param  string  $trueText The text to use for true values.
+     * @param  string  $falseText The text to use for false values.
      */
     public function setTextTransformValues($trueText, $falseText)
     {
@@ -63,7 +61,7 @@ class FieldMapper
     /**
      * Sets whether to use text transformations.
      *
-     * @param bool $doTextTransform Whether to use text transformations.
+     * @param  bool  $doTextTransform Whether to use text transformations.
      */
     public function setUseTextTransform($doTextTransform)
     {
@@ -73,9 +71,9 @@ class FieldMapper
     /**
      * Retrieves the requested fields from the comment data.
      *
-     * @param array $comment The comment data.
-     * @param array $fields The fields to retrieve.
-     * @param bool $transform Whether to transform the data.
+     * @param  array  $comment The comment data.
+     * @param  array  $fields The fields to retrieve.
+     * @param  bool  $transform Whether to transform the data.
      * @return array
      */
     public function getData($comment, $fields, $transform = true)
@@ -102,7 +100,7 @@ class FieldMapper
     /**
      * Rewrites the provided fields to their appropriate target.
      *
-     * @param array $fields The fields to rewrite.
+     * @param  array  $fields The fields to rewrite.
      * @return array
      */
     public function rewriteFields($fields)
@@ -119,5 +117,4 @@ class FieldMapper
 
         return $newFields;
     }
-
 }

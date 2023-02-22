@@ -1,13 +1,12 @@
 <?php
 
-use Stillat\Meerkat\Addon;
 use Illuminate\Support\Facades\Route;
+use Stillat\Meerkat\Addon;
 
 Route::post('/!/Meerkat/socialize', '\Stillat\Meerkat\Http\Controllers\SocializeController@postSocialize');
 
 Route::middleware('statamic.cp.authenticated')->group(function () {
     Route::group(['prefix' => Addon::getApiPrefix()], function () {
-
         Route::post('/', '\Stillat\Meerkat\Http\Controllers\Api\IndexController@index');
 
         Route::group(['prefix' => 'telemetry'], function () {
@@ -18,12 +17,11 @@ Route::middleware('statamic.cp.authenticated')->group(function () {
 
         Route::group(['prefix' => 'settings'], function () {
             Route::get('/current-user', '\Stillat\Meerkat\Http\Controllers\ConfigureController@getCurrentUserSettings');
-            Route::get('/fetch','\Stillat\Meerkat\Http\Controllers\ConfigureController@getConfiguration');
-            Route::post('/save','\Stillat\Meerkat\Http\Controllers\ConfigureController@save');
-            Route::get('/current-change-set','\Stillat\Meerkat\Http\Controllers\ConfigureController@getCurrentConfigHash');
+            Route::get('/fetch', '\Stillat\Meerkat\Http\Controllers\ConfigureController@getConfiguration');
+            Route::post('/save', '\Stillat\Meerkat\Http\Controllers\ConfigureController@save');
+            Route::get('/current-change-set', '\Stillat\Meerkat\Http\Controllers\ConfigureController@getCurrentConfigHash');
             Route::post('/validate-akismet', '\Stillat\Meerkat\Http\Controllers\ConfigureController@validateAkismetApiKey');
             Route::post('/update-per-page', '\Stillat\Meerkat\Http\Controllers\ConfigureController@updateUserPerPage');
-
         });
 
         Route::group(['prefix' => 'comments'], function () {
@@ -57,6 +55,5 @@ Route::middleware('statamic.cp.authenticated')->group(function () {
         Route::group(['prefix' => 'reporting'], function () {
             Route::get('overview', '\Stillat\Meerkat\Http\Controllers\Api\ReportingController@getReportOverview');
         });
-
     });
 });

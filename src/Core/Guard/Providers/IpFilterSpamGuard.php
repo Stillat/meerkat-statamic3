@@ -13,12 +13,12 @@ use Stillat\Meerkat\Core\GuardConfiguration;
  *
  * Determines if a comment is spam by checking its IP Address against a list of blocked IP Addressses.
  *
- * @package Stillat\Meerkat\Core\Guard\Providers
  * @since 2.1.0
  */
 class IpFilterSpamGuard implements SpamGuardContract
 {
     const IPF_MATCHED = 'IPF-01-001';
+
     const IPF_DEFAULT_MESSAGE = 'IP filter matched against a configured value.';
 
     private $reasons = [];
@@ -58,7 +58,7 @@ class IpFilterSpamGuard implements SpamGuardContract
     /**
      * Gets a value indicating if the detector succeeded.
      *
-     * @return boolean
+     * @return bool
      */
     public function wasSuccess()
     {
@@ -79,9 +79,8 @@ class IpFilterSpamGuard implements SpamGuardContract
      * Returns a value indicating if the provided object has a
      * high probability of being a disingenuous posting.
      *
-     * @param DataObjectContract $data
      *
-     * @return boolean
+     * @return bool
      */
     public function getIsSpam(DataObjectContract $data)
     {
@@ -100,7 +99,7 @@ class IpFilterSpamGuard implements SpamGuardContract
                 $reason->setReasonCode(self::IPF_MATCHED);
                 $reason->setReasonContext([
                     'address' => $address,
-                    'property' => AuthorContract::KEY_USER_IP
+                    'property' => AuthorContract::KEY_USER_IP,
                 ]);
 
                 $this->reasons[] = $reason;
@@ -116,9 +115,8 @@ class IpFilterSpamGuard implements SpamGuardContract
      * Marks an object as a spam, and communicates this
      * to third-party vendors if configured to do so.
      *
-     * @param DataObjectContract $data
      *
-     * @return boolean
+     * @return bool
      */
     public function markAsSpam(DataObjectContract $data)
     {
@@ -129,9 +127,8 @@ class IpFilterSpamGuard implements SpamGuardContract
      * Marks a object as not-spam, and communicates this
      * to third-party vendors if configured to do so.
      *
-     * @param DataObjectContract $data
      *
-     * @return boolean
+     * @return bool
      */
     public function markAsHam(DataObjectContract $data)
     {
@@ -142,7 +139,7 @@ class IpFilterSpamGuard implements SpamGuardContract
      * Returns a value indicating if a guard supports submitting
      * not-spam results to a third-party service or product.
      *
-     * @return boolean
+     * @return bool
      */
     public function supportsSubmittingHam()
     {
@@ -153,7 +150,7 @@ class IpFilterSpamGuard implements SpamGuardContract
      * Returns a value indicating if a guard supports submitting
      * spam results to a third-party service or product.
      *
-     * @return boolean
+     * @return bool
      */
     public function supportsSubmittingSpam()
     {
@@ -163,7 +160,8 @@ class IpFilterSpamGuard implements SpamGuardContract
     /**
      * Returns a value indicating if the guard encountered errors.
      *
-     * @return boolean
+     * @return bool
+     *
      * @since 2.0.0
      */
     public function hasErrors()
@@ -180,5 +178,4 @@ class IpFilterSpamGuard implements SpamGuardContract
     {
         return [];
     }
-
 }

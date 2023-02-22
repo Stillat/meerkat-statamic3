@@ -12,12 +12,9 @@ use Stillat\Meerkat\PathProvider;
  *
  * Utility to find any language key that returns the key in the current locale. When
  * this happens, a translation string resolved to the fallback locale is used.
- *
- * @package Stillat\Meerkat\Translation
  */
 class LanguagePatcher
 {
-
     /**
      * The translator instance.
      *
@@ -58,12 +55,11 @@ class LanguagePatcher
         }
 
         // Construct a path to our potential language directory.
-        $localeDirectory = PathProvider::getResourcesDirectory('lang') . '/' . $this->currentLocale;
-        $fallbackDirectory = PathProvider::getResourcesDirectory('lang') . '/' . $this->fallbackLocale;
+        $localeDirectory = PathProvider::getResourcesDirectory('lang').'/'.$this->currentLocale;
+        $fallbackDirectory = PathProvider::getResourcesDirectory('lang').'/'.$this->fallbackLocale;
 
         // If the configured locale exists, lets find which translation strings do not exist.
         if (Folder::exists($fallbackDirectory)) {
-
             $fallbackLocale = collect(Folder::getFiles($fallbackDirectory))->localize();
             $targetLocale = collect([]);
 
@@ -78,20 +74,19 @@ class LanguagePatcher
                 if (is_array($categoryStrings)) {
                     foreach ($categoryStrings as $translationKey => $translationValue) {
                         if (array_key_exists($localeCategory, $targetFlat)) {
-
                             if (array_key_exists($translationKey, $targetFlat[$localeCategory]) == false) {
-                                if (array_key_exists(Addon::CODE_ADDON_NAME . '::' . $localeCategory, $patches) == false) {
-                                    $patches[Addon::CODE_ADDON_NAME . '::' . $localeCategory] = [];
+                                if (array_key_exists(Addon::CODE_ADDON_NAME.'::'.$localeCategory, $patches) == false) {
+                                    $patches[Addon::CODE_ADDON_NAME.'::'.$localeCategory] = [];
                                 }
 
-                                $patches[Addon::CODE_ADDON_NAME . '::' . $localeCategory][$translationKey] = $translationValue;
+                                $patches[Addon::CODE_ADDON_NAME.'::'.$localeCategory][$translationKey] = $translationValue;
                             }
                         } else {
-                            if (array_key_exists(Addon::CODE_ADDON_NAME . '::' . $localeCategory, $patches) == false) {
-                                $patches[Addon::CODE_ADDON_NAME . '::' . $localeCategory] = [];
+                            if (array_key_exists(Addon::CODE_ADDON_NAME.'::'.$localeCategory, $patches) == false) {
+                                $patches[Addon::CODE_ADDON_NAME.'::'.$localeCategory] = [];
                             }
 
-                            $patches[Addon::CODE_ADDON_NAME . '::' . $localeCategory][$translationKey] = $translationValue;
+                            $patches[Addon::CODE_ADDON_NAME.'::'.$localeCategory][$translationKey] = $translationValue;
                         }
                     }
                 }
@@ -102,5 +97,4 @@ class LanguagePatcher
 
         return [];
     }
-
 }

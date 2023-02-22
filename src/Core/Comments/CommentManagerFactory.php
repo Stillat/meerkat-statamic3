@@ -9,7 +9,6 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentManagerContract;
  *
  * Allows Meerkat Core internals to reference a global implementation.
  *
- * @package Stillat\Meerkat\Core\Comments
  * @since 2.0.0
  */
 class CommentManagerFactory
@@ -24,7 +23,7 @@ class CommentManagerFactory
     /**
      * Returns a value that indicates if a comment manager instance was set.
      *
-     * @return boolean
+     * @return bool
      */
     public static function hasInstance()
     {
@@ -38,5 +37,4 @@ class CommentManagerFactory
 
         return true;
     }
-
 }

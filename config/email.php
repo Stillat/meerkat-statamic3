@@ -60,6 +60,6 @@ return [
     */
     'addresses' => [
 
-    ]
+    ],
 
 ];

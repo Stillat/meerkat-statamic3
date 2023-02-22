@@ -7,12 +7,10 @@ namespace Stillat\Meerkat\Core\Http;
  *
  * Represents an HTTP request response.
  *
- * @package Stillat\Meerkat\Core\Http
  * @since 2.0.0
  */
 class HttpResponse
 {
-
     /**
      * Indicates if the request failed due to the client implementation.
      *
@@ -22,6 +20,7 @@ class HttpResponse
 
     /**
      * Indicates if the request failed due a transport-related reason.
+     *
      * @var bool
      */
     public $wasSuccess = false;
@@ -67,5 +66,4 @@ class HttpResponse
      * @var null|HttpHeaders
      */
     public $headers = null;
-
 }

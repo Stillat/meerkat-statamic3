@@ -7,16 +7,14 @@ namespace Stillat\Meerkat\Core\Data\Filters;
  *
  * Provides utilities for redirecting internal properties, if required.
  *
- * @package Stillat\Meerkat\Core\Data\Filters
  * @since 2.0.4
  */
 class PropertyRedirector
 {
-
     /**
      * Redirects the requested provider to a different internal property, if required.
      *
-     * @param string $property The requested property.
+     * @param  string  $property The requested property.
      * @return string
      */
     public static function redirect($property)
@@ -27,5 +25,4 @@ class PropertyRedirector
 
         return $property;
     }
-
 }

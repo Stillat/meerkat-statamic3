@@ -4,7 +4,7 @@ return [
 
     'transform' => [
         'true' => 'Yes',
-        'false' => 'No'
+        'false' => 'No',
     ],
 
     'author' => [
@@ -19,7 +19,7 @@ return [
         'date' => 'Date',
         'content' => 'Comment',
         'is_spam' => 'Spam',
-        'published' => 'Published'
-    ]
+        'published' => 'Published',
+    ],
 
 ];

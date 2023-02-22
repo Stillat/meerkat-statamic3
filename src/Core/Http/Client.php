@@ -17,13 +17,12 @@ use Stillat\Meerkat\Core\Logging\LocalErrorCodeRepository;
  *
  * Implementing systems may provide their own HttpClient implementations by implementing the HttpClientContract.
  *
- * @package Stillat\Meerkat\Core\Http
  * @since 2.0.0
  */
 class Client implements HttpClientContract
 {
-
     const HTTP_POST = 'POST';
+
     const HTTP_GET = 'GET';
 
     /**
@@ -35,7 +34,8 @@ class Client implements HttpClientContract
 
     /**
      * Sets the request timeout, in seconds.
-     * @param integer $timeout
+     *
+     * @param  int  $timeout
      */
     public function setRequestTimeOut($timeout)
     {
@@ -45,9 +45,8 @@ class Client implements HttpClientContract
     /**
      * Issues a POST request and returns the server's response.
      *
-     * @param $url
-     * @param array $data
-     * @param string $referer
+     * @param  array  $data
+     * @param  string  $referer
      * @return HttpResponse
      */
     public function post($url, $data = [], $referer = '')
@@ -58,10 +57,6 @@ class Client implements HttpClientContract
     /**
      * Issues an HTTP request with the provided information.
      *
-     * @param $httpVerb
-     * @param $url
-     * @param $data
-     * @param $referer
      * @return HttpResponse
      */
     private function makeRequest($httpVerb, $url, $data, $referer)
@@ -78,7 +73,7 @@ class Client implements HttpClientContract
 
         if (array_key_exists('scheme', $requestUrl) && $requestUrl['scheme'] == 'https') {
             $requestPort = 443;
-            $requestHost = 'ssl://' . $requestHost;
+            $requestHost = 'ssl://'.$requestHost;
         }
 
         $errorNumber = null;
@@ -89,21 +84,21 @@ class Client implements HttpClientContract
             $fp = fsockopen($requestHost, $requestPort, $errorNumber, $errorString, $this->requestTimeoutInSeconds);
 
             if ($fp) {
-                fputs($fp, $httpVerb . " $path HTTP/1.1\r\n");
-                fputs($fp, "Host: " . $host . "\r\n");
+                fwrite($fp, $httpVerb." $path HTTP/1.1\r\n");
+                fwrite($fp, 'Host: '.$host."\r\n");
 
                 if ($referer != '') {
-                    fputs($fp, "Referer: $referer\r\n");
+                    fwrite($fp, "Referer: $referer\r\n");
                 }
 
-                fputs($fp, "Content-type: application/x-www-form-urlencoded\r\n");
-                fputs($fp, "Content-length: " . mb_strlen($requestData) . "\r\n");
-                fputs($fp, "Connection: close\r\n\r\n");
-                fputs($fp, $requestData);
+                fwrite($fp, "Content-type: application/x-www-form-urlencoded\r\n");
+                fwrite($fp, 'Content-length: '.mb_strlen($requestData)."\r\n");
+                fwrite($fp, "Connection: close\r\n\r\n");
+                fwrite($fp, $requestData);
 
                 $requestResult = '';
 
-                while (!feof($fp)) {
+                while (! feof($fp)) {
                     $requestResult .= fgets($fp, 128);
                 }
 
@@ -123,9 +118,8 @@ class Client implements HttpClientContract
             $httpResponse->wasClientFailure = true;
             $httpResponse->error = $e->getMessage();
 
-
             $logContext = new ErrorLogContext();
-            $logContext->msg = 'An exception was thrown during the execution of an HTTP Request (' . $httpVerb . '): ' . $url;
+            $logContext->msg = 'An exception was thrown during the execution of an HTTP Request ('.$httpVerb.'): '.$url;
             $logContext->details = $e->getMessage();
 
             ExceptionLoggerFactory::log($e);
@@ -157,7 +151,6 @@ class Client implements HttpClientContract
     /**
      * Returns a URL-encoded string for the provided data.
      *
-     * @param $data
      * @return string
      */
     private function buildQueryData($data)
@@ -168,7 +161,7 @@ class Client implements HttpClientContract
     /**
      * Decodes the provided chunk.
      *
-     * @param string $chunk The encoded chunk.
+     * @param  string  $chunk The encoded chunk.
      * @return string|null
      */
     private function decode($chunk)
@@ -179,8 +172,9 @@ class Client implements HttpClientContract
 
         while (($pos < $len)
             && ($chunkLenHex = substr($chunk, $pos, ($newlineAt = strpos($chunk, "\n", $pos + 1)) - $pos))) {
-            if (!$this->isHex($chunkLenHex)) {
+            if (! $this->isHex($chunkLenHex)) {
                 trigger_error('Value is not properly chunk encoded', E_USER_WARNING);
+
                 return $chunk;
             }
 
@@ -189,13 +183,14 @@ class Client implements HttpClientContract
             $deCoded .= substr($chunk, $pos, $chunkLen);
             $pos = strpos($chunk, "\n", $pos + $chunkLen) + 1;
         }
+
         return $deCoded;
     }
 
     /**
      * Tests if the provided value is hex.
      *
-     * @param string $hex Value to test.
+     * @param  string  $hex Value to test.
      * @return bool
      */
     private function isHex($hex)
@@ -208,21 +203,19 @@ class Client implements HttpClientContract
 
         $dec = hexdec($hex);
 
-        return ($hex == dechex($dec));
+        return $hex == dechex($dec);
     }
 
     /**
      * Issues a HTTP GET request with the provided data.
      *
-     * @param string $url The endpoint to request.
-     * @param array $data Optional query data to send.
-     * @param string $referer Optional HTTP referer to set.
-     *
+     * @param  string  $url The endpoint to request.
+     * @param  array  $data Optional query data to send.
+     * @param  string  $referer Optional HTTP referer to set.
      * @return mixed|HttpResponse
      */
     public function get($url, $data = [], $referer = '')
     {
         return $this->makeRequest(Client::HTTP_GET, $url, $data, $referer);
     }
-
 }

@@ -17,24 +17,27 @@ use Stillat\Meerkat\Core\Support\TypeConversions;
  * user:not_in(list, of, ids) - legacy alias
  * not:user:in(list, of, ids)
  *
- * @package Stillat\Meerkat\Core\Data\Filters\DefaultFilters
  * @since 1.5.85
  *
  * @method mixed get($key, $default = null) Gets a filter parameter value.
  * @method mixed getContext() Gets the filter context.
+ *
  * @see CommentFilter
  */
 class UserIn
 {
     const FILTER_USER_IN = 'user:in';
+
     const FILTER_USER_NOT_IN = 'user:not_in';
+
     const FILTER_USER_NOT_IN_ALIAS = 'not:user:in';
+
     const PARAM_USERS = 'users';
 
     /**
      * Registers the default user:<> Meerkat filters.
      *
-     * @param CommentFilterManager $manager The filter manager.
+     * @param  CommentFilterManager  $manager The filter manager.
      */
     public function register(CommentFilterManager $manager)
     {
@@ -77,5 +80,4 @@ class UserIn
             });
         }, UserIn::PARAM_USERS);
     }
-
 }

@@ -13,7 +13,6 @@ use Stillat\Meerkat\Core\Permissions\PermissionsSet;
  *
  * Represents a Statamic User Identity for Meerkat Core.
  *
- * @package Stillat\Meerkat\Identity
  * @since 1.0.0
  */
 class StatamicIdentity implements AuthorContract
@@ -72,7 +71,7 @@ class StatamicIdentity implements AuthorContract
     /**
      * Sets the user's system string identifier.
      *
-     * @param string $userId The user's string identifier.
+     * @param  string  $userId The user's string identifier.
      */
     public function setId($userId)
     {
@@ -82,7 +81,7 @@ class StatamicIdentity implements AuthorContract
     /**
      * Sets the author context's permission set.
      *
-     * @param PermissionsSet $permissionSet
+     * @param  PermissionsSet  $permissionSet
      */
     public function setPermissionsSet($permissionSet)
     {
@@ -123,7 +122,7 @@ class StatamicIdentity implements AuthorContract
     /**
      * Sets whether or not the identity is transient.
      *
-     * @param bool $isTransient
+     * @param  bool  $isTransient
      */
     public function setIsTransient($isTransient)
     {
@@ -173,7 +172,7 @@ class StatamicIdentity implements AuthorContract
     /**
      * Sets the identity's web address.
      *
-     * @param string $webAddress The web address.
+     * @param  string  $webAddress The web address.
      */
     public function setWebAddress($webAddress)
     {
@@ -193,7 +192,7 @@ class StatamicIdentity implements AuthorContract
     /**
      * Sets the identity's display name.
      *
-     * @param string $displayName
+     * @param  string  $displayName
      */
     public function setDisplayName($displayName)
     {
@@ -213,7 +212,7 @@ class StatamicIdentity implements AuthorContract
     /**
      * Sets the identity's email address.
      *
-     * @param string $emailAddress The identity's email address.
+     * @param  string  $emailAddress The identity's email address.
      */
     public function setEmailAddress($emailAddress)
     {
@@ -229,5 +228,4 @@ class StatamicIdentity implements AuthorContract
     {
         return $this->permissionSet;
     }
-
 }

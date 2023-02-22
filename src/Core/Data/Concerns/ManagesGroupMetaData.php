@@ -7,12 +7,10 @@ namespace Stillat\Meerkat\Core\Data\Concerns;
  *
  * Provides implementations for common grouped dataset methods.
  *
- * @package Stillat\Meerkat\Core\Data\Concerns
  * @since 2.0.0
  */
 trait ManagesGroupMetaData
 {
-
     /**
      * The name of all dataset groups.
      *
@@ -47,7 +45,7 @@ trait ManagesGroupMetaData
     /**
      * Sets the collective group name.
      *
-     * @param string $collectiveName The collective group name.
+     * @param  string  $collectiveName The collective group name.
      */
     public function setCollectiveGroupName($collectiveName)
     {
@@ -67,7 +65,7 @@ trait ManagesGroupMetaData
     /**
      * Sets the name of individual groups.
      *
-     * @param string $groupName The name of a single group.
+     * @param  string  $groupName The name of a single group.
      */
     public function setGroupName($groupName)
     {
@@ -77,7 +75,7 @@ trait ManagesGroupMetaData
     /**
      * Sets the name of each group's dataset.
      *
-     * @param string $datasetName The name of each group's dataset.
+     * @param  string  $datasetName The name of each group's dataset.
      */
     public function setGroupDatasetName($datasetName)
     {
@@ -93,5 +91,4 @@ trait ManagesGroupMetaData
     {
         return $this->datasetName;
     }
-
 }

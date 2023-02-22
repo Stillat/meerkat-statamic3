@@ -20,7 +20,6 @@ use Stillat\Meerkat\Http\RequestHelpers;
 
 class SpamController extends CpController
 {
-
     public function markManyAsSpam(
         CommentStorageManagerContract $storageManager,
         PermissionsManagerContract $manager,
@@ -33,7 +32,7 @@ class SpamController extends CpController
                 return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_REPORT_SPAM);
             } else {
                 abort(403, 'Unauthorized', [
-                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_REPORT_SPAM
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_REPORT_SPAM,
                 ]);
                 exit;
             }
@@ -45,7 +44,7 @@ class SpamController extends CpController
 
         if ($commentIds === null || count($commentIds) === 0) {
             return Responses::conditionalWithData(false, [
-                ApiParameters::RESULT_COMMENTS => []
+                ApiParameters::RESULT_COMMENTS => [],
             ]);
         }
 
@@ -53,7 +52,7 @@ class SpamController extends CpController
             $result = $storageManager->setIsSpamForIds($commentIds);
 
             return Responses::conditionalWithData($result->success, [
-                ApiParameters::RESULT_COMMENTS => $result->comments
+                ApiParameters::RESULT_COMMENTS => $result->comments,
             ]);
         } catch (Exception $e) {
             ErrorReporterFactory::report($e);
@@ -77,7 +76,7 @@ class SpamController extends CpController
                 return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_REPORT_SPAM);
             } else {
                 abort(403, 'Unauthorized', [
-                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_REPORT_SPAM
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_REPORT_SPAM,
                 ]);
                 exit;
             }
@@ -102,7 +101,6 @@ class SpamController extends CpController
                 $comment = Comment::find($commentId);
 
                 if ($guardConfiguration->autoDeleteSpam === true) {
-
                     $removeResult = $storageManager->removeById($comment->getId());
 
                     if ($removeResult->success) {
@@ -114,7 +112,7 @@ class SpamController extends CpController
             return Responses::conditionalWithData($result, [
                 ApiParameters::RESULT_COMMENT => $commentResultGenerator->getApiComment($comment->toArray()),
                 ApiParameters::RESULT_AUTO_REMOVED => $autoDeleted,
-                ApiParameters::RESULT_COMMENTS => $removedComments
+                ApiParameters::RESULT_COMMENTS => $removedComments,
             ]);
         } catch (CommentNotFoundException $notFound) {
             ErrorReporterFactory::report($notFound);
@@ -136,7 +134,7 @@ class SpamController extends CpController
                 return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_REMOVE);
             } else {
                 abort(403, 'Unauthorized', [
-                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_REMOVE
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_REMOVE,
                 ]);
                 exit;
             }
@@ -146,7 +144,7 @@ class SpamController extends CpController
             $result = $cleaner->deleteAllSpam();
 
             return Responses::conditionalWithData($result->success, [
-                ApiParameters::RESULT_REMOVED_IDS => $result->comments
+                ApiParameters::RESULT_REMOVED_IDS => $result->comments,
             ]);
         } catch (Exception $e) {
             ErrorReporterFactory::report($e);
@@ -154,6 +152,4 @@ class SpamController extends CpController
             return Responses::generalFailure();
         }
     }
-
-
 }

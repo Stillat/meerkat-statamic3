@@ -11,12 +11,10 @@ use Stillat\Meerkat\Core\Support\TypeConversions;
  *
  * Provides comment aggregate reporting features (such as getting pending count, published count, etc.)
  *
- * @package Stillat\Meerkat\Reporting
  * @since 2.0.0
  */
 class OverviewAggregator
 {
-
     /**
      * The ThreadStorageManagerContract implementation instance.
      *
@@ -61,6 +59,7 @@ class OverviewAggregator
 
                 if ($comment->isDeleted()) {
                     $overviewReport->softDeleted += 1;
+
                     continue;
                 }
                 $overviewReport->total += 1;
@@ -99,12 +98,10 @@ class OverviewAggregator
             }
         }
 
-
         $secondsToGenerate = microtime(true) - $startTime;
 
         $overviewReport->generationSeconds = $secondsToGenerate;
 
         return $overviewReport;
     }
-
 }

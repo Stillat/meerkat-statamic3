@@ -9,18 +9,15 @@ use Stillat\Meerkat\Core\Contracts\Data\DataSetContract;
  *
  * Provides utilities for converting a DataSet into an array.
  *
- * @package Stillat\Meerkat\Core\Data\Converters
  * @since 2.0.0
  */
 class DataSetCollectionConverter extends BaseCollectionConverter
 {
-
-
     /**
      * Converts the DataSet to its array form.
      *
-     * @param DataSetContract $dataset The dataset to convert.
-     * @param string $datasetName The dataset name.
+     * @param  DataSetContract  $dataset The dataset to convert.
+     * @param  string  $datasetName The dataset name.
      * @return DataSetContract
      */
     public function convertToArray(DataSetContract $dataset, $datasetName)
@@ -31,5 +28,4 @@ class DataSetCollectionConverter extends BaseCollectionConverter
 
         return $dataset;
     }
-
 }

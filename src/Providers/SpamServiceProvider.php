@@ -3,7 +3,6 @@
 namespace Stillat\Meerkat\Providers;
 
 use Exception;
-use Illuminate\Support\Facades\Event;
 use Statamic\Statamic;
 use Stillat\Meerkat\Concerns\UsesConfig;
 use Stillat\Meerkat\Configuration\Manager;
@@ -15,7 +14,6 @@ use Stillat\Meerkat\Core\Guard\SpamChecker;
 use Stillat\Meerkat\Core\Guard\SpamCheckerFactory;
 use Stillat\Meerkat\Core\Guard\SpamService;
 use Stillat\Meerkat\Core\GuardConfiguration;
-use Stillat\Meerkat\Core\Handlers\SpamServiceHandler;
 use Stillat\Meerkat\Core\Logging\ErrorLog;
 use Stillat\Meerkat\Core\Logging\ErrorLogContext;
 use Stillat\Meerkat\Core\Logging\ErrorReporterFactory;
@@ -74,8 +72,8 @@ class SpamServiceProvider extends AddonServiceProvider
                         if ($instance instanceof SpamGuardContract) {
                             $spamService->registerGuard($instance);
                         } else {
-                            $message = $guard . ' cannot be registered; it is not an instance of '
-                                . SpamGuardContract::class;
+                            $message = $guard.' cannot be registered; it is not an instance of '
+                                .SpamGuardContract::class;
 
                             LocalErrorCodeRepository::log(ErrorLog::warning(
                                 Errors::GUARD_INCORRECT_TYPE,
@@ -89,16 +87,14 @@ class SpamServiceProvider extends AddonServiceProvider
 
                         LocalErrorCodeRepository::log(ErrorLog::make(Errors::GUARD_CREATION_FAILED, $errorContext));
                         ErrorReporterFactory::report($e);
-
                     }
                 } else {
                     LocalErrorCodeRepository::log(ErrorLog::warning(
                         Errors::GUARD_MISSING_TYPE,
-                        $guard . ' class could not be located.'
+                        $guard.' class could not be located.'
                     ));
                 }
             }
         });
     }
-
 }

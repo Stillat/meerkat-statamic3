@@ -7,12 +7,10 @@ namespace Stillat\Meerkat\Core\Support;
  *
  * Provides information related to the execution environment and server.
  *
- * @package Stillat\Meerkat\Core\Support
  * @since 2.0.0
  */
 class Env
 {
-
     /**
      * Indicates if the Addon is running on Windows.
      *
@@ -22,5 +20,4 @@ class Env
     {
         return strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
     }
-
 }

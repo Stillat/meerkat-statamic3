@@ -12,7 +12,7 @@ return [
     */
     'guards' => [
         \Stillat\Meerkat\Core\Guard\Providers\AkismetSpamGuard::class,
-        \Stillat\Meerkat\Core\Guard\Providers\WordFilterSpamGuard::class
+        \Stillat\Meerkat\Core\Guard\Providers\WordFilterSpamGuard::class,
     ],
 
     /*

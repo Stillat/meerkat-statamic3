@@ -15,7 +15,6 @@ use Stillat\Meerkat\Validation\StorageDriverValidator;
  *
  * Provides utilities for validating the Meerkat installation.
  *
- * @package Stillat\Meerkat\Console\Commands
  * @since 2.0.0
  */
 class ValidateCommand extends Command
@@ -30,6 +29,7 @@ class ValidateCommand extends Command
      * @var string
      */
     protected $signature = 'meerkat:validate';
+
     /**
      * The description of the command.
      *
@@ -43,6 +43,7 @@ class ValidateCommand extends Command
      * @var StorageDriverValidator
      */
     private $storageDriverValidator = null;
+
     /**
      * The solution provider instance.
      *
@@ -74,8 +75,8 @@ class ValidateCommand extends Command
     /**
      * Utility method to print a boxed header to the console.
      *
-     * @param string $text The header text to print.
-     * @param int $length The length of the header line. Default 100 characters.
+     * @param  string  $text The header text to print.
+     * @param  int  $length The length of the header line. Default 100 characters.
      */
     private function printHeader($text, $length = 100)
     {
@@ -87,7 +88,7 @@ class ValidateCommand extends Command
         $leftPad = abs(floor(($availableWidth / 2) - ($headerLen / 2))) - 5;
         $rightPad = $availableWidth - $leftPad - $headerLen - 10;
 
-        $this->line(str_repeat('=', 5) . str_repeat(' ', $leftPad) . $text . str_repeat(' ', $rightPad) . str_repeat('=', 5));
+        $this->line(str_repeat('=', 5).str_repeat(' ', $leftPad).$text.str_repeat(' ', $rightPad).str_repeat('=', 5));
 
         $this->line(str_repeat('=', $length));
         $this->line('');
@@ -102,9 +103,8 @@ class ValidateCommand extends Command
 
         $this->printHeader($this->trans('commands.validate_storage_drivers'));
 
-        $this->line('Configured storage path: ' . PathProvider::normalize($driverResults->getDataAttribute('configured_storage_path')));
-        $this->line('Using storage path: ' . PathProvider::normalize($driverResults->getDataAttribute('using_storage_path')));
-
+        $this->line('Configured storage path: '.PathProvider::normalize($driverResults->getDataAttribute('configured_storage_path')));
+        $this->line('Using storage path: '.PathProvider::normalize($driverResults->getDataAttribute('using_storage_path')));
 
         if ($driverResults->isValid) {
             $this->info($this->trans('commands.validate_storage_valid'));
@@ -113,7 +113,6 @@ class ValidateCommand extends Command
         }
 
         if ($driverResults->hasDataAttribute('driver_configuration')) {
-
             $this->printHeader($this->trans('commands.validate_driver_configuration'));
 
             $drivers = $driverResults->getDataAttribute('driver_configuration');
@@ -131,17 +130,16 @@ class ValidateCommand extends Command
                 }
             } catch (\Exception $e) {
                 $this->line($this->trans('commands.validate_error_code', [
-                        'errorcode' => Errors::DRIVER_THREAD_CANNOT_USE
-                    ]) . ':: ' . $e->getMessage());
+                    'errorcode' => Errors::DRIVER_THREAD_CANNOT_USE,
+                ]).':: '.$e->getMessage());
             }
-
         }
     }
 
     /**
      * Displays the validation failure reasons in the console.
      *
-     * @param array $reasons Validation failure reasons.
+     * @param  array  $reasons Validation failure reasons.
      */
     private function displayReasons($reasons)
     {
@@ -152,7 +150,7 @@ class ValidateCommand extends Command
             $this->line(str_repeat('=', 100));
 
             $this->error($this->trans('commands.validate_error_code', [
-                'errorcode' => $errorCode
+                'errorcode' => $errorCode,
             ]));
 
             $this->line($failureReason['msg']);
@@ -161,7 +159,7 @@ class ValidateCommand extends Command
 
             if ($helpText !== null && mb_strlen(trim($helpText)) > 0) {
                 $this->info($this->trans('commands.validate_possible_solution', [
-                    'errorcode' => $errorCode
+                    'errorcode' => $errorCode,
                 ]));
                 $this->info(str_repeat('=', 100));
                 $this->line('');
@@ -169,5 +167,4 @@ class ValidateCommand extends Command
             }
         }
     }
-
 }

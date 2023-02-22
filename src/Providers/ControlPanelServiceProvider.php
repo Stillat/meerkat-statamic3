@@ -14,7 +14,6 @@ use Stillat\Meerkat\Statamic\ControlPanel\Navigation;
  *
  * Registers various Meerkat features that interact directly with the Statamic Control Panel.
  *
- * @package Stillat\Meerkat\Providers
  * @since 2.0.0
  */
 class ControlPanelServiceProvider extends AddonServiceProvider
@@ -31,6 +30,7 @@ class ControlPanelServiceProvider extends AddonServiceProvider
      * @var AddonNavIcons|null
      */
     protected $addonIconInstaller = null;
+
     /**
      * The Meerkat Navigation helper instance.
      *
@@ -58,15 +58,13 @@ class ControlPanelServiceProvider extends AddonServiceProvider
 
         $this->navigation->create();
 
-
         $currentLocale = config('app.locale', 'en');
 
-        Statamic::style('meerkat', Addon::VERSION . '/meerkat');
-        Statamic::script('meerkat', Addon::VERSION . AddonServiceProvider::getResourceJavaScriptPath('/meerkatExtend'));
-        Statamic::script('meerkat', Addon::VERSION . AddonServiceProvider::getResourceJavaScriptPath('/'.$currentLocale.'_translations'));
+        Statamic::style('meerkat', Addon::VERSION.'/meerkat');
+        Statamic::script('meerkat', Addon::VERSION.AddonServiceProvider::getResourceJavaScriptPath('/meerkatExtend'));
+        Statamic::script('meerkat', Addon::VERSION.AddonServiceProvider::getResourceJavaScriptPath('/'.$currentLocale.'_translations'));
         $this->emitEvent(ControlPanelServiceProvider::EVENT_REGISTERING_CONTROL_PANEL, '');
-        Statamic::script('meerkat', Addon::VERSION . AddonServiceProvider::getResourceJavaScriptPath('/meerkat'));
-        Statamic::script('meerkat', Addon::VERSION . AddonServiceProvider::getResourceJavaScriptPath('/bootstrap'));
+        Statamic::script('meerkat', Addon::VERSION.AddonServiceProvider::getResourceJavaScriptPath('/meerkat'));
+        Statamic::script('meerkat', Addon::VERSION.AddonServiceProvider::getResourceJavaScriptPath('/bootstrap'));
     }
-
 }

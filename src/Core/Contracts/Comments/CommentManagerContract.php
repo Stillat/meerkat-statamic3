@@ -16,12 +16,10 @@ use Stillat\Meerkat\Core\Exceptions\FilterException;
  *
  * Defines a consistent API for managing Meerkat comments
  *
- * @package Stillat\Meerkat\Core\Contracts\Commentsg
  * @since 2.0.0
  */
 interface CommentManagerContract
 {
-
     /**
      * Gets the comment storage manager implementation.
      *
@@ -32,7 +30,7 @@ interface CommentManagerContract
     /**
      * Attempts to retrieve all comments.
      *
-     * @param bool $withTrashed Indicates if soft-deleted threads should be included.
+     * @param  bool  $withTrashed Indicates if soft-deleted threads should be included.
      * @return CommentContract[]
      */
     public function getAll($withTrashed = false);
@@ -40,8 +38,9 @@ interface CommentManagerContract
     /**
      * Attempts to query all comments.
      *
-     * @param DataQuery $query The query to apply to all comments.
+     * @param  DataQuery  $query The query to apply to all comments.
      * @return GroupedDataSetContract|PagedDataSetContract|PagedGroupedDataSetContract|DataSetContract
+     *
      * @throws FilterException
      */
     public function queryAll(DataQuery $query);
@@ -49,8 +48,8 @@ interface CommentManagerContract
     /**
      * Configures the provided comment to be a reply to the specified parent.
      *
-     * @param string $parentId The parent comment's string identifier.
-     * @param CommentContract $comment The comment to attach as a reply.
+     * @param  string  $parentId The parent comment's string identifier.
+     * @param  CommentContract  $comment The comment to attach as a reply.
      * @return CommentContract
      */
     public function replyTo($parentId, CommentContract $comment);
@@ -58,8 +57,8 @@ interface CommentManagerContract
     /**
      * Saves the provided comment as a reply to the specified parent.
      *
-     * @param string $parentId The parent comment's string identifier.
-     * @param CommentContract $comment The comment to attach as a reply.
+     * @param  string  $parentId The parent comment's string identifier.
+     * @param  CommentContract  $comment The comment to attach as a reply.
      * @return bool
      */
     public function saveReplyTo($parentId, CommentContract $comment);
@@ -67,8 +66,7 @@ interface CommentManagerContract
     /**
      * Attempts to locate a comment by it's string identifier.
      *
-     * @param string $id
-     *
+     * @param  string  $id
      * @return CommentContract|null
      */
     public function findById($id);
@@ -76,8 +74,7 @@ interface CommentManagerContract
     /**
      * Attempts to remove the provided comment completely.
      *
-     * @param CommentContract $comment
-     *
+     * @param  CommentContract  $comment
      * @return AffectsCommentsResult
      */
     public function remove($comment);
@@ -85,8 +82,7 @@ interface CommentManagerContract
     /**
      * Attempts to locate and remove the comment by it's string identifier.
      *
-     * @param string $id
-     *
+     * @param  string  $id
      * @return AffectsCommentsResult
      */
     public function removeById($id);
@@ -94,8 +90,7 @@ interface CommentManagerContract
     /**
      * Resolves the storage path for the provided comment.
      *
-     * @param CommentContract $comment
-     *
+     * @param  CommentContract  $comment
      * @return string
      */
     public function determinePath($comment);
@@ -103,10 +98,8 @@ interface CommentManagerContract
     /**
      * Resolves the storage path for a comment with the provided string identifier.
      *
-     * @param string $id
-     *
+     * @param  string  $id
      * @return string
      */
     public function determinePathById($id);
-
 }

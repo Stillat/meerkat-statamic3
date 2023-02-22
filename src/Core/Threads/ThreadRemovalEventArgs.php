@@ -10,7 +10,6 @@ use Stillat\Meerkat\Core\DataObject;
  *
  * Represents a Thread during a thread mutation request
  *
- * @package Stillat\Meerkat\Core\Threads
  * @since 2.0.0
  */
 class ThreadRemovalEventArgs implements DataObjectContract
@@ -27,7 +26,7 @@ class ThreadRemovalEventArgs implements DataObjectContract
     /**
      * Indicates whether or not the thread should be permanently removed or not.
      *
-     * @var boolean
+     * @var bool
      */
     protected $doSoftDelete = false;
 
@@ -66,11 +65,10 @@ class ThreadRemovalEventArgs implements DataObjectContract
     /**
      * Returns a value indicating if the thread should be permanently removed or not.
      *
-     * @return boolean
+     * @return bool
      */
     public function shouldKeep()
     {
         return $this->doSoftDelete;
     }
-
 }

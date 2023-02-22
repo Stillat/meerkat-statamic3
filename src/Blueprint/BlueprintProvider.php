@@ -14,12 +14,10 @@ use Stillat\Meerkat\PathProvider;
  *
  * Ensures that the default Meerkat blueprint is available to the Statamic installation.
  *
- * @package Stillat\Meerkat\Blueprint
  * @since 2.0.0
  */
 class BlueprintProvider
 {
-
     /**
      * The blueprint repository implementation instance.
      *
@@ -44,6 +42,7 @@ class BlueprintProvider
      * Gets the Meerkat blueprint.
      *
      * @return Blueprint
+     *
      * @throws ParseException
      */
     public function getBlueprint()
@@ -57,6 +56,7 @@ class BlueprintProvider
      * Ensures that the default Meerkat blueprint is available.
      *
      * @return void
+     *
      * @throws ParseException
      */
     public function ensureExistence()
@@ -88,6 +88,7 @@ class BlueprintProvider
      * Creates a default blueprint.
      *
      * @return Blueprint
+     *
      * @throws ParseException
      */
     private function makeBlueprint()
@@ -100,5 +101,4 @@ class BlueprintProvider
 
         return $blueprint;
     }
-
 }

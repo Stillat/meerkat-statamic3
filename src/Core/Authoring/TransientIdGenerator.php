@@ -9,16 +9,14 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
  *
  * Provides utilities for converting identifying author properties into a GUID-like string.
  *
- * @package Stillat\Meerkat\Core\Authoring
  * @since 2.0.0
  */
 class TransientIdGenerator
 {
-
     /**
      * Converts the identifying information into a GUID-like string.
      *
-     * @param array $authorPrototype The author prototype.
+     * @param  array  $authorPrototype The author prototype.
      * @return string|null
      */
     public static function getId($authorPrototype)
@@ -37,9 +35,8 @@ class TransientIdGenerator
             return null;
         }
 
-        $hashedComponents = str_split(md5(join($idComponents)), 4);
+        $hashedComponents = str_split(md5(implode($idComponents)), 4);
 
         return vsprintf('%s%s-%s-%s-%s-%s%s%s', $hashedComponents);
     }
-
 }

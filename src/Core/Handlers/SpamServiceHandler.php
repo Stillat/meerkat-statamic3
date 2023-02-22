@@ -14,12 +14,10 @@ use Stillat\Meerkat\Core\GuardConfiguration;
  *
  * Checks submissions for spam.
  *
- * @package Stillat\Meerkat\Core\Handlers
  * @since 2.0.0
  */
 class SpamServiceHandler extends BaseHandler
 {
-
     /**
      * The Meerkat Core Configuration container.
      *
@@ -69,7 +67,8 @@ class SpamServiceHandler extends BaseHandler
     }
 
     /**
-     * @param CommentContract $comment The comment to check.
+     * @param  CommentContract  $comment The comment to check.
+     *
      * @throws FilterException
      */
     public function handle(CommentContract $comment)
@@ -80,7 +79,8 @@ class SpamServiceHandler extends BaseHandler
     /**
      * Checks the provided comment is spam or not.
      *
-     * @param CommentContract $comment The comment to test.
+     * @param  CommentContract  $comment The comment to test.
+     *
      * @throws FilterException
      */
     public function checkForSpam(CommentContract $comment)
@@ -118,5 +118,4 @@ class SpamServiceHandler extends BaseHandler
             }
         }
     }
-
 }

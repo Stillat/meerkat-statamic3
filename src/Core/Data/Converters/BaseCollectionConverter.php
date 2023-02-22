@@ -14,12 +14,10 @@ use Stillat\Meerkat\Core\Threads\ContextResolverFactory;
  *
  * Provides helpers for converting a collection of CommentContract into arrays.
  *
- * @package Stillat\Meerkat\Core\Data\Converters
  * @since 2.0.0
  */
 class BaseCollectionConverter
 {
-
     /**
      * A shared BaseCollectionConverter instance.
      *
@@ -50,6 +48,7 @@ class BaseCollectionConverter
      * Returns access to a shared BaseCollectionConverter instance.
      *
      * @return BaseCollectionConverter
+     *
      * @throws InconsistentCompositionException
      */
     public static function make()
@@ -71,8 +70,8 @@ class BaseCollectionConverter
     /**
      * Converts a comment to an array.
      *
-     * @param CommentContract $comment The comment to convert.
-     * @param string $datasetName The inner dataset name.
+     * @param  CommentContract  $comment The comment to convert.
+     * @param  string  $datasetName The inner dataset name.
      * @return array
      */
     public function convertSingle(CommentContract $comment, $datasetName)
@@ -101,8 +100,8 @@ class BaseCollectionConverter
     /**
      * Converts  a collection of comments into an array collection.
      *
-     * @param CommentContract[] $comments The comments to convert.
-     * @param string $datasetName The inner dataset name.
+     * @param  CommentContract[]  $comments The comments to convert.
+     * @param  string  $datasetName The inner dataset name.
      * @return array
      */
     public function convert(array $comments, $datasetName)
@@ -132,7 +131,6 @@ class BaseCollectionConverter
             $commentAuthor = $comment->getAuthor();
             $parentAuthor = $comment->getParentAuthor();
 
-
             if ($commentAuthor === null) {
                 $commentAuthor = [];
             } else {
@@ -141,7 +139,6 @@ class BaseCollectionConverter
                 $commentAuthor[AuthorContract::KEY_HAS_EMAIL] = $comment->getDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_EMAIL, false);
             }
 
-
             if ($parentAuthor !== null) {
                 $parentCommentAuthor = $this->sanitationManager->sanitizeArrayValues($parentAuthor->toArray());
                 $parentComment = $comment->getParentComment();
@@ -149,7 +146,6 @@ class BaseCollectionConverter
                 if ($parentComment !== null) {
                     $parentCommentAuthor[AuthorContract::KEY_HAS_NAME] = $parentComment->getDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_NAME, false);
                     $parentCommentAuthor[AuthorContract::KEY_HAS_EMAIL] = $parentComment->getDataAttribute(CommentContract::INTERNAL_AUTHOR_HAS_EMAIL, false);
-
                 }
 
                 $commentArray[CommentContract::INTERNAL_PARENT_AUTHOR] = $parentCommentAuthor;
@@ -161,7 +157,7 @@ class BaseCollectionConverter
 
             $comments[$comment->getId()] = $commentArray;
 
-            if ((string)$datasetKey !== $comment->getId()) {
+            if ((string) $datasetKey !== $comment->getId()) {
                 unset($comments[$datasetKey]);
             }
         }
@@ -206,7 +202,6 @@ class BaseCollectionConverter
                     }
 
                     $comments[$commentId][CommentContract::KEY_PARENT] = $commentParent;
-
                 }
             }
         }
@@ -225,5 +220,4 @@ class BaseCollectionConverter
 
         return $commentsToReturn;
     }
-
 }

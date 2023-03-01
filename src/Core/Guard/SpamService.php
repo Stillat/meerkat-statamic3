@@ -15,12 +15,12 @@ use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
  *
  * Provides a wrapper around the configured spam guards
  *
- * @package Stillat\Meerkat\Core\Guard
  * @since 2.0.0
  */
 class SpamService
 {
     const KEY_NAME = 'name';
+
     const KEY_CLASS = 'class';
 
     /**
@@ -87,7 +87,6 @@ class SpamService
     /**
      * Registers a spam guard with the service.
      *
-     * @param SpamGuardContract $guard
      *
      * @return void
      */
@@ -101,15 +100,16 @@ class SpamService
      *
      * This method does not automatically add the guard to the utilized guard list.
      *
-     * @param string $guardName The guard's friendly name.
-     * @param string $guardClass The fully-qualified class for the guard.
+     * @param  string  $guardName The guard's friendly name.
+     * @param  string  $guardClass The fully-qualified class for the guard.
+     *
      * @since 2.0.12
      */
     public function makeAvailable($guardName, $guardClass)
     {
         $this->discoveredGuards[] = [
             self::KEY_NAME => $guardName,
-            self::KEY_CLASS => $guardClass
+            self::KEY_CLASS => $guardClass,
         ];
     }
 
@@ -138,7 +138,7 @@ class SpamService
      * Returns a value indicating if any errors were reported during
      * the previous execution of the `isSpam($comment)` method.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasErrors()
     {
@@ -148,7 +148,6 @@ class SpamService
     /**
      * Iterates each spam guard and submits the comment as spam.
      *
-     * @param DataObjectContract $data
      *
      * @return GuardResult
      */
@@ -158,7 +157,7 @@ class SpamService
             return GuardResult::failure();
         }
 
-        if (!$this->hasGuards()) {
+        if (! $this->hasGuards()) {
             return GuardResult::failure();
         }
 
@@ -168,7 +167,7 @@ class SpamService
     /**
      * Returns a value indicating if any spam guards were registered.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasGuards()
     {
@@ -178,7 +177,6 @@ class SpamService
     /**
      * Uses each registered spam guard to submit the comment as spam.
      *
-     * @param DataObjectContract $data
      *
      * @return GuardResult
      */
@@ -213,7 +211,6 @@ class SpamService
     /**
      * Iterates each spam guard and submits the comment as "ham" (not spam).
      *
-     * @param DataObjectContract $data
      *
      * @return GuardResult
      */
@@ -223,7 +220,7 @@ class SpamService
             return new GuardResult();
         }
 
-        if (!$this->hasGuards()) {
+        if (! $this->hasGuards()) {
             return new GuardResult();
         }
 
@@ -233,7 +230,6 @@ class SpamService
     /**
      * Uses each registered spam guard to submit the comment as spam.
      *
-     * @param DataObjectContract $data
      *
      * @return GuardResult
      */
@@ -277,10 +273,9 @@ class SpamService
     /**
      * Checks the provided comment against any registered spam guards.
      *
-     * @param CommentContract $comment The comment to check.
-     * @param bool $runAutomation Whether to run comment mutation automation.
-     *
-     * @return boolean
+     * @param  CommentContract  $comment The comment to check.
+     * @param  bool  $runAutomation Whether to run comment mutation automation.
+     * @return bool
      */
     public function isSpam(CommentContract $comment, $runAutomation = true)
     {
@@ -290,7 +285,7 @@ class SpamService
             return false;
         }
 
-        if (!$this->hasGuards()) {
+        if (! $this->hasGuards()) {
             return false;
         }
 
@@ -354,5 +349,4 @@ class SpamService
 
         return $foundSpam;
     }
-
 }

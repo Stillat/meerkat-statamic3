@@ -7,13 +7,12 @@ namespace Stillat\Meerkat\Core\Data\Mutations;
  *
  * Represents a collection of atomic change-sets.
  *
- * @package Stillat\Meerkat\Core\Data\Mutations
  * @since 2.0.0
  */
 class ChangeSetCollection
 {
-
     const KEY_CHANGE_SETS = 'changes';
+
     const KEY_REVISION = 'revision';
 
     /**
@@ -33,7 +32,7 @@ class ChangeSetCollection
     /**
      * Converts the array into a ChangeSetCollection.
      *
-     * @param array $array The data to convert to a ChangeSetCollection.
+     * @param  array  $array The data to convert to a ChangeSetCollection.
      * @return ChangeSetCollection
      */
     public static function fromArray($array)
@@ -56,7 +55,7 @@ class ChangeSetCollection
     /**
      * Adds a new change set to the collection.
      *
-     * @param ChangeSet $changeSet The change set to add.
+     * @param  ChangeSet  $changeSet The change set to add.
      */
     public function addChangeSet(ChangeSet $changeSet)
     {
@@ -66,7 +65,7 @@ class ChangeSetCollection
     /**
      * Tests whether the change set collection contains the requested revision.
      *
-     * @param string $revision The revision's identifier.
+     * @param  string  $revision The revision's identifier.
      * @return bool
      */
     public function hasRevision($revision)
@@ -103,7 +102,7 @@ class ChangeSetCollection
     /**
      * Sets the collection's change sets.
      *
-     * @param ChangeSet[] $changeSets The change sets.
+     * @param  ChangeSet[]  $changeSets The change sets.
      */
     public function setChangeSets($changeSets)
     {
@@ -113,7 +112,7 @@ class ChangeSetCollection
     /**
      * Returns the change set for the provided revision identifier.
      *
-     * @param string $revision The revision's identifier.
+     * @param  string  $revision The revision's identifier.
      * @return ChangeSet|null
      */
     public function getChangeSetForRevision($revision)
@@ -136,7 +135,7 @@ class ChangeSetCollection
     {
         return [
             self::KEY_REVISION => $this->getCurrentRevision(),
-            self::KEY_CHANGE_SETS => $this->getChangeSetArray()
+            self::KEY_CHANGE_SETS => $this->getChangeSetArray(),
         ];
     }
 
@@ -153,7 +152,7 @@ class ChangeSetCollection
     /**
      * Sets the current change set revision.
      *
-     * @param int $revision The current revision.
+     * @param  int  $revision The current revision.
      */
     public function setCurrentRevision($revision)
     {
@@ -175,5 +174,4 @@ class ChangeSetCollection
 
         return $changesToReturn;
     }
-
 }

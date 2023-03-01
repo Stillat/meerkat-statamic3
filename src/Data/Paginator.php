@@ -11,12 +11,10 @@ use Stillat\Meerkat\Core\Data\PaginatorBase;
  *
  * Uses the Statamic LengthAwarePaginator paginator to provide additional page meta data.
  *
- * @package Stillat\Meerkat\Data
  * @since 2.0.0
  */
 class Paginator extends PaginatorBase
 {
-
     /**
      * Generates a collection of additional page meta data.
      *
@@ -35,8 +33,7 @@ class Paginator extends PaginatorBase
             PagedDataSet::KEY_META_PREV_PAGE => $paginator->previousPageUrl(),
             PagedDataSet::KEY_META_NEXT_PAGE => $paginator->nextPageUrl(),
             PagedDataSet::KEY_META_AUTO_LINKS => $paginator->render(),
-            PagedDataSet::KEY_META_LINKS => $paginator->renderArray()
+            PagedDataSet::KEY_META_LINKS => $paginator->renderArray(),
         ];
     }
-
 }

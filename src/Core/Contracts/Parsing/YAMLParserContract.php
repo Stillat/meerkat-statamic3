@@ -7,17 +7,14 @@ namespace Stillat\Meerkat\Core\Contracts\Parsing;
  *
  * Provides a consistent API for managing YAML-formatted documents.
  *
- * @package Stillat\Meerkat\Core\Contracts\Parsing
  * @since 2.0.0
  */
 interface YAMLParserContract
 {
-
     /**
      * Parses the provided string document and returns a value array.
      *
-     * @param string $content
-     *
+     * @param  string  $content
      * @return array
      */
     public function parseDocument($content);
@@ -25,9 +22,8 @@ interface YAMLParserContract
     /**
      * Converts the provided data into its YAML representation.
      *
-     * @param mixed $attributes The data to convert.
-     * @param string $content The content to convert.
-     *
+     * @param  mixed  $attributes The data to convert.
+     * @param  string  $content The content to convert.
      * @return string
      */
     public function toYaml($attributes, $content);
@@ -35,11 +31,8 @@ interface YAMLParserContract
     /**
      * Parses the provided string document and merges the results into the provided data container array.
      *
-     * @param string $content
-     * @param array $dataContainer
-     *
+     * @param  string  $content
      * @return void
      */
     public function parseAndMerge($content, array &$dataContainer);
-
 }

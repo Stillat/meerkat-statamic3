@@ -7,10 +7,8 @@ namespace Stillat\Meerkat\Exceptions;
  *
  * Thrown when a form submission is rejected.
  *
- * @package Stillat\Meerkat\Exceptions
  * @since 2.0.0
  */
 class RejectSubmissionException extends MeerkatStatamicException
 {
-
 }

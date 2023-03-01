@@ -20,4 +20,3 @@ return [
     'anonymous_email' => 'no-email@example.org',
     'anonymous_author' => 'Anonymous User',
 ];
-

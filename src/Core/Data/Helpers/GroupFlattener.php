@@ -10,19 +10,17 @@ use Stillat\Meerkat\Core\Data\DataGroupBuilder;
  *
  * Provides utilities to flatten a grouped dataset.
  *
- * @package Stillat\Meerkat\Core\Data\Helpers
  * @since 2.0.0
  */
 class GroupFlattener
 {
-
     /**
      * Flattens the grouped data using the provided details.
      *
-     * @param array $data The grouped data.
-     * @param string $collectiveGroupName The name of all groups.
-     * @param string $individualGroupName The name of each individual group.
-     * @param string $datasetName The name of each group's dataset.
+     * @param  array  $data The grouped data.
+     * @param  string  $collectiveGroupName The name of all groups.
+     * @param  string  $individualGroupName The name of each individual group.
+     * @param  string  $datasetName The name of each group's dataset.
      * @return array
      */
     public static function flatten($data, $collectiveGroupName, $individualGroupName, $datasetName)
@@ -49,7 +47,7 @@ class GroupFlattener
             foreach ($groupValues as $comment) {
                 $groupData = [
                     DataGroupBuilder::KEY_TOTAL_COUNT => $groupTotalItems,
-                    DataGroupBuilder::KEY_ITEM_CURRENT_INDEX => $index
+                    DataGroupBuilder::KEY_ITEM_CURRENT_INDEX => $index,
                 ];
 
                 if ($comment instanceof CommentContract) {
@@ -60,12 +58,11 @@ class GroupFlattener
                     $comment[DataGroupBuilder::KEY_GROUP] = $groupData;
                 }
 
-                $flattenedData[] =& $comment;
+                $flattenedData[] = &$comment;
                 $index += 1;
             }
         }
 
         return $flattenedData;
     }
-
 }

@@ -11,8 +11,7 @@ class GeneralCommentResponseGenerator
     public function notFound($commentId)
     {
         return array_merge(Responses::fromErrorCode(Errors::COMMENT_NOT_FOUND, true), [
-            self::KEY_COMMENT_ID => $commentId
+            self::KEY_COMMENT_ID => $commentId,
         ]);
     }
-
 }

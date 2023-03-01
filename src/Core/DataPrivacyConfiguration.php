@@ -11,12 +11,10 @@ namespace Stillat\Meerkat\Core;
  * configuration options that change the behavior
  * of the Meerkat Core processes and actions.
  *
- * @package Stillat\Meerkat\Core
  * @since 2.1.14
  */
 class DataPrivacyConfiguration extends ConfigurationContainer
 {
-
     /**
      * Indicates if Meerkat will automatically collect visitor's user agents when they submit a comment.
      *
@@ -33,6 +31,7 @@ class DataPrivacyConfiguration extends ConfigurationContainer
 
     /**
      * Indicates if Meerkat will automatically collect visitor's HTTP Referrer header when they submit a comment.
+     *
      * @var bool
      */
     public $collectReferrer = false;
@@ -50,5 +49,4 @@ class DataPrivacyConfiguration extends ConfigurationContainer
      * @var string
      */
     public $emptyName = 'Anonymous User';
-
 }

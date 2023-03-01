@@ -11,17 +11,20 @@ use Stillat\Meerkat\Core\UuidGenerator;
  *
  * Represents a reason why an item was identified as spam, from a spam Guard.
  *
- * @package Stillat\Meerkat\Core\Guard
  * @since 2.0.0
  */
 class SpamReason implements Serializable
 {
-
     const KEY_ID = 'id';
+
     const KEY_CODE = 'code';
+
     const KEY_TEXT = 'text';
+
     const KEY_CONTEXT = 'context';
+
     const KEY_NAME = 'name';
+
     const KEY_CLASS = 'class';
 
     /**
@@ -52,7 +55,6 @@ class SpamReason implements Serializable
      */
     protected $reasonId = '';
 
-
     /**
      * The guard's friendly name.
      *
@@ -74,7 +76,8 @@ class SpamReason implements Serializable
 
     /**
      * Converts the array to a SpamReason.
-     * @param array $array The reason data.
+     *
+     * @param  array  $array The reason data.
      * @return SpamReason
      */
     public static function fromArray($array)
@@ -83,7 +86,7 @@ class SpamReason implements Serializable
 
         if (Arr::matches([
             self::KEY_ID, self::KEY_CODE, self::KEY_CONTEXT, self::KEY_TEXT,
-            self::KEY_CLASS, self::KEY_NAME
+            self::KEY_CLASS, self::KEY_NAME,
         ], $array)) {
             $reason->setReasonId($array[self::KEY_ID]);
             $reason->setReasonCode($array[self::KEY_CODE]);
@@ -99,7 +102,7 @@ class SpamReason implements Serializable
     /**
      * Sets the guard's fully-qualified class name.
      *
-     * @param string $guardClass The guard's fully-qualified class name.
+     * @param  string  $guardClass The guard's fully-qualified class name.
      */
     public function setGuardClass($guardClass)
     {
@@ -109,7 +112,7 @@ class SpamReason implements Serializable
     /**
      * Sets the Guard's name.
      *
-     * @param string $guardName The guard name.
+     * @param  string  $guardName The guard name.
      */
     public function setGuardName($guardName)
     {
@@ -129,7 +132,7 @@ class SpamReason implements Serializable
     /**
      * Sets the reason's context.
      *
-     * @param mixed|string $context The reason's context.
+     * @param  mixed|string  $context The reason's context.
      */
     public function setReasonContext($context)
     {
@@ -149,7 +152,7 @@ class SpamReason implements Serializable
     /**
      * Sets the code's internal reason.
      *
-     * @param string $code The reason code.
+     * @param  string  $code The reason code.
      */
     public function setReasonCode($code)
     {
@@ -169,7 +172,7 @@ class SpamReason implements Serializable
     /**
      * Sets the reason's generalized explanation.
      *
-     * @param string $text The reason text.
+     * @param  string  $text The reason text.
      */
     public function setReasonText($text)
     {
@@ -189,7 +192,7 @@ class SpamReason implements Serializable
     /**
      * Sets the reason's identifier.
      *
-     * @param string $reasonId The identifier.
+     * @param  string  $reasonId The identifier.
      */
     public function setReasonId($reasonId)
     {
@@ -214,7 +217,7 @@ class SpamReason implements Serializable
             self::KEY_CONTEXT => $this->reasonContext,
             self::KEY_NAME => $this->spamGuardName,
             self::KEY_CLASS => $this->spamGuardClass,
-            self::KEY_TEXT => $this->reasonText
+            self::KEY_TEXT => $this->reasonText,
         ];
     }
 
@@ -240,7 +243,7 @@ class SpamReason implements Serializable
 
     public function unserialize($serialized)
     {
-        $arrayFormat = (array)json_decode($serialized);
+        $arrayFormat = (array) json_decode($serialized);
 
         $this->reasonId = $arrayFormat[self::KEY_ID];
         $this->reasonCode = $arrayFormat[self::KEY_CODE];
@@ -249,5 +252,4 @@ class SpamReason implements Serializable
         $this->spamGuardName = $arrayFormat[self::KEY_NAME];
         $this->spamGuardClass = $arrayFormat[self::KEY_CLASS];
     }
-
 }

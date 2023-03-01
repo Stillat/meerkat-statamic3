@@ -9,12 +9,10 @@ use Stillat\Meerkat\Core\Contracts\Parsing\DateParserContract;
  *
  * Allows Meerkat Core internals to access a shared datetime parser instance.
  *
- * @package Stillat\Meerkat\Core\Parsing
  * @since 2.0.4
  */
 class DateParserFactory
 {
-
     /**
      * A shared DateParserContract implementation instance.
      *
@@ -39,7 +37,7 @@ class DateParserFactory
     /**
      * Attempts to retrieve a UNIX timestamp from the input string.
      *
-     * @param string $input The input string.
+     * @param  string  $input The input string.
      * @return int
      */
     public static function parse($input)
@@ -50,5 +48,4 @@ class DateParserFactory
 
         return $input;
     }
-
 }

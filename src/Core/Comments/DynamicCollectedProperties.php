@@ -8,12 +8,10 @@ namespace Stillat\Meerkat\Core\Comments;
  * Provides utilities for managing dynamically generated property
  * names from third-party addons or mutation pipeline actions.
  *
- * @package Stillat\Meerkat\Core\Comments
  * @since 2.0.0
  */
 class DynamicCollectedProperties
 {
-
     /**
      * A collection of all properties dynamically created during collection hooks.
      *
@@ -24,8 +22,8 @@ class DynamicCollectedProperties
     /**
      * Registers all unique dynamic property names with the global cache.
      *
-     * @param string[] $preMutationProperties The list of properties before a dynamic mutation.
-     * @param string[] $postMutationProperties The list of properties after a dynamic mutation.
+     * @param  string[]  $preMutationProperties The list of properties before a dynamic mutation.
+     * @param  string[]  $postMutationProperties The list of properties after a dynamic mutation.
      */
     public static function registerDynamicProperties($preMutationProperties, $postMutationProperties)
     {
@@ -41,5 +39,4 @@ class DynamicCollectedProperties
             }
         }
     }
-
 }

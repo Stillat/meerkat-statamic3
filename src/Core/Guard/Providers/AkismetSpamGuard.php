@@ -22,20 +22,26 @@ use Stillat\Meerkat\Core\ValidationResult;
  *
  * Uses the Akismet API to determine if a comment contains spam
  *
- * @package Stillat\Meerkat\Core\Guard\Providers
  * @since 2.0.0
  */
 class AkismetSpamGuard implements SpamGuardContract
 {
     const AKISMET_MATCH_REASON = 'AKS-01-001';
+
     const AKISMET_MATCH_DEFAULT_MESSAGE = 'The Akismet service has identified the message as spam.';
 
     const TYPE_COMMENT = 'comment';
+
     const TYPE_FORUM_POST = 'forum-post';
+
     const TYPE_REPLY = 'reply';
+
     const TYPE_BLOG_POST = 'blog-post';
+
     const TYPE_CONTACT_FORM = 'contact-form';
+
     const TYPE_SIGN_UP = 'signup';
+
     const TYPE_MESSAGE = 'message';
 
     /**
@@ -94,21 +100,37 @@ class AkismetSpamGuard implements SpamGuardContract
     const AKISMET_PARAM_COMMENT_TYPE = 'comment_type';
 
     const AKISMET_PARAM_BLOG = 'blog';
+
     const AKISMET_PARAM_USER_IP = 'user_ip';
+
     const AKISMET_PARAM_USER_AGENT = 'user_agent';
+
     const AKISMET_PARAM_REFERRER = 'referrer';
+
     const AKISMET_PARAM_PERMALINK = 'permalink';
+
     const AKISMET_PARAM_COMMENT_AUTHOR = 'comment_author';
+
     const AKISMET_PARAM_AUTHOR_EMAIL = 'comment_author_email';
+
     const AKISMET_PARAM_AUTHOR_URL = 'comment_author_url';
+
     const AKISMET_PARAM_COMMENT_CONTENT = 'comment_content';
+
     const AKISMET_PARAM_COMMENT_DATE_GMT = 'comment_date_gmt';
+
     const AKISMET_PARAM_COMMENT_POST_MODIFIED_GMT = 'comment_post_modified_gmt';
+
     const AKISMET_PARAM_BLOG_LANGUAGE = 'blog_lang';
+
     const AKISMET_PARAM_BLOG_CHARSET = 'blog_charset';
+
     const AKISMET_PARAM_USER_ROLE = 'user_role';
+
     const AKISMET_PARAM_IS_TEST = 'is_test';
+
     const AKISMET_PARAM_RECHECK_REASON = 'recheck_reason';
+
     const AKISMET_PARAM_HONEYPOT_FIELD_NAME = 'honeypot_field_name';
 
     /**
@@ -123,7 +145,7 @@ class AkismetSpamGuard implements SpamGuardContract
         self::TYPE_BLOG_POST,
         self::TYPE_CONTACT_FORM,
         self::TYPE_SIGN_UP,
-        self::TYPE_MESSAGE
+        self::TYPE_MESSAGE,
     ];
 
     /**
@@ -149,7 +171,7 @@ class AkismetSpamGuard implements SpamGuardContract
         self::AKISMET_PARAM_USER_ROLE,
         self::AKISMET_PARAM_IS_TEST,
         self::AKISMET_PARAM_RECHECK_REASON,
-        self::AKISMET_PARAM_HONEYPOT_FIELD_NAME
+        self::AKISMET_PARAM_HONEYPOT_FIELD_NAME,
     ];
 
     /**
@@ -168,6 +190,7 @@ class AkismetSpamGuard implements SpamGuardContract
 
     /**
      * The submission type to check.
+     *
      * @var string
      */
     protected $type = self::TYPE_COMMENT;
@@ -175,7 +198,7 @@ class AkismetSpamGuard implements SpamGuardContract
     /**
      * Indicates if requests to the API should use HTTP or HTTPS.
      *
-     * @var boolean
+     * @var bool
      */
     private $useSsl = true;
 
@@ -198,14 +221,14 @@ class AkismetSpamGuard implements SpamGuardContract
      *
      * This value is determined based on user-supplied configuration.
      *
-     * @var boolean
+     * @var bool
      */
     private $canMakeRequests = false;
 
     /**
      * Indicates if the API keys have been validated and connections configured.
      *
-     * @var boolean
+     * @var bool
      */
     private $hasBeenValidated = false;
 
@@ -215,7 +238,8 @@ class AkismetSpamGuard implements SpamGuardContract
      * The value will indicate the following:
      *     - true:  If the API request fails, the comment will be marked as spam.
      *     - false: If the API request fails, the comment will not be marked as spam.
-     * @var boolean
+     *
+     * @var bool
      */
     private $defaultValueOnApiFailure = true;
 
@@ -233,7 +257,7 @@ class AkismetSpamGuard implements SpamGuardContract
      * https://akismet.com/development/api/#submit-spam
      * https://akismet.com/development/api/#submit-ham
      *
-     * @var boolean
+     * @var bool
      */
     private $isApiTestMode = false;
 
@@ -267,14 +291,14 @@ class AkismetSpamGuard implements SpamGuardContract
     {
         $results = new ValidationResult;
 
-        if (!$this->config->has(AkismetSpamGuard::AKISMET_API_KEY)) {
+        if (! $this->config->has(AkismetSpamGuard::AKISMET_API_KEY)) {
             $results->reasons[] = [
                 'msg' => "A required configuration value 'akismet_api_key' is missing for the Akismet spam guard.",
                 'code' => Errors::GUARD_AKISMET_MISSING_API_KEY,
             ];
         }
 
-        if (!$this->config->has(AkismetSpamGuard::AKISMET_HOME_URL)) {
+        if (! $this->config->has(AkismetSpamGuard::AKISMET_HOME_URL)) {
             $results->reasons[] = [
                 'msg' => "A required configuration value 'akismet_home_url' is missing for the Akismet spam guard.",
                 'code' => Errors::GUARD_AKISMET_MISSING_HOME_URL,
@@ -307,7 +331,7 @@ class AkismetSpamGuard implements SpamGuardContract
     /**
      * Sets the submission type to check.
      *
-     * @param string $type The submission type.
+     * @param  string  $type The submission type.
      */
     public function setType($type)
     {
@@ -327,7 +351,7 @@ class AkismetSpamGuard implements SpamGuardContract
     /**
      * Gets a value indicating if the detector succeeded.
      *
-     * @return boolean
+     * @return bool
      */
     public function wasSuccess()
     {
@@ -348,23 +372,22 @@ class AkismetSpamGuard implements SpamGuardContract
      * Returns a value indicating if the provided comment has a
      * high probability of being a disingenuous posting.
      *
-     * @param DataObjectContract $data
      *
-     * @return boolean
+     * @return bool
      */
     public function getIsSpam(DataObjectContract $data)
     {
         $this->success = false;
 
         // Check here to prevent calling the API in the constructor.
-        if (!$this->checkApiKey()) {
+        if (! $this->checkApiKey()) {
             return false;
         }
 
         if ($this->canMakeRequests) {
             $formData = $this->remapComment($data);
 
-            if (!array_key_exists(self::AKISMET_PARAM_USER_IP, $formData)) {
+            if (! array_key_exists(self::AKISMET_PARAM_USER_IP, $formData)) {
                 $formData[self::AKISMET_PARAM_USER_IP] = '';
             }
 
@@ -377,7 +400,7 @@ class AkismetSpamGuard implements SpamGuardContract
 
                     if ($responseBody == 'false') {
                         return false;
-                    } else if ($responseBody == 'true') {
+                    } elseif ($responseBody == 'true') {
                         $reason = new SpamReason();
                         $reason->setReasonCode(self::AKISMET_MATCH_REASON);
                         $reason->setReasonText(self::AKISMET_MATCH_DEFAULT_MESSAGE);
@@ -386,7 +409,7 @@ class AkismetSpamGuard implements SpamGuardContract
 
                         return true;
                     } else {
-                        throw new GuardException('Unexpected Akismet response: ' . $responseBody);
+                        throw new GuardException('Unexpected Akismet response: '.$responseBody);
                     }
                 }
             } catch (Exception $generalException) {
@@ -401,7 +424,7 @@ class AkismetSpamGuard implements SpamGuardContract
     /**
      * Checks whether the provided API key and blog home URL are valid.
      *
-     * @return boolean
+     * @return bool
      */
     private function checkApiKey()
     {
@@ -417,7 +440,7 @@ class AkismetSpamGuard implements SpamGuardContract
                 $this->config->get(AkismetSpamGuard::AKISMET_API_KEY),
                 $this->config->get(AkismetSpamGuard::AKISMET_HOME_URL));
 
-            if (!$validationResults->isValid) {
+            if (! $validationResults->isValid) {
                 $this->canMakeRequests = false;
                 $this->hasBeenValidated = true;
 
@@ -436,9 +459,8 @@ class AkismetSpamGuard implements SpamGuardContract
     /**
      * Attempts to validate the Akismet API key with the Akismet service.
      *
-     * @param string $apiKey The Akismet API key to check.
-     * @param string $homePage The Akismet Home Page.
-     *
+     * @param  string  $apiKey The Akismet API key to check.
+     * @param  string  $homePage The Akismet Home Page.
      * @return ValidationResult
      */
     private function validateAkismetAPIKey($apiKey, $homePage)
@@ -487,14 +509,12 @@ class AkismetSpamGuard implements SpamGuardContract
                         Errors::GUARD_AKISMET_RESPONSE_FAILURE,
                         $logContext
                     ));
-
                 }
             } else {
                 $results->reasons[] = [
                     'msg' => 'Could not read response from Akismet API response.',
                     'code' => Errors::GUARD_AKISMET_RESPONSE_FAILURE,
                 ];
-
 
                 $logContext = new ErrorLogContext();
                 $logContext->msg = 'Could not read response from Akismet API response.';
@@ -512,7 +532,6 @@ class AkismetSpamGuard implements SpamGuardContract
                 'error' => $e,
                 'code' => Errors::GUARD_GENERAL_API_REQUEST_FAILURE,
             ];
-
 
             $logContext = new ErrorLogContext();
             $logContext->msg = 'An exception was thrown during the API call.';
@@ -532,7 +551,7 @@ class AkismetSpamGuard implements SpamGuardContract
     /**
      * Remaps the Meerkat comment into the form required by the Akismet API.
      *
-     * @param DataObjectContract $data The source data container.
+     * @param  DataObjectContract  $data The source data container.
      * @return array
      */
     private function remapComment(DataObjectContract $data)
@@ -571,7 +590,7 @@ class AkismetSpamGuard implements SpamGuardContract
         }
 
         foreach ($commentAttributes as $key => $value) {
-            if (!array_key_exists($key, $mappedProperties) && in_array($key, $this->validApiParameters)) {
+            if (! array_key_exists($key, $mappedProperties) && in_array($key, $this->validApiParameters)) {
                 $unMappedAttributes[$key] = $value;
             }
         }
@@ -581,7 +600,7 @@ class AkismetSpamGuard implements SpamGuardContract
         }
 
         // Add the 'blob' parameter from the configuration if it does not exist in the input.
-        if (!$data->hasDataAttribute(self::AKISMET_PARAM_BLOG)) {
+        if (! $data->hasDataAttribute(self::AKISMET_PARAM_BLOG)) {
             $mappedProperties[self::AKISMET_PARAM_BLOG] = $this->config->get('akismet_front_page', '');
         }
 
@@ -591,26 +610,25 @@ class AkismetSpamGuard implements SpamGuardContract
 
         $mappedProperties[self::AKISMET_PARAM_COMMENT_TYPE] = $this->type;
 
-
         return $mappedProperties;
     }
 
     /**
      * Generates an Akismet API request URL.
      *
-     * @param string $suffix The relative path.
+     * @param  string  $suffix The relative path.
      * @return string
      */
     private function getRequestUrl($suffix)
     {
-        return 'https://' . $this->config->get(AkismetSpamGuard::AKISMET_API_KEY) . '.rest.akismet.com/1.1/' . $suffix;
+        return 'https://'.$this->config->get(AkismetSpamGuard::AKISMET_API_KEY).'.rest.akismet.com/1.1/'.$suffix;
     }
 
     /**
      * Validates the configuration values against the Akismet API.
      *
-     * @param string $apiKey The Akismet API key.
-     * @param string $homeUrl The Akismet front page.
+     * @param  string  $apiKey The Akismet API key.
+     * @param  string  $homeUrl The Akismet front page.
      * @return bool
      */
     public function checkConfigurationKey($apiKey, $homeUrl)
@@ -627,7 +645,7 @@ class AkismetSpamGuard implements SpamGuardContract
                 $apiKey,
                 $homeUrl);
 
-            if (!$validationResults->isValid) {
+            if (! $validationResults->isValid) {
                 $this->canMakeRequests = false;
                 $this->hasBeenValidated = true;
 
@@ -647,16 +665,15 @@ class AkismetSpamGuard implements SpamGuardContract
      * Marks a comment as a spam, and communicates this
      * to third-party vendors if configured to do so.
      *
-     * @param DataObjectContract $data
      *
-     * @return boolean
+     * @return bool
      */
     public function markAsSpam(DataObjectContract $data)
     {
         $this->success = false;
 
         // Check here to prevent calling the API in the constructor.
-        if (!$this->checkApiKey()) {
+        if (! $this->checkApiKey()) {
             return false;
         }
 
@@ -666,13 +683,11 @@ class AkismetSpamGuard implements SpamGuardContract
             // Check if the referrer and user_ip values are available.
             if (array_key_exists('referrer', $formData) == false ||
                 array_key_exists(CommentContract::KEY_USER_IP, $formData) == false) {
-
                 return false;
             }
 
             try {
                 $apiResponse = $this->httpClient->post($this->getRequestUrl(self::AKISMET_API_SUBMIT_SPAM), $formData);
-
 
                 if ($apiResponse->content !== null) {
                     if ($apiResponse->content == 'Thanks for making the web a better place.') {
@@ -694,16 +709,15 @@ class AkismetSpamGuard implements SpamGuardContract
      * Marks a comment as not-spam, and communicates this
      * to third-party vendors if configured to do so.
      *
-     * @param DataObjectContract $data
      *
-     * @return boolean
+     * @return bool
      */
     public function markAsHam(DataObjectContract $data)
     {
         $this->success = false;
 
         // Check here to prevent calling the API in the constructor.
-        if (!$this->checkApiKey()) {
+        if (! $this->checkApiKey()) {
             return false;
         }
 
@@ -739,7 +753,7 @@ class AkismetSpamGuard implements SpamGuardContract
      * Returns a value indicating if a guard supports submitting
      * not-spam results to a third-party service or product.
      *
-     * @return boolean
+     * @return bool
      */
     public function supportsSubmittingHam()
     {
@@ -750,7 +764,7 @@ class AkismetSpamGuard implements SpamGuardContract
      * Returns a value indicating if a guard supports submitting
      * spam results to a third-party service or product.
      *
-     * @return boolean
+     * @return bool
      */
     public function supportsSubmittingSpam()
     {
@@ -760,7 +774,8 @@ class AkismetSpamGuard implements SpamGuardContract
     /**
      * Returns a value indicating if the guard encountered errors.
      *
-     * @return boolean
+     * @return bool
+     *
      * @since 2.0.0
      */
     public function hasErrors()
@@ -777,5 +792,4 @@ class AkismetSpamGuard implements SpamGuardContract
     {
         return $this->errors;
     }
-
 }

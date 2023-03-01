@@ -3,7 +3,6 @@
 namespace Stillat\Meerkat\Http\Controllers\Api;
 
 use Exception;
-use Illuminate\Support\Facades\Log;
 use Statamic\Http\Controllers\CP\CpController;
 use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
 use Stillat\Meerkat\Core\Contracts\Permissions\PermissionsManagerContract;
@@ -15,7 +14,6 @@ use Stillat\Meerkat\Core\Logging\ErrorReporterFactory;
 
 class CommentsController extends CpController
 {
-
     public function search(PermissionsManagerContract $manager,
                            IdentityManagerContract $identityManager,
                            CommentResponseGenerator $resultGenerator)
@@ -27,7 +25,7 @@ class CommentsController extends CpController
                 return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_VIEW);
             } else {
                 abort(403, 'Unauthorized', [
-                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_VIEW
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_VIEW,
                 ]);
                 exit;
             }
@@ -47,5 +45,4 @@ class CommentsController extends CpController
             return Responses::generalFailure();
         }
     }
-
 }

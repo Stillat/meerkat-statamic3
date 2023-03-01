@@ -10,20 +10,26 @@ use Stillat\Meerkat\Core\UuidGenerator;
  *
  * Represents an error-code raising event in the Meerkat system.
  *
- * @package Stillat\Meerkat\Core\Logging
  * @since 2.0.0
  */
 class ErrorLog implements Serializable
 {
-
     const KEY_ID = 'id';
+
     const KEY_ERROR_CODE = 'ec';
+
     const KEY_CONTEXT = 'ctx';
+
     const KEY_DATE = 'date';
+
     const KEY_TYPE = 'type';
+
     const KEY_ACTION = 'action';
+
     const TYPE_ERROR = 0;
+
     const TYPE_WARNING = 1;
+
     const TYPE_MESSAGE = 3;
 
     public static $currentActionId = null;
@@ -73,8 +79,8 @@ class ErrorLog implements Serializable
     /**
      * Creates a new warning instance of ErrorLog.
      *
-     * @param string $errorCode The error code.
-     * @param string $context The error's surrounding context.
+     * @param  string  $errorCode The error code.
+     * @param  string  $context The error's surrounding context.
      * @return ErrorLog
      */
     public static function warning($errorCode, $context)
@@ -89,8 +95,8 @@ class ErrorLog implements Serializable
     /**
      * Creates a new instance of ErrorLog.
      *
-     * @param string $errorCode The error code.
-     * @param string $context The error's surrounding context.
+     * @param  string  $errorCode The error code.
+     * @param  string  $context The error's surrounding context.
      * @return ErrorLog
      */
     public static function make($errorCode, $context)
@@ -122,8 +128,8 @@ class ErrorLog implements Serializable
     /**
      * Creates a new message instance of ErrorLog.
      *
-     * @param string $errorCode The error code.
-     * @param string $context The error's surrounding context.
+     * @param  string  $errorCode The error code.
+     * @param  string  $context The error's surrounding context.
      * @return ErrorLog
      */
     public static function message($errorCode, $context)
@@ -158,18 +164,18 @@ class ErrorLog implements Serializable
             self::KEY_CONTEXT => $this->context,
             self::KEY_DATE => $this->dateTimeUtc,
             self::KEY_TYPE => $this->type,
-            self::KEY_ACTION => $this->action
+            self::KEY_ACTION => $this->action,
         ];
     }
 
     /**
      * Returns a run-time instance of an object from serialized form.
      *
-     * @param string $serialized The serialized contents.
+     * @param  string  $serialized The serialized contents.
      */
     public function unserialize($serialized)
     {
-        $arrayFormat = (array)json_decode($serialized);
+        $arrayFormat = (array) json_decode($serialized);
 
         $this->instanceId = $arrayFormat[self::KEY_ID];
         $this->errorCode = $arrayFormat[self::KEY_ERROR_CODE];
@@ -178,5 +184,4 @@ class ErrorLog implements Serializable
         $this->type = $arrayFormat[self::KEY_TYPE];
         $this->action = $arrayFormat[self::KEY_ACTION];
     }
-
 }

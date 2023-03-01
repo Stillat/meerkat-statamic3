@@ -7,17 +7,15 @@ namespace Stillat\Meerkat\Core;
  *
  * Contains guard/spam-service related configuration items
  *
- * @package Stillat\Meerkat\Core
  * @since 2.0.0
  */
 class GuardConfiguration extends ConfigurationContainer
 {
-
     /**
      * Indicates if spam results should be automatically
      * submitted to third-party providers, if available.
      *
-     * @var boolean
+     * @var bool
      */
     public $autoSubmitSpamToThirdParties = false;
 
@@ -25,7 +23,7 @@ class GuardConfiguration extends ConfigurationContainer
      * Indicates if the spam service should continue to check
      * all spam services even if one has identified an item.
      *
-     * @var boolean
+     * @var bool
      */
     public $checkAgainstAllGuardServices = false;
 
@@ -34,7 +32,7 @@ class GuardConfiguration extends ConfigurationContainer
      * as "un-published" if an error occurs when checking
      * with a spam guard service. Default is true.
      *
-     * @var boolean
+     * @var bool
      */
     public $unpublishOnGuardFailures = true;
 
@@ -58,5 +56,4 @@ class GuardConfiguration extends ConfigurationContainer
      * @var bool
      */
     public $autoDeleteSpam = false;
-
 }

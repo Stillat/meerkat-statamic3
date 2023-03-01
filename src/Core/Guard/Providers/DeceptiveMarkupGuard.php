@@ -20,12 +20,12 @@ use Stillat\Meerkat\Core\Logging\ExceptionLoggerFactory;
  * An example of this would be someone submitting a comment
  * containing nothing but an "invisible" HTML link, etc.
  *
- * @package Stillat\Meerkat\Core\Guard\Providers
  * @since 2.2.0
  */
 class DeceptiveMarkupGuard implements SpamGuardContract
 {
     const DMG_LINK_DETECTED = 'DMG-01-001';
+
     const DMG_DEFAULT_MESSAGE = 'Potentially deceptive markup was detected.';
 
     /**
@@ -84,7 +84,7 @@ class DeceptiveMarkupGuard implements SpamGuardContract
     /**
      * Gets a value indicating if the detector succeeded.
      *
-     * @return boolean
+     * @return bool
      */
     public function wasSuccess()
     {
@@ -105,9 +105,8 @@ class DeceptiveMarkupGuard implements SpamGuardContract
      * Returns a value indicating if the provided object has a
      * high probability of being a disingenuous posting.
      *
-     * @param DataObjectContract $data
      *
-     * @return boolean
+     * @return bool
      */
     public function getIsSpam(DataObjectContract $data)
     {
@@ -122,14 +121,14 @@ class DeceptiveMarkupGuard implements SpamGuardContract
             [AuthorContract::KEY_NAME => $name],
             [CommentContract::KEY_LEGACY_COMMENT => $content],
             [CommentContract::KEY_CONTENT => $contentComment],
-            [CommentContract::INTERNAL_CONTENT_RAW => $contentRaw]
+            [CommentContract::INTERNAL_CONTENT_RAW => $contentRaw],
         ];
 
         return $this->checkAllForDeceptiveMarkup($contentMapping);
     }
 
     /**
-     * @param array $contentMapping The content/property mapping.
+     * @param  array  $contentMapping The content/property mapping.
      * @return bool
      */
     private function checkAllForDeceptiveMarkup($contentMapping)
@@ -142,6 +141,7 @@ class DeceptiveMarkupGuard implements SpamGuardContract
                 return true;
             }
         }
+
         return false;
     }
 
@@ -149,9 +149,8 @@ class DeceptiveMarkupGuard implements SpamGuardContract
      * Marks an object as a spam, and communicates this
      * to third-party vendors if configured to do so.
      *
-     * @param DataObjectContract $data
      *
-     * @return boolean
+     * @return bool
      */
     public function markAsSpam(DataObjectContract $data)
     {
@@ -162,9 +161,8 @@ class DeceptiveMarkupGuard implements SpamGuardContract
      * Marks a object as not-spam, and communicates this
      * to third-party vendors if configured to do so.
      *
-     * @param DataObjectContract $data
      *
-     * @return boolean
+     * @return bool
      */
     public function markAsHam(DataObjectContract $data)
     {
@@ -175,7 +173,7 @@ class DeceptiveMarkupGuard implements SpamGuardContract
      * Returns a value indicating if a guard supports submitting
      * not-spam results to a third-party service or product.
      *
-     * @return boolean
+     * @return bool
      */
     public function supportsSubmittingHam()
     {
@@ -186,7 +184,7 @@ class DeceptiveMarkupGuard implements SpamGuardContract
      * Returns a value indicating if a guard supports submitting
      * spam results to a third-party service or product.
      *
-     * @return boolean
+     * @return bool
      */
     public function supportsSubmittingSpam()
     {
@@ -196,7 +194,8 @@ class DeceptiveMarkupGuard implements SpamGuardContract
     /**
      * Returns a value indicating if the guard encountered errors.
      *
-     * @return boolean
+     * @return bool
+     *
      * @since 2.0.0
      */
     public function hasErrors()
@@ -217,8 +216,8 @@ class DeceptiveMarkupGuard implements SpamGuardContract
     /**
      * Checks if a piece of user-supplied content contains deceptive HTML markup.
      *
-     * @param string $property The property name being checked.
-     * @param string $content The content to check.
+     * @param  string  $property The property name being checked.
+     * @param  string  $content The content to check.
      * @return bool
      */
     private function checkSingleForDeceptiveMarkup($property, $content)
@@ -245,7 +244,7 @@ class DeceptiveMarkupGuard implements SpamGuardContract
                     $reason->setReasonCode(self::DMG_LINK_DETECTED);
                     $reason->setReasonContext([
                         'content' => $content,
-                        'property' => $property
+                        'property' => $property,
                     ]);
 
                     $this->reasons[] = $reason;
@@ -260,5 +259,4 @@ class DeceptiveMarkupGuard implements SpamGuardContract
 
         return false;
     }
-
 }

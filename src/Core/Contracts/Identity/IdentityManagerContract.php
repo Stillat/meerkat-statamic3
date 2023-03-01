@@ -12,19 +12,16 @@ namespace Stillat\Meerkat\Core\Contracts\Identity;
  * and system privileges. Meerkat Core will only use the
  * methods contained within this interface when determining access rights.
  *
- * @package Stillat\Meerkat\Core\Contracts\Identity
  * @since 2.0.0
  */
 interface IdentityManagerContract
 {
-
     /**
      * Returns a value indicating if the provided author
      * contains a user identity within the host system.
      *
-     * @param AuthorContract $author
-     *
-     * @return boolean
+     * @param  AuthorContract  $author
+     * @return bool
      */
     public function containsUserIdentity($author);
 
@@ -34,17 +31,15 @@ interface IdentityManagerContract
      * comments within a thread. Implementations should
      * check with the access roles of the host system.
      *
-     * @param AuthorContract $author
-     *
-     * @return boolean
+     * @param  AuthorContract  $author
+     * @return bool
      */
     public function canAutoPublishComments($author);
 
     /**
      * Retrieves the identity ID for the provided author information.
      *
-     * @param AuthorContract $author
-     *
+     * @param  AuthorContract  $author
      * @return string
      */
     public function getIdentityId($author);
@@ -63,5 +58,4 @@ interface IdentityManagerContract
      * @return AuthorContract
      */
     public function locateIdentity($authorId);
-
 }

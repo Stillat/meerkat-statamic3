@@ -23,13 +23,14 @@ use Stillat\Meerkat\Core\UuidGenerator;
  *
  * Provides a wrapper around the SpamService.
  *
- * @package Stillat\Meerkat\Core\Guard
  * @since 2.0.0
  */
 class SpamChecker
 {
     const FILTER_ONLY_PENDING = 'pending';
+
     const FILTER_ALL = 'all';
+
     const ARG_FILTER = 'filter';
 
     /**
@@ -158,7 +159,7 @@ class SpamChecker
         // Construct a new task object.
         $spamCheckTask = Task::taskFromMethod(TaskCodes::SPAM_CHECKER_CHECK);
         $spamCheckTask->setArguments([
-            self::ARG_FILTER => $this->commentFilter
+            self::ARG_FILTER => $this->commentFilter,
         ]);
 
         $this->taskManager->saveTask($spamCheckTask);
@@ -175,7 +176,7 @@ class SpamChecker
     /**
      * Retrieves arguments from a stored task and starts the spam check.
      *
-     * @param string $taskId The task identifier.
+     * @param  string  $taskId The task identifier.
      */
     public function checkFromTask($taskId)
     {
@@ -235,6 +236,7 @@ class SpamChecker
      * Checks the comments for spam immediately.
      *
      * @return bool
+     *
      * @throws FilterException
      */
     public function checkCommentsNow()
@@ -285,7 +287,7 @@ class SpamChecker
     /**
      * Informs the checker to only check the provided comment.
      *
-     * @param CommentContract $comment The comment to check.
+     * @param  CommentContract  $comment The comment to check.
      */
     public function checkSingle(CommentContract $comment)
     {
@@ -301,5 +303,4 @@ class SpamChecker
         $this->checkSingle = false;
         $this->explicitComments = [];
     }
-
 }

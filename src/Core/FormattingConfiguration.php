@@ -7,12 +7,10 @@ namespace Stillat\Meerkat\Core;
  *
  * Contains comment-related formatting configuration items.
  *
- * @package Stillat\Meerkat\Core
  * @since 2.0.0
  */
 class FormattingConfiguration extends ConfigurationContainer
 {
-
     /**
      * Specifies the format string that will be used when formatting comment's date properties.
      *
@@ -32,5 +30,4 @@ class FormattingConfiguration extends ConfigurationContainer
      * @var string
      */
     public $tagsToKeep = ['strong', 'em'];
-
 }

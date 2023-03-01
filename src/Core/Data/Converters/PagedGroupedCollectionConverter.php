@@ -9,16 +9,14 @@ use Stillat\Meerkat\Core\Contracts\Data\PagedGroupedDataSetContract;
  *
  * Provides utilities for converting a PagedGroupedDataSet into an array.
  *
- * @package Stillat\Meerkat\Core\Data\Converters
  * @since 2.0.0
  */
 class PagedGroupedCollectionConverter extends GroupedCollectionConverter
 {
-
     /**
      * Converts a PagedGroupedDataSet into its array form.
      *
-     * @param PagedGroupedDataSetContract $dataset The dataset to convert.
+     * @param  PagedGroupedDataSetContract  $dataset The dataset to convert.
      * @return PagedGroupedDataSetContract
      */
     public function covertPagedToArray(PagedGroupedDataSetContract $dataset)
@@ -28,5 +26,4 @@ class PagedGroupedCollectionConverter extends GroupedCollectionConverter
 
         return $dataset;
     }
-
 }

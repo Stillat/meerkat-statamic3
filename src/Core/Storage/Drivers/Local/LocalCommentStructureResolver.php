@@ -12,12 +12,10 @@ use Stillat\Meerkat\Core\Threads\ThreadHierarchy;
  *
  * Resolves the hierarchy structure of a comment thread from a filesystem.
  *
- * @package Stillat\Meerkat\Core\Storage\Drivers\Local
  * @since 2.0.0
  */
 class LocalCommentStructureResolver implements StructureResolverInterface
 {
-
     /**
      * A list of all the paths processed by the resolver.
      *
@@ -134,14 +132,15 @@ class LocalCommentStructureResolver implements StructureResolverInterface
 
     public function __construct()
     {
-        $this->replyReplacement = Paths::SYM_FORWARD_SEPARATOR . LocalCommentStorageManager::PATH_REPLIES_DIRECTORY;
+        $this->replyReplacement = Paths::SYM_FORWARD_SEPARATOR.LocalCommentStorageManager::PATH_REPLIES_DIRECTORY;
     }
 
     /**
      * Attempts to clear the resolve hierarchy cache for the provided identifier.
      *
-     * @param string $threadId The thread's system identifier.
+     * @param  string  $threadId The thread's system identifier.
      * @return bool
+     *
      * @since 2.0.12
      */
     public function clearThreadCache($threadId)
@@ -162,8 +161,8 @@ class LocalCommentStructureResolver implements StructureResolverInterface
     /**
      * Resolves the comment dependency graph.
      *
-     * @param string $threadPath The thread's base path.
-     * @param array $commentPaths A collection of comment absolute paths.
+     * @param  string  $threadPath The thread's base path.
+     * @param  array  $commentPaths A collection of comment absolute paths.
      * @return ThreadHierarchy
      */
     public function resolve($threadPath, $commentPaths)
@@ -189,7 +188,7 @@ class LocalCommentStructureResolver implements StructureResolverInterface
 
             $structureId = mb_substr($structurePath, -10);
             $structureDepth = substr_count($structurePath, Paths::SYM_FORWARD_SEPARATOR);
-            $internalReplyPath = mb_substr($path, 0, -10) . LocalCommentStorageManager::PATH_REPLIES_DIRECTORY;
+            $internalReplyPath = mb_substr($path, 0, -10).LocalCommentStorageManager::PATH_REPLIES_DIRECTORY;
 
             if (array_key_exists($structureDepth, $this->depthMapping) == false) {
                 $this->depthMapping[$structureDepth] = [];
@@ -327,13 +326,12 @@ class LocalCommentStructureResolver implements StructureResolverInterface
     /**
      * Compares the lengths of the provided values.
      *
-     * @param string $a First test value.
-     * @param string $b Second test value.
+     * @param  string  $a First test value.
+     * @param  string  $b Second test value.
      * @return int
      */
     private function compareLength($a, $b)
     {
         return mb_strlen($b) - mb_strlen($a);
     }
-
 }

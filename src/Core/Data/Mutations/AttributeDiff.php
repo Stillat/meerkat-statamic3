@@ -7,16 +7,15 @@ namespace Stillat\Meerkat\Core\Data\Mutations;
  *
  * Provides utilities for generating a ChangeSet from an attribute set.
  *
- * @package Stillat\Meerkat\Core\Data\Mutations
  * @since 2.0.0
  */
 class AttributeDiff
 {
-
     /**
      * Generates a change-set from the current and new properties.
-     * @param array $currentProperties The current properties.
-     * @param array $newProperties The new properties.
+     *
+     * @param  array  $currentProperties The current properties.
+     * @param  array  $newProperties The new properties.
      * @return ChangeSet
      */
     public static function analyze($currentProperties, $newProperties)
@@ -41,7 +40,7 @@ class AttributeDiff
                 } else {
                     $changedProperties[$attributeName] = [
                         $attributeValue,
-                        $newProperties[$attributeName]
+                        $newProperties[$attributeName],
                     ];
                 }
             }
@@ -57,5 +56,4 @@ class AttributeDiff
 
         return $changeset;
     }
-
 }

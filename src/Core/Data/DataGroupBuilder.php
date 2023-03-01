@@ -13,16 +13,20 @@ use Stillat\Meerkat\Core\Parsing\MarkdownParserFactory;
  *
  * Provides utilities and mechanisms for created grouped, and paged grouped datasets.
  *
- * @package Stillat\Meerkat\Core\Data
  * @since 2.0.0
  */
 class DataGroupBuilder
 {
     const KEY_GROUP = 'group';
+
     const KEY_GROUPS = 'groups';
+
     const KEY_GROUP_NAME = 'name';
+
     const KEY_GROUP_VALUES = 'values';
+
     const KEY_TOTAL_COUNT = 'total_count';
+
     const KEY_ITEM_CURRENT_INDEX = 'current_index';
 
     /**
@@ -155,7 +159,7 @@ class DataGroupBuilder
     /**
      * Sets whether or not to automatically process comment content as Markdown.
      *
-     * @param bool $withMarkdown Whether to automatically process comment content as Markdown.
+     * @param  bool  $withMarkdown Whether to automatically process comment content as Markdown.
      * @return $this
      */
     public function withMarkdown($withMarkdown)
@@ -168,7 +172,7 @@ class DataGroupBuilder
     /**
      * Skips the specified amount of record when processing data.
      *
-     * @param int $offset The data offset when returning results.
+     * @param  int  $offset The data offset when returning results.
      * @return DataGroupBuilder
      */
     public function skip($offset)
@@ -181,7 +185,7 @@ class DataGroupBuilder
     /**
      * Sets the name of an individual group's dataset.
      *
-     * @param string $name The name to set.
+     * @param  string  $name The name to set.
      * @return $this
      */
     public function setCollectionName($name)
@@ -198,7 +202,7 @@ class DataGroupBuilder
     /**
      * Sets the name of all dataset groups.
      *
-     * @param string $name The name to set.
+     * @param  string  $name The name to set.
      * @return $this
      */
     public function setCollectiveGroupName($name)
@@ -215,7 +219,7 @@ class DataGroupBuilder
     /**
      * Sets the name of an individual groups.
      *
-     * @param string $name The name to set.
+     * @param  string  $name The name to set.
      * @return $this
      */
     public function setIndividualGroupName($name)
@@ -232,7 +236,7 @@ class DataGroupBuilder
     /**
      * Requests data only be returned for the provided page, in a paged result set.
      *
-     * @param int $page The page to return.
+     * @param  int  $page The page to return.
      * @return $this
      */
     public function forPage($page)
@@ -245,7 +249,7 @@ class DataGroupBuilder
     /**
      * The name of the pages to generate, in a paged dataset.
      *
-     * @param string $name The name of the page.
+     * @param  string  $name The name of the page.
      * @return $this
      */
     public function pageBy($name)
@@ -258,7 +262,7 @@ class DataGroupBuilder
     /**
      * Sets whether the resulting dataset should be paginated.
      *
-     * @param bool $doPaginate Whether to paginate the dataset.
+     * @param  bool  $doPaginate Whether to paginate the dataset.
      * @return $this
      */
     public function paginateResults($doPaginate)
@@ -271,7 +275,7 @@ class DataGroupBuilder
     /**
      * Requests data be split into a collection of pages of the provided size.
      *
-     * @param int $pageSize The size of pages to generate.
+     * @param  int  $pageSize The size of pages to generate.
      * @return $this
      */
     public function limit($pageSize)
@@ -290,7 +294,7 @@ class DataGroupBuilder
     /**
      * Sets the property to group the dataset by.
      *
-     * @param string $property The property to group by.
+     * @param  string  $property The property to group by.
      */
     public function setProperty($property)
     {
@@ -300,7 +304,7 @@ class DataGroupBuilder
     /**
      * Sets an optional callback to generate a dynamic property.
      *
-     * @param callable $callback The property callback.
+     * @param  callable  $callback The property callback.
      */
     public function setCallback(callable $callback)
     {
@@ -310,7 +314,7 @@ class DataGroupBuilder
     /**
      * Sets whether empty groups will be returned in the result set.
      *
-     * @param bool $keepEmptyGroups Whether to include empty groups.
+     * @param  bool  $keepEmptyGroups Whether to include empty groups.
      * @return $this
      */
     public function doKeepEmptyGroups($keepEmptyGroups)
@@ -323,7 +327,7 @@ class DataGroupBuilder
     /**
      * Sets whether to gather metadata before paging.
      *
-     * @param bool $gatherMetadata Whether to gather metadata before paging.
+     * @param  bool  $gatherMetadata Whether to gather metadata before paging.
      * @return $this
      */
     public function gatherMetadataBeforePaging($gatherMetadata)
@@ -336,13 +340,12 @@ class DataGroupBuilder
     /**
      * Groups the provided comments using the previously set property and state.
      *
-     * @param CommentContract[] $comments The comments to group.
+     * @param  CommentContract[]  $comments The comments to group.
      * @return PagedDataSetContract|GroupedDataSetContract
      */
     public function group($comments)
     {
         foreach ($comments as $comment) {
-
             if ($this->groupCallback !== null) {
                 call_user_func_array($this->groupCallback, [$comment]);
             }
@@ -353,7 +356,7 @@ class DataGroupBuilder
                 $this->groups[$groupValue] = [
                     $this->individualGroupName => $groupValue,
                     $this->collectionName => [],
-                    self::KEY_TOTAL_COUNT => 0
+                    self::KEY_TOTAL_COUNT => 0,
                 ];
 
                 $this->groupNames[] = $groupValue;
@@ -384,7 +387,7 @@ class DataGroupBuilder
 
             $nonPagedDataSet->setData([
                 $this->collectiveGroupName => $this->groups,
-                self::KEY_TOTAL_COUNT => count($this->groups)
+                self::KEY_TOTAL_COUNT => count($this->groups),
             ]);
 
             return $nonPagedDataSet;
@@ -410,7 +413,7 @@ class DataGroupBuilder
 
         $paginatedData->setDisplayItems([
             $this->collectiveGroupName => $this->groups,
-            self::KEY_TOTAL_COUNT => count($this->groups)
+            self::KEY_TOTAL_COUNT => count($this->groups),
         ]);
 
         $pagedGroupDataSet = new PagedGroupedDataSet();
@@ -423,7 +426,6 @@ class DataGroupBuilder
         $pagedGroupDataSet->setGroupNames($this->groupNames);
         $pagedGroupDataSet->fromPaginatorResult($paginatedData);
         $pagedGroupDataSet->setDatasetMetadata($metadataCollection);
-
 
         return $pagedGroupDataSet;
     }
@@ -458,7 +460,7 @@ class DataGroupBuilder
                 $this->groups[$group] = [
                     $this->individualGroupName => $group,
                     $this->collectionName => [],
-                    self::KEY_TOTAL_COUNT => 0
+                    self::KEY_TOTAL_COUNT => 0,
                 ];
             }
 
@@ -494,5 +496,4 @@ class DataGroupBuilder
     {
         return $this->groupNames;
     }
-
 }

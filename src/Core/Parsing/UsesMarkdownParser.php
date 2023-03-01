@@ -13,12 +13,10 @@ use Stillat\Meerkat\Core\Exceptions\InconsistentCompositionException;
  * Presence of this trait indicates that the eventual
  * implementation should provide access to a parser.
  *
- * @package Stillat\Meerkat\Core\Parsing
  * @since 2.0.0
  */
 trait UsesMarkdownParser
 {
-
     /**
      * The Markdown parser implementation instance.
      *
@@ -45,11 +43,10 @@ trait UsesMarkdownParser
     /**
      * Sets the Markdown parser implementation instance.
      *
-     * @param MarkdownParserContract $markdownParser The parser instance.
+     * @param  MarkdownParserContract  $markdownParser The parser instance.
      */
     public function setMarkdownParser($markdownParser)
     {
         $this->markdownParser = $markdownParser;
     }
-
 }

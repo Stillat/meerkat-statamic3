@@ -9,7 +9,6 @@ use Stillat\Meerkat\Core\Contracts\Parsing\MarkdownParserContract;
  *
  * Allows Meerkat Core internals to access a shared markdown parser instance.
  *
- * @package Stillat\Meerkat\Core\Parsing
  * @since 2.0.0
  */
 class MarkdownParserFactory
@@ -34,5 +33,4 @@ class MarkdownParserFactory
 
         return false;
     }
-
 }

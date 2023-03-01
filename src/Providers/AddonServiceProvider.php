@@ -20,12 +20,10 @@ use Stillat\Meerkat\Translation\LanguagePatcher;
  *
  * Provides additional features for registering Statamic Addon services and features.
  *
- * @package Stillat\Meerkat\Providers
  * @since 2.0.0
  */
 class AddonServiceProvider extends StatamicAddonServiceProvider
 {
-
     /**
      * Indicates whether or not the addon's language files have already been loaded into the application.
      *
@@ -154,7 +152,6 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
      */
     protected function afterBoot()
     {
-
     }
 
     /**
@@ -169,6 +166,7 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
 
         if ($serviceProvider instanceof AddonServiceProvider === false) {
             $this->hasResoledContext = true;
+
             return true;
         }
 
@@ -243,7 +241,7 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
      */
     private function publishAddonConfiguration()
     {
-        if (!is_array($this->config) || count($this->config) == 0) {
+        if (! is_array($this->config) || count($this->config) == 0) {
             return;
         }
 
@@ -251,7 +249,7 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
 
         // Protects against files not existing.
         foreach ($this->config as $sourceConfig => $targetConfig) {
-            if (!file_exists($sourceConfig) || is_dir($sourceConfig)) {
+            if (! file_exists($sourceConfig) || is_dir($sourceConfig)) {
                 continue;
             }
 
@@ -259,10 +257,10 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
         }
 
         foreach ($configurationMapping as $sourceConfig => $targetConfig) {
-            if (!file_exists($targetConfig)) {
+            if (! file_exists($targetConfig)) {
                 $dirName = dirname($targetConfig);
 
-                if (!file_exists($dirName)) {
+                if (! file_exists($dirName)) {
                     mkdir($dirName, 0755, true);
                 }
 
@@ -277,18 +275,18 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
                 $dirname .= '/';
             }
 
-            if (!file_exists($dirname)) {
+            if (! file_exists($dirname)) {
                 mkdir($dirname, 0755, true);
             }
 
-            if (!file_exists($configFile)) {
+            if (! file_exists($configFile)) {
                 file_put_contents($configFile, '');
             }
         }
 
         $userConfigDirectory = config_path('meerkat/users/');
 
-        if (!file_exists($userConfigDirectory)) {
+        if (! file_exists($userConfigDirectory)) {
             mkdir($userConfigDirectory);
         }
     }
@@ -300,20 +298,20 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
     {
         $this->publishResourceAssets([
             '/dist/js' => '/js',
-            '/dist/css' => '/css'
+            '/dist/css' => '/css',
         ]);
     }
 
     /**
      * Publishes the specified resources.
      *
-     * @param array $assets The resource asset mapping.
+     * @param  array  $assets The resource asset mapping.
      */
     private function publishResourceAssets($assets)
     {
         foreach ($assets as $source => $target) {
             $resourceSource = PathProvider::getResourcesDirectory($source);
-            $resourceTarget = public_path('/vendor/' . Addon::CODE_ADDON_NAME . $target);
+            $resourceTarget = public_path('/vendor/'.Addon::CODE_ADDON_NAME.$target);
 
             $resourceTarget = \Illuminate\Support\Str::finish($resourceTarget, '/');
 
@@ -327,7 +325,7 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
 
         $targetLocation = public_path('/vendor/'.Addon::CODE_ADDON_NAME.'/js/'.Addon::VERSION.'/'.$currentLocale.'_translations.js');
 
-        if (!file_exists($targetLocation)) {
+        if (! file_exists($targetLocation)) {
             /** @var LanguagePatcher $languagePatcher */
             $languagePatcher = app(LanguagePatcher::class);
             $statements = TranslationEmitter::getStatements($languagePatcher->getPatches());
@@ -339,12 +337,12 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
     /**
      * Publishes the assets in the source directory to the target directory.
      *
-     * @param string $sourceDirectory The source directory.
-     * @param string $targetDirectory The target directory.
+     * @param  string  $sourceDirectory The source directory.
+     * @param  string  $targetDirectory The target directory.
      */
     private function publishResourceDirectory($sourceDirectory, $targetDirectory)
     {
-        $publicPath = $targetDirectory . Addon::VERSION;
+        $publicPath = $targetDirectory.Addon::VERSION;
         $currentVersions = Paths::getDirectories($targetDirectory);
         $didFindCurrentVersion = false;
         $versionsToCleanUp = [];
@@ -421,7 +419,7 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
     /**
      * Attempts to locate the preferred resource path.
      *
-     * @param string $resourceName The desired resource name.
+     * @param  string  $resourceName The desired resource name.
      * @return string
      */
     public static function getResourceJavaScriptPath($resourceName)
@@ -447,5 +445,4 @@ class AddonServiceProvider extends StatamicAddonServiceProvider
 
         return $resourceName;*/
     }
-
 }

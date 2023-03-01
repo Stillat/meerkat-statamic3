@@ -10,17 +10,15 @@ use Stillat\Meerkat\Core\Search\EngineFactory;
  *
  * Provides helpers and utilities from retrieving comment identifiers from search results.
  *
- * @package Stillat\Meerkat\Core\Data\Retrievers
  * @since 2.0.0
  */
 class SearchTermCommentIdRetriever
 {
-
     /**
      * Attempts to locate comment identifiers from a collection of search results.
      *
-     * @param CommentContract[] $comments The comments to search.
-     * @param string $searchTerms The search terms.
+     * @param  CommentContract[]  $comments The comments to search.
+     * @param  string  $searchTerms The search terms.
      * @return string[]
      */
     public static function getIdsFromSearchTerms($comments, $searchTerms)
@@ -33,5 +31,4 @@ class SearchTermCommentIdRetriever
 
         return CommentIdRetriever::getCommentIds($searchResults);
     }
-
 }

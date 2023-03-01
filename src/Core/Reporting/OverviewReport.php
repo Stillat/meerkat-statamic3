@@ -7,21 +7,30 @@ namespace Stillat\Meerkat\Core\Reporting;
  *
  * Represents a comment overview data collection (pending, spam, published, and other counts).
  *
- * @package Stillat\Meerkat\Reporting
  * @since 2.0.0
  */
 class OverviewReport
 {
     const KEY_TOTAL = 'total';
+
     const KEY_THREAD_COUNT = 'total_threads';
+
     const KEY_NEEDS_MIGRATION = 'needs_migration';
+
     const KEY_IS_SPAM = 'is_spam';
+
     const KEY_IS_HAM = 'is_ham';
+
     const KEY_REQUIRES_REVIEW = 'requires_review';
+
     const KEY_IS_PUBLISHED = 'is_published';
+
     const KEY_PUBLISHED_AND_SPAM = 'published_and_spam';
+
     const KEY_PENDING = 'pending';
+
     const KEY_DELETED = 'is_deleted';
+
     const KEY_COMPLETION_TIME = 'completion_time';
 
     /**
@@ -121,8 +130,7 @@ class OverviewReport
             self::KEY_IS_PUBLISHED => $this->isPublished,
             self::KEY_PUBLISHED_AND_SPAM => $this->publishedAndSpam,
             self::KEY_PENDING => $this->pending,
-            self::KEY_COMPLETION_TIME => $this->generationSeconds
+            self::KEY_COMPLETION_TIME => $this->generationSeconds,
         ];
     }
-
 }

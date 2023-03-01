@@ -21,7 +21,6 @@ use Stillat\Meerkat\Http\RequestHelpers;
 
 class UnpublishCommentController extends CpController
 {
-
     public function unPublishMany(
         PermissionsManagerContract $manager,
         IdentityManagerContract $identityManager,
@@ -34,7 +33,7 @@ class UnpublishCommentController extends CpController
                 return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_APPROVE);
             } else {
                 abort(403, 'Unauthorized', [
-                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_APPROVE
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_APPROVE,
                 ]);
                 exit;
             }
@@ -46,7 +45,7 @@ class UnpublishCommentController extends CpController
 
         if ($commentIds === null || count($commentIds) === 0) {
             return Responses::conditionalWithData(false, [
-                ApiParameters::RESULT_COMMENTS => []
+                ApiParameters::RESULT_COMMENTS => [],
             ]);
         }
 
@@ -54,7 +53,7 @@ class UnpublishCommentController extends CpController
             $result = $storageManager->setIsNotApprovedForIds($commentIds);
 
             return Responses::conditionalWithData($result->success, [
-                ApiParameters::RESULT_COMMENTS => $result->comments
+                ApiParameters::RESULT_COMMENTS => $result->comments,
             ]);
         } catch (Exception $e) {
             ErrorReporterFactory::report($e);
@@ -76,7 +75,7 @@ class UnpublishCommentController extends CpController
                 return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_APPROVE);
             } else {
                 abort(403, 'Unauthorized', [
-                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_APPROVE
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_APPROVE,
                 ]);
                 exit;
             }
@@ -99,7 +98,7 @@ class UnpublishCommentController extends CpController
             }
 
             return Responses::conditionalWithData($result, [
-                ApiParameters::RESULT_COMMENT => $commentResultGenerator->getApiComment($comment->toArray())
+                ApiParameters::RESULT_COMMENT => $commentResultGenerator->getApiComment($comment->toArray()),
             ]);
         } catch (CommentNotFoundException $notFound) {
             ErrorReporterFactory::report($notFound);
@@ -115,5 +114,4 @@ class UnpublishCommentController extends CpController
             return Responses::generalFailure();
         }
     }
-
 }

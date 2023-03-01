@@ -11,12 +11,10 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
  *
  * When a truthy attribute is discovered, it is automatically cast to a boolean type.
  *
- * @package Stillat\Meerkat\Core\Storage\Drivers\Local\Attributes
  * @since 2.0.0
  */
 class TruthyAttributes
 {
-
     /**
      * Caches the internal truthy attributes.
      *
@@ -41,5 +39,4 @@ class TruthyAttributes
 
         return self::$internalTruthyAttributes;
     }
-
 }

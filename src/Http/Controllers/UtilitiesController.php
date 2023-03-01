@@ -2,18 +2,17 @@
 
 namespace Stillat\Meerkat\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Http\Request;
 use Statamic\Http\Controllers\CP\CpController;
 
 /**
  * Class UtilitiesController
- * @package Stillat\Meerkat\Http\Controllers
+ *
  * @since 2.2.3
  */
 class UtilitiesController extends CpController
 {
-
     /**
      * The filesystem instance.
      *
@@ -38,5 +37,4 @@ class UtilitiesController extends CpController
 
         return back()->withSuccess(trans('meerkat::validation.route_cache_cleared'));
     }
-
 }

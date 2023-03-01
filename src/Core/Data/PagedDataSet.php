@@ -13,7 +13,6 @@ use Stillat\Meerkat\Core\Data\Concerns\IteratesDataSets;
  *
  * Represents a collection of paged data.
  *
- * @package Stillat\Meerkat\Core\Data
  * @since 2.0.0
  */
 class PagedDataSet implements PagedDataSetContract
@@ -21,17 +20,27 @@ class PagedDataSet implements PagedDataSetContract
     use IteratesDataSets, GetsAssociatedDatasetData;
 
     const KEY_PAGINATE = 'paginate';
+
     const KEY_RETURN_META = 'meta';
+
     const KEY_RETURN_DATA = 'data';
+
     const KEY_TOTAL_RESULTS = 'total_results';
 
     const KEY_META_TOTAL_ITEMS = 'total_items';
+
     const KEY_META_ITEMS_PER_PAGE = 'items_per_page';
+
     const KEY_META_TOTAL_PAGES = 'total_pages';
+
     const KEY_META_CURRENT_PAGE = 'current_page';
+
     const KEY_META_PREV_PAGE = 'prev_page';
+
     const KEY_META_NEXT_PAGE = 'next_page';
+
     const KEY_META_AUTO_LINKS = 'auto_links';
+
     const KEY_META_LINKS = 'links';
 
     /**
@@ -107,7 +116,7 @@ class PagedDataSet implements PagedDataSetContract
         return [
             self::KEY_RETURN_META => $this->getMetaData(),
             self::KEY_RETURN_DATA => $this->getPageData(),
-            self::KEY_TOTAL_RESULTS => $this->totalResults
+            self::KEY_TOTAL_RESULTS => $this->totalResults,
         ];
     }
 
@@ -120,7 +129,7 @@ class PagedDataSet implements PagedDataSetContract
     {
         $baseMetaData = [
             self::KEY_META_TOTAL_ITEMS => $this->itemsCount,
-            self::KEY_META_ITEMS_PER_PAGE => $this->limit
+            self::KEY_META_ITEMS_PER_PAGE => $this->limit,
         ];
 
         return array_merge($baseMetaData, $this->additionalMeta);
@@ -139,7 +148,7 @@ class PagedDataSet implements PagedDataSetContract
     /**
      * Sets the dataset's raw data.
      *
-     * @param array $data The raw data.
+     * @param  array  $data The raw data.
      * @return void
      */
     public function setData($data)
@@ -170,7 +179,7 @@ class PagedDataSet implements PagedDataSetContract
     /**
      * Sets the maximum number of records per page.
      *
-     * @param int $limit The limit.
+     * @param  int  $limit The limit.
      */
     public function setLimit($limit)
     {
@@ -190,7 +199,7 @@ class PagedDataSet implements PagedDataSetContract
     /**
      * Sets the total number of items in the collection.
      *
-     * @param int $totalResults The total number of items.
+     * @param  int  $totalResults The total number of items.
      */
     public function setTotalResults($totalResults)
     {
@@ -210,7 +219,7 @@ class PagedDataSet implements PagedDataSetContract
     /**
      * Sets where to start in the list of ordered data.
      *
-     * @param int $currentOffset The offset.
+     * @param  int  $currentOffset The offset.
      */
     public function setCurrentOffset($currentOffset)
     {
@@ -230,7 +239,7 @@ class PagedDataSet implements PagedDataSetContract
     /**
      * Sets the last page's number.
      *
-     * @param int $lastPageNumber The page number.
+     * @param  int  $lastPageNumber The page number.
      */
     public function setLastPageNumber($lastPageNumber)
     {
@@ -260,7 +269,7 @@ class PagedDataSet implements PagedDataSetContract
     /**
      * Sets the current page number.
      *
-     * @param int $currentPage The current page number.
+     * @param  int  $currentPage The current page number.
      */
     public function setCurrentPage($currentPage)
     {
@@ -280,7 +289,7 @@ class PagedDataSet implements PagedDataSetContract
     /**
      * Sets the total number of items, without the offset.
      *
-     * @param int $itemsCount The items count.
+     * @param  int  $itemsCount The items count.
      */
     public function setItemsCount($itemsCount)
     {
@@ -290,7 +299,7 @@ class PagedDataSet implements PagedDataSetContract
     /**
      * Copies the values from the provided dataset to the current instance.
      *
-     * @param PagedDataSetContract $result The dataset to copy data from.
+     * @param  PagedDataSetContract  $result The dataset to copy data from.
      */
     public function fromPaginatorResult(PagedDataSetContract $result)
     {
@@ -307,7 +316,7 @@ class PagedDataSet implements PagedDataSetContract
     /**
      * Sets additional meta data for the paged result.
      *
-     * @param array $metaData The meta data.
+     * @param  array  $metaData The meta data.
      */
     public function setAdditionalMetaData($metaData)
     {
@@ -341,7 +350,7 @@ class PagedDataSet implements PagedDataSetContract
     /**
      * Sets the items that should be displayed on the current page.
      *
-     * @param array $displayItems The current page's items.
+     * @param  array  $displayItems The current page's items.
      */
     public function setDisplayItems($displayItems)
     {
@@ -361,7 +370,7 @@ class PagedDataSet implements PagedDataSetContract
     /**
      * Sets the metadata collection.
      *
-     * @param MetadataCollectionContract $metadataCollection The metadata collection.
+     * @param  MetadataCollectionContract  $metadataCollection The metadata collection.
      * @return void
      */
     public function setDatasetMetadata(MetadataCollectionContract $metadataCollection)

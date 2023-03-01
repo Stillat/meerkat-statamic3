@@ -11,7 +11,6 @@ use Stillat\Meerkat\Core\Reporting\OverviewAggregator;
  *
  * Provides utilities for visualizing comment statistics.
  *
- * @package Stillat\Meerkat\Console\Commands
  * @since 2.0.0
  */
 class StatisticsCommand extends Command
@@ -51,7 +50,7 @@ class StatisticsCommand extends Command
             $this->trans('commands.stat_spam_and_published'),
             $this->trans('commands.stat_published'),
             $this->trans('commands.stat_pending'),
-            $this->trans('commands.stat_requires_migration')
+            $this->trans('commands.stat_requires_migration'),
         ], [[
             $report->totalThreads,
             $report->total,
@@ -59,12 +58,11 @@ class StatisticsCommand extends Command
             $report->publishedAndSpam,
             $report->isPublished,
             $report->pending,
-            $report->needsMigration
+            $report->needsMigration,
         ]]);
 
         $this->line($this->trans('commands.stat_generated_in', [
-            'seconds' => $secondsToGenerate
+            'seconds' => $secondsToGenerate,
         ]));
     }
-
 }

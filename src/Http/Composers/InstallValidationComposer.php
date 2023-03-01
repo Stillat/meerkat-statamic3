@@ -11,12 +11,11 @@ use Stillat\Meerkat\Validation\RouteCacheValidator;
 
 class InstallValidationComposer
 {
-
     protected $routeCacheValidator = null;
 
     protected $configPaths = [
         'config_supplement' => 'meerkat/supplement/',
-        'config_users' => 'meerkat/users/'
+        'config_users' => 'meerkat/users/',
     ];
 
     /**
@@ -55,15 +54,15 @@ class InstallValidationComposer
 
         $variables[] = [
             'name' => trans('meerkat::validation.statamic_version'),
-            'value' => Statamic::version()
+            'value' => Statamic::version(),
         ];
         $variables[] = [
             'name' => trans('meerkat::validation.meerkat_version'),
-            'value' => Addon::VERSION
+            'value' => Addon::VERSION,
         ];
         $variables[] = [
             'name' => trans('meerkat::validation.server_type'),
-            'value' => $_SERVER['SERVER_SOFTWARE']
+            'value' => $_SERVER['SERVER_SOFTWARE'],
         ];
 
         foreach ($this->configPaths as $langKey => $path) {
@@ -82,8 +81,8 @@ class InstallValidationComposer
                 'is_readable' => $canRead,
                 'exists' => $doesExist,
                 'path' => $fullPath,
-                'description' => trans('meerkat::validation.' . $langKey),
-                'name' => trans('meerkat::validation.' . $langKey . '_name')
+                'description' => trans('meerkat::validation.'.$langKey),
+                'name' => trans('meerkat::validation.'.$langKey.'_name'),
             ];
         }
 
@@ -102,8 +101,8 @@ class InstallValidationComposer
                 'is_readable' => $canRead,
                 'exists' => $doesExist,
                 'path' => $fullPath,
-                'description' => trans('meerkat::validation.' . $langKey),
-                'name' => trans('meerkat::validation.' . $langKey . '_name')
+                'description' => trans('meerkat::validation.'.$langKey),
+                'name' => trans('meerkat::validation.'.$langKey.'_name'),
             ];
         }
 
@@ -113,7 +112,7 @@ class InstallValidationComposer
             'has_route_issues' => $hasRouteIssues,
             'missing_emissions' => $missingRouteEmitters,
             'missing_categories' => $missingCategories,
-            'can_clear_route_cache' => $this->routeCacheValidator->canClearRouteCacheFromUi()
+            'can_clear_route_cache' => $this->routeCacheValidator->canClearRouteCacheFromUi(),
         ]);
     }
 
@@ -121,5 +120,4 @@ class InstallValidationComposer
     {
         return file_exists($path) && is_dir($path);
     }
-
 }

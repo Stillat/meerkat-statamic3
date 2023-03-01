@@ -2,16 +2,16 @@
 
 use Statamic\Statamic;
 use Stillat\Meerkat\Addon;
-use Stillat\Meerkat\Providers\AddonServiceProvider;
-use Stillat\Meerkat\Core\Guard\SpamService;
-use Stillat\Meerkat\Support\Facades\Meerkat;
 use Stillat\Meerkat\Core\Guard\Providers\AkismetSpamGuard;
-use Stillat\Meerkat\Core\Guard\Providers\WordFilterSpamGuard;
-use Stillat\Meerkat\Core\Guard\Providers\IpFilterSpamGuard;
 use Stillat\Meerkat\Core\Guard\Providers\DeceptiveMarkupGuard;
+use Stillat\Meerkat\Core\Guard\Providers\IpFilterSpamGuard;
+use Stillat\Meerkat\Core\Guard\Providers\WordFilterSpamGuard;
+use Stillat\Meerkat\Core\Guard\SpamService;
+use Stillat\Meerkat\Providers\AddonServiceProvider;
+use Stillat\Meerkat\Support\Facades\Meerkat;
 
 Meerkat::onRegisteringControlPanel(function () {
-    Statamic::script('meerkat', Addon::VERSION . AddonServiceProvider::getResourceJavaScriptPath('/meerkatAvatars'));
+    Statamic::script('meerkat', Addon::VERSION.AddonServiceProvider::getResourceJavaScriptPath('/meerkatAvatars'));
 });
 
 // Register our guards with the discovery system so they are available for configuration.

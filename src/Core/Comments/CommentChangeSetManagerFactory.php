@@ -9,7 +9,6 @@ use Stillat\Meerkat\Core\Contracts\Storage\CommentChangeSetStorageManagerContrac
  *
  * Allows Meerkat Core internals to reference a global implementation.
  *
- * @package Stillat\Meerkat\Core\Comments
  * @since 2.0.0
  */
 class CommentChangeSetManagerFactory
@@ -24,7 +23,7 @@ class CommentChangeSetManagerFactory
     /**
      * Returns a value that indicates if a comment change set manager instance was set.
      *
-     * @return boolean
+     * @return bool
      */
     public static function hasInstance()
     {
@@ -38,5 +37,4 @@ class CommentChangeSetManagerFactory
 
         return true;
     }
-
 }

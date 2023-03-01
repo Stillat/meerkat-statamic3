@@ -2,7 +2,6 @@
 
 namespace Stillat\Meerkat\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Statamic\Facades\Entry;
 use Statamic\Http\Controllers\CP\CpController;
 use Stillat\Meerkat\Concerns\CanCorrectRoutes;
@@ -25,7 +24,7 @@ class DashboardController extends CpController
 
         $validFilters = ['all', 'pending', 'published', 'spam'];
 
-        if (!in_array($filter, $validFilters)) {
+        if (! in_array($filter, $validFilters)) {
             abort(404);
             exit;
         }
@@ -45,5 +44,4 @@ class DashboardController extends CpController
 
         return redirect($statamicEntry->url().'#comment-'.$commentId);
     }
-
 }

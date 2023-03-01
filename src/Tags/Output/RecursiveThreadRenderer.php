@@ -11,22 +11,22 @@ use Stillat\Meerkat\Core\Contracts\Parsing\SanitationManagerContract;
  *
  * Provides utilities to render recursive comment threads.
  *
- * @package Stillat\Meerkat\Tags\Output
  * @since 2.0.0
  */
 class RecursiveThreadRenderer
 {
     const TEMPLATE_SUB_KEY = 'meerkat_comment_tags_';
+
     const RECURSIVE_SHORTCUT = '{{ *responses* }}';
 
     /**
      * Recursively renders a comment thread.
      *
-     * @param SanitationManagerContract $sanitizer The sanitizer instance.
-     * @param string $template The template.
-     * @param array $data The comment data to render.
-     * @param array $context Optional context data.
-     * @param string $collectionName The name of the nested collection.
+     * @param  SanitationManagerContract  $sanitizer The sanitizer instance.
+     * @param  string  $template The template.
+     * @param  array  $data The comment data to render.
+     * @param  array  $context Optional context data.
+     * @param  string  $collectionName The name of the nested collection.
      * @return string|string[]
      */
     public static function renderRecursiveThread(SanitationManagerContract $sanitizer, $template, $data, $context, $collectionName)
@@ -35,10 +35,10 @@ class RecursiveThreadRenderer
             $template = str_replace(self::RECURSIVE_SHORTCUT, '{{ *recursive '.$collectionName.'* }}', $template);
         }
 
-        $nestedTagRegex = '/\{\{\s*' . $collectionName . '\s*\}\}.*?\{\{\s*\/' . $collectionName . '\s*\}\}/ms';
+        $nestedTagRegex = '/\{\{\s*'.$collectionName.'\s*\}\}.*?\{\{\s*\/'.$collectionName.'\s*\}\}/ms';
         preg_match($nestedTagRegex, $template, $match);
 
-        $subKey = RecursiveThreadRenderer::TEMPLATE_SUB_KEY . md5(time());
+        $subKey = RecursiveThreadRenderer::TEMPLATE_SUB_KEY.md5(time());
 
         if ($match && count($match) > 0) {
             $nestedCommentsString = $match[0];
@@ -48,7 +48,7 @@ class RecursiveThreadRenderer
             if (Str::contains($nestedCommentsString, '{{ if has_replies }}') === false) {
                 $templateParts = preg_split("/\r\n|\n|\r/", $nestedCommentsString);
                 $newParts = [];
-                $recursiveTagToLookFor = '{{ *recursive ' . $collectionName . '* }}';
+                $recursiveTagToLookFor = '{{ *recursive '.$collectionName.'* }}';
 
                 foreach ($templateParts as $part) {
                     if (Str::contains($part, $recursiveTagToLookFor)) {
@@ -66,8 +66,8 @@ class RecursiveThreadRenderer
             $template = preg_replace($nestedTagRegex, $subKey, $template);
 
             // Create some regular expressions to find the opening and closing comments.
-            $openingTagRegex = '/\{\{\s*' . $collectionName . '\s*\}\}/ms';
-            $closingTagRegex = '/\{\{\s*\/' . $collectionName . '\s*\}\}/ms';
+            $openingTagRegex = '/\{\{\s*'.$collectionName.'\s*\}\}/ms';
+            $closingTagRegex = '/\{\{\s*\/'.$collectionName.'\s*\}\}/ms';
 
             // We need to remove the opening and closing tag pairs from the template.
             $nestedCommentsString = preg_replace($openingTagRegex, '', $nestedCommentsString);
@@ -86,5 +86,4 @@ class RecursiveThreadRenderer
             return str_replace($subKey, $tempContent, $subTemplate);
         }
     }
-
 }

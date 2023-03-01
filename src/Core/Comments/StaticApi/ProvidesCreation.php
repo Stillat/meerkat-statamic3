@@ -10,16 +10,13 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
  *
  * Provides a static creation API for the comments.
  *
- * @package Stillat\Meerkat\Core\Comments\StaticApi
  * @since 2.0.0
  */
 trait ProvidesCreation
 {
-
     /**
      * Attempts to create a new comment from the array data.
      *
-     * @param $data
      * @return CommentContract
      */
     public static function newFromArray($data)
@@ -38,5 +35,4 @@ trait ProvidesCreation
 
         return null;
     }
-
 }

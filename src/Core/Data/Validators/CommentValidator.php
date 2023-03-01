@@ -9,16 +9,14 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
  *
  * Provides utilities for proving a value is a comment.
  *
- * @package Stillat\Meerkat\Core\Data\Validators
  * @since 2.0.0
  */
 class CommentValidator
 {
-
     /**
      * Tests if the value is a valid instance of CommentContract.
      *
-     * @param mixed $inputValue The value to check.
+     * @param  mixed  $inputValue The value to check.
      * @return bool
      */
     public static function check($inputValue)
@@ -29,5 +27,4 @@ class CommentValidator
 
         return false;
     }
-
 }

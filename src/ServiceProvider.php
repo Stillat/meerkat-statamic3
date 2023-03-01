@@ -40,7 +40,6 @@ use Stillat\Meerkat\Core\Parsing\DateParserFactory;
 use Stillat\Meerkat\Core\Parsing\MarkdownParserFactory;
 use Stillat\Meerkat\Core\Storage\Paths;
 use Stillat\Meerkat\Http\Composers\InstallValidationComposer;
-use Stillat\Meerkat\Http\Composers\ManagerComposer;
 use Stillat\Meerkat\Http\Controllers\UtilitiesController;
 use Stillat\Meerkat\Logging\ExceptionLogger;
 use Stillat\Meerkat\Mail\MeerkatMailer;
@@ -56,7 +55,7 @@ use Stillat\Meerkat\Providers\TagsServiceProvider;
 use Stillat\Meerkat\Providers\ThreadServiceProvider;
 use Stillat\Meerkat\Support\Facades\Meerkat;
 
-if (!defined('MEERKAT_COMMENTS')) {
+if (! defined('MEERKAT_COMMENTS')) {
     define('MEERKAT_COMMENTS', 210126);
 }
 
@@ -65,7 +64,6 @@ if (!defined('MEERKAT_COMMENTS')) {
  *
  * Bootstraps the core Meerkat services, configuration, and utilities.
  *
- * @package Stillat\Meerkat
  * @since 2.0.0
  */
 class ServiceProvider extends AddonServiceProvider
@@ -75,8 +73,8 @@ class ServiceProvider extends AddonServiceProvider
     protected $defer = false;
 
     protected $routes = [
-        'cp' => __DIR__ . '/../routes/cp.php',
-        'web' => __DIR__ . '/../routes/web.php',
+        'cp' => __DIR__.'/../routes/cp.php',
+        'web' => __DIR__.'/../routes/web.php',
     ];
 
     protected $composers = [
@@ -86,7 +84,7 @@ class ServiceProvider extends AddonServiceProvider
     protected $commands = [
         ValidateCommand::class,
         MigrateCommentsCommand::class,
-        StatisticsCommand::class
+        StatisticsCommand::class,
     ];
 
     protected $providers = [
@@ -96,9 +94,8 @@ class ServiceProvider extends AddonServiceProvider
         ThreadServiceProvider::class,
         DataServiceProvider::class,
         /** End: Meerkat Core Dependency Providers */
-
         TagsServiceProvider::class,
-        ControlPanelServiceProvider::class
+        ControlPanelServiceProvider::class,
     ];
 
     protected $policies = [
@@ -117,7 +114,7 @@ class ServiceProvider extends AddonServiceProvider
 
         if ($this->getConfig('debug.auto_discover_spatie_ray', true) === true) {
             if (function_exists('\ray') && class_exists('\Spatie\Ray\Ray')) {
-                $errorReporters [] = SpatieRayReporter::class;
+                $errorReporters[] = SpatieRayReporter::class;
             }
         }
 
@@ -170,7 +167,7 @@ class ServiceProvider extends AddonServiceProvider
             storage_path('meerkat/tasks'),
             storage_path('meerkat/logs'),
             storage_path('meerkat/index'),
-            base_path('meerkat')
+            base_path('meerkat'),
         ];
 
         foreach ($paths as $path) {
@@ -185,9 +182,9 @@ class ServiceProvider extends AddonServiceProvider
         $helperFiles[PathProvider::getStub('events.php')] = 'events.php';
 
         foreach ($helperFiles as $source => $fileName) {
-            $targetPath = base_path('meerkat/' . $fileName);
+            $targetPath = base_path('meerkat/'.$fileName);
 
-            if (!file_exists($targetPath)) {
+            if (! file_exists($targetPath)) {
                 copy($source, $targetPath);
             }
         }
@@ -246,7 +243,7 @@ class ServiceProvider extends AddonServiceProvider
 
             // Set the Akismet configuration data, if available.
             foreach ($this->getConfig('akismet', []) as $configSetting => $configValue) {
-                $guardConfiguration->set('akismet_' . $configSetting, $configValue);
+                $guardConfiguration->set('akismet_'.$configSetting, $configValue);
             }
 
             return $guardConfiguration;
@@ -319,7 +316,7 @@ class ServiceProvider extends AddonServiceProvider
             $globalConfiguration->emailFromAddress = $this->getConfig('email.from_address', null);
 
             foreach ($this->getConfig('authors', []) as $configSetting => $configValue) {
-                $globalConfiguration->set('author_' . $configSetting, $configValue);
+                $globalConfiguration->set('author_'.$configSetting, $configValue);
             }
 
             ConfigurationFactories::$configurationInstance = $globalConfiguration;
@@ -414,5 +411,4 @@ class ServiceProvider extends AddonServiceProvider
         $this->config = $configurationManager->getConfigurationMap();
         $this->supplementalConfiguration = $configurationManager->getSupplementalConfigurationMap();
     }
-
 }

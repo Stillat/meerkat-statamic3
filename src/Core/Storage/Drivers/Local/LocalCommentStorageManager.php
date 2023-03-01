@@ -52,21 +52,24 @@ use Stillat\Meerkat\Core\ValidationResult;
  *
  * Manages the interactions between Meerkat Comments and a local file system.
  *
- * @package Stillat\Meerkat\Core\Storage\Drivers\Local
  * @since 2.0.0
  */
 class LocalCommentStorageManager implements CommentStorageManagerContract
 {
-
     const PATH_REPLIES_DIRECTORY = 'replies';
+
     const PATH_COMMENT_FILE = 'comment.md';
 
     const KEY_HEADERS = 'headers';
+
     const KEY_RAW_HEADERS = 'raw_headers';
+
     const KEY_CONTENT = 'content';
+
     const KEY_NEEDS_MIGRATION = 'needs_content_migration';
 
     const KEY_PATH = 'path';
+
     const KEY_ID = 'id';
 
     /**
@@ -139,6 +142,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
 
     /**
      * A list of internal "truth" attributes.
+     *
      * @var array
      */
     private $truthyPrototypeElements = [];
@@ -223,7 +227,6 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         IdentityManagerContract $identityManager,
         CommentChangeSetStorageManagerContract $changeSetManager)
     {
-
         if ($config->useSlimCommentPrototypeParser === false) {
             $this->commentParser = new FullCommentPrototypeParser($yamlParser);
         } else {
@@ -280,7 +283,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Constructs a comment from the prototype data.
      *
-     * @param array $data The comment prototype.
+     * @param  array  $data The comment prototype.
      * @return CommentContract|null
      */
     public function makeFromArrayPrototype($data)
@@ -291,8 +294,9 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Gets all comments for the requested thread.
      *
-     * @param string $threadId The identifier of the thread.
+     * @param  string  $threadId The identifier of the thread.
      * @return ThreadHierarchy
+     *
      * @throws MutationException
      */
     public function getCommentsForThreadId($threadId)
@@ -314,10 +318,11 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Builds a thread comment hierarchy for the provided details.
      *
-     * @param string $threadPath The thread path.
-     * @param string $threadId The thread's string identifier.
-     * @param string[] $commentPaths The comment paths.
+     * @param  string  $threadPath The thread path.
+     * @param  string  $threadId The thread's string identifier.
+     * @param  string[]  $commentPaths The comment paths.
      * @return ThreadHierarchy
+     *
      * @throws MutationException
      */
     private function getThreadHierarchy($threadPath, $threadId, $commentPaths)
@@ -336,8 +341,8 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             }
 
             if (array_key_exists(
-                    CommentContract::KEY_ID,
-                    $commentPrototype[LocalCommentStorageManager::KEY_HEADERS]) === false
+                CommentContract::KEY_ID,
+                $commentPrototype[LocalCommentStorageManager::KEY_HEADERS]) === false
             ) {
                 continue;
             }
@@ -419,7 +424,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
 
             $comment->setDataAttribute(CommentContract::KEY_COMMENT_DATE, $commentDate);
             $comment->setDataAttribute(CommentContract::KEY_COMMENT_DATE_FORMATTED, $commentDateFormatted);
-            $comment->setDataAttribute(CommentContract::KEY_IS_ROOT, !$hasAncestor);
+            $comment->setDataAttribute(CommentContract::KEY_IS_ROOT, ! $hasAncestor);
             $comment->setDataAttribute(CommentContract::KEY_IS_PARENT, $isParent);
             $comment->setDataAttribute(CommentContract::KEY_DESCENDENTS, $allDescendents);
             $comment->setDataAttribute(CommentContract::INTERNAL_CONTEXT_ID, $threadId);
@@ -496,7 +501,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      *
      * Supplemental data and content are ignored during this phase.
      *
-     * @param string $path The full path to the comment data.
+     * @param  string  $path The full path to the comment data.
      * @return array
      */
     private function getCommentPrototype($path)
@@ -507,7 +512,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Executes the collecting hook on the comment.
      *
-     * @param CommentContract[] $comment The comment to run the hook on.
+     * @param  CommentContract[]  $comment The comment to run the hook on.
      */
     private function runCollectionHookOnComment($comment)
     {
@@ -531,9 +536,9 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Runs the requested mutation on the comment.
      *
-     * @param string $originalId The original string identifier.
-     * @param CommentContract $comment The comment to run mutations against.
-     * @param string $mutation The mutation to run.
+     * @param  string  $originalId The original string identifier.
+     * @param  CommentContract  $comment The comment to run mutations against.
+     * @param  string  $mutation The mutation to run.
      * @return mixed
      */
     private function runMutablePipeline($originalId, $comment, $mutation)
@@ -561,8 +566,8 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to merge a new result into an existing pipeline result.
      *
-     * @param CommentContract|null $currentPipelineResult The current pipeline result.
-     * @param CommentContract|null $result The result to merge.
+     * @param  CommentContract|null  $currentPipelineResult The current pipeline result.
+     * @param  CommentContract|null  $result The result to merge.
      * @return CommentContract|null
      */
     private function mergeFromPipelineResults($currentPipelineResult, $result)
@@ -580,9 +585,10 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
 
     /**
      * Reassigns the result's identifier.
-     * @param string $originalId The comment identifier.
-     * @param CommentContract $comment The comment to reassign to.
-     * @param CommentContract|null $pipelineResult The aggregate pipeline result.
+     *
+     * @param  string  $originalId The comment identifier.
+     * @param  CommentContract  $comment The comment to reassign to.
+     * @param  CommentContract|null  $pipelineResult The aggregate pipeline result.
      * @return CommentContract
      */
     private function reassignFromPipeline($originalId, $comment, $pipelineResult)
@@ -597,8 +603,9 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     }
 
     /**
-     * @param CommentContract[] $comments The comments to mutate.
+     * @param  CommentContract[]  $comments The comments to mutate.
      * @return array|null
+     *
      * @throws MutationException
      */
     private function runCollectionHookOnAllComments($comments)
@@ -653,7 +660,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
 
                 DynamicCollectedProperties::registerDynamicProperties($preMutationAttributes, $postMutationAttributes);
             } else {
-                throw new MutationException('Collection handlers must not change array keys. Missing: ' . $key);
+                throw new MutationException('Collection handlers must not change array keys. Missing: '.$key);
             }
         }
 
@@ -667,8 +674,8 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Tests if the parent identifier is the direct ancestor of the provided comment.
      *
-     * @param string $testParent The parent identifier to test.
-     * @param string $commentId The child identifier to test.
+     * @param  string  $testParent The parent identifier to test.
+     * @param  string  $commentId The child identifier to test.
      * @return bool
      */
     public function isParentOf($testParent, $commentId)
@@ -679,8 +686,8 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Tests if the provided comment identifier is a descendent of the parent.
      *
-     * @param string $commentId The child identifier to test.
-     * @param string $testParent The parent identifier to test.
+     * @param  string  $commentId The child identifier to test.
+     * @param  string  $testParent The parent identifier to test.
      * @return bool
      */
     public function isChildOf($commentId, $testParent)
@@ -704,12 +711,12 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to retrieve a storage path from a comment's identifier.
      *
-     * @param string $commentId The comment's string identifier.
+     * @param  string  $commentId The comment's string identifier.
      * @return string|null
      */
     public function getPathById($commentId)
     {
-        $threadFilter = $this->paths->combine([$this->storagePath, '*' . $commentId . '*']);
+        $threadFilter = $this->paths->combine([$this->storagePath, '*'.$commentId.'*']);
         $commentPath = $this->paths->searchForFile($threadFilter, $this->paths->combine(
             [$commentId, LocalCommentStorageManager::PATH_COMMENT_FILE]),
             LocalCommentStorageManager::PATH_COMMENT_FILE);
@@ -724,8 +731,8 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Generates a virtual storage path for the provided details.
      *
-     * @param string $threadId The thread's identifier.
-     * @param string $commentId The comment's identifier.
+     * @param  string  $threadId The thread's identifier.
+     * @param  string  $commentId The comment's identifier.
      * @return string
      */
     public function generateVirtualPath($threadId, $commentId)
@@ -733,7 +740,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         return $this->getPaths()->combineWithStorage([
             $threadId,
             $commentId,
-            CommentContract::COMMENT_FILENAME
+            CommentContract::COMMENT_FILENAME,
         ]);
     }
 
@@ -750,8 +757,9 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to save the comment data.
      *
-     * @param CommentContract $comment The comment to save.
+     * @param  CommentContract  $comment The comment to save.
      * @return bool
+     *
      * @throws InvalidArgumentException
      * @throws ConcurrentResourceAccessViolationException
      * @throws MutationException
@@ -761,7 +769,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         $authenticatedUserId = $comment->getDataAttribute(AuthorContract::AUTHENTICATED_USER_ID);
 
         if (is_numeric($authenticatedUserId)) {
-            $comment->setDataAttribute(AuthorContract::AUTHENTICATED_USER_ID, (string)$authenticatedUserId);
+            $comment->setDataAttribute(AuthorContract::AUTHENTICATED_USER_ID, (string) $authenticatedUserId);
         }
 
         RuntimeStateGuard::storageLocks()->checkConcurrentAccess();
@@ -840,8 +848,9 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to update the comment data.
      *
-     * @param CommentContract $comment The comment to save.
+     * @param  CommentContract  $comment The comment to save.
      * @return bool
+     *
      * @throws ConcurrentResourceAccessViolationException
      * @throws MutationException
      */
@@ -864,7 +873,6 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         $originalId = $comment->getId();
 
         $comment = $this->runMutablePipeline($originalId, $comment, CommentMutationPipelineContract::METHOD_UPDATING);
-
 
         // Marking as spam/ham.
         if ($changeSet->wasAttributeMutated(CommentContract::KEY_SPAM)) {
@@ -933,8 +941,9 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Retrieves a list of all changes made to the comment.
      *
-     * @param CommentContract $comment The comment to check.
+     * @param  CommentContract  $comment The comment to check.
      * @return ChangeSet
+     *
      * @throws MutationException
      */
     public function getMutationChangeSet(CommentContract $comment)
@@ -961,8 +970,9 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to locate a comment by its identifier.
      *
-     * @param string $id The comment's string identifier.
+     * @param  string  $id The comment's string identifier.
      * @return CommentContract|null
+     *
      * @throws MutationException
      */
     public function findById($id)
@@ -981,7 +991,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
                 $simpleHierarchy = $this->getThreadHierarchy($threadPath, $threadId, $commentPaths);
 
                 if ($simpleHierarchy->hasComment($id)) {
-                    $comment =  $simpleHierarchy->getComment($id);
+                    $comment = $simpleHierarchy->getComment($id);
 
                     if ($comment !== null) {
                         $comment->setThreadId($threadId);
@@ -998,9 +1008,10 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Infers ancestor relationships from the comment path, to assist with lazy-loading.
      *
-     * @param string $id The known comment identifier.
-     * @param string $path The comment path.
+     * @param  string  $id The known comment identifier.
+     * @param  string  $path The comment path.
      * @return string[]
+     *
      * @since 2.0.12
      */
     private function inferRelationshipsFromPath($id, $path)
@@ -1009,13 +1020,13 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         $subStructurePath = $this->paths->combine([
             LocalCommentStorageManager::PATH_REPLIES_DIRECTORY,
             $id,
-            LocalCommentStorageManager::PATH_COMMENT_FILE
+            LocalCommentStorageManager::PATH_COMMENT_FILE,
         ]);
 
         if (Str::endsWith($path, $subStructurePath)) {
             $parentPath = $this->paths->combine([
                 mb_substr($path, 0, mb_strlen($path) - mb_strlen($subStructurePath)),
-                LocalCommentStorageManager::PATH_COMMENT_FILE
+                LocalCommentStorageManager::PATH_COMMENT_FILE,
             ]);
 
             if (file_exists($parentPath)) {
@@ -1031,7 +1042,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Gets thread information from a comment's physical path.
      *
-     * @param string $path The comment path to analyze.
+     * @param  string  $path The comment path to analyze.
      * @return array|null
      */
     private function getThreadDetailsFromPath($path)
@@ -1050,7 +1061,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
 
             return [
                 self::KEY_ID => $threadId,
-                self::KEY_PATH => $threadPath
+                self::KEY_PATH => $threadPath,
             ];
         }
 
@@ -1060,7 +1071,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Cleans the storable comment data.
      *
-     * @param array $data The data to clean.
+     * @param  array  $data The data to clean.
      * @return array
      */
     private function cleanCommentStorableData($data)
@@ -1086,11 +1097,11 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Runs a conditional mutation on the comment.
      *
-     * @param string $originalId The original string identifier.
-     * @param CommentContract $comment The comment to run mutations against.
-     * @param bool $valueCheck The condition's value.
-     * @param string $trueMutation The mutation to run if the check value is true.
-     * @param string $falseMutation The mutation to run if the check value is false.
+     * @param  string  $originalId The original string identifier.
+     * @param  CommentContract  $comment The comment to run mutations against.
+     * @param  bool  $valueCheck The condition's value.
+     * @param  string  $trueMutation The mutation to run if the check value is true.
+     * @param  string  $falseMutation The mutation to run if the check value is false.
      * @return CommentContract
      */
     private function runConditionalMutablePipeline($originalId, $comment, $valueCheck, $trueMutation, $falseMutation)
@@ -1105,7 +1116,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to persist the comment data to disk.
      *
-     * @param CommentContract $comment The comment to save.
+     * @param  CommentContract  $comment The comment to save.
      * @return bool
      */
     private function persistComment(CommentContract $comment)
@@ -1118,7 +1129,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         $contentToSave = $this->yamlParser->toYaml($storableAttributes, $comment->getRawContent());
         $directoryName = dirname($storagePath);
 
-        if (!file_exists($directoryName)) {
+        if (! file_exists($directoryName)) {
             mkdir($directoryName, Paths::$directoryPermissions, true);
         }
 
@@ -1134,8 +1145,8 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Generates a storage replies for the provided identifiers.
      *
-     * @param string $parentId The parent comment's identifier.
-     * @param string $childId The child comment's identifier.
+     * @param  string  $parentId The parent comment's identifier.
+     * @param  string  $childId The child comment's identifier.
      * @return string|string[]
      */
     public function getReplyPathById($parentId, $childId)
@@ -1154,14 +1165,14 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             $basePath,
             self::PATH_REPLIES_DIRECTORY,
             $childId,
-            CommentContract::COMMENT_FILENAME
+            CommentContract::COMMENT_FILENAME,
         ]);
     }
 
     /**
      * Attempts to locate the comment's parent comments.
      *
-     * @param string $commentId The comment identifier.
+     * @param  string  $commentId The comment identifier.
      * @return string[]
      */
     public function getAncestors($commentId)
@@ -1172,7 +1183,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to locate the comment's parent comments and paths.
      *
-     * @param string $commentId The comment identifier.
+     * @param  string  $commentId The comment identifier.
      * @return string[]
      */
     public function getAncestorsPaths($commentId)
@@ -1199,6 +1210,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
                 for ($i = 0; $i < count($mappingParts); $i++) {
                     if ($mappingParts[$i] === $threadId) {
                         $startProcessingPaths = true;
+
                         continue;
                     }
 
@@ -1238,7 +1250,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Generates an exclusion list with the provided details.
      *
-     * @param string $commentId The comment identifier to exclude.
+     * @param  string  $commentId The comment identifier to exclude.
      * @return array
      */
     private function getExclusionList($commentId)
@@ -1246,15 +1258,15 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         return [
             CommentContract::COMMENT_FILENAME,
             self::PATH_REPLIES_DIRECTORY,
-            $commentId
+            $commentId,
         ];
     }
 
     /**
      * Removes structural information from the list of comment identifiers.
      *
-     * @param string $commentId The comment identifier.
-     * @param array $listing The list of comment identifiers.
+     * @param  string  $commentId The comment identifier.
+     * @param  array  $listing The list of comment identifiers.
      * @return array
      */
     private function cleanRelatedListing($commentId, $listing)
@@ -1262,7 +1274,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         $exclude = [
             CommentContract::COMMENT_FILENAME,
             self::PATH_REPLIES_DIRECTORY,
-            $commentId
+            $commentId,
         ];
 
         return array_values(array_unique(array_filter($listing, function ($part) use (&$exclude) {
@@ -1273,7 +1285,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to locate the comment's parent and child comment identifiers.
      *
-     * @param string $commentId The comment identifier.
+     * @param  string  $commentId The comment identifier.
      * @return string[]
      */
     public function getRelatedComments($commentId)
@@ -1288,7 +1300,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
      *   - The key will be the comment identifier.
      *   - The value will be the directory of the comment.
      *
-     * @param string $commentId The comment's identifier.
+     * @param  string  $commentId The comment's identifier.
      * @return string[]
      */
     public function getRelatedCommentsPaths($commentId)
@@ -1335,6 +1347,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
                     for ($i = 0; $i < count($mappingParts); $i++) {
                         if ($mappingParts[$i] === $threadId) {
                             $startProcessingPaths = true;
+
                             continue;
                         }
 
@@ -1350,7 +1363,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
                             }
                         }
                     }
-                };
+                }
                 $subParts = array_merge($subParts, $parts);
                 $subParts = array_unique($subParts);
             }
@@ -1373,9 +1386,10 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to update the comment's spam status.
      *
-     * @param CommentContract $comment The comment to update.
-     * @param bool $isSpam Whether or not the comment is spam.
+     * @param  CommentContract  $comment The comment to update.
+     * @param  bool  $isSpam Whether or not the comment is spam.
      * @return bool
+     *
      * @throws ConcurrentResourceAccessViolationException
      * @throws MutationException
      */
@@ -1387,9 +1401,10 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to update the comment's spam status.
      *
-     * @param string $commentId The comment's identifier.
-     * @param bool $isSpam Whether or not the comment is spam.
+     * @param  string  $commentId The comment's identifier.
+     * @param  bool  $isSpam Whether or not the comment is spam.
      * @return bool
+     *
      * @throws ConcurrentResourceAccessViolationException
      * @throws MutationException
      */
@@ -1409,8 +1424,8 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to the update the comments' spam status.
      *
-     * @param CommentContract[] $comments The comments to update.
-     * @param bool $isSpam Whether or not the comments are spam.
+     * @param  CommentContract[]  $comments The comments to update.
+     * @param  bool  $isSpam Whether or not the comments are spam.
      * @return VariableSuccessResult
      */
     public function setSpamStatusForComments($comments, $isSpam)
@@ -1427,8 +1442,8 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to update the comments' spam status.
      *
-     * @param array $commentIds The comment identifiers.
-     * @param bool $isSpam Whether or not the comments are spam.
+     * @param  array  $commentIds The comment identifiers.
+     * @param  bool  $isSpam Whether or not the comments are spam.
      * @return VariableSuccessResult
      */
     public function setSpamStatusForIds($commentIds, $isSpam)
@@ -1469,7 +1484,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to mark the comments as spam.
      *
-     * @param array $commentIds The comment identifiers.
+     * @param  array  $commentIds The comment identifiers.
      * @return VariableSuccessResult
      */
     public function setIsSpamForIds($commentIds)
@@ -1480,7 +1495,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to mark the comments as not spam.
      *
-     * @param array $commentIds The comment identifiers.
+     * @param  array  $commentIds The comment identifiers.
      * @return VariableSuccessResult
      */
     public function setIsHamForIds($commentIds)
@@ -1491,8 +1506,9 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to mark the comment as spam.
      *
-     * @param CommentContract $comment The comment to update.
+     * @param  CommentContract  $comment The comment to update.
      * @return bool
+     *
      * @throws ConcurrentResourceAccessViolationException
      * @throws MutationException
      */
@@ -1504,8 +1520,9 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to mark the comment as spam.
      *
-     * @param string $commentId The comment's identifier.
+     * @param  string  $commentId The comment's identifier.
      * @return bool
+     *
      * @throws ConcurrentResourceAccessViolationException
      * @throws MutationException
      */
@@ -1517,8 +1534,9 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to mark the comment as not-spam.
      *
-     * @param CommentContract $comment The comment to update.
+     * @param  CommentContract  $comment The comment to update.
      * @return bool
+     *
      * @throws ConcurrentResourceAccessViolationException
      * @throws MutationException
      */
@@ -1530,8 +1548,9 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to mark the comment as not-spam.
      *
-     * @param string $commentId The comment's identifier.
+     * @param  string  $commentId The comment's identifier.
      * @return bool
+     *
      * @throws ConcurrentResourceAccessViolationException
      * @throws MutationException
      */
@@ -1543,8 +1562,8 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to update the published/approved status for the provided comments.
      *
-     * @param CommentContract[] $comments The comments to update.
-     * @param bool $isApproved Whether the comments are "published".
+     * @param  CommentContract[]  $comments The comments to update.
+     * @param  bool  $isApproved Whether the comments are "published".
      * @return VariableSuccessResult
      */
     public function setApprovedStatusFor($comments, $isApproved)
@@ -1561,8 +1580,8 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to update the published/approved status for the provided comment identifiers.
      *
-     * @param array $commentIds The comment identifiers to update.
-     * @param bool $isApproved Whether the comments are "published".
+     * @param  array  $commentIds The comment identifiers to update.
+     * @param  bool  $isApproved Whether the comments are "published".
      * @return VariableSuccessResult
      */
     public function setApprovedStatusForIds($commentIds, $isApproved)
@@ -1603,9 +1622,10 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to update the comment's published/approved status.
      *
-     * @param string $commentId The comment's identifier.
-     * @param bool $isApproved Whether the comment is "published".
+     * @param  string  $commentId The comment's identifier.
+     * @param  bool  $isApproved Whether the comment is "published".
      * @return bool
+     *
      * @throws ConcurrentResourceAccessViolationException
      * @throws MutationException
      */
@@ -1625,7 +1645,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to mark the provided comments as approved.
      *
-     * @param array $commentIds The comments to update.
+     * @param  array  $commentIds The comments to update.
      * @return VariableSuccessResult
      */
     public function setIsApprovedForIds($commentIds)
@@ -1636,7 +1656,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to mark the provided comments as not approved.
      *
-     * @param array $commentIds The comments to update.
+     * @param  array  $commentIds The comments to update.
      * @return VariableSuccessResult
      */
     public function setIsNotApprovedForIds($commentIds)
@@ -1647,9 +1667,10 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to update the comment's published/approved status.
      *
-     * @param CommentContract $comment The comment to update.
-     * @param bool $isApproved Whether the comment is "published".
+     * @param  CommentContract  $comment The comment to update.
+     * @param  bool  $isApproved Whether the comment is "published".
      * @return bool
+     *
      * @throws ConcurrentResourceAccessViolationException
      * @throws MutationException
      */
@@ -1661,8 +1682,9 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to mark the comment as approved/published.
      *
-     * @param CommentContract $comment The comment to update.
+     * @param  CommentContract  $comment The comment to update.
      * @return bool
+     *
      * @throws ConcurrentResourceAccessViolationException
      * @throws MutationException
      */
@@ -1674,8 +1696,9 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to mark the comment as un-approved/not-published.
      *
-     * @param string $commentId The comment's identifier.
+     * @param  string  $commentId The comment's identifier.
      * @return bool
+     *
      * @throws ConcurrentResourceAccessViolationException
      * @throws MutationException
      */
@@ -1687,8 +1710,9 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to mark the comment as approved/published.
      *
-     * @param string $commentId The comment's identifier.
+     * @param  string  $commentId The comment's identifier.
      * @return bool
+     *
      * @throws ConcurrentResourceAccessViolationException
      * @throws MutationException
      */
@@ -1700,8 +1724,9 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to mark the comment as un-approved/not-published.
      *
-     * @param CommentContract $comment The comment to update.
+     * @param  CommentContract  $comment The comment to update.
      * @return bool
+     *
      * @throws ConcurrentResourceAccessViolationException
      * @throws MutationException
      */
@@ -1713,7 +1738,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to remove all of the provided comments.
      *
-     * @param array $commentIds The comments to remove.
+     * @param  array  $commentIds The comments to remove.
      * @return VariableSuccessResult
      */
     public function removeAll($commentIds)
@@ -1730,7 +1755,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
                     $result->comments[] = $commentId;
                     $result->comments = array_merge($result->comments, array_map('strval', array_keys($removeResult->comments)));
                 } else {
-                    if (!in_array($commentId, $result->comments)) {
+                    if (! in_array($commentId, $result->comments)) {
                         $result->failed[$commentId] = $removeResult;
                     }
                 }
@@ -1756,8 +1781,9 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to remove the requested comment.
      *
-     * @param string $commentId The comment's identifier.
+     * @param  string  $commentId The comment's identifier.
      * @return AffectsCommentsResult
+     *
      * @throws ConcurrentResourceAccessViolationException
      * @throws MutationException
      */
@@ -1818,7 +1844,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to locate the comment's child comments and paths.
      *
-     * @param string $commentId The comment identifier.
+     * @param  string  $commentId The comment identifier.
      * @return string[]
      */
     public function getDescendentsPaths($commentId)
@@ -1838,7 +1864,6 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
                 $subPath = mb_substr($path, $rootLen);
                 $subParts = array_merge($subParts, explode(Paths::SYM_FORWARD_SEPARATOR, $subPath));
 
-
                 if (Str::startsWith($path, $rootPath)) {
                     $mappedPath = dirname($path);
                     $mappingParts = explode(Paths::SYM_FORWARD_SEPARATOR, $mappedPath);
@@ -1849,6 +1874,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
                         for ($i = 0; $i < count($mappingParts); $i++) {
                             if ($mappingParts[$i] === $commentId) {
                                 $startProcessingPaths = true;
+
                                 continue;
                             }
 
@@ -1866,7 +1892,6 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
                         }
                     }
                 }
-
             }
 
             $pathMappingToReturn = [];
@@ -1887,8 +1912,9 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to soft delete the requested comment.
      *
-     * @param string $commentId The comment's identifier.
+     * @param  string  $commentId The comment's identifier.
      * @return bool
+     *
      * @throws ConcurrentResourceAccessViolationException
      * @throws MutationException
      */
@@ -1913,7 +1939,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to soft delete the provided comments.
      *
-     * @param array $commentIds The comments to soft delete
+     * @param  array  $commentIds The comments to soft delete
      * @return VariableSuccessResult
      */
     public function softDeleteAll($commentIds)
@@ -1952,7 +1978,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to restore the provided comments.
      *
-     * @param array $commentIds The comments to restore.
+     * @param  array  $commentIds The comments to restore.
      * @return VariableSuccessResult
      */
     public function restoreAll($commentIds)
@@ -1991,8 +2017,9 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to restore a soft-deleted comment.
      *
-     * @param string $commentId The comment's identifier.
+     * @param  string  $commentId The comment's identifier.
      * @return AffectsCommentsResult
+     *
      * @throws ConcurrentResourceAccessViolationException
      * @throws MutationException
      */
@@ -2003,7 +2030,6 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
         if ($comment === null) {
             return AffectsCommentsResult::failed();
         }
-
 
         if ($comment->isDeleted() === false) {
             return AffectsCommentsResult::failed();
@@ -2029,6 +2055,7 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
             if ($lastResult !== null && $lastResult instanceof CommentRestoringEventArgs) {
                 if ($lastResult->shouldRestore() === false) {
                     RuntimeStateGuard::mutationLocks()->releaseLock($lock);
+
                     return AffectsCommentsResult::failed();
                 }
             }
@@ -2049,12 +2076,11 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
     /**
      * Attempts to locate the comment's child comments.
      *
-     * @param string $commentId The comment identifier.
+     * @param  string  $commentId The comment identifier.
      * @return string[]
      */
     public function getDescendents($commentId)
     {
         return array_keys($this->getDescendentsPaths($commentId));
     }
-
 }

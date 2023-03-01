@@ -15,16 +15,15 @@ use Stillat\Meerkat\Core\Support\Str;
  *
  * not:like(content_raw, %some-value%)
  *
- * @package Stillat\Meerkat\Core\Data\Filters\DefaultFilters
  * @since 2.0.0
  *
  * @method mixed get($key, $default = null) Gets a filter parameter value.
  * @method mixed getContext() Gets the filter context.
+ *
  * @see CommentFilter
  */
 class NotLike
 {
-
     const FILTER_NOT_LIKE = 'not:like';
 
     public function register(CommentFilterManager $manager)
@@ -44,5 +43,4 @@ class NotLike
             });
         }, 'property, pattern');
     }
-
 }

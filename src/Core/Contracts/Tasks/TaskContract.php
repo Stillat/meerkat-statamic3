@@ -9,13 +9,14 @@ use Serializable;
  *
  * Represents a Meerkat background task.
  *
- * @package Stillat\Meerkat\Core\Contracts\Tasks
  * @since 2.0.0
  */
 interface TaskContract extends Serializable
 {
     const STATUS_IN_PROGRESS = 0;
-    const STATUS_DONE  = 1;
+
+    const STATUS_DONE = 1;
+
     const STATUS_CANCELED = 2;
 
     /**
@@ -28,7 +29,7 @@ interface TaskContract extends Serializable
     /**
      * Sets the task's instance identifier.
      *
-     * @param string $instanceId The identifier.
+     * @param  string  $instanceId The identifier.
      */
     public function setInstanceId($instanceId);
 
@@ -42,7 +43,7 @@ interface TaskContract extends Serializable
     /**
      * Sets the task name
      *
-     * @param string $taskName The task name.
+     * @param  string  $taskName The task name.
      */
     public function setTaskName($taskName);
 
@@ -56,7 +57,7 @@ interface TaskContract extends Serializable
     /**
      * Sets the tasks's internal code.
      *
-     * @param string $taskCode The code.
+     * @param  string  $taskCode The code.
      */
     public function setTaskCode($taskCode);
 
@@ -70,14 +71,14 @@ interface TaskContract extends Serializable
     /**
      * Sets the task's current status.
      *
-     * @param int $taskStatus The current status.
+     * @param  int  $taskStatus The current status.
      */
     public function setStatus($taskStatus);
 
     /**
      * Sets the task's created timestamp.
      *
-     * @param int $dateTimeUtc The timestamp.
+     * @param  int  $dateTimeUtc The timestamp.
      */
     public function setCreateDateTimeUtc($dateTimeUtc);
 
@@ -98,7 +99,7 @@ interface TaskContract extends Serializable
     /**
      * Sets the task arguments.
      *
-     * @param string[] $args The task arguments.
+     * @param  string[]  $args The task arguments.
      */
     public function setArguments($args);
 
@@ -108,5 +109,4 @@ interface TaskContract extends Serializable
      * @return string[]
      */
     public function getArguments();
-
 }

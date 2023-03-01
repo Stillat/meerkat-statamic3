@@ -11,7 +11,6 @@ use Stillat\Meerkat\Core\Http\Responses\Responses;
  *
  * Provides helpers for generating standardized response messages.
  *
- * @package Stillat\Meerkat\Http
  * @since 2.0.0
  */
 class MessageGeneralCommentResponseGenerator extends GeneralCommentResponseGenerator
@@ -21,7 +20,7 @@ class MessageGeneralCommentResponseGenerator extends GeneralCommentResponseGener
     /**
      * Generates a comment not found response.
      *
-     * @param string $commentId The comment identifier.
+     * @param  string  $commentId The comment identifier.
      * @return array
      */
     public function notFound($commentId)
@@ -32,7 +31,7 @@ class MessageGeneralCommentResponseGenerator extends GeneralCommentResponseGener
     /**
      * Merges the results with any error code translation messages.
      *
-     * @param array $result The results to merge.
+     * @param  array  $result The results to merge.
      * @return array
      */
     private function mergeWithMessage($result)
@@ -43,5 +42,4 @@ class MessageGeneralCommentResponseGenerator extends GeneralCommentResponseGener
 
         return $result;
     }
-
 }

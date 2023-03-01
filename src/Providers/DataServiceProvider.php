@@ -19,15 +19,12 @@ use Stillat\Meerkat\Support\Factories\DataQueryBuilderFactory;
  *
  * Manages the registration of Meerkat's data querying, filtering, and management services.
  *
- * @package Stillat\Meerkat\Providers
  * @since 2.0.0
  */
 class DataServiceProvider extends AddonServiceProvider
 {
-
     public function register()
     {
-
         $this->app->bind(CsvWriterContract::class, CsvWriter::class);
 
         $this->app->singleton(CommentFilterManager::class, function ($app) {
@@ -62,5 +59,4 @@ class DataServiceProvider extends AddonServiceProvider
             include_once $eventsPath;
         }
     }
-
 }

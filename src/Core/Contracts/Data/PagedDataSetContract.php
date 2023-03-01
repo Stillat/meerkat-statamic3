@@ -7,12 +7,10 @@ namespace Stillat\Meerkat\Core\Contracts\Data;
  *
  * Represents a paged dataset.
  *
- * @package Stillat\Meerkat\Core\Contracts\Data
  * @since 2.0.0
  */
 interface PagedDataSetContract extends DataSetContract
 {
-
     /**
      * Generates a collection of additional meta data properties.
      *
@@ -30,7 +28,7 @@ interface PagedDataSetContract extends DataSetContract
     /**
      * Sets the maximum number of records per page.
      *
-     * @param int $limit The limit.
+     * @param  int  $limit The limit.
      */
     public function setLimit($limit);
 
@@ -44,7 +42,7 @@ interface PagedDataSetContract extends DataSetContract
     /**
      * Sets the total number of items in the collection.
      *
-     * @param int $totalResults The total number of items.
+     * @param  int  $totalResults The total number of items.
      */
     public function setTotalResults($totalResults);
 
@@ -58,7 +56,7 @@ interface PagedDataSetContract extends DataSetContract
     /**
      * Sets where to start in the list of ordered data.
      *
-     * @param int $currentOffset The offset.
+     * @param  int  $currentOffset The offset.
      */
     public function setCurrentOffset($currentOffset);
 
@@ -79,7 +77,7 @@ interface PagedDataSetContract extends DataSetContract
     /**
      * Sets the items that should be displayed on the current page.
      *
-     * @param array $displayItems The current page's items.
+     * @param  array  $displayItems The current page's items.
      */
     public function setDisplayItems($displayItems);
 
@@ -93,14 +91,14 @@ interface PagedDataSetContract extends DataSetContract
     /**
      * Sets the last page's number.
      *
-     * @param int $lastPageNumber The page number.
+     * @param  int  $lastPageNumber The page number.
      */
     public function setLastPageNumber($lastPageNumber);
 
     /**
      * Sets additional meta data for the paged result.
      *
-     * @param array $metaData The meta data.
+     * @param  array  $metaData The meta data.
      */
     public function setAdditionalMetaData($metaData);
 
@@ -114,7 +112,7 @@ interface PagedDataSetContract extends DataSetContract
     /**
      * Sets the current page number.
      *
-     * @param int $currentPage The current page number.
+     * @param  int  $currentPage The current page number.
      */
     public function setCurrentPage($currentPage);
 
@@ -128,7 +126,7 @@ interface PagedDataSetContract extends DataSetContract
     /**
      * Sets the total number of items, without the offset.
      *
-     * @param int $itemsCount The items count.
+     * @param  int  $itemsCount The items count.
      */
     public function setItemsCount($itemsCount);
 
@@ -142,7 +140,7 @@ interface PagedDataSetContract extends DataSetContract
     /**
      * Sets the metadata collection.
      *
-     * @param MetadataCollectionContract $metadataCollection The metadata collection.
+     * @param  MetadataCollectionContract  $metadataCollection The metadata collection.
      * @return void
      */
     public function setDatasetMetadata(MetadataCollectionContract $metadataCollection);
@@ -153,5 +151,4 @@ interface PagedDataSetContract extends DataSetContract
      * @return MetadataCollectionContract|null
      */
     public function getDatasetMetadata();
-
 }

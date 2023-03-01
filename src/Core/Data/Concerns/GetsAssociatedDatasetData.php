@@ -13,14 +13,12 @@ use Stillat\Meerkat\Core\Data\Retrievers\CommentThreadIdRetriever;
  *
  * Provides helpers to retrieve associated dataset data.
  *
- * @package Stillat\Meerkat\Core\Data\Concerns
  * @since 2.0.0
  *
  * @method CommentContract[] flattenDataset
  */
 trait GetsAssociatedDatasetData
 {
-
     /**
      * A cached list of comment identifiers.
      *
@@ -123,7 +121,7 @@ trait GetsAssociatedDatasetData
             $this->cachedAuthorEmailAddresses = [];
 
             foreach ($this->getAuthors() as $author) {
-                if (!in_array($author->getEmailAddress(), $this->cachedAuthorEmailAddresses)) {
+                if (! in_array($author->getEmailAddress(), $this->cachedAuthorEmailAddresses)) {
                     $this->cachedAuthorEmailAddresses[] = $author->getEmailAddress();
                 }
             }
@@ -239,5 +237,4 @@ trait GetsAssociatedDatasetData
 
         return $this->cachedAnonymousAuthors;
     }
-
 }

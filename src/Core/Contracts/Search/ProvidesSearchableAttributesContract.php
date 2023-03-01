@@ -7,17 +7,14 @@ namespace Stillat\Meerkat\Core\Contracts\Search;
  *
  * Indicates that the object has searchable attributes.
  *
- * @package Stillat\Meerkat\Core\Contracts\Search
  * @since 2.0.0
  */
 interface ProvidesSearchableAttributesContract
 {
-
     /**
      * Gets the searchable attributes of an object instance.
      *
      * @return array
      */
     public function getSearchableAttributes();
-
 }

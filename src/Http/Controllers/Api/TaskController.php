@@ -11,7 +11,6 @@ use Stillat\Meerkat\Core\Logging\ErrorReporterFactory;
 
 class TaskController extends CpController
 {
-
     public function getTaskStatus(TaskStorageManagerContract $taskManager)
     {
         $taskId = $this->request->get(ApiParameters::PARAM_TASK_ID, null);
@@ -32,7 +31,7 @@ class TaskController extends CpController
             if ($task !== null) {
                 return Responses::successWithData([
                     'task' => $task->getInstanceId(),
-                    'status' => $task->getStatus()
+                    'status' => $task->getStatus(),
                 ]);
             }
         } catch (Exception $e) {
@@ -43,5 +42,4 @@ class TaskController extends CpController
 
         return Responses::generalFailure();
     }
-
 }

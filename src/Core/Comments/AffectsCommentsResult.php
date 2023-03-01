@@ -7,12 +7,10 @@ namespace Stillat\Meerkat\Core\Comments;
  *
  * Represents an operation result that affects multiple comments.
  *
- * @package Stillat\Meerkat\Core\Comments
  * @since 2.0.0
  */
 class AffectsCommentsResult
 {
-
     /**
      * Whether the operation completed successfully.
      *
@@ -40,8 +38,8 @@ class AffectsCommentsResult
     /**
      * Creates a new result based on the provided conditions.
      *
-     * @param bool $success Whether the operation was a success.
-     * @param string[] $comments The comment identifiers affected, if any.
+     * @param  bool  $success Whether the operation was a success.
+     * @param  string[]  $comments The comment identifiers affected, if any.
      * @return AffectsCommentsResult
      */
     public static function conditionalWithComments($success, $comments)
@@ -56,7 +54,7 @@ class AffectsCommentsResult
     /**
      * Creates a new success result with the provided comments.
      *
-     * @param string[] $comments The comment identifiers affected, if any.
+     * @param  string[]  $comments The comment identifiers affected, if any.
      * @return AffectsCommentsResult
      */
     public static function successWithComments($comments)
@@ -67,12 +65,11 @@ class AffectsCommentsResult
     /**
      * Creates a new failed result with the provided comments.
      *
-     * @param string[] $comments The comment identifiers affected, if any.
+     * @param  string[]  $comments The comment identifiers affected, if any.
      * @return AffectsCommentsResult
      */
     public static function failedWithComments($comments)
     {
         return self::conditionalWithComments(false, $comments);
     }
-
 }

@@ -18,7 +18,6 @@ use Stillat\Meerkat\Core\Support\TypeConversions;
  *
  * Parses comment files and returns an array containing the prototypical data to work with comment data.
  *
- * @package Stillat\Meerkat\Core\Parsing
  * @since 2.0.11
  */
 class CommentPrototypeParser implements PrototypeParserContract
@@ -144,7 +143,7 @@ class CommentPrototypeParser implements PrototypeParserContract
     /**
      * Sets the comment's truthy prototype elements.
      *
-     * @param array $elements The truthy prototype elements.
+     * @param  array  $elements The truthy prototype elements.
      */
     public function setTruthyElements($elements)
     {
@@ -174,7 +173,7 @@ class CommentPrototypeParser implements PrototypeParserContract
     /**
      * Sets the Meerkat Core configuration instance.
      *
-     * @param Configuration $configuration The configuration.
+     * @param  Configuration  $configuration The configuration.
      */
     public function setConfig(Configuration $configuration)
     {
@@ -184,7 +183,7 @@ class CommentPrototypeParser implements PrototypeParserContract
     /**
      * Sets the prototype elements.
      *
-     * @param array $elements The prototype elements.
+     * @param  array  $elements The prototype elements.
      */
     public function setPrototypeElements($elements)
     {
@@ -196,7 +195,7 @@ class CommentPrototypeParser implements PrototypeParserContract
      *
      * Supplemental data and content are ignored during this phase.
      *
-     * @param string $path The full path to the comment data.
+     * @param  string  $path The full path to the comment data.
      * @return array
      */
     public function getCommentPrototype($path)
@@ -204,7 +203,7 @@ class CommentPrototypeParser implements PrototypeParserContract
         $this->reset();
         $handle = fopen($path, 'r');
 
-        $bom = pack("CCC", 0xef, 0xbb, 0xbf);
+        $bom = pack('CCC', 0xEF, 0xBB, 0xBF);
 
         if ($handle) {
             while (($line = fgets($handle)) !== false) {
@@ -262,7 +261,7 @@ class CommentPrototypeParser implements PrototypeParserContract
             LocalCommentStorageManager::KEY_HEADERS => $this->headers,
             LocalCommentStorageManager::KEY_RAW_HEADERS => $this->rawHeaders,
             LocalCommentStorageManager::KEY_CONTENT => $this->content,
-            LocalCommentStorageManager::KEY_NEEDS_MIGRATION => $this->alreadyFoundContent
+            LocalCommentStorageManager::KEY_NEEDS_MIGRATION => $this->alreadyFoundContent,
         ];
     }
 
@@ -292,7 +291,7 @@ class CommentPrototypeParser implements PrototypeParserContract
     /**
      * Attempts to process the provided content line.
      *
-     * @param string $line The line to process.
+     * @param  string  $line The line to process.
      * @return bool
      */
     private function processLine($line)
@@ -354,6 +353,7 @@ class CommentPrototypeParser implements PrototypeParserContract
                 if (mb_strlen($this->content) > $this->config->hardCommentLengthCap) {
                     $this->content = mb_substr($this->content, 0, $this->config->hardCommentLengthCap);
                     $this->headers[CommentContract::INTERNAL_CONTENT_TRUNCATED] = true;
+
                     return false;
                 }
             }
@@ -365,7 +365,7 @@ class CommentPrototypeParser implements PrototypeParserContract
     /**
      * Cleans an attribute value to make it consistent and usable.
      *
-     * @param string $attributeValue The value to clean.
+     * @param  string  $attributeValue The value to clean.
      * @return string
      */
     private function cleanAttributeValue($attributeValue)
@@ -379,8 +379,8 @@ class CommentPrototypeParser implements PrototypeParserContract
     /**
      * Attempts to convert the comment's content with the provided encoding.
      *
-     * @param string $path The file path.
-     * @param string $encoding The content encoding.
+     * @param  string  $path The file path.
+     * @param  string  $encoding The content encoding.
      */
     private function convertWithEncoding($path, $encoding)
     {
@@ -397,6 +397,7 @@ class CommentPrototypeParser implements PrototypeParserContract
 
         if ($encoding === false) {
             unset($contents);
+
             return;
         }
 
@@ -420,14 +421,14 @@ class CommentPrototypeParser implements PrototypeParserContract
     /**
      * Attempts to improve the encoding guess based on what the opening YAML header looks like.
      *
-     * @param string $contents The content to analyze.
-     * @param string $encoding The already guessed encoding.
+     * @param  string  $contents The content to analyze.
+     * @param  string  $encoding The already guessed encoding.
      * @return string
      */
     private function getFormatEncoding($contents, $encoding)
     {
-        $utf16leBom = chr(0xFF) . chr(0xFE);
-        $utf16beBom = chr(0xFE) . chr(0xFF);
+        $utf16leBom = chr(0xFF).chr(0xFE);
+        $utf16beBom = chr(0xFE).chr(0xFF);
         $firstTwo = substr($contents, 0, 2);
 
         if ($firstTwo === $utf16beBom) {
@@ -446,7 +447,7 @@ class CommentPrototypeParser implements PrototypeParserContract
     /**
      * Attempts to resolve a comment's identifier based on its storage path.
      *
-     * @param string $path The comment's storage path.
+     * @param  string  $path The comment's storage path.
      * @return string|null
      */
     private function getIdFromPath($path)
@@ -463,7 +464,7 @@ class CommentPrototypeParser implements PrototypeParserContract
     /**
      * Protects against missing comment identifiers, or unexpected identifiers.
      *
-     * @param string $path The comment's storage path.
+     * @param  string  $path The comment's storage path.
      */
     private function ensureIdIntegrity($path)
     {
@@ -489,7 +490,8 @@ class CommentPrototypeParser implements PrototypeParserContract
 
     /**
      * Checks the resolved data values and fills any supplemental data, if required.
-     * @param string $path The comment's storage path.
+     *
+     * @param  string  $path The comment's storage path.
      */
     private function fillSupplementalDataIfRequired($path)
     {
@@ -523,5 +525,4 @@ class CommentPrototypeParser implements PrototypeParserContract
     {
         $this->failedNodes = [];
     }
-
 }

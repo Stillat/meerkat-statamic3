@@ -11,12 +11,10 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
  *
  * When comment data is being saved, all internal attributes are removed.
  *
- * @package Stillat\Meerkat\Core\Storage\Drivers\Local\Attributes
  * @since 2.0.0
  */
 class InternalAttributes
 {
-
     /**
      * A collection of internal attributes that should not be saved.
      *
@@ -66,11 +64,10 @@ class InternalAttributes
                 CommentContract::INTERNAL_HAS_SUPPLEMENTED_DATA,
                 CommentContract::INTERNAL_PARSER_CONTENT_SUPPLEMENTED,
                 CommentContract::INTERNAL_PARSER_AUTHOR_EMAIL_SUPPLEMENTED,
-                CommentContract::INTERNAL_PARSER_AUTHOR_NAME_SUPPLEMENTED
+                CommentContract::INTERNAL_PARSER_AUTHOR_NAME_SUPPLEMENTED,
             ];
         }
 
         return self::$internalAttributes;
     }
-
 }

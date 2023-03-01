@@ -7,17 +7,14 @@ namespace Stillat\Meerkat\Core\Logging;
  *
  * Provides a central location to managing debug-level system variables.
  *
- * @package Stillat\Meerkat\Core\Logging
  * @since 2.3.0
  */
 class GlobalLogState
 {
-
     /**
      * Indicates if Meerkat is running in a debug environment.
      *
      * @var bool
      */
     public static $isApplicationInDebugMode = false;
-
 }

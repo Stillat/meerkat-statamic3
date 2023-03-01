@@ -7,17 +7,14 @@ namespace Stillat\Meerkat\Core\Contracts;
  *
  * Provides a consistent API for interacting with persistent objects.
  *
- * @package Stillat\Meerkat\Core\Contracts
  * @since 2.0.0
  */
 interface StorableContract
 {
-
     /**
      * Sets the storage path.
      *
-     * @param string $path
-     *
+     * @param  string  $path
      * @return void
      */
     public function setPath($path);
@@ -32,8 +29,7 @@ interface StorableContract
     /**
      * Attempts to remove the current object instance.
      *
-     * @return boolean
+     * @return bool
      */
     public function delete();
-
 }

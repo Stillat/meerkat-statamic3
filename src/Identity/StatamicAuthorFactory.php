@@ -13,12 +13,10 @@ use Stillat\Meerkat\Core\Contracts\Permissions\PermissionsManagerContract;
  *
  * Handles the creation of Meerkat Core identities from various Statamic contexts.
  *
- * @package Stillat\Meerkat\Identity
  * @since 1.0.0
  */
 class StatamicAuthorFactory implements AuthorFactoryContract
 {
-
     /**
      * Data attribute key representing Statamic "Super User" status.
      */
@@ -36,6 +34,7 @@ class StatamicAuthorFactory implements AuthorFactoryContract
 
     /**
      * A cache of previously resolved user identities.
+     *
      * @var array
      */
     public static $identityCache = [];
@@ -91,7 +90,7 @@ class StatamicAuthorFactory implements AuthorFactoryContract
     /**
      * Constructs a valid AuthorContract instance from the prototype.
      *
-     * @param array $protoAuthor
+     * @param  array  $protoAuthor
      * @return AuthorContract
      */
     public function makeAuthor($protoAuthor)
@@ -110,7 +109,7 @@ class StatamicAuthorFactory implements AuthorFactoryContract
     /**
      * Creates a Meerkat Core identity from the provided prototype information.
      *
-     * @param array $protoAuthor The author prototype.
+     * @param  array  $protoAuthor The author prototype.
      * @return StatamicIdentity|
      */
     private function makeAuthorFromArrayPrototype($protoAuthor)
@@ -175,7 +174,7 @@ class StatamicAuthorFactory implements AuthorFactoryContract
     /**
      * Creates a Meerkat Core identity from the provided Statamic User.
      *
-     * @param User $protoUser The Statamic User instance.
+     * @param  User  $protoUser The Statamic User instance.
      * @return StatamicIdentity
      */
     private function makeAuthorFromStatamicUser(User $protoUser)
@@ -208,7 +207,7 @@ class StatamicAuthorFactory implements AuthorFactoryContract
     /**
      * Attempts to locate a Statamic user with the provided  identifier.
      *
-     * @param string $userId The user identifier.
+     * @param  string  $userId The user identifier.
      * @return User|null
      */
     public function getStatamicIdentity($userId)
@@ -223,5 +222,4 @@ class StatamicAuthorFactory implements AuthorFactoryContract
 
         return self::$userCache[$userId];
     }
-
 }

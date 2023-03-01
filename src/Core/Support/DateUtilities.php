@@ -7,17 +7,15 @@ namespace Stillat\Meerkat\Core\Support;
  *
  * Provides utilities for working with timestamps.
  *
- * @package Stillat\Meerkat\Core\Support
  * @since 2.0.0
  */
 class DateUtilities
 {
-
     /**
      * Gets the number of days between two timestamps.
      *
-     * @param int $recentTimestamp The newer timestamp.
-     * @param int $olderTimestamp The older timestamp.
+     * @param  int  $recentTimestamp The newer timestamp.
+     * @param  int  $olderTimestamp The older timestamp.
      * @return false|float
      */
     public static function daysBetween($recentTimestamp, $olderTimestamp)
@@ -26,5 +24,4 @@ class DateUtilities
 
         return round($diff / (60 * 60 * 24));
     }
-
 }

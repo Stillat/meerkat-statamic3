@@ -17,14 +17,14 @@ use Stillat\Meerkat\Core\Support\Str;
  *
  * Manages the interactions between Meerkat Comment Revisions and a local file system.
  *
- * @package Stillat\Meerkat\Core\Storage\Drivers\Local
  * @since 2.0.0
  */
 class LocalCommentChangeSetStorageManager implements CommentChangeSetStorageManagerContract
 {
-
     const PATH_REVISIONS = '.revisions';
+
     const KEY_SPECIAL_CONTENT = '*content*';
+
     const STR_CHECK_TIMESTAMP = 'timestamp: ';
 
     /**
@@ -58,7 +58,7 @@ class LocalCommentChangeSetStorageManager implements CommentChangeSetStorageMana
     /**
      * Attempts to locate the change sets for the provided comment identifier.
      *
-     * @param string $commentId The comment identifier.
+     * @param  string  $commentId The comment identifier.
      * @return ChangeSetCollection|null
      */
     public function getChangeSetForCommentId($commentId)
@@ -73,7 +73,7 @@ class LocalCommentChangeSetStorageManager implements CommentChangeSetStorageMana
     /**
      * Attempts to locate the change sets for the provided comment.
      *
-     * @param CommentContract $comment The comment.
+     * @param  CommentContract  $comment The comment.
      * @return ChangeSetCollection
      */
     public function getChangeSetForComment(CommentContract $comment)
@@ -100,7 +100,7 @@ class LocalCommentChangeSetStorageManager implements CommentChangeSetStorageMana
     /**
      * Retrieves the file path for the comment's revisions.
      *
-     * @param CommentContract $comment The comment to locate the path for.
+     * @param  CommentContract  $comment The comment to locate the path for.
      * @return string
      */
     private function getChangeSetStoragePath(CommentContract $comment)
@@ -109,15 +109,15 @@ class LocalCommentChangeSetStorageManager implements CommentChangeSetStorageMana
 
         return $this->paths->combine([
             $storageDirectory,
-            self::PATH_REVISIONS
+            self::PATH_REVISIONS,
         ]);
     }
 
     /**
      * Attempts to add a single change set to the comment.
      *
-     * @param string $commentId The comment identifier.
-     * @param ChangeSet $changeSet The change set to add.
+     * @param  string  $commentId The comment identifier.
+     * @param  ChangeSet  $changeSet The change set to add.
      * @return bool
      */
     public function addChangeSetById($commentId, ChangeSet $changeSet)
@@ -132,8 +132,8 @@ class LocalCommentChangeSetStorageManager implements CommentChangeSetStorageMana
     /**
      * Attempts to add a single change set to the comment.
      *
-     * @param CommentContract $comment The comment.
-     * @param ChangeSet $changeSet The change set to add.
+     * @param  CommentContract  $comment The comment.
+     * @param  ChangeSet  $changeSet The change set to add.
      * @return bool
      */
     public function addChangeSet(CommentContract $comment, ChangeSet $changeSet)
@@ -162,7 +162,7 @@ class LocalCommentChangeSetStorageManager implements CommentChangeSetStorageMana
     /**
      * Retrieves the revision identifiers for the provided identifier.
      *
-     * @param string $commentId The comment identifier.
+     * @param  string  $commentId The comment identifier.
      * @return string[]
      */
     public function getRevisionsById($commentId)
@@ -177,7 +177,7 @@ class LocalCommentChangeSetStorageManager implements CommentChangeSetStorageMana
     /**
      * Retrieves the revision identifiers for the provided comment.
      *
-     * @param CommentContract $comment The comment.
+     * @param  CommentContract  $comment The comment.
      * @return string[]
      */
     public function getRevisions(CommentContract $comment)
@@ -192,8 +192,8 @@ class LocalCommentChangeSetStorageManager implements CommentChangeSetStorageMana
     /**
      * Tests if a revision exists for the provided comment.
      *
-     * @param string $commentId The comment identifier.
-     * @param string $revision The revision identifier.
+     * @param  string  $commentId The comment identifier.
+     * @param  string  $revision The revision identifier.
      * @return bool
      */
     public function revisionExistsById($commentId, $revision)
@@ -208,8 +208,8 @@ class LocalCommentChangeSetStorageManager implements CommentChangeSetStorageMana
     /**
      * Tests if a revision exists for the provided comment.
      *
-     * @param CommentContract $comment The comment identifier.
-     * @param string $revision The revision identifier.
+     * @param  CommentContract  $comment The comment identifier.
+     * @param  string  $revision The revision identifier.
      * @return bool
      */
     public function revisionExists(CommentContract $comment, $revision)
@@ -224,7 +224,7 @@ class LocalCommentChangeSetStorageManager implements CommentChangeSetStorageMana
     /**
      * Attempts to remove all revisions older than the current revision.
      *
-     * @param string $commentId The comment identifier.
+     * @param  string  $commentId The comment identifier.
      * @return bool
      */
     public function removeHistoricalChangeSetsById($commentId)
@@ -239,7 +239,7 @@ class LocalCommentChangeSetStorageManager implements CommentChangeSetStorageMana
     /**
      * Attempts to remove all revisions older than the current revision.
      *
-     * @param CommentContract $comment The comment identifier.
+     * @param  CommentContract  $comment The comment identifier.
      * @return bool
      */
     public function removeHistoricalChangeSets(CommentContract $comment)
@@ -276,8 +276,8 @@ class LocalCommentChangeSetStorageManager implements CommentChangeSetStorageMana
     /**
      * Attempts to update the comment to the specified revision.
      *
-     * @param string $commentId The comment identifier.
-     * @param string $revision The revision identifier.
+     * @param  string  $commentId The comment identifier.
+     * @param  string  $revision The revision identifier.
      * @return bool
      */
     public function updateToRevisionById($commentId, $revision)
@@ -292,8 +292,8 @@ class LocalCommentChangeSetStorageManager implements CommentChangeSetStorageMana
     /**
      * Attempts to update the comment to the specified revision.
      *
-     * @param CommentContract $comment The comment identifier.
-     * @param string $revision The revision identifier.
+     * @param  CommentContract  $comment The comment identifier.
+     * @param  string  $revision The revision identifier.
      * @return bool
      */
     public function updateToRevision(CommentContract $comment, $revision)
@@ -314,7 +314,7 @@ class LocalCommentChangeSetStorageManager implements CommentChangeSetStorageMana
             return false;
         }
 
-        $currentCollection->setCurrentRevision((int)$revision);
+        $currentCollection->setCurrentRevision((int) $revision);
 
         $content = '';
         $propertiesToRestore = $changeSet->getNewProperties();
@@ -347,7 +347,7 @@ class LocalCommentChangeSetStorageManager implements CommentChangeSetStorageMana
     /**
      * Gets the revision count for the provided comment identifier.
      *
-     * @param string $commentId The comment's identifier.
+     * @param  string  $commentId The comment's identifier.
      * @return int
      */
     public function getRevisionCountById($commentId)
@@ -362,7 +362,7 @@ class LocalCommentChangeSetStorageManager implements CommentChangeSetStorageMana
     /**
      * Gets the revision count for the provided comment.
      *
-     * @param CommentContract $comment The comment.
+     * @param  CommentContract  $comment The comment.
      * @return int
      */
     public function getRevisionCount(CommentContract $comment)
@@ -394,5 +394,4 @@ class LocalCommentChangeSetStorageManager implements CommentChangeSetStorageMana
 
         return $potentialCount;
     }
-
 }

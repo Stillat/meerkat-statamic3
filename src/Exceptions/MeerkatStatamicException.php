@@ -6,5 +6,4 @@ use Stillat\Meerkat\Core\Exceptions\MeerkatCoreException;
 
 class MeerkatStatamicException extends MeerkatCoreException
 {
-
 }

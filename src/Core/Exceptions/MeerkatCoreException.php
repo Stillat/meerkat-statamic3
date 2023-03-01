@@ -9,12 +9,10 @@ use Exception;
  *
  * The base Meerkat Core exception.
  *
- * @package Stillat\Meerkat\Core
  * @since 2.0.0
  */
 abstract class MeerkatCoreException extends Exception
 {
-
     /**
      * A collection of optional error messages.
      *
@@ -25,7 +23,7 @@ abstract class MeerkatCoreException extends Exception
     /**
      * Sets the error messages.
      *
-     * @param array $errors The error messages.
+     * @param  array  $errors The error messages.
      */
     public function setErrors($errors)
     {
@@ -41,5 +39,4 @@ abstract class MeerkatCoreException extends Exception
     {
         return $this->errors;
     }
-
 }

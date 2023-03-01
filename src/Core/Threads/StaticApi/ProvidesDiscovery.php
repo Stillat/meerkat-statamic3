@@ -11,17 +11,16 @@ use Stillat\Meerkat\Core\Threads\ThreadManagerFactory;
  *
  * Provides a static thread-discovery API.
  *
- * @package Stillat\Meerkat\Core\Threads\StaticApi
  * @since 2.0.0
  */
 trait ProvidesDiscovery
 {
-
     /**
      * Attempts to locate the specified thread.
      *
-     * @param string $threadId The thread's string identifier.
+     * @param  string  $threadId The thread's string identifier.
      * @return ThreadContract|null
+     *
      * @throws ThreadNotFoundException
      */
     public static function findOrFail($threadId)
@@ -41,7 +40,7 @@ trait ProvidesDiscovery
     /**
      * Attempts to locate the specified thread.
      *
-     * @param string $threadId The thread's string identifier.
+     * @param  string  $threadId The thread's string identifier.
      * @return ThreadContract|null
      */
     public static function find($threadId)
@@ -52,5 +51,4 @@ trait ProvidesDiscovery
 
         return null;
     }
-
 }

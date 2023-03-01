@@ -11,15 +11,18 @@ use Stillat\Meerkat\Core\UuidGenerator;
  *
  * Represents the results of a spam check operation.
  *
- * @package Stillat\Meerkat\Core\Guard
  * @since 2.0.0
  */
 class SpamCheckReport implements Serializable
 {
     const KEY_ID = 'id';
+
     const KEY_DATETIME = 'date';
+
     const KEY_REASONS = 'reasons';
+
     const KEY_SKIPPED_GUARDS = 'skipped_guards';
+
     const KEY_DETECTED_SPAM = 'detected_spam';
 
     /**
@@ -66,14 +69,14 @@ class SpamCheckReport implements Serializable
     /**
      * Converts the array to a SpamCheckReport.
      *
-     * @param array $array The report data.
+     * @param  array  $array The report data.
      * @return SpamCheckReport|null
      */
     public static function fromArray($array)
     {
         if (Arr::matches([
-                self::KEY_ID, self::KEY_DATETIME, self::KEY_DETECTED_SPAM, self::KEY_SKIPPED_GUARDS, self::KEY_REASONS
-            ], $array) === false) {
+            self::KEY_ID, self::KEY_DATETIME, self::KEY_DETECTED_SPAM, self::KEY_SKIPPED_GUARDS, self::KEY_REASONS,
+        ], $array) === false) {
             return null;
         }
         $report = new SpamCheckReport();
@@ -95,7 +98,7 @@ class SpamCheckReport implements Serializable
     /**
      * Gets the report's identifier.
      *
-     * @param string $id The identifier.
+     * @param  string  $id The identifier.
      */
     public function setId($id)
     {
@@ -103,7 +106,7 @@ class SpamCheckReport implements Serializable
     }
 
     /**
-     * @param SpamReason $reason Adds a spam reason.
+     * @param  SpamReason  $reason Adds a spam reason.
      */
     public function addReason($reason)
     {
@@ -123,7 +126,7 @@ class SpamCheckReport implements Serializable
     /**
      * Sets the report's UTC timestamp.
      *
-     * @param int $dateTime The timestamp.
+     * @param  int  $dateTime The timestamp.
      */
     public function setDateTime($dateTime)
     {
@@ -143,7 +146,7 @@ class SpamCheckReport implements Serializable
     /**
      * Sets the report's spam reasons.
      *
-     * @param SpamReason[] $reasons The reasons.
+     * @param  SpamReason[]  $reasons The reasons.
      */
     public function setGuardReasons($reasons)
     {
@@ -173,7 +176,7 @@ class SpamCheckReport implements Serializable
     /**
      * Sets whether spam guards were skipped due to configuration.
      *
-     * @param bool $skipped Whether guards were skipped.
+     * @param  bool  $skipped Whether guards were skipped.
      */
     public function setSkippedGuards($skipped)
     {
@@ -193,7 +196,7 @@ class SpamCheckReport implements Serializable
     /**
      * Sets whether any spam guards detected spam.
      *
-     * @param bool $foundSpam Whether spam was detected.
+     * @param  bool  $foundSpam Whether spam was detected.
      */
     public function setDetectedSpam($foundSpam)
     {
@@ -214,7 +217,7 @@ class SpamCheckReport implements Serializable
     {
         $arrayReasons = [];
 
-        foreach($this->reasons as $reason) {
+        foreach ($this->reasons as $reason) {
             $arrayReasons[] = $reason->toArray();
         }
 
@@ -223,13 +226,13 @@ class SpamCheckReport implements Serializable
             self::KEY_REASONS => $arrayReasons,
             self::KEY_DATETIME => $this->dateTime,
             self::KEY_SKIPPED_GUARDS => $this->skippedGuards,
-            self::KEY_DETECTED_SPAM => $this->detectedSpam
+            self::KEY_DETECTED_SPAM => $this->detectedSpam,
         ];
     }
 
     public function unserialize($serialized)
     {
-        $arrayFormat = (array)json_decode($serialized);
+        $arrayFormat = (array) json_decode($serialized);
 
         $this->reportId = $arrayFormat[self::KEY_ID];
         $this->reasons = $arrayFormat[self::KEY_REASONS];
@@ -237,5 +240,4 @@ class SpamCheckReport implements Serializable
         $this->skippedGuards = $arrayFormat[self::KEY_SKIPPED_GUARDS];
         $this->detectedSpam = $arrayFormat[self::KEY_DETECTED_SPAM];
     }
-
 }

@@ -12,7 +12,6 @@ use Stillat\Meerkat\Blueprint\BlueprintProvider;
  *
  * Contains features and resources for interacting with the Meerkat blueprint.
  *
- * @package Stillat\Meerkat\Http\Controllers
  * @since 2.0.0
  */
 class MeerkatBlueprintController extends CpController
@@ -36,17 +35,16 @@ class MeerkatBlueprintController extends CpController
 
         return view('meerkat::blueprints.edit', [
             'blueprint' => $blueprint,
-            'blueprintVueObject' => $this->toVueObject($blueprint)
+            'blueprintVueObject' => $this->toVueObject($blueprint),
         ]);
     }
 
     public function update(Request $request)
     {
         $request->validate([
-            'sections' => 'array'
+            'sections' => 'array',
         ]);
 
         $this->updateBlueprint($request, $this->blueprintProvider->getBlueprint());
     }
-
 }

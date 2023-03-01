@@ -11,12 +11,10 @@ use Stillat\Meerkat\Core\Data\FieldMapper;
  *
  * Exports the comments as a JSON document.
  *
- * @package Stillat\Meerkat\Core\Data\Export
  * @since 2.0.0
  */
 class JsonExporter implements DataExporterContract
 {
-
     /**
      * The header names.
      *
@@ -46,7 +44,7 @@ class JsonExporter implements DataExporterContract
     /**
      * Exports the provided comments.
      *
-     * @param CommentContract[] $comments The comments to export.
+     * @param  CommentContract[]  $comments The comments to export.
      * @return mixed
      */
     public function export($comments)
@@ -74,26 +72,25 @@ class JsonExporter implements DataExporterContract
     /**
      * Sets the property names.
      *
-     * @param array $names The property names.
+     * @param  array  $names The property names.
      */
     public function setPropertyNames($names)
     {
         $this->headers = array_merge($names, [
             trans('meerkat::fields.entry.id'),
-            trans('meerkat::fields.entry.title')
+            trans('meerkat::fields.entry.title'),
         ]);
     }
 
     /**
      * Sets which data properties to export.
      *
-     * @param array $properties The properties to export.
+     * @param  array  $properties The properties to export.
      */
     public function setProperties($properties)
     {
         $this->dataFields = array_merge($properties, [
-            'comment.context.id', 'comment.context.title'
+            'comment.context.id', 'comment.context.title',
         ]);
     }
-
 }

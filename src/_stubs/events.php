@@ -10,8 +10,8 @@
 |
 */
 
-use Stillat\Meerkat\Support\Facades\Meerkat;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
+use Stillat\Meerkat\Support\Facades\Meerkat;
 
 /* The following is an example of hooking into a comment being saved:
 

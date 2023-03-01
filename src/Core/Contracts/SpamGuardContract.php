@@ -9,12 +9,10 @@ use Stillat\Meerkat\Core\Guard\SpamReason;
  *
  * Defines a consistent API for spam-guard implementations
  *
- * @package Stillat\Meerkat\Core\Contracts
  * @since 2.0.0
  */
 interface SpamGuardContract
 {
-
     /**
      * Gets the name of the spam detector.
      *
@@ -25,7 +23,7 @@ interface SpamGuardContract
     /**
      * Gets a value indicating if the detector succeeded.
      *
-     * @return boolean
+     * @return bool
      */
     public function wasSuccess();
 
@@ -40,9 +38,8 @@ interface SpamGuardContract
      * Returns a value indicating if the provided object has a
      * high probability of being a disingenuous posting.
      *
-     * @param DataObjectContract $data
      *
-     * @return boolean
+     * @return bool
      */
     public function getIsSpam(DataObjectContract $data);
 
@@ -50,9 +47,8 @@ interface SpamGuardContract
      * Marks an object as a spam, and communicates this
      * to third-party vendors if configured to do so.
      *
-     * @param DataObjectContract $data
      *
-     * @return boolean
+     * @return bool
      */
     public function markAsSpam(DataObjectContract $data);
 
@@ -60,9 +56,8 @@ interface SpamGuardContract
      * Marks a object as not-spam, and communicates this
      * to third-party vendors if configured to do so.
      *
-     * @param DataObjectContract $data
      *
-     * @return boolean
+     * @return bool
      */
     public function markAsHam(DataObjectContract $data);
 
@@ -70,7 +65,7 @@ interface SpamGuardContract
      * Returns a value indicating if a guard supports submitting
      * not-spam results to a third-party service or product.
      *
-     * @return boolean
+     * @return bool
      */
     public function supportsSubmittingHam();
 
@@ -78,14 +73,15 @@ interface SpamGuardContract
      * Returns a value indicating if a guard supports submitting
      * spam results to a third-party service or product.
      *
-     * @return boolean
+     * @return bool
      */
     public function supportsSubmittingSpam();
 
     /**
      * Returns a value indicating if the guard encountered errors.
      *
-     * @return boolean
+     * @return bool
+     *
      * @since 2.0.0
      */
     public function hasErrors();
@@ -96,5 +92,4 @@ interface SpamGuardContract
      * @return array
      */
     public function getErrors();
-
 }

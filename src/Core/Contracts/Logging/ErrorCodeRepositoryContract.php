@@ -9,17 +9,14 @@ use Stillat\Meerkat\Core\Logging\ErrorLog;
  *
  * Provides an API for managing Meerkat Core error code logs.
  *
- * @package Stillat\Meerkat\Core\Contracts\Logging
  * @since 2.0.0
  */
 interface ErrorCodeRepositoryContract
 {
-
     /**
      * Logs an error code.
      *
-     * @param ErrorLog $log The error information to log.
-     *
+     * @param  ErrorLog  $log The error information to log.
      * @return bool
      */
     public function logError(ErrorLog $log);
@@ -34,7 +31,7 @@ interface ErrorCodeRepositoryContract
     /**
      * Removes an error log instance.
      *
-     * @param string $instanceId The instance to remove.
+     * @param  string  $instanceId The instance to remove.
      * @return bool
      */
     public function removeInstance($instanceId);
@@ -49,9 +46,8 @@ interface ErrorCodeRepositoryContract
     /**
      * Returns the logs for the provided action.
      *
-     * @param string|null $actionId The action identifier.
+     * @param  string|null  $actionId The action identifier.
      * @return ErrorLog[]
      */
     public function getActionLogs($actionId);
-
 }

@@ -10,7 +10,6 @@ use Stillat\Meerkat\Core\DataObject;
  *
  * Represents a post/page/etc in the host system.
  *
- * @package Stillat\Meerkat\Core\Threads
  * @since 2.0.0
  */
 class Context implements ThreadContextContract
@@ -18,6 +17,7 @@ class Context implements ThreadContextContract
     use DataObject;
 
     const KEY_NAME = 'name';
+
     const KEY_REMOVE_CONTENT = 'content';
 
     /**
@@ -94,5 +94,4 @@ class Context implements ThreadContextContract
     {
         return $this->contextName;
     }
-
 }

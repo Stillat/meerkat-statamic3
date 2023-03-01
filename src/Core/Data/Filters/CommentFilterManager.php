@@ -22,14 +22,13 @@ use Stillat\Meerkat\Core\Support\Str;
  *
  * Manages comment filters and their runtime contexts.
  *
- * @package Stillat\Meerkat\Core\Data\Filters
  * @since 1.5.85
  */
 class CommentFilterManager
 {
-
     /**
      * The current parameter mapping.
+     *
      * @var array
      */
     protected $paramMapping = [];
@@ -64,6 +63,7 @@ class CommentFilterManager
 
     /**
      * A collection of registered resolvable variables.
+     *
      * @var array
      */
     private $resolvableItems = [];
@@ -78,18 +78,19 @@ class CommentFilterManager
     /**
      * Registers a filter group.
      *
-     * @param string $groupName The group name.
-     * @param string $filters The filters to use when this group is referenced.
+     * @param  string  $groupName The group name.
+     * @param  string  $filters The filters to use when this group is referenced.
      */
     public function filterGroup($groupName, $filters)
     {
-        $this->groups['@' . $groupName] = $filters;
+        $this->groups['@'.$groupName] = $filters;
     }
 
     /**
      * Returns all registered filter groups.
      *
      * @return array
+     *
      * @since 2.1.21
      */
     public function getFilterGroups()
@@ -117,7 +118,7 @@ class CommentFilterManager
     /**
      * Checks if the provided filter is a group and returns the group, else the filter.
      *
-     * @param string $filter The filter to check.
+     * @param  string  $filter The filter to check.
      * @return string
      */
     public function getFilterMap($filter)
@@ -134,9 +135,9 @@ class CommentFilterManager
     /**
      * Registers a new thread filter.
      *
-     * @param string $filterName The name of the filter.
-     * @param callable $callback The filter callback.
-     * @param string $params Optional parameter mappings.
+     * @param  string  $filterName The name of the filter.
+     * @param  callable  $callback The filter callback.
+     * @param  string  $params Optional parameter mappings.
      */
     public function filter($filterName, $callback, $params = '')
     {
@@ -150,10 +151,10 @@ class CommentFilterManager
     /**
      * Registers a new thread filter.
      *
-     * @param string $filterName The name of the filter.
-     * @param callable $callback The filter callback.
-     * @param string $params Optional parameter mappings.
-     * @param array $supportedTags The filter's supported tags.
+     * @param  string  $filterName The name of the filter.
+     * @param  callable  $callback The filter callback.
+     * @param  string  $params Optional parameter mappings.
+     * @param  array  $supportedTags The filter's supported tags.
      */
     public function filterWithTagContext($filterName, $callback, $params = '', $supportedTags = [])
     {
@@ -168,22 +169,22 @@ class CommentFilterManager
     /**
      * Lets Meerkat know how to resolve a variable.
      *
-     * @param string $variableName The resolvable name.
-     * @param callable $callback The function to execute when this value is requested.
+     * @param  string  $variableName The resolvable name.
+     * @param  callable  $callback The function to execute when this value is requested.
      */
     public function resolve($variableName, $callback)
     {
         $filterVariable = new FilterVariable();
         $filterVariable->setCallback($callback);
 
-        $this->resolvableItems['$' . $variableName] = $filterVariable;
+        $this->resolvableItems['$'.$variableName] = $filterVariable;
     }
 
     /**
      * Restricts a filter to specific tag contexts.
      *
-     * @param string $filterName The filter name.
-     * @param array $tagContexts The filter tag contexts.
+     * @param  string  $filterName The filter name.
+     * @param  array  $tagContexts The filter tag contexts.
      */
     public function restrictFilter($filterName, $tagContexts)
     {
@@ -199,7 +200,7 @@ class CommentFilterManager
     /**
      * Parses the filter name from the input string.
      *
-     * @param string $filterName The filter name input.
+     * @param  string  $filterName The filter name input.
      * @return string|null
      */
     protected function getFilterName($filterName)
@@ -220,7 +221,7 @@ class CommentFilterManager
     /**
      * Removes tag context restrictions from the provided filter name.
      *
-     * @param string $filterName The filter name.
+     * @param  string  $filterName The filter name.
      */
     public function removeRestrictions($filterName)
     {
@@ -236,11 +237,12 @@ class CommentFilterManager
     /**
      * Runs the requested filter against the comments within context.
      *
-     * @param array $queryFilter The name of the filter.
-     * @param array $comments The comments to filter.
-     * @param null $context The parser context.
-     * @param string $tagContext The tag context.
+     * @param  array  $queryFilter The name of the filter.
+     * @param  array  $comments The comments to filter.
+     * @param  null  $context The parser context.
+     * @param  string  $tagContext The tag context.
      * @return mixed|null
+     *
      * @throws FilterException
      */
     public function runFilter($queryFilter, $comments, $context = null, $tagContext = '')
@@ -272,10 +274,10 @@ class CommentFilterManager
 
                     $parameters[] = [
                         ExpressionParser::KEY_VALUE => $resolvedValue,
-                        ExpressionParser::KEY_TYPE => $currentType
+                        ExpressionParser::KEY_TYPE => $currentType,
                     ];
                 } else {
-                    throw new FilterException('Could not find resolvable item: ' . $paramValueName);
+                    throw new FilterException('Could not find resolvable item: '.$paramValueName);
                 }
             } else {
                 $parameters[] = $param;
@@ -301,14 +303,14 @@ class CommentFilterManager
 
             if (count($filterTags) > 0) {
                 if (in_array($tagContext, $filterTags) == false) {
-                    throw new FilterException($queryFilter . ' is not supported by ' . $tagContext);
+                    throw new FilterException($queryFilter.' is not supported by '.$tagContext);
                 }
             }
 
             return $filter->runFilter($comments);
         }
 
-        throw new FilterException($queryFilter . ' Meerkat filter not found.');
+        throw new FilterException($queryFilter.' Meerkat filter not found.');
     }
 
     /**
@@ -323,7 +325,8 @@ class CommentFilterManager
 
     /**
      * The current user identity.
-     * @param mixed|null $identity
+     *
+     * @param  mixed|null  $identity
      */
     public function setUser(AuthorContract $identity)
     {
@@ -333,12 +336,11 @@ class CommentFilterManager
     /**
      * Checks if a filter exists.
      *
-     * @param string $filterName The filter name.
+     * @param  string  $filterName The filter name.
      * @return bool
      */
     public function hasFilter($filterName)
     {
         return array_key_exists($filterName, $this->filters);
     }
-
 }

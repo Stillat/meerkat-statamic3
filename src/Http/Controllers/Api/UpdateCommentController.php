@@ -17,7 +17,6 @@ use Stillat\Meerkat\Http\RequestHelpers;
 
 class UpdateCommentController extends CpController
 {
-
     public function updateComment(
         PermissionsManagerContract $manager,
         IdentityManagerContract $identityManager,
@@ -31,7 +30,7 @@ class UpdateCommentController extends CpController
                 return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_EDIT);
             } else {
                 abort(403, 'Unauthorized', [
-                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_EDIT
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_EDIT,
                 ]);
                 exit;
             }
@@ -52,7 +51,7 @@ class UpdateCommentController extends CpController
             $result = $comment->updateCommentContent($content);
 
             return Responses::conditionalWithData($result, [
-                ApiParameters::RESULT_COMMENT => $commentResultGenerator->getApiComment($comment->toArray())
+                ApiParameters::RESULT_COMMENT => $commentResultGenerator->getApiComment($comment->toArray()),
             ]);
         } catch (CommentNotFoundException $notFoundException) {
             ErrorReporterFactory::report($notFoundException);
@@ -64,5 +63,4 @@ class UpdateCommentController extends CpController
             return Responses::generalFailure();
         }
     }
-
 }

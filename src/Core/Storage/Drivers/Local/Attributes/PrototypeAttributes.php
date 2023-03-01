@@ -11,12 +11,10 @@ use Stillat\Meerkat\Core\Data\Types;
  *
  * Provides a consistent location to resolve comment prototype attributes.
  *
- * @package Stillat\Meerkat\Core\Storage\Drivers\Local\Attributes
  * @since 2.0.0
  */
 class PrototypeAttributes
 {
-
     /**
      * A cache of prototype attributes.
      *
@@ -59,7 +57,7 @@ class PrototypeAttributes
                 CommentContract::KEY_PAGE_URL,
                 CommentContract::KEY_SPAM,
                 AuthorContract::AUTHENTICATED_USER_ID,
-                CommentContract::INTERNAL_HAS_SUPPLEMENTED_DATA
+                CommentContract::INTERNAL_HAS_SUPPLEMENTED_DATA,
             ];
         }
 
@@ -70,6 +68,7 @@ class PrototypeAttributes
      * Returns a list of prototype attributes that can be `null`.
      *
      * @since 2.1.14
+     *
      * @return array
      */
     public static function getNullablePrototypeAttributes()
@@ -109,11 +108,10 @@ class PrototypeAttributes
                 CommentContract::KEY_PAGE_URL => Types::TYPE_STRING,
                 CommentContract::KEY_SPAM => Types::TYPE_BIT,
                 AuthorContract::AUTHENTICATED_USER_ID => Types::TYPE_STRING,
-                CommentContract::INTERNAL_HAS_SUPPLEMENTED_DATA => Types::TYPE_BIT
+                CommentContract::INTERNAL_HAS_SUPPLEMENTED_DATA => Types::TYPE_BIT,
             ];
         }
 
         return self::$prototypeExpectedTypes;
     }
-
 }

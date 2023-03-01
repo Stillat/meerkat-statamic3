@@ -11,12 +11,10 @@ namespace Stillat\Meerkat\Core;
  * configuration options that change the behavior
  * of the Meerkat Core processes and actions.
  *
- * @package Stillat\Meerkat\Core
  * @since 2.0.0
  */
 class Configuration extends ConfigurationContainer
 {
-
     /**
      * Indicates if comments created by an authenticated
      * system user should be marked as "published".
@@ -148,6 +146,7 @@ class Configuration extends ConfigurationContainer
      * or are having issues with migrating comments from old Meerkat versions.
      *
      * @since 2.1.6
+     *
      * @var bool
      */
     public $useSlimCommentPrototypeParser = false;
@@ -176,6 +175,7 @@ class Configuration extends ConfigurationContainer
 
     /**
      * The string value to use when a comment's email address cannot be found.
+     *
      * @var string
      */
     public $supplementAuthorEmail = '[Email Missing]';
@@ -219,7 +219,8 @@ class Configuration extends ConfigurationContainer
     /**
      * Sets the active data privacy configuration.
      *
-     * @param DataPrivacyConfiguration $config The configuration.
+     * @param  DataPrivacyConfiguration  $config The configuration.
+     *
      * @since 2.1.14
      */
     public function setDataPrivacyConfiguration(DataPrivacyConfiguration $config)
@@ -231,6 +232,7 @@ class Configuration extends ConfigurationContainer
      * Returns access to the active data privacy configuration.
      *
      * @return DataPrivacyConfiguration
+     *
      * @since 2.1.14
      */
     public function getDataPrivacyConfiguration()
@@ -241,7 +243,7 @@ class Configuration extends ConfigurationContainer
     /**
      * Sets the formatting configuration instance.
      *
-     * @param FormattingConfiguration $formattingConfiguration The configuration instance.
+     * @param  FormattingConfiguration  $formattingConfiguration The configuration instance.
      */
     public function setFormattingConfiguration(FormattingConfiguration $formattingConfiguration)
     {
@@ -293,5 +295,4 @@ class Configuration extends ConfigurationContainer
     {
         $this->trackChanges = false;
     }
-
 }

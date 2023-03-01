@@ -23,6 +23,6 @@ return [
     */
     'reporters' => [
         \Stillat\Meerkat\Core\Logging\Reporters\ExceptionReporter::class,
-    ]
+    ],
 
 ];

@@ -9,12 +9,10 @@ use Stillat\Meerkat\Core\Comments\Comment;
  *
  * Provides a wrapper around Meerkat's spam service implementation.
  *
- * @package Stillat\Meerkat\Core\Guard
  * @since 2.2.0
  */
 class SpamServiceWrapper
 {
-
     /**
      * The SpamService instance.
      *
@@ -30,8 +28,8 @@ class SpamServiceWrapper
     /**
      * Checks if the provided data is spam or not.
      *
-     * @param Specimen $specimen The data to check.
-     * @return boolean
+     * @param  Specimen  $specimen The data to check.
+     * @return bool
      */
     public function isSpam(Specimen $specimen)
     {
@@ -41,7 +39,7 @@ class SpamServiceWrapper
     /**
      * Submits the specimen as spam to any third-party spam service providers.
      *
-     * @param Specimen $specimen The data to submit.
+     * @param  Specimen  $specimen The data to submit.
      * @return GuardResult
      */
     public function submitSpam(Specimen $specimen)
@@ -52,7 +50,7 @@ class SpamServiceWrapper
     /**
      * Submits the specimen as not spam to any third-party spam service providers.
      *
-     * @param Specimen $specimen The data to submit.
+     * @param  Specimen  $specimen The data to submit.
      * @return GuardResult
      */
     public function submitHam(Specimen $specimen)
@@ -63,7 +61,7 @@ class SpamServiceWrapper
     /**
      * Converts the provided specimen to a Comment instance for SpamService compatibility.
      *
-     * @param Specimen $specimen The specimen to convert.
+     * @param  Specimen  $specimen The specimen to convert.
      * @return Comment
      */
     private function convertSpecimenToComment(Specimen $specimen)
@@ -73,5 +71,4 @@ class SpamServiceWrapper
 
         return $comment;
     }
-
 }

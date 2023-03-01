@@ -14,26 +14,33 @@ use Stillat\Meerkat\Core\Support\TypeConversions;
  *
  * Contains the is:<property> related filters.
  *
- * @package Stillat\Meerkat\Core\Data\Filters\DefaultFilters
  * @since 1.5.85
  *
  * @method mixed get($key, $default = null) Gets a filter parameter value.
  * @method mixed getContext() Gets the filter context.
+ *
  * @see CommentFilter
  */
 class IsFilters
 {
-
     const FILTER_IS_BEFORE = 'is:before';
+
     const FILTER_IS_AFTER = 'is:after';
+
     const FILTER_IS_BETWEEN = 'is:between';
+
     const FILTER_IS_SPAM = 'is:spam';
+
     const FILTER_IS_PUBLISHED = 'is:published';
+
     const FILTER_IS_DELETED = 'is:deleted';
+
     const FILTER_ANY = '*';
 
     const PARAM_COMPARISON = 'comparison';
+
     const PARAM_TIMESTAMP = 'timestamp';
+
     const PARAM_RANGE = 'range';
 
     public function register(CommentFilterManager $manager)
@@ -64,11 +71,11 @@ class IsFilters
                 return array_filter($comments, function (CommentContract $comment) use ($sinceTimestamp, $beforeTimestamp) {
                     $commentDateValue = intval($comment->getId());
 
-                    return ($commentDateValue >= $sinceTimestamp && $commentDateValue <= $beforeTimestamp);
+                    return $commentDateValue >= $sinceTimestamp && $commentDateValue <= $beforeTimestamp;
                 });
             }
 
-            throw new FilterException('is:between requires two parameters: ' . count($range) . ' given.');
+            throw new FilterException('is:between requires two parameters: '.count($range).' given.');
         }, IsFilters::PARAM_RANGE);
 
         $manager->filterWithTagContext(IsFilters::FILTER_IS_SPAM, function ($comments) {
@@ -155,5 +162,4 @@ class IsFilters
             });
         }, IsFilters::PARAM_COMPARISON);
     }
-
 }

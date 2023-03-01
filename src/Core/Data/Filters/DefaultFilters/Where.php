@@ -24,15 +24,14 @@ use Stillat\Meerkat\Core\Support\Str;
  * where(property_name, <, some_value) - less than
  * where(property_name, <=, some_value) - less than or equal to
  *
- * @package Stillat\Meerkat\Core\Data\Filters\DefaultFilters
  *
  * @method mixed get($key, $default = null) Gets a filter parameter value.
  * @method mixed getContext() Gets the filter context.
+ *
  * @see CommentFilter
  */
 class Where
 {
-
     const FILTER_WHERE = 'where';
 
     public function register(CommentFilterManager $manager)
@@ -59,5 +58,4 @@ class Where
             });
         }, 'property, comparison, value');
     }
-
 }

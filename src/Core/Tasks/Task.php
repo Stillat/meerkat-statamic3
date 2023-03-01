@@ -12,7 +12,6 @@ use Stillat\Meerkat\Core\UuidGenerator;
  *
  * Represents an individual Core task.
  *
- * @package Stillat\Meerkat\Core\Tasks
  * @since 2.0.0
  */
 class Task implements TaskContract
@@ -20,10 +19,15 @@ class Task implements TaskContract
     use ProvidesCreation;
 
     const KEY_ID = 'id';
+
     const KEY_CODE = 'code';
+
     const KEY_STATUS = 'status';
+
     const KEY_CREATED_ON_DATETIME = 'created_on';
+
     const KEY_NAME = 'name';
+
     const KEY_ARGS = 'args';
 
     /**
@@ -77,17 +81,16 @@ class Task implements TaskContract
     /**
      * Attempts to convert the array to a Task instance.
      *
-     * @param array $array The task data.
+     * @param  array  $array The task data.
      * @return Task
      */
     public static function fromArray($array)
     {
         $task = new Task();
 
-
         if (Arr::matches([
             self::KEY_NAME, self::KEY_CREATED_ON_DATETIME, self::KEY_STATUS,
-            self::KEY_CODE, self::KEY_ARGS, self::KEY_ID
+            self::KEY_CODE, self::KEY_ARGS, self::KEY_ID,
         ], $array)) {
             $task->setInstanceId($array[self::KEY_ID]);
             $task->setTaskCode($array[self::KEY_CODE]);
@@ -103,7 +106,7 @@ class Task implements TaskContract
     /**
      * Sets the task's instance identifier.
      *
-     * @param string $instanceId The identifier.
+     * @param  string  $instanceId The identifier.
      */
     public function setInstanceId($instanceId)
     {
@@ -113,7 +116,7 @@ class Task implements TaskContract
     /**
      * Sets the task's created timestamp.
      *
-     * @param int $dateTimeUtc The timestamp.
+     * @param  int  $dateTimeUtc The timestamp.
      */
     public function setCreateDateTimeUtc($dateTimeUtc)
     {
@@ -123,7 +126,7 @@ class Task implements TaskContract
     /**
      * Sets the task arguments.
      *
-     * @param string[] $args The task arguments.
+     * @param  string[]  $args The task arguments.
      */
     public function setArguments($args)
     {
@@ -142,7 +145,9 @@ class Task implements TaskContract
 
     /**
      * String representation of object
+     *
      * @link https://php.net/manual/en/serializable.serialize.php
+     *
      * @return string the string representation of the object or null
      */
     public function serialize()
@@ -163,21 +168,23 @@ class Task implements TaskContract
             self::KEY_STATUS => $this->status,
             self::KEY_CREATED_ON_DATETIME => $this->createdOnUtc,
             self::KEY_NAME => $this->taskName,
-            self::KEY_ARGS => $this->args
+            self::KEY_ARGS => $this->args,
         ];
     }
 
     /**
      * Constructs the object
+     *
      * @link https://php.net/manual/en/serializable.unserialize.php
-     * @param string $serialized <p>
+     *
+     * @param  string  $serialized <p>
      * The string representation of the object.
      * </p>
      * @return void
      */
     public function unserialize($serialized)
     {
-        $arrayFormat = (array)json_decode($serialized);
+        $arrayFormat = (array) json_decode($serialized);
 
         $this->taskId = $arrayFormat[self::KEY_ID];
         $this->taskCode = $arrayFormat[self::KEY_CODE];
@@ -210,7 +217,7 @@ class Task implements TaskContract
     /**
      * Sets the task name
      *
-     * @param string $taskName The task name.
+     * @param  string  $taskName The task name.
      */
     public function setTaskName($taskName)
     {
@@ -230,7 +237,7 @@ class Task implements TaskContract
     /**
      * Sets the tasks's internal code.
      *
-     * @param string $taskCode The code.
+     * @param  string  $taskCode The code.
      */
     public function setTaskCode($taskCode)
     {
@@ -250,7 +257,7 @@ class Task implements TaskContract
     /**
      * Sets the task's current status.
      *
-     * @param int $taskStatus The current status.
+     * @param  int  $taskStatus The current status.
      */
     public function setStatus($taskStatus)
     {
@@ -266,5 +273,4 @@ class Task implements TaskContract
     {
         return $this->createdOnUtc;
     }
-
 }

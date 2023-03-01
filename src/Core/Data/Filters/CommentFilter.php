@@ -9,7 +9,6 @@ use Closure;
  *
  * Represents a comment filter that can be applied to a collection of comments.
  *
- * @package Stillat\Meerkat\Core\Data\Filters
  * @since 1.5.85
  */
 class CommentFilter
@@ -71,7 +70,7 @@ class CommentFilter
     /**
      * Sets the user context.
      *
-     * @param mixed|null $user The user context.
+     * @param  mixed|null  $user The user context.
      */
     public function setUser($user)
     {
@@ -101,7 +100,7 @@ class CommentFilter
     /**
      * Sets the tags that this filter supports.
      *
-     * @param array $tags The tags this filter supports.
+     * @param  array  $tags The tags this filter supports.
      */
     public function setSupportedTags($tags)
     {
@@ -111,7 +110,7 @@ class CommentFilter
     /**
      * Sets the name of the filter.
      *
-     * @param string $name The filter's name.
+     * @param  string  $name The filter's name.
      */
     public function setName($name)
     {
@@ -131,7 +130,7 @@ class CommentFilter
     /**
      * Sets the filter's context.
      *
-     * @param mixed|null $context The context.
+     * @param  mixed|null  $context The context.
      */
     public function setContext($context)
     {
@@ -161,7 +160,7 @@ class CommentFilter
     /**
      * Sets the filter's parameters.
      *
-     * @param array $parameters The parameters.
+     * @param  array  $parameters The parameters.
      */
     public function setParameters($parameters)
     {
@@ -181,8 +180,8 @@ class CommentFilter
     /**
      * Gets a parameter's value, or a default if it does not exist.
      *
-     * @param string $key The parameter name to get.
-     * @param null $default The default value to return.
+     * @param  string  $key The parameter name to get.
+     * @param  null  $default The default value to return.
      * @return mixed|null
      */
     public function get($key, $default = null)
@@ -197,7 +196,7 @@ class CommentFilter
     /**
      * Checks if a parameter with the given name exists.
      *
-     * @param string $key The key to check.
+     * @param  string  $key The key to check.
      * @return bool
      */
     public function has($key)
@@ -208,7 +207,7 @@ class CommentFilter
     /**
      * Sets the filter callable.
      *
-     * @param callable $callable The function to run.
+     * @param  callable  $callable The function to run.
      */
     public function setCallback($callable)
     {
@@ -228,12 +227,11 @@ class CommentFilter
     /**
      * Runs the filter against the provided comments.
      *
-     * @param array|mixed $comments The comments.
+     * @param  array|mixed  $comments The comments.
      * @return mixed
      */
     public function runFilter($comments)
     {
         return call_user_func($this->filterCallback, $comments);
     }
-
 }

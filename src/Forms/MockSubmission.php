@@ -10,12 +10,10 @@ use Statamic\Forms\Submission;
  * Wraps Meerkat data in a Statamic Submission container
  * to provide compatibility with the native form event.
  *
- * @package Stillat\Meerkat\Forms
  * @since 2.0.0
  */
 class MockSubmission extends Submission
 {
-
     public function __construct()
     {
         parent::__construct();
@@ -39,7 +37,7 @@ class MockSubmission extends Submission
      */
     public function save()
     {
-        return;
+
     }
 
     /**
@@ -47,7 +45,6 @@ class MockSubmission extends Submission
      */
     public function delete()
     {
-        return;
-    }
 
+    }
 }

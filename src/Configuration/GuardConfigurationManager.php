@@ -10,7 +10,6 @@ use Stillat\Meerkat\Core\Guard\SpamService;
  *
  * Manages the supplemental guard configuration storage
  *
- * @package Stillat\Meerkat\Configuration
  * @since 2.1.0
  */
 class GuardConfigurationManager
@@ -18,7 +17,9 @@ class GuardConfigurationManager
     use UsesConfig;
 
     const KEY_GUARD_NAME = 'name';
+
     const KEY_GUARD_CLASS = 'class';
+
     const KEY_ENABLED = 'enabled';
 
     /**
@@ -63,7 +64,7 @@ class GuardConfigurationManager
                     $allDiscoveredGuards[] = [
                         self::KEY_GUARD_NAME => $guardName,
                         self::KEY_GUARD_CLASS => $undiscoveredGuard,
-                        self::KEY_ENABLED => true
+                        self::KEY_ENABLED => true,
                     ];
                 }
             }
@@ -75,5 +76,4 @@ class GuardConfigurationManager
 
         return $allDiscoveredGuards;
     }
-
 }

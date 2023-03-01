@@ -16,7 +16,6 @@ use Stillat\Meerkat\Core\Guard\Providers\AkismetSpamGuard;
  * This wrapper will apply the correct attribute names for internal spam guards,
  * comment and author impersonation, as well as those required for Akismet.
  *
- * @package Stillat\Meerkat\Core\Guard
  * @since 2.2.0
  */
 class Specimen implements DataObjectContract
@@ -33,7 +32,7 @@ class Specimen implements DataObjectContract
     /**
      * Replaces all current data attributes with the provided data.
      *
-     * @param array $data The data attributes to set
+     * @param  array  $data The data attributes to set
      * @return $this
      */
     public function withData($data)
@@ -46,8 +45,8 @@ class Specimen implements DataObjectContract
     /**
      * Sets a data attribute and returns the current specimen instance.
      *
-     * @param string $key The attribute name to set.
-     * @param string $value The value to set.
+     * @param  string  $key The attribute name to set.
+     * @param  string  $value The value to set.
      * @return $this
      */
     private function setAndReturn($key, $value)
@@ -60,7 +59,7 @@ class Specimen implements DataObjectContract
     /**
      * Sets the specimen's IP Address.
      *
-     * @param string $address The IP Address to set.
+     * @param  string  $address The IP Address to set.
      * @return Specimen
      */
     public function ipAddress($address)
@@ -72,7 +71,7 @@ class Specimen implements DataObjectContract
     /**
      * Sets the requesting site's homepage URL or front page.
      *
-     * @param string $blog The blog's front page, or home URL.
+     * @param  string  $blog The blog's front page, or home URL.
      * @return $this
      */
     public function blog($blog)
@@ -83,7 +82,7 @@ class Specimen implements DataObjectContract
     /**
      * Sets the specimen's user agent string.
      *
-     * @param string $userAgent The user agent.
+     * @param  string  $userAgent The user agent.
      * @return $this
      */
     public function userAgent($userAgent)
@@ -94,7 +93,7 @@ class Specimen implements DataObjectContract
     /**
      * Sets the HTTP referer request value.
      *
-     * @param string $referrer The HTTP referer.
+     * @param  string  $referrer The HTTP referer.
      * @return Specimen
      */
     public function referrer($referrer)
@@ -106,7 +105,7 @@ class Specimen implements DataObjectContract
     /**
      * Sets the permalink of the submission's entry.
      *
-     * @param string $permalink The permalink.
+     * @param  string  $permalink The permalink.
      * @return $this
      */
     public function permalink($permalink)
@@ -117,7 +116,7 @@ class Specimen implements DataObjectContract
     /**
      * Sets the specimen's author name.
      *
-     * @param string $authorName The author name.
+     * @param  string  $authorName The author name.
      * @return Specimen
      */
     public function authorName($authorName)
@@ -129,7 +128,7 @@ class Specimen implements DataObjectContract
     /**
      * Sets the specimen's email address.
      *
-     * @param string $authorEmail The email address.
+     * @param  string  $authorEmail The email address.
      * @return Specimen
      */
     public function authorEmail($authorEmail)
@@ -141,7 +140,7 @@ class Specimen implements DataObjectContract
     /**
      * Sets the specimen's author URL.
      *
-     * @param string $authorUrl The author's URL.
+     * @param  string  $authorUrl The author's URL.
      * @return $this
      */
     public function authorUrl($authorUrl)
@@ -152,7 +151,7 @@ class Specimen implements DataObjectContract
     /**
      * Sets the specimen's content.
      *
-     * @param string $content The content.
+     * @param  string  $content The content.
      * @return Specimen
      */
     public function commentContent($content)
@@ -166,7 +165,7 @@ class Specimen implements DataObjectContract
     /**
      * Sets the UTC timestamp that the specimen was created.
      *
-     * @param string|int $commentDateGmt The UTC timestamp.
+     * @param  string|int  $commentDateGmt The UTC timestamp.
      * @return $this
      */
     public function commentDateGmt($commentDateGmt)
@@ -177,7 +176,7 @@ class Specimen implements DataObjectContract
     /**
      * Sets the UTC timestamp that the content was created.
      *
-     * @param string|int $postModifiedGmt The UTC timestamp.
+     * @param  string|int  $postModifiedGmt The UTC timestamp.
      * @return $this
      */
     public function postModifiedGmt($postModifiedGmt)
@@ -188,7 +187,7 @@ class Specimen implements DataObjectContract
     /**
      * Sets the ISO 693-1 formatted languages that are used on the site.
      *
-     * @param string $blogLanguage The blog's language.
+     * @param  string  $blogLanguage The blog's language.
      * @return $this
      */
     public function blogLanguage($blogLanguage)
@@ -201,7 +200,7 @@ class Specimen implements DataObjectContract
      *
      * Examples include UTF-8 or ISO-8859-1.
      *
-     * @param string $blogCharset The charset in use by content.
+     * @param  string  $blogCharset The charset in use by content.
      * @return $this
      */
     public function blogCharset($blogCharset)
@@ -212,7 +211,7 @@ class Specimen implements DataObjectContract
     /**
      * Sets the user role of the person submitting the specimen.
      *
-     * @param string $userRole The user's role.
+     * @param  string  $userRole The user's role.
      * @return $this
      */
     public function userRole($userRole)
@@ -223,7 +222,7 @@ class Specimen implements DataObjectContract
     /**
      * Sets whether or not the specimen is an Akismet test API request.
      *
-     * @param bool $isTest Whether or not the request is a test.
+     * @param  bool  $isTest Whether or not the request is a test.
      * @return $this
      */
     public function isAkismetTest($isTest)
@@ -234,7 +233,7 @@ class Specimen implements DataObjectContract
     /**
      * The reason to provide to Akismet if you are rechecking a specimen.
      *
-     * @param string $recheckReason The reason.
+     * @param  string  $recheckReason The reason.
      * @return $this
      */
     public function akismetRecheckReason($recheckReason)
@@ -245,7 +244,7 @@ class Specimen implements DataObjectContract
     /**
      * Sets the honeypot field name, if in use.
      *
-     * @param string $fieldName The field name.
+     * @param  string  $fieldName The field name.
      * @return $this
      */
     public function akismetHoneypotField($fieldName)
@@ -326,12 +325,11 @@ class Specimen implements DataObjectContract
     /**
      * Sets the Akismet comment_type parameter.
      *
-     * @param string $type The type.
+     * @param  string  $type The type.
      * @return $this
      */
     protected function setType($type)
     {
         return $this->setAndReturn(AkismetSpamGuard::AKISMET_PARAM_COMMENT_TYPE, $type);
     }
-
 }

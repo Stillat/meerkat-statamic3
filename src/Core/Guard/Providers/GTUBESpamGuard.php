@@ -18,14 +18,14 @@ use Stillat\Meerkat\Core\Support\Str;
  * More information can be found here from Apache SpamAssassin:
  *    https://spamassassin.apache.org/gtube/
  *
- * @package Stillat\Meerkat\Core\Guard\Providers
  * @since 2.0.0
  */
 class GTUBESpamGuard implements SpamGuardContract
 {
-
     const GTUBE_MATCH_REASON = 'GTSG-01-001';
+
     const GTUBE_MATCH_DEFAULT_MESSAGE = 'Message contained GTUBE test string.';
+
     const GTUBE_TEST_STRING = 'XJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X';
 
     /**
@@ -68,7 +68,7 @@ class GTUBESpamGuard implements SpamGuardContract
     /**
      * Gets a value indicating if the detector succeeded.
      *
-     * @return boolean
+     * @return bool
      */
     public function wasSuccess()
     {
@@ -79,9 +79,8 @@ class GTUBESpamGuard implements SpamGuardContract
      * Returns a value indicating if the provided object has a
      * high probability of being a disingenuous posting.
      *
-     * @param DataObjectContract $data
      *
-     * @return boolean
+     * @return bool
      */
     public function getIsSpam(DataObjectContract $data)
     {
@@ -92,7 +91,7 @@ class GTUBESpamGuard implements SpamGuardContract
                     $reason->setReasonCode(self::GTUBE_MATCH_REASON);
                     $reason->setReasonText(self::GTUBE_MATCH_DEFAULT_MESSAGE);
                     $reason->setReasonContext([
-                        'position' => mb_strpos($item, self::GTUBE_TEST_STRING)
+                        'position' => mb_strpos($item, self::GTUBE_TEST_STRING),
                     ]);
 
                     $this->reasons[] = $reason;
@@ -109,9 +108,8 @@ class GTUBESpamGuard implements SpamGuardContract
      * Marks an object as a spam, and communicates this
      * to third-party vendors if configured to do so.
      *
-     * @param DataObjectContract $data
      *
-     * @return boolean
+     * @return bool
      */
     public function markAsSpam(DataObjectContract $data)
     {
@@ -122,9 +120,8 @@ class GTUBESpamGuard implements SpamGuardContract
      * Marks a object as not-spam, and communicates this
      * to third-party vendors if configured to do so.
      *
-     * @param DataObjectContract $data
      *
-     * @return boolean
+     * @return bool
      */
     public function markAsHam(DataObjectContract $data)
     {
@@ -135,7 +132,7 @@ class GTUBESpamGuard implements SpamGuardContract
      * Returns a value indicating if a guard supports submitting
      * not-spam results to a third-party service or product.
      *
-     * @return boolean
+     * @return bool
      */
     public function supportsSubmittingHam()
     {
@@ -146,7 +143,7 @@ class GTUBESpamGuard implements SpamGuardContract
      * Returns a value indicating if a guard supports submitting
      * spam results to a third-party service or product.
      *
-     * @return boolean
+     * @return bool
      */
     public function supportsSubmittingSpam()
     {
@@ -156,7 +153,8 @@ class GTUBESpamGuard implements SpamGuardContract
     /**
      * Returns a value indicating if the guard encountered errors.
      *
-     * @return boolean
+     * @return bool
+     *
      * @since 2.0.0
      */
     public function hasErrors()

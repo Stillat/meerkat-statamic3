@@ -9,12 +9,10 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
  *
  * Provides a central location to manage properties that should always be cleaned.
  *
- * @package Stillat\Meerkat\Core\Comments
  * @since 2.0.0
  */
 class CleanableCommentAttributes
 {
-
     /**
      * Caches the property array so we don't create multiple copies everywhere.
      *
@@ -25,7 +23,7 @@ class CleanableCommentAttributes
     /**
      * Cleans up internal storable data attributes.
      *
-     * @param array $data The data to clean.
+     * @param  array  $data The data to clean.
      * @return array
      */
     public static function clean($data)
@@ -58,11 +56,10 @@ class CleanableCommentAttributes
                 CommentContract::KEY_USER_IP,
                 CommentContract::KEY_USER_AGENT,
                 CommentContract::KEY_REFERRER,
-                CommentContract::KEY_PAGE_URL
+                CommentContract::KEY_PAGE_URL,
             ];
         }
 
         return self::$attributesToClean;
     }
-
 }

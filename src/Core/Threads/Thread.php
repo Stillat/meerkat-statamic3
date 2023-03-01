@@ -31,7 +31,6 @@ use Stillat\Meerkat\Core\Threads\StaticApi\ProvidesDiscovery;
  * to a single context. A context is any data object;
  * common examples include blog posts and photos.
  *
- * @package Stillat\Meerkat\Core\Threads
  * @since 2.0.0
  */
 class Thread implements ThreadContract, JsonSerializable
@@ -71,21 +70,21 @@ class Thread implements ThreadContract, JsonSerializable
     /**
      * The total number of all comments in the thread.
      *
-     * @var integer
+     * @var int
      */
     private $totalCommentCount = 0;
 
     /**
      * The total (cached) number of root level comments.
      *
-     * @var integer
+     * @var int
      */
     private $totalRootLevelCommentCount = 0;
 
     /**
      * Indicates whether the current thread was soft-deleted.
      *
-     * @var boolean
+     * @var bool
      */
     private $isTrashed = false;
 
@@ -129,7 +128,7 @@ class Thread implements ThreadContract, JsonSerializable
     /**
      * Sets if the thread is usable.
      *
-     * @param bool $isUsable The threads usability status.
+     * @param  bool  $isUsable The threads usability status.
      */
     public function setIsUsable($isUsable)
     {
@@ -149,8 +148,7 @@ class Thread implements ThreadContract, JsonSerializable
     /**
      * Sets the storage path.
      *
-     * @param string $path
-     *
+     * @param  string  $path
      * @return void
      */
     public function setPath($path)
@@ -161,8 +159,7 @@ class Thread implements ThreadContract, JsonSerializable
     /**
      * Sets the ID for the current thread.
      *
-     * @param string $id
-     *
+     * @param  string  $id
      * @return void
      */
     public function setId($id)
@@ -184,7 +181,7 @@ class Thread implements ThreadContract, JsonSerializable
     /**
      * Sets the thread's meta data.
      *
-     * @param ThreadMetaData $metaData The meta data.
+     * @param  ThreadMetaData  $metaData The meta data.
      */
     public function setMetaData(ThreadMetaData $metaData)
     {
@@ -204,8 +201,7 @@ class Thread implements ThreadContract, JsonSerializable
     /**
      * Sets the context identifier for the thread.
      *
-     * @param string $id
-     *
+     * @param  string  $id
      * @return void
      */
     public function setContextId($id)
@@ -217,7 +213,7 @@ class Thread implements ThreadContract, JsonSerializable
     /**
      * Sets the comments for the current thread.
      *
-     * @param CommentContract[] $comments The comments to set on the thread.
+     * @param  CommentContract[]  $comments The comments to set on the thread.
      * @return void
      */
     public function setComments($comments)
@@ -238,7 +234,7 @@ class Thread implements ThreadContract, JsonSerializable
     /**
      * Sets the total number of comments in the thread.
      *
-     * @param int $count The total number of comments in the thread.
+     * @param  int  $count The total number of comments in the thread.
      * @return void
      */
     public function setTotalCommentCount($count)
@@ -259,7 +255,7 @@ class Thread implements ThreadContract, JsonSerializable
     /**
      * Sets the total number of root comment counts.
      *
-     * @param int $count The total number of root-level comments in the thread.
+     * @param  int  $count The total number of root-level comments in the thread.
      * @return void
      */
     public function setRootCommentCount($count)
@@ -270,7 +266,7 @@ class Thread implements ThreadContract, JsonSerializable
     /**
      * Returns a value indicating if the current thread was soft deleted.
      *
-     * @return boolean
+     * @return bool
      */
     public function isTrashed()
     {
@@ -280,7 +276,7 @@ class Thread implements ThreadContract, JsonSerializable
     /**
      * Sets whether or not the Meerkat thread was soft-deleted.
      *
-     * @param bool $isTrashed A value indicating if the thread wa soft-deleted.
+     * @param  bool  $isTrashed A value indicating if the thread wa soft-deleted.
      * @return void
      */
     public function setIsTrashed($isTrashed)
@@ -291,7 +287,7 @@ class Thread implements ThreadContract, JsonSerializable
     /**
      * Attempts to remove the current thread instance.
      *
-     * @return boolean
+     * @return bool
      */
     public function delete()
     {
@@ -315,8 +311,9 @@ class Thread implements ThreadContract, JsonSerializable
     /**
      * Converts the thread's comments into an array; sets the comment reply property to the provided name
      *
-     * @param string $repliesName The replies data property to use.
+     * @param  string  $repliesName The replies data property to use.
      * @return array
+     *
      * @throws InconsistentCompositionException
      */
     public function getCommentCollection($repliesName)
@@ -329,7 +326,7 @@ class Thread implements ThreadContract, JsonSerializable
     /**
      * Attempts to attach the provided comment to the thread.
      *
-     * @param CommentContract $comment The comment to attach to the thread.
+     * @param  CommentContract  $comment The comment to attach to the thread.
      * @return bool
      */
     public function attachNewComment(CommentContract $comment)
@@ -343,8 +340,9 @@ class Thread implements ThreadContract, JsonSerializable
     /**
      * Queries the thread's comments.
      *
-     * @param callable $builder A callback to modify the query builder.
+     * @param  callable  $builder A callback to modify the query builder.
      * @return array|mixed|DataSetContract|GroupedDataSetContract|PagedDataSetContract|DataSet
+     *
      * @throws DataQueryException
      * @throws InconsistentCompositionException
      * @throws FilterException
@@ -386,7 +384,6 @@ class Thread implements ThreadContract, JsonSerializable
     /**
      * Sets the thread's context.
      *
-     * @param ThreadContextContract $context
      *
      * @return void
      */
@@ -450,7 +447,7 @@ class Thread implements ThreadContract, JsonSerializable
     /**
      * Sets the thread's hierarchy.
      *
-     * @param ThreadHierarchy $hierarchy The thread's structure.
+     * @param  ThreadHierarchy  $hierarchy The thread's structure.
      * @return void
      */
     public function setHierarchy(ThreadHierarchy $hierarchy)
@@ -463,7 +460,7 @@ class Thread implements ThreadContract, JsonSerializable
     /**
      * Attempts to retrieve the participants for the thread.
      *
-     * @param string[] $commentIds The comment identifiers.
+     * @param  string[]  $commentIds The comment identifiers.
      * @return AuthorContract[]
      */
     public function getParticipantsFor($commentIds)
@@ -486,5 +483,4 @@ class Thread implements ThreadContract, JsonSerializable
 
         return $participants;
     }
-
 }

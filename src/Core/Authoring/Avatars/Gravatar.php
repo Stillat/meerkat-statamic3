@@ -11,16 +11,14 @@ namespace Stillat\Meerkat\Core\Authoring\Avatars;
  * to utilize the same image across many different
  * sites: https://en.gravatar.com/site/implement/
  *
- * @package Stillat\Meerkat\Core\Authoring\Avatars
  * @since 2.0.0
  */
 class Gravatar
 {
-
     /**
      * Returns the value expected by Gravatar for the provided email address.
      *
-     * @param string $emailAddress
+     * @param  string  $emailAddress
      * @return string
      */
     public static function gravatarValue($emailAddress)
@@ -31,12 +29,11 @@ class Gravatar
     /**
      * Returns a Gravatar URI for the provided email address.
      *
-     * @param string $email
+     * @param  string  $email
      * @return string
      */
     public function gravatar($email)
     {
-        return '//www.gravatar.com/avatar/' . md5($email) . '?';
+        return '//www.gravatar.com/avatar/'.md5($email).'?';
     }
-
 }

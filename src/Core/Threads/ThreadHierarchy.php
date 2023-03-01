@@ -11,12 +11,10 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
  *
  * Represents the nested structure of a comment thread.
  *
- * @package Stillat\Meerkat\Core\Threads
  * @since 2.0.0
  */
 class ThreadHierarchy implements ArrayAccess, Iterator
 {
-
     /**
      * A list of all the paths processed by the resolver.
      *
@@ -105,7 +103,7 @@ class ThreadHierarchy implements ArrayAccess, Iterator
     /**
      * Sets the comment ID path mapping.
      *
-     * @param array $mapping The ID > path mapping.
+     * @param  array  $mapping The ID > path mapping.
      */
     public function setCommentIdPathMapping($mapping)
     {
@@ -115,7 +113,7 @@ class ThreadHierarchy implements ArrayAccess, Iterator
     /**
      * Sets the comment identifier depth mapping.
      *
-     * @param array $mapping The ID > depth mapping.
+     * @param  array  $mapping The ID > depth mapping.
      */
     public function setIdentifierDepthMapping($mapping)
     {
@@ -145,7 +143,7 @@ class ThreadHierarchy implements ArrayAccess, Iterator
     /**
      * Sets the comment depth mapping.
      *
-     * @param array $mapping The depth > comment mapping.
+     * @param  array  $mapping The depth > comment mapping.
      */
     public function setCommentDepthMapping($mapping)
     {
@@ -165,7 +163,7 @@ class ThreadHierarchy implements ArrayAccess, Iterator
     /**
      * Sets the director ancestor comment mapping.
      *
-     * @param array $mapping The mapping.
+     * @param  array  $mapping The mapping.
      */
     public function setDirectAncestorMapping($mapping)
     {
@@ -185,7 +183,7 @@ class ThreadHierarchy implements ArrayAccess, Iterator
     /**
      * Sets the direct descendent mapping table.
      *
-     * @param array $mapping The mapping.
+     * @param  array  $mapping The mapping.
      */
     public function setDirectDescendentMapping($mapping)
     {
@@ -205,7 +203,7 @@ class ThreadHierarchy implements ArrayAccess, Iterator
     /**
      * Sets the descendent mapping table.
      *
-     * @param array $mapping The mapping.
+     * @param  array  $mapping The mapping.
      */
     public function setDescendentMapping($mapping)
     {
@@ -225,7 +223,7 @@ class ThreadHierarchy implements ArrayAccess, Iterator
     /**
      * Sets the ancestor mapping table.
      *
-     * @param array $mapping The mapping.
+     * @param  array  $mapping The mapping.
      */
     public function setAncestorMapping($mapping)
     {
@@ -245,7 +243,7 @@ class ThreadHierarchy implements ArrayAccess, Iterator
     /**
      * Sets the hierarchy's comments.
      *
-     * @param CommentContract[] $comments The comments.
+     * @param  CommentContract[]  $comments The comments.
      */
     public function setComments($comments)
     {
@@ -255,7 +253,7 @@ class ThreadHierarchy implements ArrayAccess, Iterator
     /**
      * Attempts to retrieve the specified comment.
      *
-     * @param string $commentId The comment's string identifier.
+     * @param  string  $commentId The comment's string identifier.
      * @return CommentContract|null
      */
     public function getComment($commentId)
@@ -270,7 +268,7 @@ class ThreadHierarchy implements ArrayAccess, Iterator
     /**
      * Tests if the hierarchy contains the comment.
      *
-     * @param string $commentId The comment's string identifier.
+     * @param  string  $commentId The comment's string identifier.
      * @return bool
      */
     public function hasComment($commentId)
@@ -281,7 +279,7 @@ class ThreadHierarchy implements ArrayAccess, Iterator
     /**
      * Executes the mutation callback on each comment in the hierarchy.
      *
-     * @param callable $callback The callback to execute.
+     * @param  callable  $callback The callback to execute.
      */
     public function mapComments(callable $callback)
     {
@@ -291,8 +289,8 @@ class ThreadHierarchy implements ArrayAccess, Iterator
     /**
      * Gets the depth of the provided comment identifier.
      *
-     * @param string $commentId The comment's identifier.
-     * @return integer
+     * @param  string  $commentId The comment's identifier.
+     * @return int
      */
     public function getDepth($commentId)
     {
@@ -306,7 +304,7 @@ class ThreadHierarchy implements ArrayAccess, Iterator
     /**
      * Indicates if the comment has a direct ancestor.
      *
-     * @param string $commentId The comment ID.
+     * @param  string  $commentId The comment ID.
      * @return bool
      */
     public function hasAncestor($commentId)
@@ -317,7 +315,7 @@ class ThreadHierarchy implements ArrayAccess, Iterator
     /**
      * Gets the comment's ancestor identifiers.
      *
-     * @param string $commentId The comment's identifier.
+     * @param  string  $commentId The comment's identifier.
      * @return string[]
      */
     public function getAllAncestors($commentId)
@@ -332,7 +330,7 @@ class ThreadHierarchy implements ArrayAccess, Iterator
     /**
      * Gets the comment's parent identifier, if any.
      *
-     * @param string $commentId The comment's identifier.
+     * @param  string  $commentId The comment's identifier.
      * @return string|null
      */
     public function getParent($commentId)
@@ -350,7 +348,7 @@ class ThreadHierarchy implements ArrayAccess, Iterator
      * This method will all comment identifiers from:
      *    Comment Depth + 1 to MaxSubThreadDepth
      *
-     * @param string $commentId The comment's identifier.
+     * @param  string  $commentId The comment's identifier.
      * @return string[]
      */
     public function getAllDescendents($commentId)
@@ -368,7 +366,7 @@ class ThreadHierarchy implements ArrayAccess, Iterator
      * This method will return all comment identifiers from:
      *    Comment Depth + 1
      *
-     * @param string $commentId The comment's identifier.
+     * @param  string  $commentId The comment's identifier.
      * @return string[]
      */
     public function getDirectDescendents($commentId)
@@ -406,8 +404,10 @@ class ThreadHierarchy implements ArrayAccess, Iterator
 
     /**
      * Offset to retrieve
+     *
      * @link https://php.net/manual/en/arrayaccess.offsetget.php
-     * @param mixed $offset <p>
+     *
+     * @param  mixed  $offset <p>
      * The offset to retrieve.
      * </p>
      * @return mixed Can return all value types.
@@ -423,8 +423,10 @@ class ThreadHierarchy implements ArrayAccess, Iterator
 
     /**
      * Whether a offset exists
+     *
      * @link https://php.net/manual/en/arrayaccess.offsetexists.php
-     * @param mixed $offset <p>
+     *
+     * @param  mixed  $offset <p>
      * An offset to check for.
      * </p>
      * @return bool true on success or false on failure.
@@ -439,14 +441,15 @@ class ThreadHierarchy implements ArrayAccess, Iterator
 
     /**
      * Offset to set
+     *
      * @link https://php.net/manual/en/arrayaccess.offsetset.php
-     * @param mixed $offset <p>
+     *
+     * @param  mixed  $offset <p>
      * The offset to assign the value to.
      * </p>
-     * @param mixed $value <p>
+     * @param  mixed  $value <p>
      * The value to set.
      * </p>
-     * @return void
      */
     public function offsetSet(mixed $offset, mixed $value): void
     {
@@ -459,11 +462,12 @@ class ThreadHierarchy implements ArrayAccess, Iterator
 
     /**
      * Offset to unset
+     *
      * @link https://php.net/manual/en/arrayaccess.offsetunset.php
-     * @param mixed $offset <p>
+     *
+     * @param  mixed  $offset <p>
      * The offset to unset.
      * </p>
-     * @return void
      */
     public function offsetUnset(mixed $offset): void
     {
@@ -474,7 +478,9 @@ class ThreadHierarchy implements ArrayAccess, Iterator
 
     /**
      * Return the current element
+     *
      * @link https://php.net/manual/en/iterator.current.php
+     *
      * @return mixed Can return any type.
      */
     public function current(): mixed
@@ -484,6 +490,7 @@ class ThreadHierarchy implements ArrayAccess, Iterator
 
     /**
      * Move forward to next element
+     *
      * @link https://php.net/manual/en/iterator.next.php
      */
     public function next(): void
@@ -493,7 +500,9 @@ class ThreadHierarchy implements ArrayAccess, Iterator
 
     /**
      * Checks if current position is valid
+     *
      * @link https://php.net/manual/en/iterator.valid.php
+     *
      * @return bool The return value will be casted to boolean and then evaluated.
      * Returns true on success or false on failure.
      */
@@ -504,7 +513,9 @@ class ThreadHierarchy implements ArrayAccess, Iterator
 
     /**
      * Return the key of the current element
+     *
      * @link https://php.net/manual/en/iterator.key.php
+     *
      * @return string|float|int|bool|null scalar on success, or null on failure.
      */
     public function key(): mixed
@@ -514,7 +525,9 @@ class ThreadHierarchy implements ArrayAccess, Iterator
 
     /**
      * Rewind the Iterator to the first element
+     *
      * @link https://php.net/manual/en/iterator.rewind.php
+     *
      * @return void Any returned value is ignored.
      */
     public function rewind(): void

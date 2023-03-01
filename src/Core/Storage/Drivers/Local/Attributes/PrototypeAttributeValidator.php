@@ -13,16 +13,15 @@ use Stillat\Meerkat\Core\Data\Validators\StringValidator;
  *
  * Provides utilities for validating internal comment prototype attributes.
  *
- * @package Stillat\Meerkat\Core\Storage\Drivers\Local\Attributes
  * @since 2.0.0
  */
 class PrototypeAttributeValidator
 {
-
     /**
      * Validates the supplied attributes against their expected runtime types.
      *
-     * @param array $attributes The attributes to validate.
+     * @param  array  $attributes The attributes to validate.
+     *
      * @throws InvalidArgumentException
      */
     public static function validateAttributes($attributes)
@@ -62,9 +61,9 @@ class PrototypeAttributeValidator
     /**
      * Generates an exception message for invalid types.
      *
-     * @param string $attributeName The attribute name.
-     * @param int $expectedType The expected type.
-     * @param mixed $value The value provided.
+     * @param  string  $attributeName The attribute name.
+     * @param  int  $expectedType The expected type.
+     * @param  mixed  $value The value provided.
      * @return string
      */
     private static function getErrorMessage($attributeName, $expectedType, $value)
@@ -77,7 +76,6 @@ class PrototypeAttributeValidator
             $expectedType = 'string';
         }
 
-        return $attributeName . ' expects ' . $expectedType . ' type. ' . gettype($value) . ' provided.';
+        return $attributeName.' expects '.$expectedType.' type. '.gettype($value).' provided.';
     }
-
 }

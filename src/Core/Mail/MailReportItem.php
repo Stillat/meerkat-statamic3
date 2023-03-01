@@ -9,17 +9,19 @@ use Stillat\Meerkat\Core\Support\Arr;
  *
  * Represents a single line item in a comment mail report.
  *
- * @package Stillat\Meerkat\Core\Mail
  * @since 2.1.5
  */
 class MailReportItem
 {
     const KEY_SENT_ON = 'sent_on';
+
     const KEY_ADDRESS = 'address';
+
     const KEY_DID_SEND = 'did_send';
 
     /**
      * The UTC timestamp the email was sent.
+     *
      * @var int
      */
     protected $sentOn = null;
@@ -46,7 +48,7 @@ class MailReportItem
     /**
      * Constructs a MailReportItem from the provided data.
      *
-     * @param array $data The report data.
+     * @param  array  $data The report data.
      * @return MailReportItem
      */
     public static function fromArray($data)
@@ -72,7 +74,7 @@ class MailReportItem
         return [
             self::KEY_SENT_ON => $this->getSentOn(),
             self::KEY_ADDRESS => $this->getAddress(),
-            self::KEY_DID_SEND => $this->getDidSend()
+            self::KEY_DID_SEND => $this->getDidSend(),
         ];
     }
 
@@ -89,7 +91,7 @@ class MailReportItem
     /**
      * Sets the UTC timestamp the email message was sent on.
      *
-     * @param int $sentOn The timestamp.
+     * @param  int  $sentOn The timestamp.
      */
     public function setSentOn($sentOn)
     {
@@ -109,7 +111,7 @@ class MailReportItem
     /**
      * Sets the email address the message was sent to.
      *
-     * @param string $address The address.
+     * @param  string  $address The address.
      */
     public function setAddress($address)
     {
@@ -129,11 +131,10 @@ class MailReportItem
     /**
      * Sets whether or not the email message was sent without error.
      *
-     * @param bool $didSend Whether the email sent without errors.
+     * @param  bool  $didSend Whether the email sent without errors.
      */
     public function setDidSend($didSend)
     {
         $this->didSend = $didSend;
     }
-
 }

@@ -26,7 +26,6 @@ use Stillat\Meerkat\Exceptions\RejectSubmissionException;
  *
  * Handles Meerkat form submissions.
  *
- * @package Stillat\Meerkat\Forms
  * @since 2.0.0
  */
 class FormHandler
@@ -99,7 +98,7 @@ class FormHandler
     /**
      * Sets the form's request data.
      *
-     * @param Collection $data The request data.
+     * @param  Collection  $data The request data.
      */
     public function setData($data)
     {
@@ -122,7 +121,7 @@ class FormHandler
      */
     public function handleRequest()
     {
-        $this->checkHoneypot();;
+        $this->checkHoneypot();
         $this->validate();
     }
 
@@ -150,6 +149,7 @@ class FormHandler
      * Validates the submission data.
      *
      * @return array
+     *
      * @throws FormValidationException
      */
     public function validate()
@@ -221,7 +221,7 @@ class FormHandler
     }
 
     /**
-     * @param Collection $data Submission data.
+     * @param  Collection  $data Submission data.
      * @return Blueprint
      */
     private function getBlueprint($data)
@@ -272,7 +272,7 @@ class FormHandler
                 $entryUrl = url($entry->url());
 
                 return [
-                    CommentContract::KEY_PAGE_URL => $entryUrl
+                    CommentContract::KEY_PAGE_URL => $entryUrl,
                 ];
             }
         }
@@ -295,7 +295,7 @@ class FormHandler
     /**
      * Attempts to save the Meerkat submission.
      *
-     * @param array $data The data to save.
+     * @param  array  $data The data to save.
      * @return bool
      */
     public function store($data)
@@ -349,5 +349,4 @@ class FormHandler
 
         return null;
     }
-
 }

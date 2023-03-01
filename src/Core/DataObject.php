@@ -26,12 +26,10 @@ use Stillat\Meerkat\Core\Exceptions\InconsistentCompositionException;
  * Meerkat's storage mechanisms will sort attributes alphabetically
  * when persisting them to disk. Do not assume a consistent order.
  *
- * @package Stillat\Meerkat\Core
  * @since 2.0.0
  */
 trait DataObject
 {
-
     /**
      * Gets a list of all attribute names.
      *
@@ -45,7 +43,7 @@ trait DataObject
     /**
      * Merges the attributes into the current data object.
      *
-     * @param array $attributes The attributes to merge.
+     * @param  array  $attributes The attributes to merge.
      */
     public function mergeAttributes($attributes)
     {
@@ -59,8 +57,8 @@ trait DataObject
     /**
      * Reassigns the provided attribute names and removes the source.
      *
-     * @param string $sourceAttribute The source attribute.
-     * @param string $targetAttribute The target attribute.
+     * @param  string  $sourceAttribute The source attribute.
+     * @param  string  $targetAttribute The target attribute.
      * @return mixed
      */
     public function reassignDataProperty($sourceAttribute, $targetAttribute)
@@ -75,9 +73,8 @@ trait DataObject
      * Get the value for the provided $key, if one exists.
      *
      *
-     * @param string $key The key of the attribute to get.
-     * @param string|null $default The default value to return if the attribute does not exist.
-     *
+     * @param  string  $key The key of the attribute to get.
+     * @param  string|null  $default The default value to return if the attribute does not exist.
      * @return string|mixed|null
      */
     public function getDataAttribute($key, $default = null)
@@ -92,9 +89,8 @@ trait DataObject
     /**
      * Returns a value indicating if the provided attribute exists.
      *
-     * @param string $key The key to check for existence.
-     *
-     * @return boolean
+     * @param  string  $key The key to check for existence.
+     * @return bool
      */
     public function hasDataAttribute($key)
     {
@@ -104,9 +100,8 @@ trait DataObject
     /**
      * Set the data on the object identified by the $key with the given $value.
      *
-     * @param string|array $key The key of the attribute to set.
-     * @param string $value The value to set.
-     *
+     * @param  string|array  $key The key of the attribute to set.
+     * @param  string  $value The value to set.
      * @return void
      */
     public function setDataAttribute($key, $value)
@@ -117,7 +112,7 @@ trait DataObject
     /**
      * Removes a data attribute with the given name.
      *
-     * @param string $attributeName The name of the attribute to remove.
+     * @param  string  $attributeName The name of the attribute to remove.
      */
     public function removeDataAttribute($attributeName)
     {
@@ -149,17 +144,17 @@ trait DataObject
     /**
      * Returns a run-time instance of an object from serialized form.
      *
-     * @param string $serialized The serialized contents.
+     * @param  string  $serialized The serialized contents.
      */
     public function unserialize($serialized)
     {
-        $this->setDataAttributes((array)json_decode($serialized));
+        $this->setDataAttributes((array) json_decode($serialized));
     }
 
     /**
      * Sets the data attributes for the current data object.
      *
-     * @param array $attributes The data attributes to set.
+     * @param  array  $attributes The data attributes to set.
      */
     public function setDataAttributes($attributes)
     {
@@ -193,5 +188,4 @@ trait DataObject
 
         throw InconsistentCompositionException::make('uidGenerator', __CLASS__);
     }
-
 }

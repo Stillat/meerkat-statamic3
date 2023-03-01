@@ -10,16 +10,14 @@ use Stillat\Meerkat\Core\Mail\MailReport;
  *
  * Provides a consistent API for managing comment submission email reports.
  *
- * @package Stillat\Meerkat\Core\Contracts\Storage
  * @since 2.1.5
  */
 interface EmailReportStorageManagerContract
 {
-
     /**
      * Indicates if mail was already sent for the provided comment.
      *
-     * @param string $commentId The comment identifier.
+     * @param  string  $commentId The comment identifier.
      * @return bool
      */
     public function wasSentById($commentId);
@@ -27,7 +25,7 @@ interface EmailReportStorageManagerContract
     /**
      * Indicates if mail was already sent for the provided comment.
      *
-     * @param CommentContract $comment The comment.
+     * @param  CommentContract  $comment The comment.
      * @return bool
      */
     public function wasSent(CommentContract $comment);
@@ -35,8 +33,8 @@ interface EmailReportStorageManagerContract
     /**
      * Saves a mail report for the provided comment.
      *
-     * @param string $commentId The comment identifier.
-     * @param MailReport $report The report.
+     * @param  string  $commentId The comment identifier.
+     * @param  MailReport  $report The report.
      * @return bool
      */
     public function saveReportForCommentById($commentId, MailReport $report);
@@ -44,8 +42,8 @@ interface EmailReportStorageManagerContract
     /**
      * Saves a mail report for the provided comment.
      *
-     * @param CommentContract $comment The comment.
-     * @param MailReport $report The report.
+     * @param  CommentContract  $comment The comment.
+     * @param  MailReport  $report The report.
      * @return bool
      */
     public function saveReportForComment(CommentContract $comment, MailReport $report);
@@ -53,7 +51,7 @@ interface EmailReportStorageManagerContract
     /**
      * Locates an existing mail report for the provided comment.
      *
-     * @param string $commentId The comment identifier.
+     * @param  string  $commentId The comment identifier.
      * @return MailReport|null
      */
     public function getReportForCommentById($commentId);
@@ -61,9 +59,8 @@ interface EmailReportStorageManagerContract
     /**
      * Locates an existing mail report for the provided comment.
      *
-     * @param CommentContract $comment The comment.
+     * @param  CommentContract  $comment The comment.
      * @return MailReport|null
      */
     public function getReportForComment(CommentContract $comment);
-
 }

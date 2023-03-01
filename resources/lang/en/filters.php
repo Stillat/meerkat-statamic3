@@ -11,6 +11,6 @@ return [
 
     'no_data' => 'We\'ve searched everywhere and found nothing',
     'no_data_filter' => 'This is most likely due to the current filters',
-    'search_placeholder' => 'Search within comments...'
+    'search_placeholder' => 'Search within comments...',
 
 ];

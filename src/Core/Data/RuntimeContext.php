@@ -7,12 +7,10 @@ namespace Stillat\Meerkat\Core\Data;
  *
  * Represents a runtime context.
  *
- * @package Stillat\Meerkat\Core\Data
  * @since 2.0.0
  */
 class RuntimeContext
 {
-
     /**
      * The run time contextual parameters, if any.
      *
@@ -33,5 +31,4 @@ class RuntimeContext
      * @var string
      */
     public $templateTagContext = '';
-
 }

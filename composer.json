@@ -35,5 +35,13 @@
                 "Stillat\\Meerkat\\ServiceProvider"
             ]
         }
+    },
+    "config": {
+        "allow-plugins": {
+            "pixelfear/composer-dist-plugin": true
+        }
+    },
+    "require-dev": {
+        "laravel/pint": "^1.6"
     }
 }

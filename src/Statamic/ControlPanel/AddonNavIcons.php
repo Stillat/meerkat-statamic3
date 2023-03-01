@@ -7,40 +7,39 @@ namespace Stillat\Meerkat\Statamic\ControlPanel;
  *
  * Provides utilities to install custom Statamic Control Panel navigation menu icons.
  *
- * @package Stillat\Meerkat\Statamic\ControlPanel
  * @since 2.0.0
  */
 class AddonNavIcons
 {
-
     const STATAMIC_ICONS_DIRECTORY = 'vendor/statamic/cp/svg/';
-    const STATAMIC_ADDON_ICONS = self::STATAMIC_ICONS_DIRECTORY . 'addons/';
+
+    const STATAMIC_ADDON_ICONS = self::STATAMIC_ICONS_DIRECTORY.'addons/';
 
     /**
      * Installs custom SVG icons into the Statamic navigation icon directory.
      *
      * Icons are installed to an addon-specific sub-directory.
      *
-     * @param string $addonName The addon name.
-     * @param string $iconLocation The path to the icons to install.
+     * @param  string  $addonName The addon name.
+     * @param  string  $iconLocation The path to the icons to install.
      */
     public function installAddonIcons($addonName, $iconLocation)
     {
         $isAvailable = $this->createRepository();
 
         if ($isAvailable) {
-            $addonIconPath = public_path(AddonNavIcons::STATAMIC_ADDON_ICONS . '/' . $addonName);
+            $addonIconPath = public_path(AddonNavIcons::STATAMIC_ADDON_ICONS.'/'.$addonName);
 
             if (file_exists($addonIconPath) == false) {
                 mkdir($addonIconPath);
             }
 
             if (file_exists($iconLocation)) {
-                $svgFiles = glob($iconLocation . '/*.svg');
+                $svgFiles = glob($iconLocation.'/*.svg');
 
                 if (is_array($svgFiles) && count($svgFiles) > 0) {
                     foreach ($svgFiles as $iconFile) {
-                        copy($iconFile, $addonIconPath . '/' . basename($iconFile));
+                        copy($iconFile, $addonIconPath.'/'.basename($iconFile));
                     }
                 }
             }
@@ -64,5 +63,4 @@ class AddonNavIcons
 
         return file_exists($addonIconDirectory) && is_dir($addonIconDirectory);
     }
-
 }

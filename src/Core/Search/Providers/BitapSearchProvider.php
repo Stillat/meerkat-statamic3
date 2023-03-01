@@ -10,17 +10,15 @@ use Stillat\Meerkat\Core\Contracts\Search\SearchAlgorithmContract;
  *
  * Implements the Bitap search algorithm for searching text.
  *
- * @package Stillat\Meerkat\Core\Search\Providers
  * @since 2.0.0
  */
 class BitapSearchProvider implements SearchAlgorithmContract
 {
-
     /**
      * Searches the provided text with the given pattern.
      *
-     * @param string|ProvidesSearchableAttributesContract $text The text to search.
-     * @param string $pattern The search pattern.
+     * @param  string|ProvidesSearchableAttributesContract  $text The text to search.
+     * @param  string  $pattern The search pattern.
      * @return int
      */
     public function search($text, $pattern)
@@ -34,7 +32,7 @@ class BitapSearchProvider implements SearchAlgorithmContract
         }
 
         if (is_string($text) === false) {
-            $text = (string)$text;
+            $text = (string) $text;
         }
 
         $text = mb_strtolower($text);
@@ -58,15 +56,15 @@ class BitapSearchProvider implements SearchAlgorithmContract
         $patternMask = [];
         $r = ~1;
 
-        for ($i = 0; $i <= 127; ++$i) {
+        for ($i = 0; $i <= 127; $i++) {
             $patternMask[$i] = ~0;
         }
 
-        for ($i = 0; $i < $patternLen; ++$i) {
+        for ($i = 0; $i < $patternLen; $i++) {
             $patternMask[ord($pattern[$i])] &= ~(1 << $i);
         }
 
-        for ($i = 0; $i < $textLen; ++$i) {
+        for ($i = 0; $i < $textLen; $i++) {
             $r |= $patternMask[ord($text[$i])];
             $r <<= 1;
 
@@ -77,5 +75,4 @@ class BitapSearchProvider implements SearchAlgorithmContract
 
         return -1;
     }
-
 }

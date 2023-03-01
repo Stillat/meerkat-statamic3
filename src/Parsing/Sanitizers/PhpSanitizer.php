@@ -9,16 +9,14 @@ use Stillat\Meerkat\Core\Contracts\Parsing\OutputSanitizerContract;
  *
  * Sanitizes PHP tags from input values.
  *
- * @package Stillat\Meerkat\Parsing\Sanitizers
  * @since 2.0.0
  */
 class PhpSanitizer implements OutputSanitizerContract
 {
-
     /**
      * Sanitizes the input value.
      *
-     * @param string $value The value to sanitize.
+     * @param  string  $value The value to sanitize.
      * @return string
      */
     public function sanitize($value)
@@ -28,5 +26,4 @@ class PhpSanitizer implements OutputSanitizerContract
 
         return $value;
     }
-
 }

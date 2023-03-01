@@ -15,7 +15,6 @@ use Stillat\Meerkat\Core\Data\Helpers\GroupMapper;
  *
  * Represents a dataset containing groups.
  *
- * @package Stillat\Meerkat\Core\Data
  * @since 2.0.0
  */
 class GroupedDataSet implements GroupedDataSetContract
@@ -45,7 +44,7 @@ class GroupedDataSet implements GroupedDataSetContract
     /**
      * Sets the dataset's raw data.
      *
-     * @param array $data The raw data.
+     * @param  array  $data The raw data.
      * @return void
      */
     public function setData($data)
@@ -56,7 +55,7 @@ class GroupedDataSet implements GroupedDataSetContract
     /**
      * Applies the mutation callback to all group items.
      *
-     * @param callable $callback The function to execute against all group items.
+     * @param  callable  $callback The function to execute against all group items.
      */
     public function mutate($callback)
     {

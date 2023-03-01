@@ -9,12 +9,10 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
  *
  * Provides a central location to manage properties that should not be persisted to disk.
  *
- * @package Stillat\Meerkat\Core\Comments
  * @since 2.0.0
  */
 class TransientCommentAttributes
 {
-
     /**
      * Caches the property array so we don't create multiple copies everywhere.
      *
@@ -49,7 +47,7 @@ class TransientCommentAttributes
                 CommentContract::INTERNAL_RESPONSE_PATH,
                 CommentContract::INTERNAL_RESPONSE_CONTEXT,
                 CommentContract::INTERNAL_RESPONSE_HAS_REPLIES,
-                CommentContract::INTERNAL_STRUCTURE_NEEDS_MIGRATION
+                CommentContract::INTERNAL_STRUCTURE_NEEDS_MIGRATION,
             ];
         }
 
@@ -59,7 +57,7 @@ class TransientCommentAttributes
     /**
      * Removes any transient properties from the supplied dataset.
      *
-     * @param array $data The data to filter.
+     * @param  array  $data The data to filter.
      * @return array
      */
     public static function filter($data)
@@ -74,5 +72,4 @@ class TransientCommentAttributes
 
         return $data;
     }
-
 }

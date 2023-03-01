@@ -10,12 +10,10 @@ use Stillat\Meerkat\Core\GuardConfiguration;
  *
  * Checks the site configuration and submits false positive/negative spam results to third-party providers.
  *
- * @package Stillat\Meerkat\Core\Guard
  * @since 2.0.8
  */
 class SubmitModeratorResultsHandler
 {
-
     /**
      * The Meerkat Core GuardConfiguration instance.
      *
@@ -41,8 +39,8 @@ class SubmitModeratorResultsHandler
      *
      * This method checks if the site has been configured to automatically submit specimens to third-parties.
      *
-     * @param CommentContract $comment The comment to submit results for.
-     * @param bool $isSpam Indicates if the comment is spam or not.
+     * @param  CommentContract  $comment The comment to submit results for.
+     * @param  bool  $isSpam Indicates if the comment is spam or not.
      */
     public function submitToProviders(CommentContract $comment, $isSpam)
     {
@@ -54,5 +52,4 @@ class SubmitModeratorResultsHandler
             }
         }
     }
-
 }

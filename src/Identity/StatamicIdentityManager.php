@@ -4,11 +4,11 @@ namespace Stillat\Meerkat\Identity;
 
 use Statamic\Auth\UserProvider;
 use Statamic\Contracts\Auth\User;
+use Statamic\Contracts\Auth\UserRepository;
 use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorContract;
 use Stillat\Meerkat\Core\Contracts\Identity\AuthorFactoryContract;
 use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
-use Statamic\Contracts\Auth\UserRepository;
 use Stillat\Meerkat\Core\Contracts\Permissions\PermissionsManagerContract;
 use Stillat\Meerkat\Core\Permissions\PermissionsSet;
 
@@ -17,12 +17,10 @@ use Stillat\Meerkat\Core\Permissions\PermissionsSet;
  *
  * Manages the resolution of identities between Meerkat Core and Statamic.
  *
- * @package Stillat\Meerkat\Identity
  * @since 1.0.0
  */
 class StatamicIdentityManager implements IdentityManagerContract, PermissionsManagerContract
 {
-
     /**
      * The Statamic UserProvider instance.
      *
@@ -61,9 +59,8 @@ class StatamicIdentityManager implements IdentityManagerContract, PermissionsMan
      * Returns a value indicating if the provided author
      * contains a user identity within the host system.
      *
-     * @param AuthorContract $author
-     *
-     * @return boolean
+     * @param  AuthorContract  $author
+     * @return bool
      */
     public function containsUserIdentity($author)
     {
@@ -90,9 +87,8 @@ class StatamicIdentityManager implements IdentityManagerContract, PermissionsMan
      * comments within a thread. Implementations should
      * check with the access roles of the host system.
      *
-     * @param AuthorContract $author
-     *
-     * @return boolean
+     * @param  AuthorContract  $author
+     * @return bool
      */
     public function canAutoPublishComments($author)
     {
@@ -122,8 +118,7 @@ class StatamicIdentityManager implements IdentityManagerContract, PermissionsMan
     /**
      * Retrieves the identity ID for the provided author information.
      *
-     * @param AuthorContract $author
-     *
+     * @param  AuthorContract  $author
      * @return string
      */
     public function getIdentityId($author)
@@ -194,7 +189,6 @@ class StatamicIdentityManager implements IdentityManagerContract, PermissionsMan
     /**
      * Resolves the permissions set for the provided identity.
      *
-     * @param AuthorContract $identity
      * @return PermissionsSet
      */
     public function getPermissions(AuthorContract $identity)
@@ -209,5 +203,4 @@ class StatamicIdentityManager implements IdentityManagerContract, PermissionsMan
 
         return $this->locateIdentity($identity->getId())->getPermissionSet();
     }
-
 }

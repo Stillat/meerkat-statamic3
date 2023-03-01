@@ -10,12 +10,10 @@ use Stillat\Meerkat\Core\Contracts\Logging\ErrorReporterContract;
  * Sends error information to Spatie Ray, if it is installed in the host project.
  *
  * @link https://spatie.be/products/ray
- * @package Stillat\Meerkat\Core\Logging\Reporters
  * @since 2.3.0
  */
 class SpatieRayReporter implements ErrorReporterContract
 {
-
     /**
      * A hash of all previously reported error objects.
      *
@@ -26,7 +24,7 @@ class SpatieRayReporter implements ErrorReporterContract
     /**
      * Sends the error object to Ray, if installed in the host project.
      *
-     * @param mixed $errorObject The error object.
+     * @param  mixed  $errorObject The error object.
      */
     public function log($errorObject)
     {
@@ -42,5 +40,4 @@ class SpatieRayReporter implements ErrorReporterContract
             \ray($errorObject);
         }
     }
-
 }

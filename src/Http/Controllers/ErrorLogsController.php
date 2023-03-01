@@ -14,7 +14,6 @@ use Stillat\Meerkat\Feedback\SolutionProvider;
  *
  * Provides the HTTP API for interacting with the Meerkat Core error code log.
  *
- * @package Stillat\Meerkat\Http\Controllers
  * @since 2.0.0
  */
 class ErrorLogsController extends CpController
@@ -67,12 +66,12 @@ class ErrorLogsController extends CpController
         foreach ($errorLogs as $log) {
             $logsToReturn[] = [
                 'log' => $log,
-                'suggest' => $this->solutions->findSolution($log->errorCode)
+                'suggest' => $this->solutions->findSolution($log->errorCode),
             ];
         }
 
         return [
-            'logs' => $logsToReturn
+            'logs' => $logsToReturn,
         ];
     }
 
@@ -88,7 +87,7 @@ class ErrorLogsController extends CpController
         $success = $this->errors->removeLogs();
 
         return [
-            'success' => $success
+            'success' => $success,
         ];
     }
 
@@ -110,14 +109,13 @@ class ErrorLogsController extends CpController
                 $success = $this->errors->removeInstance($instanceId);
 
                 return [
-                    'success' => $success
+                    'success' => $success,
                 ];
             }
         }
 
         return [
-            'success' => false
+            'success' => false,
         ];
     }
-
 }

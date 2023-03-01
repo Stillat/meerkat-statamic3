@@ -30,21 +30,33 @@ class ConfigureController extends CpController
     use UsesConfig, UsesTranslations, CanCorrectRoutes;
 
     const KEY_CONFIG_HASH = 'change_set';
+
     const KEY_CONFIG_ITEMS = 'config';
+
     const KEY_HAS_MANAGED = 'has_managed';
+
     const KEY_SPAM_GUARDS = 'spam_guards';
+
     const KEY_PERMISSIONS = 'permissions';
+
     const KEY_PARAM_API_KEY = 'api_key';
+
     const KEY_PARAM_FRONT_PAGE = 'front_page';
+
     const KEY_PARAM_PER_PAGE = 'per_page';
 
     const KEY_SETTINGS = 'settings';
+
     const KEY_ITEMS = 'items';
+
     const KEY_USER_SETTINGS = 'user';
+
     const KEY_USER_PER_PAGE = 'perPage';
+
     const KEY_USER_AVATAR = 'avatar';
 
     const KEY_RETURN_SETTINGS_UPDATED = 'settings_updated';
+
     const KEY_RETURN_USER_SETTINGS_UPDATED = 'preferences_updated';
 
     public function index()
@@ -57,7 +69,7 @@ class ConfigureController extends CpController
         return view('meerkat::settings', [
             'user' => Auth::user(),
             'addonUrl' => $addonsUrl,
-            'commentsUrl' => $commentsUrl
+            'commentsUrl' => $commentsUrl,
         ]);
     }
 
@@ -65,11 +77,11 @@ class ConfigureController extends CpController
     {
         try {
             return Responses::successWithData([
-                'settings' => $provider->getCurrentConfiguration()
+                'settings' => $provider->getCurrentConfiguration(),
             ]);
         } catch (Exception $e) {
-
             ExceptionLoggerFactory::log($e);
+
             return Responses::generalFailure();
         }
     }
@@ -84,7 +96,7 @@ class ConfigureController extends CpController
                 return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_VIEW);
             } else {
                 abort(403, 'Unauthorized', [
-                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_VIEW
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_VIEW,
                 ]);
                 exit;
             }
@@ -93,7 +105,7 @@ class ConfigureController extends CpController
         $options = [10, 25, 50, 100];
         $perPage = intval(request()->get(self::KEY_PARAM_PER_PAGE, 25));
 
-        if (!in_array($perPage, $options)) {
+        if (! in_array($perPage, $options)) {
             $perPage = 25;
         }
 
@@ -115,7 +127,7 @@ class ConfigureController extends CpController
                 return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_VIEW);
             } else {
                 abort(403, 'Unauthorized', [
-                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_VIEW
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_VIEW,
                 ]);
                 exit;
             }
@@ -123,10 +135,11 @@ class ConfigureController extends CpController
 
         try {
             return Responses::successWithData([
-                self::KEY_CONFIG_HASH => $configurationManager->getConfigurationHash()
+                self::KEY_CONFIG_HASH => $configurationManager->getConfigurationHash(),
             ]);
         } catch (Exception $e) {
             ExceptionLoggerFactory::log($e);
+
             return Responses::generalFailure();
         }
     }
@@ -140,7 +153,7 @@ class ConfigureController extends CpController
                 return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_VIEW);
             } else {
                 abort(403, 'Unauthorized', [
-                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_VIEW
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_VIEW,
                 ]);
                 exit;
             }
@@ -151,7 +164,7 @@ class ConfigureController extends CpController
 
         if ($apiKey === null || $frontPage === null || mb_strlen(trim($apiKey)) === 0 || mb_strlen(trim($frontPage)) === 0) {
             return Responses::failureWithData([
-                'message' => $this->trans('config.validate_akismet_no_params')
+                'message' => $this->trans('config.validate_akismet_no_params'),
             ]);
         }
 
@@ -161,19 +174,20 @@ class ConfigureController extends CpController
             $success = $guard->checkConfigurationKey(trim($apiKey), trim($frontPage));
         } catch (Exception $e) {
             ExceptionLoggerFactory::log($e);
+
             return Responses::failureWithData([
-                'message' => $this->trans('config.validate_akismet_failure')
+                'message' => $this->trans('config.validate_akismet_failure'),
             ]);
         }
 
         if ($success === true) {
             return Responses::successWithData([
-                'message' => $this->trans('config.validate_akismet_okay')
+                'message' => $this->trans('config.validate_akismet_okay'),
             ]);
         }
 
         return Responses::failureWithData([
-            'message' => $this->trans('config.validate_akismet_api_invalid')
+            'message' => $this->trans('config.validate_akismet_api_invalid'),
         ]);
     }
 
@@ -186,7 +200,7 @@ class ConfigureController extends CpController
                 return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_VIEW);
             } else {
                 abort(403, 'Unauthorized', [
-                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_VIEW
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_VIEW,
                 ]);
                 exit;
             }
@@ -195,7 +209,7 @@ class ConfigureController extends CpController
         RequestHelpers::setActionFromRequest($this->request);
         $requestData = request()->all();
 
-        if (!array_key_exists(self::KEY_SETTINGS, $requestData)) {
+        if (! array_key_exists(self::KEY_SETTINGS, $requestData)) {
             return Responses::recoverableFailure(Errors::CONFIG_MISSING_PARAMETERS);
         }
 
@@ -207,7 +221,6 @@ class ConfigureController extends CpController
         if ($this->getConfig('permissions.control_panel_config', true) === true) {
             try {
                 if ($userConfigurationManager->isSysAdmin() === true && array_key_exists(self::KEY_ITEMS, $requestData)) {
-
                     $statamicGroups = $userGroups->all();
                     $validGroups = [];
 
@@ -254,7 +267,7 @@ class ConfigureController extends CpController
 
         return Responses::conditionalWithData($savedConfiguration && $preferencesUpdated, [
             self::KEY_RETURN_SETTINGS_UPDATED => $savedConfiguration,
-            self::KEY_RETURN_USER_SETTINGS_UPDATED => $preferencesUpdated
+            self::KEY_RETURN_USER_SETTINGS_UPDATED => $preferencesUpdated,
         ]);
     }
 
@@ -267,7 +280,7 @@ class ConfigureController extends CpController
                 return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_VIEW);
             } else {
                 abort(403, 'Unauthorized', [
-                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_VIEW
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_VIEW,
                 ]);
                 exit;
             }
@@ -278,8 +291,7 @@ class ConfigureController extends CpController
             self::KEY_CONFIG_ITEMS => $configManager->getConfigurationItemArray(),
             self::KEY_HAS_MANAGED => $configManager->hasManagedItems(),
             self::KEY_SPAM_GUARDS => $guardConfig->getConfiguration(),
-            self::KEY_PERMISSIONS => $permissionsManager->getPermissionMapping()
+            self::KEY_PERMISSIONS => $permissionsManager->getPermissionMapping(),
         ]);
     }
-
 }

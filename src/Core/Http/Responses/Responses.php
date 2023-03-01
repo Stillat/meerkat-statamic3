@@ -6,10 +6,12 @@ use Stillat\Meerkat\Core\Errors;
 
 class Responses
 {
-
     const KEY_SUCCESS = 'success';
+
     const KEY_ERROR_CODE = 'error_code';
+
     const KEY_MESSAGE = 'msg';
+
     const KEY_RECOVERABLE = 'is_recoverable';
 
     public static function generalFailure()
@@ -20,15 +22,15 @@ class Responses
     /**
      * Creates a general error response.
      *
-     * @param string $errorCode The error code.
-     * @param bool $isRecoverable Indicates if the error was catastrophic or not.
+     * @param  string  $errorCode The error code.
+     * @param  bool  $isRecoverable Indicates if the error was catastrophic or not.
      */
     public static function fromErrorCode($errorCode, $isRecoverable)
     {
         return [
             self::KEY_SUCCESS => false,
             self::KEY_ERROR_CODE => $errorCode,
-            self::KEY_RECOVERABLE => $isRecoverable
+            self::KEY_RECOVERABLE => $isRecoverable,
         ];
     }
 
@@ -48,7 +50,7 @@ class Responses
         return [
             self::KEY_SUCCESS => true,
             self::KEY_ERROR_CODE => null,
-            self::KEY_RECOVERABLE => true
+            self::KEY_RECOVERABLE => true,
         ];
     }
 
@@ -57,7 +59,7 @@ class Responses
         return [
             self::KEY_SUCCESS => false,
             self::KEY_ERROR_CODE => null,
-            self::KEY_RECOVERABLE => true
+            self::KEY_RECOVERABLE => true,
         ];
     }
 
@@ -75,5 +77,4 @@ class Responses
     {
         return array_merge(self::nonFatalFailure(), $data);
     }
-
 }

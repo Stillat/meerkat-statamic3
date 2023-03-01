@@ -9,14 +9,16 @@ use Statamic\Extend\AddonRepository;
  *
  * Provides basic addon identification details and utilities.
  *
- * @package Stillat\Meerkat
  * @since 2.0.0
  */
 class Addon
 {
     public const ADDON_NAME = 'Meerkat';
+
     public const CODE_ADDON_NAME = 'meerkat';
+
     public const ROUTE_PREFIX = 'meerkat';
+
     public const ADDON_ID = 'stillat/meerkat';
 
     public const VERSION = '2.4.14';
@@ -28,7 +30,7 @@ class Addon
      */
     public static function getApiPrefix()
     {
-        return 'mapi/' . Addon::CODE_ADDON_NAME;
+        return 'mapi/'.Addon::CODE_ADDON_NAME;
     }
 
     /**
@@ -63,5 +65,4 @@ class Addon
     {
         return strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
     }
-
 }

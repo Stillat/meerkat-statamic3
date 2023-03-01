@@ -15,12 +15,10 @@ use Stillat\Meerkat\Core\Parsing\AbstractYAMLParser;
  *
  * Provides utilities for parsing and encoding YAML documents.
  *
- * @package Stillat\Meerkat\Parsing
  * @since 2.0.0
  */
 class YAMLParser extends AbstractYAMLParser implements YAMLParserContract
 {
-
     /**
      * The Statamic Yaml instance.
      *
@@ -36,8 +34,8 @@ class YAMLParser extends AbstractYAMLParser implements YAMLParserContract
     /**
      * Converts the provided meta-data and content to YAML.
      *
-     * @param array $data The content meta-data.
-     * @param string $content The content to save.
+     * @param  array  $data The content meta-data.
+     * @param  string  $content The content to save.
      * @return string
      */
     public function toYaml($data, $content)
@@ -48,13 +46,14 @@ class YAMLParser extends AbstractYAMLParser implements YAMLParserContract
     /**
      * Parses the provided string document and returns a value array.
      *
-     * @param string $content The content to parse.
+     * @param  string  $content The content to parse.
      * @return array
+     *
      * @throws ParseException
      */
     public function parseDocument($content)
     {
-        $bom = pack("CCC", 0xef, 0xbb, 0xbf);
+        $bom = pack('CCC', 0xEF, 0xBB, 0xBF);
 
         if (strncmp(trim($content), $bom, 3) === 0) {
             $content = substr(trim($content), 3);
@@ -82,5 +81,4 @@ class YAMLParser extends AbstractYAMLParser implements YAMLParserContract
             }
         }
     }
-
 }

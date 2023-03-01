@@ -12,17 +12,14 @@ namespace Stillat\Meerkat\Core\Contracts\Threads;
  * implement a caching mechanism if the location routines are
  * expensive each time the `findById` method is invoked.
  *
- * @package Stillat\Meerkat\Core\Contracts\Threads
  * @since 2.0.0
  */
 interface ContextResolverContract
 {
-
     /**
      * Attempts to locate a thread context by it's string identifier.
      *
-     * @param string $contextId The context's unique identifier.
-     *
+     * @param  string  $contextId The context's unique identifier.
      * @return ThreadContextContract
      */
     public function findById($contextId);
@@ -30,9 +27,8 @@ interface ContextResolverContract
     /**
      * Returns a value indicating if a context exists for the given identifier.
      *
-     * @param string $contextId The context's unique identifier.
+     * @param  string  $contextId The context's unique identifier.
      * @return bool
      */
     public function contextExistsById($contextId);
-
 }

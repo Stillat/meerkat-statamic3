@@ -12,7 +12,6 @@ use Stillat\Meerkat\Core\Http\Responses\Responses;
 
 class CheckForSpamController extends CpController
 {
-
     public function checkForSpam(PermissionsManagerContract $manager,
                                  IdentityManagerContract $identityManager,
                                  SpamChecker $spamChecker)
@@ -24,7 +23,7 @@ class CheckForSpamController extends CpController
                 return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_REPORT_SPAM);
             } else {
                 abort(403, 'Unauthorized', [
-                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_REPORT_SPAM
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_REPORT_SPAM,
                 ]);
                 exit;
             }
@@ -35,7 +34,7 @@ class CheckForSpamController extends CpController
                 return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_REPORT_HAM);
             } else {
                 abort(403, 'Unauthorized', [
-                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_REPORT_HAM
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_REPORT_HAM,
                 ]);
                 exit;
             }
@@ -51,8 +50,7 @@ class CheckForSpamController extends CpController
 
         return Responses::successWithData([
             'task' => $task->getInstanceId(),
-            'status' => TaskContract::STATUS_IN_PROGRESS
+            'status' => TaskContract::STATUS_IN_PROGRESS,
         ]);
     }
-
 }

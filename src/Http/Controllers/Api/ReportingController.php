@@ -3,7 +3,6 @@
 namespace Stillat\Meerkat\Http\Controllers\Api;
 
 use Exception;
-use Illuminate\Http\Request;
 use Statamic\Http\Controllers\CP\CpController;
 use Stillat\Meerkat\Core\Contracts\Identity\IdentityManagerContract;
 use Stillat\Meerkat\Core\Contracts\Permissions\PermissionsManagerContract;
@@ -17,12 +16,10 @@ use Stillat\Meerkat\Core\Reporting\OverviewAggregator;
  *
  * Provides communication between HTTP clients and the Meerkat server components.
  *
- * @package Stillat\Meerkat\Http\Controllers\Api
  * @since 2.0.0
  */
 class ReportingController extends CpController
 {
-
     public function getReportOverview(
         PermissionsManagerContract $manager,
         IdentityManagerContract $identityManager,
@@ -35,7 +32,7 @@ class ReportingController extends CpController
                 return response('Unauthorized.', 401)->header('Meerkat-Permission', Errors::MISSING_PERMISSION_CAN_VIEW);
             } else {
                 abort(403, 'Unauthorized', [
-                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_VIEW
+                    'Meerkat-Permission' => Errors::MISSING_PERMISSION_CAN_VIEW,
                 ]);
                 exit;
             }
@@ -51,5 +48,4 @@ class ReportingController extends CpController
             return Responses::generalFailure();
         }
     }
-
 }

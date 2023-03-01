@@ -11,12 +11,10 @@ use Stillat\Meerkat\PathProvider;
  * Provides utilities to emit JavaScript statements to patch an addon's
  * translation string key/value pairs in the Statamic Control Panel.
  *
- * @package Stillat\Meerkat\Statamic\ControlPanel
  * @since 2.0.0
  */
 class TranslationEmitter
 {
-
     /**
      * Creates a JavaScript snippet that can be utilized to patch the Statamic Control Panel translation system.
      *
@@ -28,7 +26,7 @@ class TranslationEmitter
         $replacements = TranslationEmitter::emitAll($translationKeys);
         $javaScriptStub = file_get_contents(PathProvider::getStub('lang.js'));
 
-        $javaScriptStub = str_replace('@addon', Addon::ADDON_NAME . ' v' . Addon::VERSION, $javaScriptStub);
+        $javaScriptStub = str_replace('@addon', Addon::ADDON_NAME.' v'.Addon::VERSION, $javaScriptStub);
         $javaScriptStub = str_replace('/*patches*/', $replacements, $javaScriptStub);
 
         return $javaScriptStub;
@@ -68,19 +66,18 @@ class TranslationEmitter
 
         if ($transValue != null && is_array($transValue) && count($transValue) > 0) {
             foreach ($transValue as $key => $value) {
-                $cpKey = $transKey . '.' . $key;
+                $cpKey = $transKey.'.'.$key;
 
                 if (is_array($value)) {
                     $jsValue = json_encode($value);
-                    $jsToEmit .= '_cst[\'' . $cpKey . '\']= JSON.parse(\'' . $jsValue. '\');';
+                    $jsToEmit .= '_cst[\''.$cpKey.'\']= JSON.parse(\''.$jsValue.'\');';
                 } else {
                     $jsValue = str_replace('\'', '\\\'', $value);
-                    $jsToEmit .= '_cst[\'' . $cpKey . '\']= \'' . $jsValue. '\';';
+                    $jsToEmit .= '_cst[\''.$cpKey.'\']= \''.$jsValue.'\';';
                 }
             }
         }
 
         return $jsToEmit;
     }
-
 }

@@ -9,12 +9,10 @@ use Stillat\Meerkat\Core\Contracts\Threads\ThreadContract;
  *
  * Provides helpers for retrieving thread identifiers from page contexts.
  *
- * @package Stillat\Meerkat\Concerns
  * @since 2.0.0
  */
 trait GetsHiddenContext
 {
-
     /**
      * Gets the page's hidden context.
      *
@@ -56,5 +54,4 @@ trait GetsHiddenContext
     {
         return data_get($this->context, 'id', null);
     }
-
 }

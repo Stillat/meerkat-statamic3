@@ -10,17 +10,15 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
  *
  * Provides a static mutation API for creating, replying and managing comments.
  *
- * @package Stillat\Meerkat\Core\Comments\StaticApi
  * @since 2.0.0
  */
 trait ProvidesMutations
 {
-
     /**
      * Configures a comment as a reply to the provided parent.
      *
-     * @param string $parentId The parent comment string identifier.
-     * @param CommentContract $comment The child comment instance.
+     * @param  string  $parentId The parent comment string identifier.
+     * @param  CommentContract  $comment The child comment instance.
      * @return CommentContract|null
      */
     public static function replyTo($parentId, CommentContract $comment)
@@ -35,8 +33,8 @@ trait ProvidesMutations
     /**
      * Saves the provided comment to the specified parent comment.
      *
-     * @param string $parentId The parent comment string identifier.
-     * @param CommentContract $comment The comment to save as a reply.
+     * @param  string  $parentId The parent comment string identifier.
+     * @param  CommentContract  $comment The comment to save as a reply.
      * @return bool|CommentContract|null
      */
     public static function saveReplyTo($parentId, CommentContract $comment)
@@ -51,5 +49,4 @@ trait ProvidesMutations
 
         return false;
     }
-
 }

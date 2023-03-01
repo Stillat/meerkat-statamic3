@@ -29,19 +29,24 @@ use Stillat\Meerkat\Http\Emitter\Emit;
  * Checks the current route configuration to determine if Meerkat
  * routes are missing due to Laravel's route caching mechanics.
  *
- * @package Stillat\Meerkat\Validation
  * @since 2.2.3
  */
 class RouteCacheValidator
 {
     const KEY_NAME = 'name';
+
     const KEY_ACTION = 'action';
+
     const ROUTE_CACHE_CLEAR = 'statamic.cp.utilities.meerkat-validation.meerkat.routes.clear.cache';
 
     const CATEGORY_CONTROL_PANEL_CONFIGURATION = 'cp_configuration';
+
     const CATEGORY_SPAM_API = 'spam_api';
+
     const CATEGORY_TELEMETRY_API = 'telemetry_api';
+
     const CATEGORY_MODERATION_API = 'moderation_api';
+
     const CATEGORY_SITE_SUBMISSION_API = 'submission_api';
 
     /**
@@ -155,7 +160,7 @@ class RouteCacheValidator
         $this->hasLoadedRoutes = true;
 
         foreach ($this->callbackCategories as $actionName => $categoryName) {
-            if (!in_array($actionName, $this->routeActions)) {
+            if (! in_array($actionName, $this->routeActions)) {
                 $this->missingActionCategories[] = $categoryName;
             }
         }
@@ -182,14 +187,14 @@ class RouteCacheValidator
     {
         $this->addActions(SocializeController::class, ['postSocialize'], self::CATEGORY_SITE_SUBMISSION_API);
         $this->addActions(TelemetryController::class, [
-            'index', 'getReport', 'submitReport'
+            'index', 'getReport', 'submitReport',
         ], self::CATEGORY_TELEMETRY_API);
         $this->addActions(ConfigureController::class, [
             'getConfiguration',
             'save',
             'getCurrentConfigHash',
             'validateAkismetApiKey',
-            'updateUserPerPage'
+            'updateUserPerPage',
         ], self::CATEGORY_CONTROL_PANEL_CONFIGURATION);
         $this->addActions(CommentsController::class, ['search'], self::CATEGORY_MODERATION_API);
         $this->addActions(UpdateCommentController::class, ['updateComment'], self::CATEGORY_MODERATION_API);
@@ -208,9 +213,9 @@ class RouteCacheValidator
     /**
      * Adds all of the provided class methods to the required actions list.
      *
-     * @param string $class The class name.
-     * @param string[] $methods The method names.
-     * @param string $category The method category.
+     * @param  string  $class The class name.
+     * @param  string[]  $methods The method names.
+     * @param  string  $category The method category.
      */
     private function addActions($class, $methods, $category)
     {
@@ -226,8 +231,8 @@ class RouteCacheValidator
     /**
      * Constructs a callback string.
      *
-     * @param string $class The class name.
-     * @param string $method The method name.
+     * @param  string  $class The class name.
+     * @param  string  $method The method name.
      * @return string
      */
     private function toCallbackString($class, $method)
@@ -248,7 +253,7 @@ class RouteCacheValidator
     /**
      * Determines if the environment has the provided route.
      *
-     * @param string $routeName The route's name.
+     * @param  string  $routeName The route's name.
      * @return bool
      */
     public function hasRoute($routeName)
@@ -291,14 +296,14 @@ class RouteCacheValidator
     /**
      * Returns the route's name and action as an array.
      *
-     * @param Route $route The route.
+     * @param  Route  $route The route.
      * @return array
      */
     private function getRouteDetails(Route $route)
     {
         return [
             self::KEY_NAME => $route->getName(),
-            self::KEY_ACTION => $route->getActionName()
+            self::KEY_ACTION => $route->getActionName(),
         ];
     }
 
@@ -317,5 +322,4 @@ class RouteCacheValidator
             $files->delete(app()->getCachedRoutesPath());
         }
     }
-
 }

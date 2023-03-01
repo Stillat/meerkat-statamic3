@@ -9,16 +9,14 @@ use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
  *
  * Provides utilities for getting unique comment identifiers from a comment collection.
  *
- * @package Stillat\Meerkat\Core\Data\Retrievers
  * @since 2.0.0
  */
 class CommentIdRetriever
 {
-
     /**
      * Gets the unique comment identifiers from the data.
      *
-     * @param CommentContract[] $data The data to analyze.
+     * @param  CommentContract[]  $data The data to analyze.
      * @return string[]
      */
     public static function getCommentIds($data)
@@ -31,5 +29,4 @@ class CommentIdRetriever
 
         return array_unique($commentIds);
     }
-
 }

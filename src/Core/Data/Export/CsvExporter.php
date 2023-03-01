@@ -11,12 +11,10 @@ use Stillat\Meerkat\Core\Data\FieldMapper;
  *
  * Exports the comments as a CSV document.
  *
- * @package Stillat\Meerkat\Core\Data\Export
  * @since 2.0.0
  */
 class CsvExporter implements DataExporterContract
 {
-
     /**
      * The header names.
      *
@@ -54,7 +52,7 @@ class CsvExporter implements DataExporterContract
     /**
      * Exports the provided comments.
      *
-     * @param array $comments The comments to export.
+     * @param  array  $comments The comments to export.
      * @return string
      */
     public function export($comments)
@@ -85,25 +83,25 @@ class CsvExporter implements DataExporterContract
     /**
      * Sets the property names.
      *
-     * @param array $names The property names.
+     * @param  array  $names The property names.
      */
     public function setPropertyNames($names)
     {
         $this->headers = array_merge($names, [
             trans('meerkat::fields.entry.id'),
-            trans('meerkat::fields.entry.title')
+            trans('meerkat::fields.entry.title'),
         ]);
     }
 
     /**
      * Sets which data properties to export.
      *
-     * @param array $properties The properties to export.
+     * @param  array  $properties The properties to export.
      */
     public function setProperties($properties)
     {
         $this->dataFields = array_merge($properties, [
-            'comment.context.id', 'comment.context.title'
+            'comment.context.id', 'comment.context.title',
         ]);
     }
 }

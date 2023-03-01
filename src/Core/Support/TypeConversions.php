@@ -10,12 +10,10 @@ use Stillat\Meerkat\Core\Parsing\ArrayParser;
  *
  * Contains helpers for converting between run-time types
  *
- * @package Stillat\Meerkat\Core\Support
  * @since 2.0.0
  */
 class TypeConversions
 {
-
     /**
      * Converts the provided value to a truthy value.
      *
@@ -24,8 +22,8 @@ class TypeConversions
      * Strings are considered true if "true"
      * All other values are false
      *
-     * @param mixed $value The value to convert.
-     * @return boolean
+     * @param  mixed  $value The value to convert.
+     * @return bool
      */
     public static function getBooleanValue($value)
     {
@@ -47,9 +45,10 @@ class TypeConversions
     /**
      * Converts the provided value to an array.
      *
-     * @param string $value The input string.
-     * @param string $delimiter The string that separates values.
+     * @param  string  $value The input string.
+     * @param  string  $delimiter The string that separates values.
      * @return array
+     *
      * @throws ParserException
      */
     public static function parseToArray($value, $delimiter = ',')
@@ -64,7 +63,7 @@ class TypeConversions
     /**
      * Attempts to convert the value to an array.
      *
-     * @param mixed $value The value to convert.
+     * @param  mixed  $value The value to convert.
      * @return array
      */
     public static function getArray($value)
@@ -73,7 +72,6 @@ class TypeConversions
             return $value;
         }
 
-        return (array)$value;
+        return (array) $value;
     }
-
 }

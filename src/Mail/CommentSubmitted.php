@@ -14,7 +14,6 @@ use Stillat\Meerkat\ExportFields;
  *
  * Provides data transformations and view data to build comment submission emails.
  *
- * @package Stillat\Meerkat\Mail
  * @since 2.1.5
  */
 class CommentSubmitted extends Mailable
@@ -73,7 +72,7 @@ class CommentSubmitted extends Mailable
             $this->trans('fields.transform.false')
         );
 
-        $this->controlPanelUrl = url('/' . config('statamic.cp.route') . '/meerkat');
+        $this->controlPanelUrl = url('/'.config('statamic.cp.route').'/meerkat');
         $this->showControlPanelButton = $this->getConfig('email.show_control_panel_button', true);
         $this->comment = $comment;
 
@@ -87,7 +86,7 @@ class CommentSubmitted extends Mailable
             if ($exportData[$i] !== null) {
                 $field = $fields[$i];
 
-                $dataToPresent[$this->trans('fields.' . $field)] = $exportData[$i];
+                $dataToPresent[$this->trans('fields.'.$field)] = $exportData[$i];
             }
         }
 
@@ -99,7 +98,7 @@ class CommentSubmitted extends Mailable
     /**
      * Sets an optional "from" email address override.
      *
-     * @param string|null $address The address.
+     * @param  string|null  $address The address.
      * @return $this
      */
     public function setFromAddress($address)
@@ -123,5 +122,4 @@ class CommentSubmitted extends Mailable
         return $this->subject($this->trans('email.subject'))
             ->from($this->getFromEmailAddress())->view('meerkat::emails.submission');
     }
-
 }

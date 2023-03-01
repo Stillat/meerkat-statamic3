@@ -15,12 +15,10 @@ use Stillat\Meerkat\Core\Contracts\DataObjectContract;
  * and may have a name associated with them. Examples of
  * typical thread contexts are photos or blog posts.
  *
- * @package Stillat\Meerkat\Core\Contracts\Threads
  * @since 2.0.0
  */
 interface ThreadContextContract extends DataObjectContract, Serializable
 {
-
     /**
      * Returns the identifier string of the context.
      *
@@ -48,5 +46,4 @@ interface ThreadContextContract extends DataObjectContract, Serializable
      * @return array
      */
     public function toArray();
-
 }

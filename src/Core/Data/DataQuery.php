@@ -35,12 +35,10 @@ use Stillat\Meerkat\Core\Storage\Drivers\Local\Attributes\InternalAttributes;
  *
  * Provides a fluent interface for querying Meerkat comments.
  *
- * @package Stillat\Meerkat\Core\Data
  * @since 2.0.0
  */
 class DataQuery
 {
-
     /**
      * A list of potential filters to run.
      *
@@ -261,7 +259,7 @@ class DataQuery
     /**
      * Sets the run time context.
      *
-     * @param RuntimeContext $context The run time context.
+     * @param  RuntimeContext  $context The run time context.
      * @return $this
      */
     public function withContext(RuntimeContext $context)
@@ -274,7 +272,7 @@ class DataQuery
     /**
      * Skips the specified amount of record when processing data.
      *
-     * @param int $offset The data offset when returning results.
+     * @param  int  $offset The data offset when returning results.
      * @return DataQuery
      */
     public function skip($offset)
@@ -287,7 +285,7 @@ class DataQuery
     /**
      * The name of the pages to generate, in a paged dataset.
      *
-     * @param string $pageName The name of the page.
+     * @param  string  $pageName The name of the page.
      * @return $this
      */
     public function pageBy($pageName)
@@ -301,7 +299,7 @@ class DataQuery
     /**
      * Requests data be split into a collection of pages of the provided size.
      *
-     * @param int $pageSize The size of pages to generate.
+     * @param  int  $pageSize The size of pages to generate.
      * @return $this
      */
     public function limit($pageSize)
@@ -320,7 +318,7 @@ class DataQuery
     /**
      * Requests data only be returned for the provided page, in a paged result set.
      *
-     * @param int $page The page to return.
+     * @param  int  $page The page to return.
      * @return $this
      */
     public function forPage($page)
@@ -332,24 +330,22 @@ class DataQuery
     }
 
     /**
-     * @param $property
-     * @param $comparison
-     * @param $value
      * @return $this
      */
     public function where($property, $comparison, $value)
     {
         return $this->createWrappedFilter(Where::FILTER_WHERE, [
-            $property, $comparison, $value
+            $property, $comparison, $value,
         ]);
     }
 
     /**
      * Creates a filter string where the last parameter value is wrapped.
      *
-     * @param string $filter The filter name.
-     * @param array $parameters The filter parameters.
+     * @param  string  $filter The filter name.
+     * @param  array  $parameters The filter parameters.
      * @return $this
+     *
      * @throws FilterParserException
      */
     private function createWrappedFilter($filter, $parameters)
@@ -368,8 +364,9 @@ class DataQuery
     /**
      * Filters the comment collection using the provided filter.
      *
-     * @param string|array $filterString The filter input.
+     * @param  string|array  $filterString The filter input.
      * @return $this
+     *
      * @throws FilterParserException
      */
     public function filterBy($filterString)
@@ -380,15 +377,16 @@ class DataQuery
     /**
      * Filters the comment collection using the provided filter.
      *
-     * @param string|array $filterString The filter input.
+     * @param  string|array  $filterString The filter input.
      * @return $this
+     *
      * @throws FilterParserException
      */
     public function thenFilterBy($filterString)
     {
         if (is_array($filterString)) {
             $this->filters[] = $filterString;
-        } else if (is_string($filterString)) {
+        } elseif (is_string($filterString)) {
             $processedFilter = $this->expressionParser->parse($filterString);
 
             if ($processedFilter !== null && is_array($processedFilter)) {
@@ -416,8 +414,9 @@ class DataQuery
     /**
      * Attempts to filter the query by the provided filter string.
      *
-     * @param string $filterString The filter string.
+     * @param  string  $filterString The filter string.
      * @return $this
+     *
      * @throws FilterParserException
      */
     public function safeThenFilterBy($filterString)
@@ -426,7 +425,7 @@ class DataQuery
 
         if (is_array($filterString)) {
             $filterName = $filterString[ExpressionParser::KEY_NAME];
-        } else if (is_string($filterString)) {
+        } elseif (is_string($filterString)) {
             $filterName = $filterString;
         }
 
@@ -440,8 +439,9 @@ class DataQuery
     /**
      * Attempts to filter the query by the provided filter string.
      *
-     * @param string $filterString The filter string.
+     * @param  string  $filterString The filter string.
      * @return $this
+     *
      * @throws FilterParserException
      */
     public function safeFilterBy($filterString)
@@ -450,7 +450,7 @@ class DataQuery
 
         if (is_array($filterString)) {
             $filterName = $filterString[ExpressionParser::KEY_NAME];
-        } else if (is_string($filterString)) {
+        } elseif (is_string($filterString)) {
             $filterName = $filterString;
         }
 
@@ -474,69 +474,73 @@ class DataQuery
     /**
      * Constructs a "where not in" filter expression from the provided values.
      *
-     * @param string $property The property name to check.
-     * @param string|mixed $value The comparison value.
+     * @param  string  $property The property name to check.
+     * @param  string|mixed  $value The comparison value.
      * @return $this
+     *
      * @throws FilterParserException
      */
     public function whereNotIn($property, $value)
     {
         return $this->createWrappedFilter(WhereNotIn::FILTER_WHERE_NOT_IN, [
-            $property, $value
+            $property, $value,
         ]);
     }
 
     /**
      * Constructs a "where in" filter expression from the provided values.
      *
-     * @param string $property The property name to check.
-     * @param string|mixed $value The comparison value.
+     * @param  string  $property The property name to check.
+     * @param  string|mixed  $value The comparison value.
      * @return $this
+     *
      * @throws FilterParserException
      */
     public function whereIn($property, $value)
     {
         return $this->createWrappedFilter(WhereIn::FILTER_WHERE_IN, [
-            $property, $value
+            $property, $value,
         ]);
     }
 
     /**
      * Constructs a "where like" filter expression from the provided values.
      *
-     * @param string $property The property name to check.
-     * @param string $value The comparison string pattern.
+     * @param  string  $property The property name to check.
+     * @param  string  $value The comparison string pattern.
      * @return $this
+     *
      * @throws FilterParserException
      */
     public function whereLike($property, $value)
     {
         return $this->createWrappedFilter(Like::FILTER_LIKE, [
             $property,
-            $value
+            $value,
         ]);
     }
 
     /**
      * Constructs a "where not like" filter expression from the provided values.
      *
-     * @param string $property The property name to check.
-     * @param string|mixed $value The comparison string pattern.
+     * @param  string  $property The property name to check.
+     * @param  string|mixed  $value The comparison string pattern.
      * @return $this
+     *
      * @throws FilterParserException
      */
     public function whereNotLike($property, $value)
     {
         return $this->createWrappedFilter(NotLike::FILTER_NOT_LIKE, [
             $property,
-            $value
+            $value,
         ]);
     }
 
     /**
      * Sorts by the property name, ascending.
      *
-     * @param string $p The property name.
+     * @param  string  $p The property name.
      * @return DataQuery
      */
     public function sortAsc($p)
@@ -549,7 +553,7 @@ class DataQuery
     /**
      * Sorts by the property name, ascending.
      *
-     * @param string $p The property name to sort.
+     * @param  string  $p The property name to sort.
      * @return $this
      */
     public function thenSortAsc($p)
@@ -562,7 +566,7 @@ class DataQuery
     /**
      * Sorts by the property name, descending.
      *
-     * @param string $p The property name to sort.
+     * @param  string  $p The property name to sort.
      * @return $this
      */
     public function sortDesc($p)
@@ -575,7 +579,7 @@ class DataQuery
     /**
      * Sorts by the property name, descending.
      *
-     * @param string $p The property name to sort.
+     * @param  string  $p The property name to sort.
      * @return $this
      */
     public function thenSortDesc($p)
@@ -586,8 +590,8 @@ class DataQuery
     }
 
     /**
-     * @param string $property The property to group by.
-     * @param callable|null $callback An optional computed callback.
+     * @param  string  $property The property to group by.
+     * @param  callable|null  $callback An optional computed callback.
      * @return $this
      */
     public function groupBy($property, $callback = null)
@@ -617,7 +621,7 @@ class DataQuery
     /**
      * Sets the name of an individual group's dataset.
      *
-     * @param string $name The name to set.
+     * @param  string  $name The name to set.
      * @return $this
      */
     public function collectionName($name)
@@ -630,7 +634,7 @@ class DataQuery
     /**
      * Sets the name of all dataset groups.
      *
-     * @param string $name The name to set.
+     * @param  string  $name The name to set.
      * @return $this
      */
     public function nameAllGroups($name)
@@ -643,7 +647,7 @@ class DataQuery
     /**
      * Sets the name of an individual group.
      *
-     * @param string $name The name to set.
+     * @param  string  $name The name to set.
      * @return $this
      */
     public function groupName($name)
@@ -666,7 +670,7 @@ class DataQuery
     /**
      * Sets whether or not group results should return empty groups.
      *
-     * @param bool $keepEmptySets Whether to keep empty result sets.
+     * @param  bool  $keepEmptySets Whether to keep empty result sets.
      * @return $this
      */
     public function groupDoKeepEmptySets($keepEmptySets)
@@ -689,7 +693,7 @@ class DataQuery
     /**
      * Sets a value indicating whether or not to gather meta data before creating pages.
      *
-     * @param bool $gatherMetaData Whether to gather meta data before creating pages.
+     * @param  bool  $gatherMetaData Whether to gather meta data before creating pages.
      * @return $this
      */
     public function gatherMetaDataBeforePaging($gatherMetaData)
@@ -702,7 +706,7 @@ class DataQuery
     /**
      * Sets the search terms that will be used when collecting results.
      *
-     * @param string $searchTerms The text to search.
+     * @param  string  $searchTerms The text to search.
      * @return $this
      */
     public function searchFor($searchTerms)
@@ -729,7 +733,7 @@ class DataQuery
     /**
      * Sets whether or not to automatically process comment content as Markdown.
      *
-     * @param bool $useMarkdown Whether to automatically process content as Markdown.
+     * @param  bool  $useMarkdown Whether to automatically process content as Markdown.
      * @return $this
      */
     public function withMarkdown($useMarkdown)
@@ -742,9 +746,10 @@ class DataQuery
     /**
      * Retrieves the results and converts the internal dataset into its array form.
      *
-     * @param CommentContract[] $sourceComments The comments to analyze.
-     * @param string $repliesName The name of the nested dataset collection.
+     * @param  CommentContract[]  $sourceComments The comments to analyze.
+     * @param  string  $repliesName The name of the nested dataset collection.
      * @return GroupedDataSetContract|PagedDataSetContract|PagedGroupedDataSetContract|DataSetContract
+     *
      * @throws FilterException|ParserException
      */
     public function getCollection($sourceComments, $repliesName)
@@ -773,8 +778,9 @@ class DataQuery
     /**
      * Runs all filters, queries, and sorting operations and returns the dataset.
      *
-     * @param CommentContract[] $data
+     * @param  CommentContract[]  $data
      * @return array|PagedDataSetContract|DataSetContract|GroupedDataSetContract
+     *
      * @throws FilterException|ParserException
      */
     public function get($data)
@@ -783,12 +789,11 @@ class DataQuery
         if (count($this->filters) > 0 && $this->runtimeContext === null) {
             throw new FilterException('Filters cannot be executed without a run-time context. Supply a runtime context by calling withContext($context).');
         } elseif (count($this->filters) > 0 && $this->runtimeContext !== null) {
-
             foreach ($this->filters as $filter) {
                 $filterManager = $this->filterRunner->getFilterManager();
 
-                if (!$filterManager->hasFilter($filter[ExpressionParser::KEY_NAME])) {
-                    throw new FilterException('Could not locate filter: ' . $filter[ExpressionParser::KEY_NAME]);
+                if (! $filterManager->hasFilter($filter[ExpressionParser::KEY_NAME])) {
+                    throw new FilterException('Could not locate filter: '.$filter[ExpressionParser::KEY_NAME]);
                 }
             }
 
@@ -882,8 +887,9 @@ class DataQuery
     /**
      * Indicates if soft deleted comments should be part of the result set.
      *
-     * @param bool $trashed If false, soft deleted comments will be removed.
+     * @param  bool  $trashed If false, soft deleted comments will be removed.
      * @return $this
+     *
      * @throws FilterParserException
      */
     public function withTrashed($trashed = false)
@@ -904,5 +910,4 @@ class DataQuery
 
         return $this;
     }
-
 }

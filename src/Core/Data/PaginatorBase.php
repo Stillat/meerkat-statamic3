@@ -10,12 +10,10 @@ use Stillat\Meerkat\Core\Contracts\Data\PaginatorContract;
  *
  * Provides a base implementation for data pagination.
  *
- * @package Stillat\Meerkat\Core\Data
  * @since 2.0.0
  */
 abstract class PaginatorBase implements PaginatorContract
 {
-
     /**
      * The maximum number of records per page.
      *
@@ -75,11 +73,11 @@ abstract class PaginatorBase implements PaginatorContract
     /**
      * Creates a paged dataset for the provided data and constraints.
      *
-     * @param array $collection The data to page.
-     * @param string $pageName The name of the pages to create.
-     * @param int $currentPage The current data page.
-     * @param int $offset Where to start in the dataset.
-     * @param int $limit The maximum number of records per page.
+     * @param  array  $collection The data to page.
+     * @param  string  $pageName The name of the pages to create.
+     * @param  int  $currentPage The current data page.
+     * @param  int  $offset Where to start in the dataset.
+     * @param  int  $limit The maximum number of records per page.
      * @return PagedDataSetContract
      */
     public function paginate($collection, $pageName, $currentPage, $offset, $limit)
@@ -94,16 +92,16 @@ abstract class PaginatorBase implements PaginatorContract
     /**
      * Prepares the data collection for paging.
      *
-     * @param array $collection The data to page.
-     * @param string $pageName The name of the pages to create.
-     * @param int $currentPage The current data page.
-     * @param int $offset Where to start in the dataset.
-     * @param int $limit The maximum number of records per page.
+     * @param  array  $collection The data to page.
+     * @param  string  $pageName The name of the pages to create.
+     * @param  int  $currentPage The current data page.
+     * @param  int  $offset Where to start in the dataset.
+     * @param  int  $limit The maximum number of records per page.
      * @return void
      */
     protected function preparePagedData($collection, $pageName, $currentPage, $offset, $limit)
     {
-        if ($collection === null || !is_array($collection)) {
+        if ($collection === null || ! is_array($collection)) {
             $collection = [];
         }
 
@@ -111,10 +109,10 @@ abstract class PaginatorBase implements PaginatorContract
             $limit = count($collection);
         }
 
-        $limit = (int)$limit;
+        $limit = (int) $limit;
         $totalResults = count($collection);
         $itemsCount = $totalResults - $offset;
-        $lastPage = (int)ceil($itemsCount / $limit);
+        $lastPage = (int) ceil($itemsCount / $limit);
 
         if ($currentPage > $lastPage) {
             $currentPage = $lastPage;
@@ -167,5 +165,4 @@ abstract class PaginatorBase implements PaginatorContract
      * @return array
      */
     abstract protected function getMetaData();
-
 }

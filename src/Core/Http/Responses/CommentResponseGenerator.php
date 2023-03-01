@@ -224,7 +224,7 @@ class CommentResponseGenerator
         $threads = [];
 
         /** @var array $comment */
-        foreach ($commentResults as $comment) {
+        foreach ($commentResults as $key => $comment) {
             $threadId = null;
 
             if (array_key_exists(CommentContract::INTERNAL_CONTEXT_ID, $comment)) {
@@ -233,6 +233,10 @@ class CommentResponseGenerator
             if ($threadId !== null && array_key_exists($threadId, $threads) === false) {
                 $threads[$threadId] = $this->resolver->findById($threadId);
             }
+
+            $commentResults[$key]['_cp_view_entry_url'] = route('statamic.cp.meerkat.redirect', [
+                $comment['internal_context_id'], $comment['id']
+            ]);
         }
 
         /** @var array $author */

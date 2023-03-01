@@ -52,6 +52,7 @@ class Comment {
     this.isDeleted = false;
     this.hasAuthorEmail = false;
     this.hasAuthorName = false;
+    this.controlPanelViewEntryUrl = '';
 
     this.hasBeenCheckedForSpam = false;
     this.isSpam = null;
@@ -296,6 +297,7 @@ class Comment {
     comment.hasBeenCheckedForSpam = Type.withDefault(apiObject[Comment.ApiHasCheckedForSpam], false);
     comment.hasAuthorEmail = Type.withDefault(apiObject[Comment.ApiCommentHasAuthorEmail], false);
     comment.hasAuthorName = Type.withDefault(apiObject[Comment.ApiCommentHasAuthorName], false);
+    comment.controlPanelViewEntryUrl = Type.withDefault(apiObject[Comment.ApiControlPanelUrl], '#');
 
     if (comment.hasBeenCheckedForSpam) {
       comment.isSpam = Type.withDefault(apiObject[Comment.ApiSpam], true);
@@ -456,5 +458,6 @@ Comment.ApiPublished = 'published';
 Comment.ApiRevisionCount = 'revision_count';
 Comment.ApiSpam = 'spam';
 Comment.ApiHasCheckedForSpam = 'has_checked_for_spam';
+Comment.ApiControlPanelUrl = '_cp_view_entry_url';
 
 export default Comment;

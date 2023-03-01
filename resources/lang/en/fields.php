@@ -20,6 +20,10 @@ return [
         'content' => 'Comment',
         'is_spam' => 'Spam',
         'published' => 'Published'
-    ]
+    ],
 
+    'entry' => [
+        'id' => 'Entry ID',
+        'title' => 'Entry Title',
+    ],
 ];

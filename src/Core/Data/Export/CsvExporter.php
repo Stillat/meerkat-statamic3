@@ -89,7 +89,10 @@ class CsvExporter implements DataExporterContract
      */
     public function setPropertyNames($names)
     {
-        $this->headers = $names;
+        $this->headers = array_merge($names, [
+            trans('meerkat::fields.entry.id'),
+            trans('meerkat::fields.entry.title')
+        ]);
     }
 
     /**
@@ -99,6 +102,8 @@ class CsvExporter implements DataExporterContract
      */
     public function setProperties($properties)
     {
-        $this->dataFields = $properties;
+        $this->dataFields = array_merge($properties, [
+            'comment.context.id', 'comment.context.title'
+        ]);
     }
 }

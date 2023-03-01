@@ -24,7 +24,9 @@ class FieldMapper
         'comment.date' => 'comment_date_formatted',
         'comment.content' => 'content_raw',
         'comment.is_spam' => 'spam',
-        'comment.published' => 'published'
+        'comment.published' => 'published',
+        'comment.context.id' => 'context.id',
+        'comment.context.title' => 'context.title',
     ];
 
     /**
@@ -93,6 +95,27 @@ class FieldMapper
                 }
             } else {
                 $props[] = $value;
+            }
+        }
+
+        return $props;
+    }
+
+    public function getDataWithKeys($comment, $fields, $transform = true)
+    {
+        $props = [];
+
+        foreach ($fields as $field) {
+            $value = Arr::getValue($field, $comment, null);
+
+            if ($transform) {
+                if ($this->transformForText === false) {
+                    $props[$field] = ValueTransformer::transform($value);
+                } else {
+                    $props[$field] = ValueTransformer::transformText($value, $this->trueText, $this->falseText);
+                }
+            } else {
+                $props[$field] = $value;
             }
         }
 

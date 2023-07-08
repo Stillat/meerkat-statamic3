@@ -126,7 +126,7 @@ class ContextResolver implements ContextResolverContract
         }
 
         $this->threadPipeline->resolving($threadContext, function ($resolved) use (&$threadContext) {
-            if ($resolved !== null && $resolved instanceof ThreadContextContract) {
+            if ($resolved instanceof ThreadContextContract) {
                 $threadContext->mergeAttributes($resolved->getDataAttributes());
                 $threadContext->contextName = $resolved->contextName;
             }

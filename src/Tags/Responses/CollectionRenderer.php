@@ -411,6 +411,17 @@ class CollectionRenderer extends MeerkatTag
         return $groupData;
     }
 
+    private function removeKeysFromCommentsArray(array &$array, $collectionName) {
+        foreach ($array as &$item) {
+            if (is_array($item)) {
+                if (isset($item[$collectionName])) {
+                    $item[$collectionName] = array_values($item[$collectionName]);
+                }
+                $this->removeKeysFromCommentsArray($item, $collectionName);
+            }
+        }
+    }
+
     /**
      * Prepares the paginated dataset for rendering.
      *
@@ -468,6 +479,8 @@ class CollectionRenderer extends MeerkatTag
         } else {
             $displayComments = $comments;
         }
+
+        $this->removeKeysFromCommentsArray($displayComments, $collectionName);
 
         return $this->parseComments([
             $collectionName => $displayComments,

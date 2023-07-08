@@ -44,6 +44,7 @@ export default {
       akismetFilterEnabled: false,
       avatarOptions: [],
       canChangeConfig: false,
+      hasLoaded: false,
       perPageOptions: [
         10,
         25,
@@ -204,6 +205,7 @@ export default {
       SettingsRepository.Instance.getSettings().then(function (settings) {
         this.settings = settings;
         this.state.loading = false;
+        this.hasLoaded = true;
         this.state.serverDiffers = false;
       }.bind(this)).catch(function (err) {
         this.lastError = err;

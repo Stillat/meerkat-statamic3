@@ -1,4 +1,4 @@
-<div class="page-wrapper max-w-xl">
+<div class="page-wrapper max-w-full">
   <div class="flex items-center justify-between mb-3">
     <h1 class="flex-1">{{ trans('display.header_configure') }}</h1>
 
@@ -26,7 +26,7 @@
       </div>
 
       <div class="card p-0 flex justify-between">
-        <div class="publish-section rounded-tl-none">
+        <div class="publish-section rounded-tl-none w-full" v-if="hasLoaded">
           <component :is="activePage" :settings="settings"></component>
         </div>
       </div>

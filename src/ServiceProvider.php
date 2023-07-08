@@ -390,7 +390,7 @@ class ServiceProvider extends AddonServiceProvider
 
     protected function afterBoot()
     {
-        Utility::make('meerkat-validation')
+        Utility::register('meerkat-validation')
             ->title(trans('meerkat::general.installation_validation'))
             ->description(trans('meerkat::general.installation_validation_desc'))
             ->icon('list')

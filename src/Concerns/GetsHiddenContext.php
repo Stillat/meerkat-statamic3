@@ -26,6 +26,10 @@ trait GetsHiddenContext
             return $sharing[0];
         }
 
+        if ($this->params->has('from_thread')) {
+            return $this->params->get('from_thread');
+        }
+
         return $this->getCurrentContextId();
     }
 

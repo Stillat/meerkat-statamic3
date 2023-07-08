@@ -303,6 +303,13 @@ class CommentFilterManager
 
             if (count($filterTags) > 0) {
                 if (in_array($tagContext, $filterTags) == false) {
+                    if (is_array($queryFilter)) {
+                        if (array_key_exists('name', $queryFilter)) {
+                            $queryFilter = $queryFilter['name'];
+                        } else {
+                            $queryFilter = '[unknown]';
+                        }
+                    }
                     throw new FilterException($queryFilter.' is not supported by '.$tagContext);
                 }
             }

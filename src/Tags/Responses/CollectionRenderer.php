@@ -19,7 +19,6 @@ use Stillat\Meerkat\Core\Exceptions\FilterParserException;
 use Stillat\Meerkat\Core\Exceptions\ParserException;
 use Stillat\Meerkat\Core\Parsing\ExpressionParser;
 use Stillat\Meerkat\Tags\MeerkatTag;
-use Stillat\Meerkat\Tags\Output\RecursiveThreadRenderer;
 
 /**
  * Class CollectionRenderer
@@ -450,7 +449,7 @@ class CollectionRenderer extends MeerkatTag
      * @param  array  $comments The comments to render.
      * @param  string  $collectionName The collection name.
      * @param  bool  $isFlatList Indicates if the results should be a flat list.
-     * @return string
+     * @return array
      */
     private function renderListComments($comments, $collectionName, $isFlatList)
     {
@@ -505,7 +504,7 @@ class CollectionRenderer extends MeerkatTag
      * @param  array  $data The comment data.
      * @param  array  $context The render context.
      * @param  string  $collectionName The name of the collection.
-     * @return string|string[]
+     * @return array
      */
     protected function parseComments($data = [], $context = [], $collectionName = 'comments')
     {
@@ -526,8 +525,6 @@ class CollectionRenderer extends MeerkatTag
             $data = array_merge($data, $metaData);
         }
 
-        return RecursiveThreadRenderer::renderRecursiveThread(
-            $this->sanitizer, $this->content, $data, $context, $collectionName
-        );
+        return $data;
     }
 }

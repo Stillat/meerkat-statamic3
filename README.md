@@ -6,9 +6,9 @@
 
 
 
-## About Meerkat for Statamic 4
+## About Meerkat for Statamic
 
-Meerkat 3 is an extremely powerful, yet easy-to-use comment platform for Statamic 3. Meerkat 3 allows designers and
+Meerkat is an extremely powerful, yet easy-to-use comment platform for Statamic. Meerkat 3 allows designers and
 developers to easily build comment threads into their existing projects, allowing them to retain their user engagement data.
 
 ## Installing
@@ -19,13 +19,13 @@ It is simple to install Meerkat into an existing Statamic site using Composer:
 composer require stillat/meerkat
 ``` 
 
-You may read the full installation documentation at [https://meerkatcomments.com/docs/installation](https://meerkatcomments.com/docs/installation).
+You may read the full installation documentation at [https://stillat.com/meerkat/installation](https://stillat.com/meerkat/installation)
 
 ## Documentation
 
-Meerkat 3 is documented on the official Meerkat 3 website at [https://meerkatcomments.com/docs](https://meerkatcomments.com/docs).
+Meerkat 3 is documented on the official Meerkat 3 website at [https://stillat.com/meerkat/installation](https://stillat.com/meerkat/installation)
 
-There are definitely documentation gaps, and if you find something that could use clarifying please open an issue. Documentation will continue to be added over time.
+There are definitely documentation gaps, and if you find something that could use clarifying please open an issue.
 
 ## License
 

@@ -123,9 +123,7 @@ class CommentMutationPipeline extends EventPipeline implements CommentMutationPi
      */
     public function created(CommentContract $comment, $callback)
     {
-        if ($comment !== null) {
-            $this->fireStatamicEntrySavedEvent($comment->getThreadId());
-        }
+        $this->fireStatamicEntrySavedEvent($comment->getThreadId());
 
         $pipelineArgs = [
             $comment,
@@ -239,9 +237,7 @@ class CommentMutationPipeline extends EventPipeline implements CommentMutationPi
      */
     public function replied(CommentContract $comment, $callback)
     {
-        if ($comment !== null) {
-            $this->fireStatamicEntrySavedEvent($comment->getThreadId());
-        }
+        $this->fireStatamicEntrySavedEvent($comment->getThreadId());
 
         $pipelineArgs = [
             $comment,
@@ -273,9 +269,7 @@ class CommentMutationPipeline extends EventPipeline implements CommentMutationPi
      */
     public function markedAsSpam(CommentContract $comment, $callback)
     {
-        if ($comment !== null) {
-            $this->fireStatamicEntrySavedEvent($comment->getThreadId());
-        }
+        $this->fireStatamicEntrySavedEvent($comment->getThreadId());
 
         $pipelineArgs = [
             $comment,
@@ -307,9 +301,7 @@ class CommentMutationPipeline extends EventPipeline implements CommentMutationPi
      */
     public function markedAsHam(CommentContract $comment, $callback)
     {
-        if ($comment !== null) {
-            $this->fireStatamicEntrySavedEvent($comment->getThreadId());
-        }
+        $this->fireStatamicEntrySavedEvent($comment->getThreadId());
 
         $pipelineArgs = [
             $comment,
@@ -341,9 +333,7 @@ class CommentMutationPipeline extends EventPipeline implements CommentMutationPi
      */
     public function approved(CommentContract $comment, $callback)
     {
-        if ($comment !== null) {
-            $this->fireStatamicEntrySavedEvent($comment->getThreadId());
-        }
+        $this->fireStatamicEntrySavedEvent($comment->getThreadId());
 
         $pipelineArgs = [
             $comment,
@@ -375,9 +365,7 @@ class CommentMutationPipeline extends EventPipeline implements CommentMutationPi
      */
     public function unapproved(CommentContract $comment, $callback)
     {
-        if ($comment !== null) {
-            $this->fireStatamicEntrySavedEvent($comment->getThreadId());
-        }
+        $this->fireStatamicEntrySavedEvent($comment->getThreadId());
 
         $pipelineArgs = [
             $comment,
@@ -409,9 +397,7 @@ class CommentMutationPipeline extends EventPipeline implements CommentMutationPi
      */
     public function restored(CommentContract $comment, $callback)
     {
-        if ($comment !== null) {
-            $this->fireStatamicEntrySavedEvent($comment->getThreadId());
-        }
+        $this->fireStatamicEntrySavedEvent($comment->getThreadId());
 
         $pipelineArgs = [
             $comment,

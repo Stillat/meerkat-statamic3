@@ -1,17 +1,17 @@
 <div>
-    <div class="flex justify-between">
+    <div class="flex justify-between items-center mb-6">
         <h1 class="flex-1">{{ trans('display.header_comments') }}</h1>
 
         <loader v-if="state.loadingData" :display-inline="true" class="mr-1"></loader>
 
         <dropdown-list class="mr-2">
-            <button class="flex items-center" slot="trigger">{{ trans('actions.export') }} <svg-icon name="chevron-down-xs" class="w-2 ml-1"></svg-icon></button>
+            <button class="button flex items-center pr-4" slot="trigger">{{ trans('actions.export') }} <svg-icon name="micro/chevron-down-xs" class="w-2 ml-2" /></button>
             <dropdown-item :text="trans('actions.export_csv')" :redirect="exportLinks.csv"></dropdown-item>
             <dropdown-item :text="trans('actions.export_json')" :redirect="exportLinks.json"></dropdown-item>
         </dropdown-list>
         <dropdown-list>
-            <button class="flex items-center" slot="trigger">
-                {{ trans('actions.spam') }} <svg-icon name="chevron-down-xs" class="w-2 ml-1"></svg-icon>
+            <button class="button btn-primary flex items-center pr-4" slot="trigger">
+                {{ trans('actions.spam') }} <svg-icon name="micro/chevron-down-xs" class="w-2 ml-2" />
             </button>
             <dropdown-item :text="trans('actions.check_for_spam')" :disabled="state.isCheckingAllForSpam" v-if="canCheckForSpam" v-on:click="checkForSpam"></dropdown-item>
             <dropdown-item :text="trans('actions.remove_all_spam')" v-if="permissions.canRemoveComments" v-on:click="removeAllSpam"></dropdown-item>

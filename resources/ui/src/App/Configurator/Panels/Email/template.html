@@ -1,5 +1,5 @@
 <div class="w-full publish-fields" v-if="settings != null">
-  <div class="form-group publish-field section-fieldtype field-w-full">
+  <div class="form-group publish-field section-fieldtype w-full">
     <div class="field-inner">
       <label class="publish-field-label"><span>{{ trans('config.email_general_title') }}</span></label>
       <div class="help-block -mt-1">
@@ -30,7 +30,7 @@
                       :read-only="settings.items['email.check_with_spam_guard'].behavior === 0"></toggle-fieldtype>
   </div>
 
-  <div class="form-group publish-field list-fieldtype field-w-full" v-if="typeof settings.items['email.addresses'] !== 'undefined'">
+  <div class="form-group publish-field list-fieldtype w-full" v-if="typeof settings.items['email.addresses'] !== 'undefined'">
     <div class="field-inner">
       <label><span>{{ trans('config.email_addresses') }}</span></label>
       <div class="help-block -mt-1">

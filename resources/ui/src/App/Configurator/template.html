@@ -1,4 +1,4 @@
-<div>
+<div class="page-wrapper max-w-xl">
   <div class="flex items-center justify-between mb-3">
     <h1 class="flex-1">{{ trans('display.header_configure') }}</h1>
 
@@ -15,7 +15,7 @@
 
   <div class="flex relative">
     <div class="w-full">
-      <div class="publish-tabs tabs">
+      <div class="tabs-container relative">
         <a class="tab-button" :class="{'active': activePage == 'publishing'}" v-on:click="activePage = 'publishing'">{{ trans('config.tab_general') }}</a>
         <a class="tab-button" :class="{'active': activePage == 'guard'}" v-on:click="activePage = 'guard'" v-if="canChangeConfig === true">{{ trans('config.tab_spam') }}</a>
         <a class="tab-button" :class="{'active': activePage == 'ip-filter'}" v-on:click="activePage = 'ip-filter'" v-if="ipFilterEnabled === true && canChangeConfig === true" >{{ trans('config.tab_ip_address_filter') }}</a>
@@ -25,7 +25,7 @@
         <a class="tab-button" :class="{'active': activePage == 'privacy'}" v-on:click="activePage = 'privacy'" v-if="canChangeConfig === true">{{ trans('config.tab_privacy') }}</a>
       </div>
 
-      <div class="flex justify-between">
+      <div class="card p-0 flex justify-between">
         <div class="publish-section rounded-tl-none">
           <component :is="activePage" :settings="settings"></component>
         </div>

@@ -397,8 +397,7 @@ class ServiceProvider extends AddonServiceProvider
             ->view('meerkat::validation')
             ->routes(function ($router) {
                 $router->post('cache', [UtilitiesController::class, 'clearSiteRoutesCache'])->name('meerkat.routes.clear.cache');
-            })
-            ->register();
+            });
     }
 
     protected function beforeBoot()

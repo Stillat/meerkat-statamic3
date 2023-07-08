@@ -1,7 +1,7 @@
 <div class="w-full">
   <div class="publish-fields w-full" v-if="settings != null">
 
-    <div class="form-group publish-field section-fieldtype field-w-full">
+    <div class="form-group publish-field section-fieldtype w-full">
       <div class="field-inner">
         <label class="publish-field-label"><span>{{ trans('config.spam_general_title') }}</span></label>
         <div class="help-block -mt-1">
@@ -65,7 +65,7 @@
                         :read-only="settings.items['publishing.auto_submit_results'].behavior === 0"></toggle-fieldtype>
     </div>
 
-    <div class="form-group publish-field section-fieldtype field-w-full">
+    <div class="form-group publish-field section-fieldtype w-full">
       <div class="field-inner">
         <label class="publish-field-label"><span>{{ trans('config.spam_guards_title') }}</span></label>
         <div class="help-block -mt-1">
@@ -95,7 +95,7 @@
       </table>
     </div>
 
-    <div class="form-group publish-field section-fieldtype field-w-full" v-if="$parent.akismetFilterEnabled === true">
+    <div class="form-group publish-field section-fieldtype w-full" v-if="$parent.akismetFilterEnabled === true">
       <div class="field-inner">
         <label class="publish-field-label"><span>{{ trans('config.akismet_title') }}</span></label>
         <div class="help-block -mt-1">
@@ -124,7 +124,7 @@
       <text-fieldtype name="akismet_front_page" v-model="settings.items['akismet.front_page'].value" :read-only="settings.items['akismet.front_page'].behavior === 0" handle="akismet_front_page" :config="{'handle':'akismet_front_page'}"></text-fieldtype>
     </div>
 
-    <div class="field-w-full p-4"  v-if="hasAkismetSettings && $parent.akismetFilterEnabled === true">
+    <div class="w-full p-4"  v-if="hasAkismetSettings && $parent.akismetFilterEnabled === true">
       <p><button class="btn btn-primary" v-on:click="validateConfiguration" v-if="state.isValidating === false">{{ trans('config.validate_akismet_prompt') }}</button> <span style="position: relative; display: inline-block"><loader v-if="state.isValidating" :display-inline="true" class="mr-1"></loader> {{ state.currentMessage }}</span></p>
     </div>
   </div>

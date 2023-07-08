@@ -145,9 +145,7 @@ class CommentMutationPipeline extends EventPipeline implements CommentMutationPi
      */
     public function updated(CommentContract $comment, $callback)
     {
-        if ($comment !== null) {
-            $this->fireStatamicEntrySavedEvent($comment->getThreadId());
-        }
+        $this->fireStatamicEntrySavedEvent($comment->getThreadId());
 
         $pipelineArgs = [
             $comment,
@@ -164,7 +162,7 @@ class CommentMutationPipeline extends EventPipeline implements CommentMutationPi
      */
     public function removing(CommentRemovalEventArgs $eventArgs, $callback)
     {
-        if ($eventArgs !== null && count($eventArgs->contexts) > 0) {
+        if (count($eventArgs->contexts) > 0) {
             foreach ($eventArgs->contexts as $context) {
                 $this->fireStatamicEntrySavedEvent($context);
             }

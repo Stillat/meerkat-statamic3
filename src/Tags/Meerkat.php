@@ -325,7 +325,6 @@ class Meerkat extends MeerkatTag
      */
     public function count()
     {
-        // TODO: Allow override of query. Needs a global "query builder builder".
         $contextId = $this->getHiddenContext();
         $this->setFromContext($this);
         $thread = $this->threadManager->findById($contextId);

@@ -77,7 +77,7 @@
                         </sort-indicator>
                     </th>
                 </tr>
-                <tr class="meerkat__comment-header-row--responsive">
+                <tr class="meerkat__comment-header-row--responsive w-full">
                   <th colspan="2">
                     <div class="comment-table__author-column sortable-column meerkat__sort-response--primary" v-on:click="updateSortFromHeader('id')">
                       <label class="text-gray-500 font-bold inline cursor-pointer" :title="singleSelectTranslation"
@@ -108,8 +108,8 @@
                         <p :title="comments.threads[0].name"><span class="meerkat__inline-callout"><strong>{{ trans('display.thread_single_response') }}</strong></span> {{ comments.threads[0].name | meerkatTruncate(75) }}</p>
                     </td>
                 </tr>
-                <tr v-for="(comment, i) in comments.comments" class="meerkat__comment-row flex lg:table-row flex-row lg:flex-row flex-wrap lg:flex-no-wrap mb-10 lg:mb-0"
-                    v-bind:class="getCommentClasses(comment)" v-if="comment.isDeleted === false">
+                <tr v-for="(comment, i) in comments.comments" class="meerkat__comment-row"
+                    v-bind:class="getCommentClasses(comment)" v-if="comment.isDeleted === false" colspan="2">
                     <td class="author-display__container w-full lg:w-auto lg:table-cell relative lg:static">
                         <label class="text-gray-500 font-bold cursor-pointer meerkat__comment-checkbox-label" :title="singleSelectTranslation"
                                v-if="canUseBulkActions">

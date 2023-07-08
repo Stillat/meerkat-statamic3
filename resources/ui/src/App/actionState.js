@@ -4,8 +4,6 @@ import ControlPanelApplication from './controlPanelApplication';
 import Type from '../Types/type';
 import ErrorResponse from '../Http/Responses/errorResponse';
 import Guid from '../Types/guid';
-import ErrorsRepository from '../Repositories/errorsRepository';
-import Environment from '../Config/environment';
 import Comment from '../Data/Comments/comment';
 
 class ActionState extends EventEmitter {
@@ -16,7 +14,6 @@ class ActionState extends EventEmitter {
 
     this.comment = comment;
     this.commentIds = [];
-    this.useTelemetry = Environment.isTelemetryEnabled();
     this.display = false;
     this.title = 'Please override this title: title';
     this.activeTitle = '';
@@ -117,11 +114,6 @@ class ActionState extends EventEmitter {
   }
 
   _submitAndTryAgain() {
-    if (this.useTelemetry) {
-      ErrorsRepository.Instance.submitActionReport(ActionState.CurrentActionId).then(function () {
-      }).catch(function () {
-      });
-    }
     this._clearErrorState();
     this._tryAgain();
   }
@@ -184,15 +176,6 @@ class ActionState extends EventEmitter {
 
     if (incrementErrorCounter) {
       this.numberOfErrorsEncountered += 1;
-    }
-
-    if (this.useTelemetry && this.numberOfErrorsEncountered > this.failedRequestCutoff) {
-      ErrorsRepository.Instance.getReportLog(ActionState.CurrentActionId).then(function (result) {
-        this.serverErrorReport = result;
-      }.bind(this)).catch(function () {
-        this.isLoadingLog = false;
-        this.serverErrorReport = null;
-      }.bind(this));
     }
   }
 

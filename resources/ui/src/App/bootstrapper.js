@@ -67,7 +67,6 @@ class Bootstrapper {
         Environment.Settings.avatarDriver = response.settings['general'].avatarDriver;
         Environment.Settings.controlPanelConfigurationEnabled =
           response.settings['general'].controlPanelConfigurationEnabled;
-        Environment.Settings.telemetryEnabled = response.settings['general'].telemetryEnabled;
         syncjs.Hubs.config().userAvailable([Environment.UserPreferences]);
       }
     });

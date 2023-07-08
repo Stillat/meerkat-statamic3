@@ -43,9 +43,6 @@ return [
     'route_category_spam_api' => 'Spam API',
     'route_category_spam_api_desc' => 'Manages spam moderation requests.',
 
-    'route_category_telemetry_api' => 'Telemetry API',
-    'route_category_telemetry_api_desc' => 'Manages bug and crash reports.',
-
     'route_category_moderation_api' => 'Moderation API',
     'route_category_moderation_api_desc' => 'Provides the core moderation features such as editing, replying, and comment visibility.',
 

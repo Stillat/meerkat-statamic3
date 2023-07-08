@@ -22,8 +22,6 @@ class SettingsProvider
 
     const JS_NAME_CP_CONFIG_ENABLED = 'controlPanelConfigurationEnabled';
 
-    const JS_NAME_TELEMETRY_ENABLED = 'telemetryEnabled';
-
     /**
      * The SanitationManagerContract implementation instance.
      *
@@ -97,7 +95,6 @@ class SettingsProvider
         return [
             SettingsProvider::JS_NAME_CP_CONFIG_ENABLED => $this->getConfig('permissions.control_panel_config', true),
             SettingsProvider::JS_NAME_AVATAR_DRIVER => $avatarDriver,
-            SettingsProvider::JS_NAME_TELEMETRY_ENABLED => $this->getConfig('telemetry.enabled'),
         ];
     }
 }

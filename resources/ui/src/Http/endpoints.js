@@ -43,7 +43,4 @@ Endpoints.ExportJson = 'export/json';
 
 Endpoints.ReportingOverview = 'reporting/overview';
 
-Endpoints.TelemetryViewReport = 'telemetry/report';
-Endpoints.TelemetrySubmitReport = 'telemetry/submit';
-
 export default Endpoints;

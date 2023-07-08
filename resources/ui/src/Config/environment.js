@@ -45,17 +45,6 @@ class Environment {
     return (curValue === true);
   }
 
-  /**
-   * Tests if telemetry has been enabled.
-   *
-   * @returns {Boolean}
-   */
-  static isTelemetryEnabled(): Boolean {
-    let curValue = Type.withDefault(Environment.Settings['telemetryEnabled'], true);
-
-    return (curValue === true);
-  }
-
   static getCsrfToken(): string {
     return window.Statamic.$config.get('csrfToken');
   }

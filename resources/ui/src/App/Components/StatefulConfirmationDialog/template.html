@@ -25,7 +25,7 @@
             </div>
 
             <div v-if="actionState.isErrorState === true">
-                <div v-if="actionState.numberOfErrorsEncountered <= this.actionState.failedRequestCutoff || this.actionState.useTelemetry === false">
+                <div v-if="actionState.numberOfErrorsEncountered <= this.actionState.failedRequestCutoff">
                     <p v-if="actionState.wasClientError === false">{{ errorMessage }}</p>
 
                     <div v-if="actionState.wasClientError === true">

@@ -823,7 +823,11 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
             return null;
         }
 
-        if ($this->existsForContext($id, $withTrashed) == false && $autoCreate) {
+        if ($this->existsForContext($id, $withTrashed) == false) {
+            if (! $autoCreate) {
+                return null;
+            }
+
             $context = $this->contextResolver->findById($id);
 
             if ($context !== null) {
@@ -834,10 +838,6 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
                 }
             }
 
-            return null;
-        }
-
-        if (! $autoCreate) {
             return null;
         }
 

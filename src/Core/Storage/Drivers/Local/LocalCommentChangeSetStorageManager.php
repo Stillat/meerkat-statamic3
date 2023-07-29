@@ -10,7 +10,6 @@ use Stillat\Meerkat\Core\Contracts\Storage\CommentChangeSetStorageManagerContrac
 use Stillat\Meerkat\Core\Data\Mutations\ChangeSet;
 use Stillat\Meerkat\Core\Data\Mutations\ChangeSetCollection;
 use Stillat\Meerkat\Core\Storage\Paths;
-use Stillat\Meerkat\Core\Support\Str;
 
 /**
  * Class LocalCommentChangeSetStorageManager
@@ -373,25 +372,28 @@ class LocalCommentChangeSetStorageManager implements CommentChangeSetStorageMana
 
         $storagePath = $this->getChangeSetStoragePath($comment);
 
-        if (file_exists($storagePath) === false) {
+        if (!file_exists($storagePath)) {
+            return 0;
+        }
+
+        $handle = fopen($storagePath, 'r');
+        if (! $handle) {
             return 0;
         }
 
         $potentialCount = 0;
-        $handle = fopen($storagePath, 'r');
+        $timestampLength = strlen(self::STR_CHECK_TIMESTAMP);
 
-        if ($handle) {
-            while (($line = fgets($handle)) !== false) {
-                $trimLine = trim($line);
-
-                if (Str::startsWith($trimLine, self::STR_CHECK_TIMESTAMP)) {
-                    $potentialCount += 1;
-                }
+        while (($line = fgets($handle)) !== false) {
+            if (strncmp(trim($line), self::STR_CHECK_TIMESTAMP, $timestampLength) === 0) {
+                $potentialCount++;
             }
-
-            fclose($handle);
         }
+
+        fclose($handle);
 
         return $potentialCount;
     }
+
+
 }

@@ -67,9 +67,10 @@ class ContextResolver implements ContextResolverContract
      * Attempts to locate a thread context by it's string identifier.
      *
      * @param  string  $contextId
+     * @parma array|null $contextCache A cache of previously resolved contexts.
      * @return ThreadContextContract
      */
-    public function findById($contextId)
+    public function findById($contextId, $contextCache = null)
     {
         if ($contextId instanceof Value) {
             $contextId = $contextId->value();
@@ -82,7 +83,13 @@ class ContextResolver implements ContextResolverContract
         }
 
         /** @var Entry $statamicContext */
-        $statamicContext = $this->entryRepository->find($contextId);
+        $statamicContext = null;
+
+        if ($contextCache != null && array_key_exists($contextId, $contextCache)) {
+            $statamicContext = $contextCache[$contextId];
+        } else {
+            $statamicContext = $this->entryRepository->find($contextId);
+        }
 
         if ($statamicContext === null) {
             return null;

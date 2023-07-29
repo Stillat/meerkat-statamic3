@@ -3,6 +3,7 @@
 namespace Stillat\Meerkat\Core\Storage\Drivers\Local;
 
 use DirectoryIterator;
+use Statamic\Facades\Entry;
 use Statamic\Fields\Value;
 use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\Contracts\Comments\CommentContract;
@@ -204,8 +205,14 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
             return $threadsToReturn;
         }
 
+        $threadContexts = Entry::query()
+            ->whereIn('id', $threadIdsToUse)
+            ->get(['id', 'date', 'title'])
+            ->keyBy('id')
+            ->all();
+
         foreach ($threadIdsToUse as $threadId) {
-            $newThread = $this->materializeThread($threadId, $withComments);
+            $newThread = $this->materializeThread($threadId, $withComments, $threadContexts);
 
             if ($newThread !== null && $newThread->getContext() !== null) {
                 $threadsToReturn[] = $newThread;
@@ -436,9 +443,10 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
      *
      * @param  string  $threadId The thread's identifier.
      * @param  bool  $includeComments Indicates if comments should be included.
+     * @param array|null $contextCache A pre-loaded list of contexts.
      * @return Thread|null
      */
-    private function materializeThread($threadId, $includeComments)
+    private function materializeThread($threadId, $includeComments, $contextCache = null)
     {
         if ($this->canUseDirectory === false) {
             return null;
@@ -450,7 +458,7 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
         $newThread->setId($threadId);
         $newThread->setContextId($threadId);
 
-        $threadContext = $this->contextResolver->findById($threadId);
+        $threadContext = $this->contextResolver->findById($threadId, $contextCache);
 
         if ($threadContext !== null) {
             $newThread->setContext($threadContext);

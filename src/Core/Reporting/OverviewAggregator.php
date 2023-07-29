@@ -43,12 +43,6 @@ class OverviewAggregator
         foreach ($threadIds as $thread) {
             $overviewReport->totalThreads += 1;
 
-            $threadContext = $this->threadManager->findById($thread);
-
-            if ($threadContext === null || $threadContext->getContext() === null) {
-                continue;
-            }
-
             /** @var CommentContract $comment */
             foreach ($this->threadManager->getAllCommentsById($thread) as $comment) {
                 if (TypeConversions::getBooleanValue(

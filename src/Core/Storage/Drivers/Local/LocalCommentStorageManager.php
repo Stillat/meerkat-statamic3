@@ -307,8 +307,6 @@ class LocalCommentStorageManager implements CommentStorageManagerContract
 
         $threadPath = $this->paths->combine([$this->storagePath, $threadId]);
 
-        $commentPaths = [];
-
         $threadFilter = $this->paths->combine([$threadPath, '*'.LocalCommentStorageManager::PATH_COMMENT_FILE]);
         $commentPaths = $this->paths->getFilesRecursively($threadFilter);
 

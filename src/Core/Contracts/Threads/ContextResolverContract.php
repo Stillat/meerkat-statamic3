@@ -20,9 +20,10 @@ interface ContextResolverContract
      * Attempts to locate a thread context by it's string identifier.
      *
      * @param  string  $contextId The context's unique identifier.
+     * @param array|null $contextCache A cache of previously resolved contexts.
      * @return ThreadContextContract
      */
-    public function findById($contextId);
+    public function findById($contextId, $contextCache = null);
 
     /**
      * Returns a value indicating if a context exists for the given identifier.

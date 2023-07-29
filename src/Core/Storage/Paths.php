@@ -3,6 +3,9 @@
 namespace Stillat\Meerkat\Core\Storage;
 
 use DirectoryIterator;
+use FilesystemIterator;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use Stillat\Meerkat\Core\Configuration;
 use Stillat\Meerkat\Core\ConfigurationFactories;
 use Stillat\Meerkat\Core\Support\Env;
@@ -220,24 +223,23 @@ class Paths
      */
     public function getFilesRecursively($pattern, $flags = 0)
     {
-        $files = glob($pattern, $flags);
+        $files = [];
+        $globPattern = basename($pattern);
 
-        if ($files === false || is_array($files) === false) {
-            $files = [];
-        }
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator(dirname($pattern), FilesystemIterator::SKIP_DOTS | FilesystemIterator::FOLLOW_SYMLINKS),
+            RecursiveIteratorIterator::SELF_FIRST
+        );
 
-        $dirs = glob(dirname($pattern).'/*', GLOB_NOSORT);
-
-        if ($dirs === false || is_array($dirs) === false) {
-            $dirs = [];
-        }
-
-        foreach ($dirs as $dir) {
-            $files = array_merge($files, $this->getFilesRecursively($dir.'/'.basename($pattern), $flags));
+        foreach ($iterator as $fileInfo) {
+            if ($fileInfo->isFile() && fnmatch($globPattern, $fileInfo->getFilename(), $flags)) {
+                $files[] = $fileInfo->getPathname();
+            }
         }
 
         return $files;
     }
+
 
     /**
      * Recursively searched for a file using multiple patterns.

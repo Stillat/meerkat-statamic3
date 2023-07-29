@@ -9,6 +9,7 @@ class Client {
   constructor() {
     this._pendingRequestMapping = {};
     this.api = ky.extend({
+      timeout: false,
       hooks: {
         beforeRequest: [
           request => {

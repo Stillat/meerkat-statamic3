@@ -814,15 +814,16 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
      * @param  string  $id The thread's identifier.
      * @param  bool  $withTrashed Indicates if soft-deleted threads should be considered.
      * @param  bool  $includeComments Indicates if comments should be included with the thread.
+     * @param bool $autoCreate Indicates if threads be automatically created when querying.
      * @return Thread|null
      */
-    public function findById($id, $withTrashed = false, $includeComments = true)
+    public function findById($id, $withTrashed = false, $includeComments = true, $autoCreate = false)
     {
         if ($this->canUseDirectory === false) {
             return null;
         }
 
-        if ($this->existsForContext($id, $withTrashed) == false) {
+        if (! $this->existsForContext($id, $withTrashed) && $autoCreate) {
             $context = $this->contextResolver->findById($id);
 
             if ($context !== null) {

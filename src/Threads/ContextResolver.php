@@ -88,17 +88,6 @@ class ContextResolver implements ContextResolverContract
             return null;
         }
 
-        $contextData = $statamicContext->data();
-
-        if ($contextData !== null) {
-            /** @var Collection $contextData */
-            $contextData = $contextData->toArray();
-        }
-
-        if ($contextData === null || is_array($contextData) === false) {
-            $contextData = [];
-        }
-
         $threadContext = new Context();
         $threadContext->contextId = $statamicContext->id();
 
@@ -108,22 +97,9 @@ class ContextResolver implements ContextResolverContract
             $threadContext->createdUtc = $statamicContext->date()->timestamp;
         }
 
-        if (array_key_exists('title', $contextData)) {
-            $threadContext->contextName = $contextData['title'];
-        }
+        $threadContext->contextName = $statamicContext->title;
 
         $statamicContext->id();
-
-        foreach ($statamicContext->toArray() as $arrayKey => $arrayValue) {
-            if ($arrayKey === 'data') {
-                continue;
-            }
-            $threadContext->setDataAttribute($arrayKey, $arrayValue);
-        }
-
-        foreach ($contextData as $arrayKey => $arrayValue) {
-            $threadContext->setDataAttribute($arrayKey, $arrayValue);
-        }
 
         $this->threadPipeline->resolving($threadContext, function ($resolved) use (&$threadContext) {
             if ($resolved !== null && $resolved instanceof ThreadContextContract) {

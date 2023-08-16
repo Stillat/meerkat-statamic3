@@ -368,6 +368,12 @@ class LocalThreadStorageManager implements ThreadStorageManagerContract
         $targetPath = $this->storagePath.Paths::SYM_FORWARD_SEPARATOR.
             $contextId.Paths::SYM_FORWARD_SEPARATOR.self::EXT_THREAD_META;
 
+        $targetDir = dirname($targetPath);
+
+        if (! file_exists($targetDir)) {
+            mkdir($targetDir, 0755, true);
+        }
+
         $wasSuccess = file_put_contents($targetPath, $this->yamlParser->toYaml($data->toArray(), null));
 
         if ($wasSuccess === false) {

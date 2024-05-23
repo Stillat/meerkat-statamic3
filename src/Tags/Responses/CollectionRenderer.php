@@ -274,7 +274,7 @@ class CollectionRenderer extends MeerkatTag
     {
         $context = new RuntimeContext();
         $context->parameters = $this->getParameterArray();
-        $context->context = $this->context->toArray();
+        $context->context = $this->context->all();
 
         return $context;
     }
@@ -472,7 +472,7 @@ class CollectionRenderer extends MeerkatTag
 
         return $this->parseComments([
             $collectionName => $displayComments,
-        ], $this->context->toArray(), $collectionName);
+        ], $this->context->all(), $collectionName);
     }
 
     /**

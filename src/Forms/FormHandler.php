@@ -4,6 +4,7 @@ namespace Stillat\Meerkat\Forms;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 use Illuminate\Validation\Factory;
 use Statamic\Facades\Entry;
 use Statamic\Fields\Blueprint;
@@ -160,7 +161,7 @@ class FormHandler
 
         // Merge in field rules
         foreach ($this->getFields() as $field_name => $field_config) {
-            $field_rules = array_get($field_config, MeerkatForm::KEY_FORM_CONFIG_VALIDATE);
+            $field_rules = Arr::get($field_config, MeerkatForm::KEY_FORM_CONFIG_VALIDATE);
 
             if ($field_rules) {
                 if (is_string($field_rules)) {
@@ -179,7 +180,7 @@ class FormHandler
             }
 
             // Makes the names prettier.
-            $attributes[$field_name] = array_get(
+            $attributes[$field_name] = Arr::get(
                 $field_config,
                 MeerkatForm::KEY_FORM_CONFIG_DISPLAY_NAME, $field_name
             );

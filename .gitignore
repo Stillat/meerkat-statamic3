@@ -3,3 +3,4 @@ src/.idea/*
 /.idea/*
 /.vs/*
 /src/Core/.idea/*
+node_modules/*

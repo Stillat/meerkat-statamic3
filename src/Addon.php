@@ -21,7 +21,7 @@ class Addon
 
     public const ADDON_ID = 'stillat/meerkat';
 
-    public const VERSION = '3.1.0';
+    public const VERSION = '3.2.3';
 
     /**
      * Gets the addon API prefix.

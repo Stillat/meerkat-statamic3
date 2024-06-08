@@ -259,5 +259,7 @@
     }
   };
 
-  MeerkatForms.init();
+  document.addEventListener('DOMContentLoaded', function () {
+    MeerkatForms.init();
+  });
 })();

@@ -9,12 +9,6 @@ Route::middleware('statamic.cp.authenticated')->group(function () {
     Route::group(['prefix' => Addon::getApiPrefix()], function () {
         Route::post('/', '\Stillat\Meerkat\Http\Controllers\Api\IndexController@index');
 
-        Route::group(['prefix' => 'telemetry'], function () {
-            Route::get('/', '\Stillat\Meerkat\Http\Controllers\Api\TelemetryController@index');
-            Route::get('report', '\Stillat\Meerkat\Http\Controllers\Api\TelemetryController@getReport');
-            Route::post('submit', '\Stillat\Meerkat\Http\Controllers\Api\TelemetryController@submitReport');
-        });
-
         Route::group(['prefix' => 'settings'], function () {
             Route::get('/current-user', '\Stillat\Meerkat\Http\Controllers\ConfigureController@getCurrentUserSettings');
             Route::get('/fetch', '\Stillat\Meerkat\Http\Controllers\ConfigureController@getConfiguration');

@@ -16,7 +16,6 @@ use Stillat\Meerkat\Http\Controllers\Api\ReplyCommentController;
 use Stillat\Meerkat\Http\Controllers\Api\ReportingController;
 use Stillat\Meerkat\Http\Controllers\Api\SpamController;
 use Stillat\Meerkat\Http\Controllers\Api\TaskController;
-use Stillat\Meerkat\Http\Controllers\Api\TelemetryController;
 use Stillat\Meerkat\Http\Controllers\Api\UnpublishCommentController;
 use Stillat\Meerkat\Http\Controllers\Api\UpdateCommentController;
 use Stillat\Meerkat\Http\Controllers\ConfigureController;
@@ -186,9 +185,6 @@ class RouteCacheValidator
     private function buildRequiredActionsTable()
     {
         $this->addActions(SocializeController::class, ['postSocialize'], self::CATEGORY_SITE_SUBMISSION_API);
-        $this->addActions(TelemetryController::class, [
-            'index', 'getReport', 'submitReport',
-        ], self::CATEGORY_TELEMETRY_API);
         $this->addActions(ConfigureController::class, [
             'getConfiguration',
             'save',

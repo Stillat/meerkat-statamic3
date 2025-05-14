@@ -172,7 +172,7 @@
 
           _this.data.ReplyForm = _this.getReplyForm();
 
-          let replyingTo = event.target.getAttribute('data-meerkat-reply-to');
+          let replyingTo = event.currentTarget.getAttribute('data-meerkat-reply-to');
 
           _this.data.ReplyForm.appendChild(_this.makeReplyInput(replyingTo));
           _this.data.ReplyForm.addEventListener('submit', _this.data.Extend.submit, false);
@@ -225,7 +225,7 @@
       });
     },
     replyHandler: function (event) {
-      let meerkatForm = MeerkatForms.findClosest(event.target, '[data-meerkat-form]');
+      let meerkatForm = MeerkatForms.findClosest(event.currentTarget, '[data-meerkat-form]');
 
       if (typeof meerkatForm !== 'undefined' && meerkatForm !== null) {
 

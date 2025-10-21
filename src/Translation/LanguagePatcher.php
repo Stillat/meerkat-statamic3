@@ -57,6 +57,11 @@ class LanguagePatcher
         // Construct a path to our potential language directory.
         $localeDirectory = PathProvider::getResourcesDirectory('lang').'/'.$this->currentLocale;
         $fallbackDirectory = PathProvider::getResourcesDirectory('lang').'/'.$this->fallbackLocale;
+        $overrideDirectory = base_path('lang/vendor/meerkat/'.$this->currentLocale);
+
+        if (file_exists($overrideDirectory) ) {
+            $localeDirectory = $overrideDirectory;
+        }
 
         // If the configured locale exists, lets find which translation strings do not exist.
         if (Folder::exists($fallbackDirectory)) {

@@ -121,6 +121,18 @@ class CommentAuthorRetriever
      */
     public function getCommentAuthor(CommentContract $comment)
     {
+        $authenticatedUser = $comment->getDataAttribute(AuthorContract::AUTHENTICATED_USER_ID, null);
+
+        if ($authenticatedUser !== null) {
+            $statamicIdentity = $this->authorFactory->makeAuthor([
+                'authenticated_user' => $authenticatedUser,
+            ]);
+
+            if ($statamicIdentity) {
+                return $this->authEmailMappings[$authenticatedUser] = $statamicIdentity;
+            }
+        }
+
         $emailAddress = $comment->getDataAttribute(AuthorContract::KEY_EMAIL_ADDRESS, null);
 
         if ($emailAddress === null || mb_strlen(trim($emailAddress)) === 0) {

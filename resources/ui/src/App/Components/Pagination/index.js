@@ -111,7 +111,7 @@ export default {
       this.$emit('page-updated', pageNumber);
     },
     updatePerPage(event) {
-      this.$emit('per-page-updated', event.target.value);
+      this.$emit('per-page-updated', event.currentTarget.value);
       event.preventDefault();
     },
     movePrevious() {
